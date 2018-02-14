@@ -1,0 +1,57 @@
+*.py[cod]
+
+# C extensions
+*.so
+
+# Packages
+*.egg
+*.egg-info
+dist
+build
+eggs
+parts
+var
+sdist
+develop-eggs
+.installed.cfg
+lib
+lib64
+
+# Installer logs
+pip-log.txt
+
+# Unit test / coverage reports
+.coverage
+.tox
+.research
+nosetests.xml
+coverage.xml
+cover
+pep8.txt
+sphinx-output
+
+# Translations
+*.mo
+
+# Default dev virtual environment
+.venv*
+.cache
+
+# Settings overrides
+settings_local.py
+
+# docs
+docs/build*
+
+# FE stuff
+node_modules
+bower_components
+
+# dev files
+.todos
+
+# docker stuff
+docker-compose.yml
+
+# django
+collectedstatic

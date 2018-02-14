@@ -1,0 +1,33 @@
+
+openapi: 3.0.1
+info:
+    version: {{ version }}
+
+    title: CoSphere API
+
+    description: CoSphere's API with hypermedia links
+
+    termsOfService: http://app.cosphere.org/api/terms/
+
+    contact:
+        name: CoSphere API Support
+        url: http//app.cosphere.org/contact/
+        email: support@cosphere.org
+
+    license:
+        name: Apache 2.0
+        url: https://www.apache.org/licenses/LICENSE-2.0.html
+
+servers:
+    - url: https://development.cosphere.org
+      description: Development server
+
+    - url: https://api.cosphere.org
+      description: Production server
+
+paths:
+    {{ paths | safe }}
+
+externalDocs:
+    description: Discover CoSphere's Entities
+    url: https://app.cosphere.org/fragments/56

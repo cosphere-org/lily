@@ -1,0 +1,2556 @@
+{
+    "LIST_INVOICES": {
+        "200 (INVOICES_LISTED)": {
+            "description": "INVOICES_LISTED",
+            "method": "get",
+            "request": {
+                "path": "/payments/invoices/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 464
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "invoices_list",
+                    "@event": "INVOICES_LISTED",
+                    "invoices": [
+                        {
+                            "surplus_amount": "167",
+                            "paid_till_timestamp": 1510576260.0,
+                            "id": 34,
+                            "display_amount": "1.90",
+                            "@type": "invoice",
+                            "valid_till_timestamp": 1510576260.0,
+                            "created_timestamp": 1510576260.0,
+                            "currency": "PLN",
+                            "product": {
+                                "@type": "product",
+                                "display_price": "29.90",
+                                "currency": "PLN",
+                                "name": "Miesi\u0119czna Subskrypcja Learner w CoSphere.org",
+                                "price": "2990",
+                                "product_type": "SUBSCRIPTION_LEARNER_MONTHLY"
+                            },
+                            "is_extension": true,
+                            "surplus_currency": "EUR",
+                            "amount": "190"
+                        }
+                    ]
+                },
+                "status": 200
+            }
+        }
+    },
+    "REGISTER_ANONYMOUS_DONATION": {
+        "500 (SOME_ERROR)": {
+            "description": "SOME_ERROR",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "hi@there.you",
+                    "amount": 678
+                },
+                "path": "/payments/donations/register_anonymous/",
+                "headers": {
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": null,
+                    "some": "error",
+                    "@event": "SOME_ERROR"
+                },
+                "status": 500
+            }
+        },
+        "201 (ANONYMOUS_DONATION_REGISTERED)": {
+            "description": "ANONYMOUS_DONATION_REGISTERED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "hi@there.you",
+                    "amount": 455
+                },
+                "path": "/payments/donations/register_anonymous/",
+                "headers": {
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "display_amount": "6.78",
+                    "@type": "payment",
+                    "created_timestamp": 1518641937.532142,
+                    "amount": "678",
+                    "product": {
+                        "@type": "product",
+                        "name": "Dotacja CoSphere.org",
+                        "currency": "PLN",
+                        "display_price": null,
+                        "price": null,
+                        "product_type": "DONATION"
+                    },
+                    "status_ledger": null,
+                    "@event": "ANONYMOUS_DONATION_REGISTERED",
+                    "status": "NEW"
+                },
+                "status": 201
+            }
+        },
+        "404 (COULD_NOT_FIND_PRODUCT)": {
+            "description": "COULD_NOT_FIND_PRODUCT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "amount": 678,
+                    "email": "hi@there.you"
+                },
+                "path": "/payments/donations/register_anonymous/",
+                "headers": {
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_FIND_PRODUCT",
+                    "product_type": "DONATION"
+                },
+                "status": 404
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "amount": 455
+                },
+                "path": "/payments/donations/register_anonymous/",
+                "headers": {
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "email": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "RESET_PASSWORD": {
+        "404 (COULD_NOT_FIND_ACCOUNT)": {
+            "description": "COULD_NOT_FIND_ACCOUNT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whatever",
+                    "password": "whatever",
+                    "email": "jake@whatever.com",
+                    "code": "WyJqYWtlQHdoYXRldmVyLmNvbSIsIlBBU1NXT1JEX1JFU0VUIl0.DWY0ig.9DsMGYjmheGcjW4Nbow6xDndTbk"
+                },
+                "path": "/auth/reset_password/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_FIND_ACCOUNT",
+                    "email": "jake@whatever.com"
+                },
+                "status": 404
+            }
+        },
+        "400 (NOT_PASSWORD_RESET_OPERATION_DETECTED)": {
+            "description": "NOT_PASSWORD_RESET_OPERATION_DETECTED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whatever",
+                    "password": "whatever",
+                    "email": "jess@whatever.com",
+                    "code": "WyJqZXNzQHdoYXRldmVyLmNvbSIsIldIQVRFVkVSX09QRVJBVElPTiJd.DWY0ig.6DeaQHZDWDPG_4nhVJu_VCXzcvs"
+                },
+                "path": "/auth/reset_password/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "NOT_PASSWORD_RESET_OPERATION_DETECTED"
+                },
+                "status": 400
+            }
+        },
+        "200 (PASSWORD_RESET)": {
+            "description": "PASSWORD_RESET",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whatever",
+                    "password": "whatever",
+                    "email": "jess@whatever.com",
+                    "code": "WyJqZXNzQHdoYXRldmVyLmNvbSIsIlBBU1NXT1JEX1JFU0VUIl0.DWY0iQ.3HponXG7NpnGzPq6mgFRFbdXXUQ"
+                },
+                "path": "/auth/reset_password/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "token": "nie.twoje.dziecko",
+                    "@type": "token",
+                    "@event": "PASSWORD_RESET"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whateve",
+                    "password": "whateve",
+                    "email": "jess@whatever.com",
+                    "code": "WyJqZXNzQHdoYXRldmVyLmNvbSIsIlBBU1NXT1JEX1JFU0VUIl0.DWY0ig.HMtu9loh32TsyGYWTJfJe59EVdg"
+                },
+                "path": "/auth/reset_password/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "password_again": [
+                            "Ensure this field has at least 8 characters."
+                        ],
+                        "password": [
+                            "Ensure this field has at least 8 characters."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "CHECK_IF_CAN_ATTEMPT_DONATION": {
+        "200 (CHECKED_IF_CAN_ATTEMPT_DONATION)": {
+            "description": "CHECKED_IF_CAN_ATTEMPT_DONATION",
+            "method": "get",
+            "request": {
+                "path": "/payments/donations/can_attempt/?event=START",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 449
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "can_attempt": true,
+                    "@type": "can_attempt",
+                    "@event": "CHECKED_IF_CAN_ATTEMPT_DONATION"
+                },
+                "status": 200
+            }
+        },
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "method": "get",
+            "request": {
+                "path": "/payments/donations/can_attempt/?event=UNKNOWN_TIRIKAM",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 453
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 453,
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "event": [
+                            "\"UNKNOWN_TIRIKAM\" is not a valid choice."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "CHANGE_PASSWORD": {
+        "200 (PASSWORD_CHANGED)": {
+            "description": "PASSWORD_CHANGED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whatever",
+                    "password": "whatever"
+                },
+                "path": "/auth/change_password/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "MENTOR",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 242
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "PASSWORD_CHANGED"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whateve",
+                    "password": "whateve"
+                },
+                "path": "/auth/change_password/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "MENTOR",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 246
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 246,
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "password_again": [
+                            "Ensure this field has at least 8 characters."
+                        ],
+                        "password": [
+                            "Ensure this field has at least 8 characters."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        },
+        "401 (COULD_NOT_FIND_USER)": {
+            "description": "COULD_NOT_FIND_USER",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whatever",
+                    "password": "whatever"
+                },
+                "path": "/auth/change_password/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "MENTOR",
+                    "X-CS-USER-ID": 658965,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 658965,
+                    "@event": "COULD_NOT_FIND_USER"
+                },
+                "status": 401
+            }
+        }
+    },
+    "VERIFY_ANONYMOUS_CONTACT_ATTEMPT_AND_SEND_MESSAGE": {
+        "200 (ANONYMOUS_CONTACT_ATTEMPT_VERIFIED_AND_MESSAGE_SENT)": {
+            "description": "ANONYMOUS_CONTACT_ATTEMPT_VERIFIED_AND_MESSAGE_SENT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "tirikam@gmail.com",
+                    "code": "WyJ0aXJpa2FtQGdtYWlsLmNvbSIsInRoaXMgaXMgdGhlIG1lc3NhZ2UhIl0.DWY0jA.kLDyrf6NcAyWNeArt8EpjwhwBJ8"
+                },
+                "path": "/contacts/anonymous/verify/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "ANONYMOUS_CONTACT_ATTEMPT_VERIFIED_AND_MESSAGE_SENT"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_JSON_DID_NOT_PARSE)": {
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_JSON_DID_NOT_PARSE"
+                },
+                "status": 400
+            },
+            "method": "post",
+            "request": {
+                "path": "/contacts/anonymous/verify/",
+                "headers": {
+                    "content_type": "application/json"
+                }
+            },
+            "description": "BODY_JSON_DID_NOT_PARSE"
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "tirikam@gmail.com"
+                },
+                "path": "/contacts/anonymous/verify/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "code": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "ACTIVATE_ACCOUNT": {
+        "404 (COULD_NOT_FIND_ACCOUNT)": {
+            "description": "COULD_NOT_FIND_ACCOUNT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password_again": "whatever",
+                    "password": "whatever",
+                    "email": "jake@whatever.com",
+                    "code": "WyJqYWtlQHdoYXRldmVyLmNvbSIsIkFDQ09VTlRfQUNUSVZBVElPTiJd.DWY0hw.acs44d3j6nbI4JaNaP6CWe0QC84"
+                },
+                "path": "/auth/activate/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_FIND_ACCOUNT",
+                    "email": "jake@whatever.com"
+                },
+                "status": 404
+            }
+        },
+        "400 (NOT_ACCOUNT_ACTIVATION_OPERATION_DETECTED)": {
+            "description": "NOT_ACCOUNT_ACTIVATION_OPERATION_DETECTED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "jess@whatever.com",
+                    "code": "WyJqZXNzQHdoYXRldmVyLmNvbSIsIldIQVRFVkVSX09QRVJBVElPTiJd.DWY0hw.Azp6h4L0eJeiVR-AdmyZljYwTUU"
+                },
+                "path": "/auth/activate/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "NOT_ACCOUNT_ACTIVATION_OPERATION_DETECTED"
+                },
+                "status": 400
+            }
+        },
+        "200 (ACCOUNT_ACTIVATED)": {
+            "description": "ACCOUNT_ACTIVATED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "jess@whatever.com",
+                    "code": "WyJqZXNzQHdoYXRldmVyLmNvbSIsIkFDQ09VTlRfQUNUSVZBVElPTiJd.DWY0hw.VPfS7rcSmogx3szK2Tc_W3kTAZA"
+                },
+                "path": "/auth/activate/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "ACCOUNT_ACTIVATED"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "hi@the.re"
+                },
+                "path": "/auth/activate/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "code": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "SEND_RESET_PASSWORD_EMAIL": {
+        "404 (COULD_NOT_FIND_ACCOUNT)": {
+            "description": "COULD_NOT_FIND_ACCOUNT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "operation": "ACCOUNT_ACTIVATION",
+                    "email": "unknown@whatever.com"
+                },
+                "path": "/auth/send_reset_password_email/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_FIND_ACCOUNT",
+                    "email": "unknown@whatever.com"
+                },
+                "status": 404
+            }
+        },
+        "200 (RESET_PASSWORD_EMAIL_SENT)": {
+            "description": "RESET_PASSWORD_EMAIL_SENT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "operation": "PASSWORD_RESET",
+                    "email": "jess@whatever.com"
+                },
+                "path": "/auth/send_reset_password_email/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "RESET_PASSWORD_EMAIL_SENT"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "operation": "PASSWORD_RESET"
+                },
+                "path": "/auth/send_reset_password_email/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "email": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "AUTHENTICATE": {
+        "401 (INVALID_ACCOUNT_TYPE_USED)": {
+            "description": "INVALID_ACCOUNT_TYPE_USED",
+            "method": "post",
+            "request": {
+                "path": "/auth/authenticate/",
+                "headers": {
+                    "AUTHORIZATION": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X3R5cGUiOiJMRUFSTkVSIiwiZXhwIjoxNTE5NTA1OTI4LCJ1c2VyX2lkIjoyNDEsImVtYWlsIjoibWVudG9yQHdoYXRldmVyLmNvbSJ9.nlMa4iTqTDS_bbSWpTwhsFr-I5Dp6gjG6pkCJEhlVrI",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "INVALID_ACCOUNT_TYPE_USED"
+                },
+                "status": 401
+            }
+        },
+        "200 (AUTHENTICATED)": {
+            "description": "AUTHENTICATED",
+            "method": "post",
+            "request": {
+                "path": "/auth/authenticate/",
+                "headers": {
+                    "AUTHORIZATION": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X3R5cGUiOiJNRU5UT1IiLCJleHAiOjE1MTk1MDU5MjgsInVzZXJfaWQiOjIzOCwiZW1haWwiOiJtZW50b3JAd2hhdGV2ZXIuY29tIn0.kOPYW5Gyall-HdYf-uLihtFQfE0-iNmPmvL_dFz5WA4",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "account_type": "MENTOR",
+                    "@type": "token_info",
+                    "user_id": 238,
+                    "@event": "AUTHENTICATED",
+                    "email": "mentor@whatever.com"
+                },
+                "status": 200
+            }
+        },
+        "401 (COULD_NOT_FIND_AUTH_TOKEN)": {
+            "description": "COULD_NOT_FIND_AUTH_TOKEN",
+            "method": "post",
+            "request": {
+                "content": {
+                    "external": false
+                },
+                "path": "/auth/authenticate/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_FIND_AUTH_TOKEN"
+                },
+                "status": 401
+            }
+        },
+        "401 (AUTH_TOKEN_WAS_MISSING_FIELDS)": {
+            "description": "AUTH_TOKEN_WAS_MISSING_FIELDS",
+            "method": "post",
+            "request": {
+                "content": {
+                    "external": false
+                },
+                "path": "/auth/authenticate/",
+                "headers": {
+                    "AUTHORIZATION": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MTg2NDE5MjcsInVzZXJfaWQiOjIzNSwiZW1haWwiOiJtZW50b3JAd2hhdGV2ZXIuY29tIn0.5JE8KphJr7GQ9ql3JazVcOG2J0hIZlF5MSLvAEQ3waA",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "AUTH_TOKEN_WAS_MISSING_FIELDS"
+                },
+                "status": 401
+            }
+        },
+        "404 (COULD_NOT_FIND_ACCOUNT)": {
+            "description": "COULD_NOT_FIND_ACCOUNT",
+            "method": "post",
+            "request": {
+                "path": "/auth/authenticate/",
+                "headers": {
+                    "AUTHORIZATION": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2NvdW50X3R5cGUiOiJMRUFSTkVSIiwiZXhwIjoxNTE5NTA1OTI4LCJ1c2VyX2lkIjoxMSwiZW1haWwiOiJnaUB0aC5yZSJ9.vWmncLotaXYglWQd_XWBUTPzpiPdgmcfzJ57-jBDmAw",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_FIND_ACCOUNT"
+                },
+                "status": 404
+            }
+        },
+        "401 (AUTH_TOKEN_WAS_BROKEN)": {
+            "description": "AUTH_TOKEN_WAS_BROKEN",
+            "method": "post",
+            "request": {
+                "content": {
+                    "external": false
+                },
+                "path": "/auth/authenticate/",
+                "headers": {
+                    "AUTHORIZATION": "Bearer d8f9d89c8d9",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "AUTH_TOKEN_WAS_BROKEN"
+                },
+                "status": 401
+            }
+        }
+    },
+    "REMOVE_PAYMENT_CARD": {
+        "404 (COULD_NOT_FIND_PAYMENT_CARD)": {
+            "description": "COULD_NOT_FIND_PAYMENT_CARD",
+            "method": "delete",
+            "request": {
+                "path": "/payments/payment_cards/89",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 501
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "payment_card_id": "89",
+                    "user_id": 501,
+                    "@type": "error",
+                    "@event": "COULD_NOT_FIND_PAYMENT_CARD"
+                },
+                "status": 404
+            }
+        },
+        "400 (COULD_NOT_REMOVE_DEFAULT_PAYMENT_CARD)": {
+            "description": "COULD_NOT_REMOVE_DEFAULT_PAYMENT_CARD",
+            "method": "delete",
+            "request": {
+                "path": "/payments/payment_cards/89",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 497
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "payment_card_id": "89",
+                    "user_id": 497,
+                    "@type": "error",
+                    "@event": "COULD_NOT_REMOVE_DEFAULT_PAYMENT_CARD"
+                },
+                "status": 400
+            }
+        },
+        "200 (PAYMENT_CARD_REMOVED)": {
+            "description": "PAYMENT_CARD_REMOVED",
+            "method": "delete",
+            "request": {
+                "path": "/payments/payment_cards/89",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 495
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "PAYMENT_CARD_REMOVED"
+                },
+                "status": 200
+            }
+        }
+    },
+    "CALCULATE_DEBT": {
+        "404 (NO_DEBT_CALCULATED)": {
+            "description": "NO_DEBT_CALCULATED",
+            "method": "get",
+            "request": {
+                "path": "/payments/invoices/debt/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 476
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 476,
+                    "@event": "NO_DEBT_CALCULATED"
+                },
+                "status": 404
+            }
+        },
+        "200 (DEBT_CALCULATED)": {
+            "description": "DEBT_CALCULATED",
+            "method": "get",
+            "request": {
+                "path": "/payments/invoices/debt/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 468
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "display_owes": "2.11",
+                    "@type": "debt",
+                    "currency": "EUR",
+                    "owes": 211,
+                    "@commands": {
+                        "PAY_WITH_DEFAULT_PAYMENT_CARD": {
+                            "@type": "command",
+                            "method": "post",
+                            "name": "PAY_WITH_DEFAULT_PAYMENT_CARD",
+                            "uri": "http://localhost:8080/payments/payment_cards/pay_with_default/",
+                            "body": {
+                                "payment_token": {
+                                    "@value": "89382903289",
+                                    "@type": "string",
+                                    "@required": true
+                                },
+                                "@type": "object"
+                            }
+                        }
+                    },
+                    "@event": "DEBT_CALCULATED"
+                },
+                "status": 200
+            }
+        },
+        "400 (RESPONSE_DID_NOT_VALIDATE)": {
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 470,
+                    "@event": "RESPONSE_DID_NOT_VALIDATE",
+                    "errors": {
+                        "at__commands": [
+                            "Expected a list of items but got type \"dict\"."
+                        ]
+                    }
+                },
+                "status": 400
+            },
+            "method": "get",
+            "request": {
+                "path": "/payments/invoices/debt/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 470
+                }
+            },
+            "description": "RESPONSE_DID_NOT_VALIDATE"
+        }
+    },
+    "RENDER_PAYMENT_CARD_WIDGET": {
+        "200 (PAYMENT_CARD_WIDGET_RENDERED)": {
+            "description": "PAYMENT_CARD_WIDGET_RENDERED",
+            "method": "get",
+            "request": {
+                "path": "/payments/payment_cards/widget/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 480
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "shop_name": "Nazwa sklepu",
+                    "@type": "payment_card_widget",
+                    "currency_code": "PLN",
+                    "widget_mode": "use",
+                    "merchant_pos_id": "145227",
+                    "sig": "f8d9f8",
+                    "recurring_payment": true,
+                    "total_amount": "0.00",
+                    "store_card": true,
+                    "@event": "PAYMENT_CARD_WIDGET_RENDERED",
+                    "customer_language": "pl"
+                },
+                "status": 200
+            }
+        }
+    },
+    "CREATE_DONATION_ATTEMPT": {
+        "201 (DONATION_ATTEMPT_CREATED)": {
+            "description": "DONATION_ATTEMPT_CREATED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "event": "RECALL"
+                },
+                "path": "/payments/donations/attempts/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 455,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "created_timestamp": 1518641937.411547,
+                    "@type": "donation_attempt",
+                    "event": "RECALL",
+                    "@event": "DONATION_ATTEMPT_CREATED"
+                },
+                "status": 201
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "event": "WAT!EVER"
+                },
+                "path": "/payments/donations/attempts/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 457,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 457,
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "event": [
+                            "\"WAT!EVER\" is not a valid choice."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "REGISTER_DONATION": {
+        "500 (SOME_ERROR)": {
+            "description": "SOME_ERROR",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "hi@there.you",
+                    "amount": 678
+                },
+                "path": "/payments/donations/register/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 463,
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": null,
+                    "some": "error",
+                    "@event": "SOME_ERROR"
+                },
+                "status": 500
+            }
+        },
+        "201 (DONATION_REGISTERED)": {
+            "description": "DONATION_REGISTERED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "amount": 455,
+                    "email": "hi@there.you"
+                },
+                "path": "/payments/donations/register/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "X-CS-USER-ID": 458
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "display_amount": "4.55",
+                    "@type": "payment",
+                    "created_timestamp": 1518641937.657063,
+                    "status": "NEW",
+                    "product": {
+                        "@type": "product",
+                        "display_price": null,
+                        "currency": "PLN",
+                        "name": "Dotacja CoSphere.org",
+                        "price": null,
+                        "product_type": "DONATION"
+                    },
+                    "status_ledger": null,
+                    "@event": "DONATION_REGISTERED",
+                    "amount": "455"
+                },
+                "status": 201
+            }
+        },
+        "404 (COULD_NOT_FIND_PRODUCT)": {
+            "description": "COULD_NOT_FIND_PRODUCT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "amount": 678,
+                    "email": "hi@there.you"
+                },
+                "path": "/payments/donations/register/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "X-CS-USER-ID": 460
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 460,
+                    "@event": "COULD_NOT_FIND_PRODUCT",
+                    "product_type": "DONATION"
+                },
+                "status": 404
+            }
+        },
+        "500 (DATABASE_ERROR_OCCURRED)": {
+            "description": "DATABASE_ERROR_OCCURRED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "amount": 455,
+                    "email": "hi@there.you"
+                },
+                "path": "/payments/donations/register/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "X-CS-USER-ID": 462
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 462,
+                    "@event": "DATABASE_ERROR_OCCURRED"
+                },
+                "status": 500
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {},
+                "path": "/payments/donations/register/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 459,
+                    "X-CS-REAL-IP": "91.216.191.182",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 459,
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "amount": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "MARK_PAYMENT_CARD_AS_DEFAULT": {
+        "404 (COULD_NOT_FIND_PAYMENT_CARD)": {
+            "description": "COULD_NOT_FIND_PAYMENT_CARD",
+            "method": "put",
+            "request": {
+                "path": "/payments/payment_cards/901/mark_as_default/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 485
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "payment_card_id": "901",
+                    "user_id": 485,
+                    "@type": "error",
+                    "@event": "COULD_NOT_FIND_PAYMENT_CARD"
+                },
+                "status": 404
+            }
+        },
+        "200 (PAYMENT_CARD_MARKED_AS_DEFAULT)": {
+            "description": "PAYMENT_CARD_MARKED_AS_DEFAULT",
+            "method": "put",
+            "request": {
+                "path": "/payments/payment_cards/901/mark_as_default/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 481
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "PAYMENT_CARD_MARKED_AS_DEFAULT"
+                },
+                "status": 200
+            }
+        }
+    },
+    "CREATE_PAYMENT_CARD": {
+        "201 (PAYMENT_CARD_CREATED)": {
+            "description": "PAYMENT_CARD_CREATED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "token": "TOK_483948398439",
+                    "expiration_month": 7,
+                    "masked_number": "6789*****34556",
+                    "mark_as_default": true,
+                    "expiration_year": 2019
+                },
+                "path": "/payments/payment_cards/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 491
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "payment_card",
+                    "is_fully_defined": false,
+                    "payments": [],
+                    "is_default": true,
+                    "masked_number": "6789*****34556",
+                    "id": 28,
+                    "@commands": {
+                        "MARK_PAYMENT_CARD_AS_DEFAULT": {
+                            "method": "put",
+                            "name": "MARK_PAYMENT_CARD_AS_DEFAULT",
+                            "uri": "http://localhost:8080/payments/payment_cards/28/mark_as_default/"
+                        },
+                        "REMOVE_PAYMENT_CARD": {
+                            "method": "delete",
+                            "name": "REMOVE_PAYMENT_CARD",
+                            "uri": "http://localhost:8080/payments/payment_cards/28"
+                        }
+                    },
+                    "expiration_month": 7,
+                    "expired": false,
+                    "expiration_year": 2019,
+                    "@event": "PAYMENT_CARD_CREATED"
+                },
+                "status": 201
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "token": "TOK_483948398439",
+                    "expiration_month": 7,
+                    "masked_number": "6789*****34556"
+                },
+                "path": "/payments/payment_cards/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 493
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 493,
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "expiration_year": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "REFRESH_TOKEN": {
+        "403 (ACCESS_DENIED)": {
+            "description": "ACCESS_DENIED",
+            "method": "post",
+            "request": {
+                "path": "/auth/refresh_token/"
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "ACCESS_DENIED"
+                },
+                "status": 403
+            }
+        },
+        "200 (TOKEN_REFRESHED)": {
+            "description": "TOKEN_REFRESHED",
+            "method": "post",
+            "request": {
+                "path": "/auth/refresh_token/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 276
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "token": "super.new.token.123",
+                    "@type": "token",
+                    "@event": "TOKEN_REFRESHED"
+                },
+                "status": 200
+            }
+        },
+        "401 (COULD_NOT_FIND_USER)": {
+            "description": "COULD_NOT_FIND_USER",
+            "method": "post",
+            "request": {
+                "path": "/auth/refresh_token/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "MENTOR",
+                    "X-CS-USER-ID": 547953
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 547953,
+                    "@event": "COULD_NOT_FIND_USER"
+                },
+                "status": 401
+            }
+        }
+    },
+    "PAY_WITH_DEFAULT_PAYMENT_CARD": {
+        "400 (BROKEN)": {
+            "description": "BROKEN",
+            "method": "post",
+            "request": {
+                "content": {
+                    "payment_token": "token.token"
+                },
+                "path": "/payments/payment_cards/pay_with_default/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 504
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 504,
+                    "@event": "BROKEN"
+                },
+                "status": 400
+            }
+        },
+        "500 (DATABASE_ERROR_OCCURRED)": {
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 13,
+                    "@event": "DATABASE_ERROR_OCCURRED"
+                },
+                "status": 500
+            },
+            "method": "post",
+            "request": {
+                "content": {
+                    "payment_token": "token.token"
+                },
+                "path": "/payments/payment_cards/pay_with_default/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 13,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "description": "DATABASE_ERROR_OCCURRED"
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {},
+                "path": "/payments/payment_cards/pay_with_default/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 505,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 505,
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "payment_token": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        },
+        "404 (COULD_NOT_FIND_INVOICE)": {
+            "description": "COULD_NOT_FIND_INVOICE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "payment_token": "token.token"
+                },
+                "path": "/payments/payment_cards/pay_with_default/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 506
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 506,
+                    "@event": "COULD_NOT_FIND_INVOICE"
+                },
+                "status": 404
+            }
+        },
+        "201 (PAID_WITH_DEFAULT_PAYMENT_CARD)": {
+            "description": "PAID_WITH_DEFAULT_PAYMENT_CARD",
+            "method": "post",
+            "request": {
+                "content": {
+                    "payment_token": "token.token"
+                },
+                "path": "/payments/payment_cards/pay_with_default/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 503,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "display_amount": "1.90",
+                    "@type": "payment",
+                    "created_timestamp": 1518641939.426763,
+                    "status": "NEW",
+                    "product": {
+                        "@type": "product",
+                        "display_price": "29.90",
+                        "currency": "PLN",
+                        "name": "Miesi\u0119czna Subskrypcja Learner w CoSphere.org",
+                        "price": "2990",
+                        "product_type": "SUBSCRIPTION_LEARNER_MONTHLY"
+                    },
+                    "status_ledger": null,
+                    "@event": "PAID_WITH_DEFAULT_PAYMENT_CARD",
+                    "amount": "190"
+                },
+                "status": 201
+            }
+        }
+    },
+    "MOBILE_GOOGLE_SOCIAL_SIGN_IN_OR_UP": {
+        "500 (COULD_NOT_AUTHENTICATE_AGAINST_GOOGLE)": {
+            "description": "COULD_NOT_AUTHENTICATE_AGAINST_GOOGLE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "access_token": "atoken",
+                    "email": "d@g.com"
+                },
+                "path": "/auth/google/mobile/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_AUTHENTICATE_AGAINST_GOOGLE"
+                },
+                "status": 500
+            }
+        },
+        "500 (COULD_NOT_AUTHENTICATE_AGAINST_FACEBOOK)": {
+            "description": "COULD_NOT_AUTHENTICATE_AGAINST_FACEBOOK",
+            "method": "post",
+            "request": {
+                "content": {
+                    "access_token": "atoken",
+                    "email": "d@g.com"
+                },
+                "path": "/auth/facebook/mobile/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_AUTHENTICATE_AGAINST_FACEBOOK"
+                },
+                "status": 500
+            }
+        },
+        "201 (SOCIAL_ACCOUNT_SIGNED_UP)": {
+            "description": "SOCIAL_ACCOUNT_SIGNED_UP",
+            "method": "post",
+            "request": {
+                "content": {
+                    "access_token": "my.access",
+                    "email": "d@g.com"
+                },
+                "path": "/auth/google/mobile/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "token": "some.auth.token.1234",
+                    "@type": "token",
+                    "@event": "SOCIAL_ACCOUNT_SIGNED_UP"
+                },
+                "status": 201
+            }
+        },
+        "200 (SOCIAL_ACCOUNT_SIGNED_IN)": {
+            "description": "SOCIAL_ACCOUNT_SIGNED_IN",
+            "method": "post",
+            "request": {
+                "content": {
+                    "access_token": "my.access",
+                    "email": "d@g.com"
+                },
+                "path": "/auth/google/mobile/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "token": "some.access.token.1234",
+                    "@type": "token",
+                    "@event": "SOCIAL_ACCOUNT_SIGNED_IN"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "access_token": "atoken"
+                },
+                "path": "/auth/google/mobile/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "email": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "CHANGE_SUBSCRIPTION": {
+        "400 (ACCOUNT_CONFIRMED_TO_HAVE_REQUESTED_SUBSCRIPTION)": {
+            "description": "ACCOUNT_CONFIRMED_TO_HAVE_REQUESTED_SUBSCRIPTION",
+            "method": "put",
+            "request": {
+                "content": {
+                    "subscription_type": "SUBSCRIPTION_LEARNER_MONTHLY"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 512
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 512,
+                    "@event": "ACCOUNT_CONFIRMED_TO_HAVE_REQUESTED_SUBSCRIPTION"
+                },
+                "status": 400
+            }
+        },
+        "200 (SUBSCRIPTION_CHANGED_ACCOUNT_DOWNGRADED)": {
+            "description": "SUBSCRIPTION_CHANGED_ACCOUNT_DOWNGRADED",
+            "method": "put",
+            "request": {
+                "content": {
+                    "subscription_type": "FREE"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 509
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "subscription_change_process",
+                    "@process": [],
+                    "@event": "SUBSCRIPTION_CHANGED_ACCOUNT_DOWNGRADED"
+                },
+                "status": 200
+            }
+        },
+        "200 (SUBSCRIPTION_CHANGE_INITIATED_PAY)": {
+            "description": "SUBSCRIPTION_CHANGE_INITIATED_PAY",
+            "method": "put",
+            "request": {
+                "content": {
+                    "subscription_type": "SUBSCRIPTION_MENTOR_MONTHLY"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 508
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "subscription_change_process",
+                    "@process": [
+                        {
+                            "@type": "command",
+                            "method": "post",
+                            "name": "PAY_WITH_DEFAULT_PAYMENT_CARD",
+                            "uri": "http://localhost:8080/payments/payment_cards/pay_with_default/",
+                            "body": {
+                                "payment_token": {
+                                    "@value": "token.token",
+                                    "@type": "string",
+                                    "@required": true
+                                },
+                                "@type": "object"
+                            }
+                        }
+                    ],
+                    "@event": "SUBSCRIPTION_CHANGE_INITIATED_PAY"
+                },
+                "status": 200
+            }
+        },
+        "401 (COULD_NOT_FIND_USER)": {
+            "description": "COULD_NOT_FIND_USER",
+            "method": "put",
+            "request": {
+                "content": {
+                    "wattype": "FREE"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 58495849,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 58495849,
+                    "@event": "COULD_NOT_FIND_USER"
+                },
+                "status": 401
+            }
+        },
+        "200 (SUBSCRIPTION_CHANGED_UPGRADED)": {
+            "description": "SUBSCRIPTION_CHANGED_UPGRADED",
+            "method": "put",
+            "request": {
+                "content": {
+                    "subscription_type": "SUBSCRIPTION_MENTOR_MONTHLY"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 511,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "subscription_change_process",
+                    "@process": [
+                        {
+                            "@type": "command",
+                            "method": "post",
+                            "name": "REFRESH_TOKEN",
+                            "uri": "http://localhost:8080/auth/refresh_token/"
+                        }
+                    ],
+                    "@event": "SUBSCRIPTION_CHANGED_UPGRADED"
+                },
+                "status": 200
+            }
+        },
+        "200 (SUBSCRIPTION_CHANGE_INITIATED_ADD_PAYMENT_CARD_AND_PAY)": {
+            "description": "SUBSCRIPTION_CHANGE_INITIATED_ADD_PAYMENT_CARD_AND_PAY",
+            "method": "put",
+            "request": {
+                "content": {
+                    "subscription_type": "SUBSCRIPTION_MENTOR_MONTHLY"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 507,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "subscription_change_process",
+                    "@process": [
+                        {
+                            "@type": "command",
+                            "method": "get",
+                            "name": "RENDER_PAYMENT_CARD_WIDGET",
+                            "uri": "http://localhost:8080/payments/payment_cards/widget/"
+                        },
+                        {
+                            "@type": "command",
+                            "method": "post",
+                            "name": "CREATE_PAYMENT_CARD",
+                            "uri": "http://localhost:8080/payments/payment_cards/",
+                            "body": {
+                                "token": {
+                                    "@type": "string",
+                                    "@required": true
+                                },
+                                "@type": "object",
+                                "expiration_month": {
+                                    "@type": "number",
+                                    "@required": true
+                                },
+                                "expiration_year": {
+                                    "@type": "number",
+                                    "@required": true
+                                },
+                                "masked_number": {
+                                    "@type": "string",
+                                    "@required": true
+                                },
+                                "mark_as_default": {
+                                    "@value": true,
+                                    "@type": "boolean"
+                                }
+                            }
+                        },
+                        {
+                            "@type": "command",
+                            "method": "post",
+                            "name": "PAY_WITH_DEFAULT_PAYMENT_CARD",
+                            "uri": "http://localhost:8080/payments/payment_cards/pay_with_default/",
+                            "body": {
+                                "payment_token": {
+                                    "@value": "token.token",
+                                    "@type": "string",
+                                    "@required": true
+                                },
+                                "@type": "object"
+                            }
+                        }
+                    ],
+                    "@event": "SUBSCRIPTION_CHANGE_INITIATED_ADD_PAYMENT_CARD_AND_PAY"
+                },
+                "status": 200
+            }
+        },
+        "200 (SUBSCRIPTION_CHANGED_ACCOUNT_MARKED_FOR_DOWNGRADE)": {
+            "description": "SUBSCRIPTION_CHANGED_ACCOUNT_MARKED_FOR_DOWNGRADE",
+            "method": "put",
+            "request": {
+                "content": {
+                    "subscription_type": "FREE"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 510
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "subscription_change_process",
+                    "@process": [],
+                    "@event": "SUBSCRIPTION_CHANGED_ACCOUNT_MARKED_FOR_DOWNGRADE"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "put",
+            "request": {
+                "content": {
+                    "subscription_type": "FREEEEE"
+                },
+                "path": "/payments/subscription/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 514
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 514,
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "subscription_type": [
+                            "\"FREEEEE\" is not a valid choice."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "UPDATE_PAYMENT_STATUS": {
+        "400 (WAS_BROKEN)": {
+            "description": "WAS_BROKEN",
+            "method": "post",
+            "request": {
+                "content": {
+                    "order": {
+                        "extOrderId": "9e05b887741747238b",
+                        "status": "PENDING",
+                        "merchantPosId": "58697"
+                    }
+                },
+                "path": "/payments/584-9g87",
+                "headers": {
+                    "X-OPENPAYU-SIGNATURE": "signature=7869586;algorithm=md5;sender=189",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 12,
+                    "@event": "WAS_BROKEN"
+                },
+                "status": 400
+            }
+        },
+        "200 (PAYMENT_STATUS_UPDATED)": {
+            "description": "PAYMENT_STATUS_UPDATED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "order": {
+                        "extOrderId": "9e05b887741747238b",
+                        "merchantPosId": "58697",
+                        "status": "COMPLETED"
+                    }
+                },
+                "path": "/payments/584-9g87",
+                "headers": {
+                    "X-OPENPAYU-SIGNATURE": "signature=7869586;algorithm=md5;sender=189",
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "PAYMENT_STATUS_UPDATED"
+                },
+                "status": 200
+            }
+        }
+    },
+    "SEND_AUTHENTICATED_CONTACT_MESSAGE": {
+        "201 (AUTHENTICATED_CONTACT_MESSAGE_SENT)": {
+            "description": "AUTHENTICATED_CONTACT_MESSAGE_SENT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "text": "cze\u015b\u0107\u00a0grzeg\u017c\u00f3\u0142ko?!"
+                },
+                "path": "/contacts/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "FREE",
+                    "X-CS-USER-ID": 320,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "AUTHENTICATED_CONTACT_MESSAGE_SENT"
+                },
+                "status": 201
+            }
+        },
+        "400 (BODY_JSON_DID_NOT_PARSE)": {
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 323,
+                    "@event": "BODY_JSON_DID_NOT_PARSE"
+                },
+                "status": 400
+            },
+            "method": "post",
+            "request": {
+                "path": "/contacts/",
+                "headers": {
+                    "HTTP_X_CS_ACCOUNT_TYPE": "FREE",
+                    "content_type": "application/json",
+                    "HTTP_X_CS_USER_ID": 323
+                }
+            },
+            "description": "BODY_JSON_DID_NOT_PARSE"
+        },
+        "401 (COULD_NOT_FIND_USER)": {
+            "description": "COULD_NOT_FIND_USER",
+            "method": "post",
+            "request": {
+                "content": {
+                    "text": "cze\u015b\u0107\u00a0grzeg\u017c\u00f3\u0142ko?!"
+                },
+                "path": "/contacts/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "FREE",
+                    "X-CS-USER-ID": 685965,
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 685965,
+                    "@event": "COULD_NOT_FIND_USER"
+                },
+                "status": 401
+            }
+        },
+        "403 (ACCESS_DENIED)": {
+            "description": "ACCESS_DENIED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "text": "cze\u015b\u0107\u00a0grzeg\u017c\u00f3\u0142ko?!"
+                },
+                "path": "/contacts/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "ACCESS_DENIED"
+                },
+                "status": 403
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "NOT_text": "cze\u015b\u0107\u00a0grzeg\u017c\u00f3\u0142ko?!"
+                },
+                "path": "/contacts/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "FREE",
+                    "CONTENT-TYPE": "application/json",
+                    "X-CS-USER-ID": 321
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 321,
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "text": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "SEND_ACCOUNT_ACTIVATION_EMAIL": {
+        "404 (COULD_NOT_FIND_ACCOUNT)": {
+            "description": "COULD_NOT_FIND_ACCOUNT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "operation": "ACCOUNT_ACTIVATION",
+                    "email": "unknown@whatever.com"
+                },
+                "path": "/auth/send_activation_email/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_FIND_ACCOUNT",
+                    "email": "unknown@whatever.com"
+                },
+                "status": 404
+            }
+        },
+        "200 (ACCOUNT_ACTIVATION_EMAIL_SENT)": {
+            "description": "ACCOUNT_ACTIVATION_EMAIL_SENT",
+            "method": "post",
+            "request": {
+                "content": {
+                    "operation": "PASSWORD_RESET",
+                    "email": "jess@whatever.com"
+                },
+                "path": "/auth/send_activation_email/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "ACCOUNT_ACTIVATION_EMAIL_SENT"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "operation": "PASSWORD_RESET"
+                },
+                "path": "/auth/send_activation_email/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "email": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "CREATE_ANONYMOUS_CONTACT_ATTEMPT": {
+        "201 (ANONYMOUS_CONTACT_ATTEMPT_CREATED)": {
+            "description": "ANONYMOUS_CONTACT_ATTEMPT_CREATED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "tirikam@gmail.com",
+                    "text": "this is it!"
+                },
+                "path": "/contacts/anonymous/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "empty",
+                    "@event": "ANONYMOUS_CONTACT_ATTEMPT_CREATED"
+                },
+                "status": 201
+            }
+        },
+        "400 (BODY_JSON_DID_NOT_PARSE)": {
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_JSON_DID_NOT_PARSE"
+                },
+                "status": 400
+            },
+            "method": "post",
+            "request": {
+                "path": "/contacts/anonymous/",
+                "headers": {
+                    "content_type": "application/json"
+                }
+            },
+            "description": "BODY_JSON_DID_NOT_PARSE"
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "email": "tirikam@gmail.com"
+                },
+                "path": "/contacts/anonymous/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "text": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "GOOGLE_SOCIAL_SIGN_IN_OR_UP": {
+        "500 (COULD_NOT_AUTHENTICATE_AGAINST_GOOGLE)": {
+            "description": "COULD_NOT_AUTHENTICATE_AGAINST_GOOGLE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "code": "verification.code"
+                },
+                "path": "/auth/google/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_AUTHENTICATE_AGAINST_GOOGLE"
+                },
+                "status": 500
+            }
+        },
+        "500 (COULD_NOT_AUTHENTICATE_AGAINST_FACEBOOK)": {
+            "description": "COULD_NOT_AUTHENTICATE_AGAINST_FACEBOOK",
+            "method": "post",
+            "request": {
+                "content": {
+                    "code": "verification.code"
+                },
+                "path": "/auth/facebook/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "COULD_NOT_AUTHENTICATE_AGAINST_FACEBOOK"
+                },
+                "status": 500
+            }
+        },
+        "201 (SOCIAL_ACCOUNT_SIGNED_UP)": {
+            "description": "SOCIAL_ACCOUNT_SIGNED_UP",
+            "method": "post",
+            "request": {
+                "content": {
+                    "code": "verification.code"
+                },
+                "path": "/auth/google/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "token": "access.token.1829",
+                    "@type": "token",
+                    "@event": "SOCIAL_ACCOUNT_SIGNED_UP"
+                },
+                "status": 201
+            }
+        },
+        "200 (SOCIAL_ACCOUNT_SIGNED_IN)": {
+            "description": "SOCIAL_ACCOUNT_SIGNED_IN",
+            "method": "post",
+            "request": {
+                "content": {
+                    "code": "verification.code"
+                },
+                "path": "/auth/google/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "token": "some.accesss.token.123",
+                    "@type": "token",
+                    "@event": "SOCIAL_ACCOUNT_SIGNED_IN"
+                },
+                "status": 200
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {},
+                "path": "/auth/google/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "code": [
+                            "This field is required."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "SIGN_IN": {
+        "200 (SIGNED_IN)": {
+            "description": "SIGNED_IN",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password": "abc",
+                    "email": "mentor@whatever.com"
+                },
+                "path": "/auth/signin/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "token": "super.new.token.123",
+                    "@type": "token",
+                    "@event": "SIGNED_IN"
+                },
+                "status": 200
+            }
+        },
+        "401 (INVALID_SIGN_IN_NOT_ACTIVATED_ACCOUNT_DETECTED)": {
+            "description": "INVALID_SIGN_IN_NOT_ACTIVATED_ACCOUNT_DETECTED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password": "abc",
+                    "email": "bob@whatever.com"
+                },
+                "path": "/auth/signin/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": 296,
+                    "@event": "INVALID_SIGN_IN_NOT_ACTIVATED_ACCOUNT_DETECTED"
+                },
+                "status": 401
+            }
+        },
+        "401 (INVALID_SIGN_IN_CREDENTIALS_DETECTED)": {
+            "description": "INVALID_SIGN_IN_CREDENTIALS_DETECTED",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password": "abc1234",
+                    "email": "jess@whatever.com"
+                },
+                "path": "/auth/signin/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "INVALID_SIGN_IN_CREDENTIALS_DETECTED",
+                    "email": "jess@whatever.com"
+                },
+                "status": 401
+            }
+        },
+        "400 (BODY_DID_NOT_VALIDATE)": {
+            "description": "BODY_DID_NOT_VALIDATE",
+            "method": "post",
+            "request": {
+                "content": {
+                    "password": "\n\n\t   \t",
+                    "email": "jessYYY@whatever.com"
+                },
+                "path": "/auth/signin/",
+                "headers": {
+                    "CONTENT-TYPE": "application/json"
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "user_id": "anonymous",
+                    "@event": "BODY_DID_NOT_VALIDATE",
+                    "errors": {
+                        "password": [
+                            "This field may not be blank."
+                        ]
+                    }
+                },
+                "status": 400
+            }
+        }
+    },
+    "LIST_PAYMENT_CARDS": {
+        "200 (PAYMENT_CARDS_LISTED)": {
+            "description": "PAYMENT_CARDS_LISTED",
+            "method": "get",
+            "request": {
+                "path": "/payments/payment_cards/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "LEARNER",
+                    "X-CS-USER-ID": 487
+                }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "payment_cards": [
+                        {
+                            "@type": "payment_card",
+                            "is_fully_defined": true,
+                            "expiration_month": 9,
+                            "payments": [
+                                {
+                                    "display_amount": "29.90",
+                                    "@type": "payment",
+                                    "created_timestamp": 1512213241.0,
+                                    "amount": "2990",
+                                    "product": {
+                                        "@type": "product",
+                                        "name": "Miesi\u0119czna Subskrypcja Learner w CoSphere.org",
+                                        "currency": "PLN",
+                                        "display_price": "29.90",
+                                        "price": "2990",
+                                        "product_type": "SUBSCRIPTION_LEARNER_MONTHLY"
+                                    },
+                                    "status_ledger": null,
+                                    "status": "NEW"
+                                }
+                            ],
+                            "masked_number": "444433******2222",
+                            "@commands": {
+                                "MARK_PAYMENT_CARD_AS_DEFAULT": {
+                                    "method": "put",
+                                    "name": "MARK_PAYMENT_CARD_AS_DEFAULT",
+                                    "uri": "http://localhost:8080/payments/payment_cards/24/mark_as_default/"
+                                },
+                                "REMOVE_PAYMENT_CARD": {
+                                    "method": "delete",
+                                    "name": "REMOVE_PAYMENT_CARD",
+                                    "uri": "http://localhost:8080/payments/payment_cards/24"
+                                }
+                            },
+                            "is_default": false,
+                            "expired": true,
+                            "expiration_year": 2016,
+                            "id": 24
+                        },
+                        {
+                            "@type": "payment_card",
+                            "is_fully_defined": true,
+                            "expiration_month": 12,
+                            "payments": [
+                                {
+                                    "display_amount": "29.90",
+                                    "@type": "payment",
+                                    "created_timestamp": 1511349241.0,
+                                    "amount": "2990",
+                                    "product": {
+                                        "@type": "product",
+                                        "name": "Miesi\u0119czna Subskrypcja Learner w CoSphere.org",
+                                        "currency": "PLN",
+                                        "display_price": "29.90",
+                                        "price": "2990",
+                                        "product_type": "SUBSCRIPTION_LEARNER_MONTHLY"
+                                    },
+                                    "status_ledger": null,
+                                    "status": "NEW"
+                                },
+                                {
+                                    "display_amount": "0.93",
+                                    "@type": "payment",
+                                    "created_timestamp": 1510744441.0,
+                                    "amount": "93",
+                                    "product": {
+                                        "@type": "product",
+                                        "name": "Dotacja CoSphere.org",
+                                        "currency": "PLN",
+                                        "display_price": null,
+                                        "price": null,
+                                        "product_type": "DONATION"
+                                    },
+                                    "status_ledger": null,
+                                    "status": "NEW"
+                                }
+                            ],
+                            "masked_number": "444433******1111",
+                            "@commands": {
+                                "MARK_PAYMENT_CARD_AS_DEFAULT": {
+                                    "method": "put",
+                                    "name": "MARK_PAYMENT_CARD_AS_DEFAULT",
+                                    "uri": "http://localhost:8080/payments/payment_cards/23/mark_as_default/"
+                                },
+                                "REMOVE_PAYMENT_CARD": {
+                                    "method": "delete",
+                                    "name": "REMOVE_PAYMENT_CARD",
+                                    "uri": "http://localhost:8080/payments/payment_cards/23"
+                                }
+                            },
+                            "is_default": false,
+                            "expired": false,
+                            "expiration_year": 2017,
+                            "id": 23
+                        }
+                    ],
+                    "@type": "payment_cards_list",
+                    "@commands": {
+                        "CREATE_PAYMENT_CARD": {
+                            "method": "post",
+                            "name": "CREATE_PAYMENT_CARD",
+                            "uri": "http://localhost:8080/payments/payment_cards/",
+                            "body": {
+                                "token": {
+                                    "@type": "string",
+                                    "@required": true
+                                },
+                                "@type": "object",
+                                "expiration_month": {
+                                    "@type": "number",
+                                    "@required": true
+                                },
+                                "mark_as_default": {
+                                    "@type": "boolean"
+                                },
+                                "masked_number": {
+                                    "@type": "string",
+                                    "@required": true
+                                },
+                                "expiration_year": {
+                                    "@type": "number",
+                                    "@required": true
+                                }
+                            }
+                        }
+                    },
+                    "@event": "PAYMENT_CARDS_LISTED"
+                },
+                "status": 200
+            }
+        }
+    }
+}

@@ -1,0 +1,503 @@
+{
+    "LIST_PAYMENT_CARDS": {
+        "service_base_uri": "http://localhost:8080",
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/payment_cards/"
+        },
+        "method": "get",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "PAY_WITH_DEFAULT_PAYMENT_CARD": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "payment_token": {
+                "@required": true,
+                "@type": "string"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/payment_cards/pay_with_default/"
+        },
+        "method": "post",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "SEND_ACCOUNT_ACTIVATION_EMAIL": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "email": {
+                "@required": true,
+                "@type": "string",
+                "format": "email"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/auth/send_activation_email/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "RESET_PASSWORD": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "email": {
+                "@required": true,
+                "@type": "string",
+                "format": "email"
+            },
+            "code": {
+                "@required": true,
+                "@type": "string"
+            },
+            "password": {
+                "@required": true,
+                "@type": "string",
+                "minLength": 8
+            },
+            "@type": "object",
+            "password_again": {
+                "@required": true,
+                "@type": "string",
+                "minLength": 8
+            }
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/auth/reset_password/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "AUTHENTICATE": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "@type": "object",
+            "external": {
+                "@type": "boolean"
+            }
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/auth/authenticate/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "VERIFY_ANONYMOUS_CONTACT_ATTEMPT_AND_SEND_MESSAGE": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "email": {
+                "@required": true,
+                "@type": "string",
+                "format": "email"
+            },
+            "code": {
+                "@required": true,
+                "@type": "string"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/contacts/anonymous/verify/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "CREATE_DONATION_ATTEMPT": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "event": {
+                "@required": true,
+                "enum": [
+                    "CLOSE",
+                    "RECALL",
+                    "START"
+                ],
+                "@type": "string"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/donations/attempts/"
+        },
+        "method": "post",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "CHECK_IF_CAN_ATTEMPT_DONATION": {
+        "service_base_uri": "http://localhost:8080",
+        "query": {
+            "event": {
+                "@required": true,
+                "enum": [
+                    "CLOSE",
+                    "RECALL",
+                    "START"
+                ],
+                "@type": "string"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/donations/can_attempt/"
+        },
+        "method": "get",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "CHANGE_SUBSCRIPTION": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "@type": "object",
+            "subscription_type": {
+                "@required": true,
+                "enum": [
+                    "FREE",
+                    "SUBSCRIPTION_LEARNER_MONTHLY",
+                    "SUBSCRIPTION_LEARNER_YEARLY",
+                    "SUBSCRIPTION_MENTOR_MONTHLY",
+                    "SUBSCRIPTION_MENTOR_YEARLY"
+                ],
+                "@type": "string"
+            }
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/subscription/"
+        },
+        "method": "put",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "CREATE_PAYMENT_CARD": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "expiration_month": {
+                "@required": true,
+                "@type": "number"
+            },
+            "expiration_year": {
+                "@required": true,
+                "@type": "number"
+            },
+            "masked_number": {
+                "@required": true,
+                "@type": "string"
+            },
+            "token": {
+                "@required": true,
+                "@type": "string"
+            },
+            "@type": "object",
+            "mark_as_default": {
+                "@type": "boolean"
+            }
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/payment_cards/"
+        },
+        "method": "post",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "CHANGE_PASSWORD": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "password": {
+                "@required": true,
+                "@type": "string",
+                "minLength": 8
+            },
+            "@type": "object",
+            "password_again": {
+                "@required": true,
+                "@type": "string",
+                "minLength": 8
+            }
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/auth/change_password/"
+        },
+        "method": "post",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "SEND_AUTHENTICATED_CONTACT_MESSAGE": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "text": {
+                "@required": true,
+                "@type": "string"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/contacts/"
+        },
+        "method": "post",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "RENDER_PAYMENT_CARD_WIDGET": {
+        "service_base_uri": "http://localhost:8080",
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/payment_cards/widget/"
+        },
+        "method": "get",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "REGISTER_ANONYMOUS_DONATION": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "email": {
+                "@required": true,
+                "@type": "string",
+                "format": "email"
+            },
+            "amount": {
+                "@required": true,
+                "@type": "number"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/donations/register_anonymous/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "SEND_RESET_PASSWORD_EMAIL": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "email": {
+                "@required": true,
+                "@type": "string",
+                "format": "email"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/auth/send_reset_password_email/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "CREATE_ANONYMOUS_CONTACT_ATTEMPT": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "text": {
+                "@required": true,
+                "@type": "string"
+            },
+            "email": {
+                "@required": true,
+                "@type": "string",
+                "format": "email"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/contacts/anonymous/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "ACTIVATE_ACCOUNT": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "email": {
+                "@required": true,
+                "@type": "string",
+                "format": "email"
+            },
+            "code": {
+                "@required": true,
+                "@type": "string"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/auth/activate/"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "REMOVE_PAYMENT_CARD": {
+        "service_base_uri": "http://localhost:8080",
+        "path_conf": {
+            "parameters": [
+                {
+                    "required": true,
+                    "name": "payment_card_id",
+                    "in": "path",
+                    "description": "",
+                    "schema": {
+                        "type": "integer"
+                    }
+                }
+            ],
+            "path": "/payments/payment_cards/{payment_card_id}"
+        },
+        "method": "delete",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "UPDATE_PAYMENT_STATUS": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "order": {
+                "@required": true,
+                "status": {
+                    "@required": true,
+                    "@type": "string"
+                },
+                "merchantPosId": {
+                    "@required": true,
+                    "@type": "string"
+                },
+                "@type": "object",
+                "extOrderId": {
+                    "@required": true,
+                    "@type": "string"
+                }
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/(?P<session_id>[\\w\\-]+)"
+        },
+        "method": "post",
+        "access_list": null
+    },
+    "MARK_PAYMENT_CARD_AS_DEFAULT": {
+        "service_base_uri": "http://localhost:8080",
+        "path_conf": {
+            "parameters": [
+                {
+                    "required": true,
+                    "name": "payment_card_id",
+                    "in": "path",
+                    "description": "",
+                    "schema": {
+                        "type": "integer"
+                    }
+                }
+            ],
+            "path": "/payments/payment_cards/{payment_card_id}/mark_as_default/"
+        },
+        "method": "put",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "REFRESH_TOKEN": {
+        "service_base_uri": "http://localhost:8080",
+        "path_conf": {
+            "parameters": [],
+            "path": "/auth/refresh_token/"
+        },
+        "method": "post",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    },
+    "REGISTER_DONATION": {
+        "service_base_uri": "http://localhost:8080",
+        "body": {
+            "amount": {
+                "@required": true,
+                "@type": "number"
+            },
+            "@type": "object"
+        },
+        "path_conf": {
+            "parameters": [],
+            "path": "/payments/donations/register/"
+        },
+        "method": "post",
+        "access_list": [
+            "FREE",
+            "LEARNER",
+            "MENTOR",
+            "PARTNER",
+            "ADMIN"
+        ]
+    }
+}

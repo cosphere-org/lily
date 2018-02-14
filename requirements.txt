@@ -1,0 +1,16 @@
+
+# cosphere base
+# -- needed because of the Authorizer which needs it for figuring out how to
+# -- handle authentication
+-e git+https://msobczak@bitbucket.org/goodai/cosphere-base-service.git#egg=cosphere_base_service
+
+# foundations
+Django==1.10
+djangorestframework==3.7.7
+
+# utils
+pytz==2015.7
+
+# authentication / cryptography
+django-jwt-auth==0.0.2
+itsdangerous==0.24

@@ -1,0 +1,184 @@
+# -*- coding: utf-8 -*-
+
+import re
+
+from django.test import TestCase
+from mock import Mock
+import pytest
+
+from lily.base.command import Meta
+from lily.docs.markdown_renderer import Renderer, ViewsIndexRender
+
+
+def remove_white_chars(x):
+    return re.sub('\s+', '', x)
+
+
+class MarkdownRenderer(TestCase):
+
+    @pytest.fixture(autouse=True)
+    def initfixture(self, mocker, tmpdir):
+        self.mocker = mocker
+        self.tmpdir = tmpdir
+
+    def test_render(self):
+
+        self.mocker.patch.object(ViewsIndexRender, 'render').return_value = {
+            '/items/': {
+                'path_conf': {
+                    'path': '/items/',
+                    'parameters': {}
+                },
+                'get': {
+                    'name': 'LIST_ITEMS',
+                    'meta': Meta(
+                        title='hi there',
+                        description='what?',
+                        tags=['items management']),
+                },
+                'post': {
+                    'name': 'CREATED',
+                    'meta': Meta(
+                        title='hi there',
+                        description='what?',
+                        tags=['items management']),
+                }
+            }
+        }
+        self.mocker.patch.object(Renderer, 'get_examples').return_value = {
+            'CREATED': {
+                '201 (CREATED)': {
+                    'response': {
+                        'content_type': 'application/json',
+                        'status': 201,
+                        'content': {
+                            'user_id': 434,
+                            '@event': 'CREATED',
+                        }
+                    },
+                    'request': {
+                        'path': 'hello/hi',
+                        'headers': {
+                            'HI-THERE': 'JSON',
+                        },
+                        'content': {
+                            'hi': 'there'
+                        }
+                    },
+                    'description': 'CREATE',
+                    'method': 'post'
+                },
+            },
+            'LIST_ITEMS': {
+                '200 (LISTED)': {
+                    'response': {
+                        'content_type': 'application/json',
+                        'status': 200,
+                        'content': {
+                            'user_id': 434,
+                            '@event': 'LISTED',
+                        }
+                    },
+                    'request': {
+                        'path': 'wat/178',
+                        'headers': {
+                            'HI-THERE': 'JSON',
+                        }
+                    },
+                    'description': 'SERVER_ERROR',
+                    'method': 'get'
+                },
+                '502 (SERVER_ERROR)': {
+                    'response': {
+                        'content_type': 'application/json',
+                        'status': 502,
+                        'content': {
+                            'user_id': 434,
+                            '@type': 'error',
+                            '@event': 'SERVER_ERROR',
+                        }
+                    },
+                    'request': {
+                        'path': 'hello/world',
+                        'headers': {
+                            'HI-THERE': 'JSON',
+                        }
+                    },
+                    'description': 'SERVER_ERROR',
+                    'method': 'get'
+                },
+            }
+        }
+
+        assert remove_white_chars(
+            Renderer(Mock()).render()
+        ) == remove_white_chars('''
+
+            # CoSphere API
+
+            CoSphere's API with hypermedia links
+
+            ## items management
+
+            ### CREATED: POST /items/
+
+            hi there
+            what?
+
+            #### 201 (CREATED)
+
+            Request:
+            ```http
+            POST hello/hi HTTP/1.1
+            HI-THERE: JSON
+            {
+                "hi": "there"
+            }
+            ```
+
+            Respone:
+            ```json
+            {
+                "@event": "CREATED",
+                "user_id": 434
+            }
+            ```
+
+            ### LIST_ITEMS: GET /items/
+            hi there
+            what?
+
+            #### 200 (LISTED)
+
+            Request:
+            ```http
+            GET wat/178 HTTP/1.1
+            HI-THERE: JSON
+            ```
+
+            Respone:
+            ```json
+            {
+                "@event": "LISTED",
+                "user_id": 434
+            }
+            ```
+
+            #### 502 (SERVER_ERROR)
+
+            Request:
+            ```http
+            GET hello/world HTTP/1.1
+            HI-THERE: JSON
+            ```
+
+            Respone:
+            ```json
+            {
+                "@event": "SERVER_ERROR",
+                "@type": "error",
+                "user_id": 434
+            }
+            ```
+
+        ''')
