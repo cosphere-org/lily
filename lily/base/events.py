@@ -3,16 +3,48 @@
 import json
 
 from django.http.request import HttpRequest
+from django.http import JsonResponse
 
-from cosphere_base_service.base.response import (
-    JsonResponse,
-    JsonCreated,
-    JsonAuthError,
-    JsonAccessDenied,
-    JsonBrokenPayload,
-    JsonDoesNotExist,
-    JsonServerError,
-)
+
+class JsonResponseBase(JsonResponse):
+
+    status_code = NotImplemented
+
+    data = {}
+
+    def __init__(self, data={}):
+
+        super(JsonResponseBase, self).__init__(data=(data or self.data))
+
+
+class JsonCreated(JsonResponseBase):
+
+    status_code = 201
+
+
+class JsonBrokenPayload(JsonResponseBase):
+
+    status_code = 400
+
+
+class JsonAuthError(JsonResponseBase):
+
+    status_code = 401
+
+
+class JsonAccessDenied(JsonResponseBase):
+
+    status_code = 403
+
+
+class JsonDoesNotExist(JsonResponseBase):
+
+    status_code = 404
+
+
+class JsonServerError(JsonResponseBase):
+
+    status_code = 500
 
 
 # -- Auth Events

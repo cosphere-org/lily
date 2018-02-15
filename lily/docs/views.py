@@ -5,9 +5,7 @@ import os
 
 from django.views.generic import View
 
-from cosphere_base_service.base.response import (
-    JsonResponse,
-)
+from base.events import JsonResponse
 
 
 BASE_DIR = os.path.dirname(__file__)

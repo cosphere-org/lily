@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import json
-import types
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.utils import DatabaseError
 
-from cosphere_base_service.authentication.constants import (
-    ACCOUNT_TYPE_ADMIN as ADMIN,
-    ACCOUNT_TYPE_MENTOR as MENTOR,
-    ACCOUNT_TYPE_LEARNER as LEARNER,
-    ACCOUNT_TYPE_FREE as FREE,
-)
 from .events import EventFactory
 
 
@@ -29,72 +23,6 @@ class Meta:
             'description': self.description,
             'tags': self.tags,
         }
-
-
-class Authorizer:
-
-    def __init__(self, event, access_list):
-        self.event = event
-        self.access_list = access_list
-
-    def authorize(self, request):
-
-        if self.access_list:
-            account_type, user_id, auth_headers = (
-                self.get_authorization_headers(request))
-
-            if self.credentials_are_valid(request, user_id, account_type):
-                request.user_id = user_id
-                request.account_type = account_type
-                request.auth_headers = auth_headers
-
-                # -- comfort methods
-                request.is_admin = types.MethodType(
-                    lambda self: request.account_type == ADMIN, request)
-
-                request.is_mentor = types.MethodType(
-                    lambda self: request.account_type == MENTOR, request)
-
-                request.is_learner = types.MethodType(
-                    lambda self: request.account_type == LEARNER, request)
-
-                request.is_free = types.MethodType(
-                    lambda self: request.account_type == FREE, request)
-
-                # -- FIXME: below is added only for the backward compatibility
-                request.get_auth_headers = types.MethodType(
-                    lambda self: request.auth_headers, request)
-
-    def get_authorization_headers(self, request):
-
-        try:
-            account_type = request.META['HTTP_X_CS_ACCOUNT_TYPE']
-            user_id = request.META['HTTP_X_CS_USER_ID']
-
-            # -- caching for later usage when for example one wants to
-            # -- communicate with another service which also requires
-            # -- authentication headers
-            auth_headers = {
-                'X-CS-USER-ID': user_id,
-                'X-CS-ACCOUNT-TYPE': account_type,
-            }
-
-        except KeyError:
-            raise self.event.AccessDenied('ACCESS_DENIED', context=request)
-
-        else:
-            return account_type, user_id, auth_headers
-
-    def credentials_are_valid(self, request, user_id, account_type):
-
-        if user_id is None or account_type is None:
-            raise self.event.AccessDenied('ACCESS_DENIED', context=request)
-
-        else:
-            if account_type not in self.access_list:
-                raise self.event.AccessDenied('ACCESS_DENIED', context=request)
-
-        return True
 
 
 class Input:
@@ -202,7 +130,7 @@ def command(
         def inner(self, request, *args, **kwargs):
 
             if access_list:
-                authorizer = Authorizer(event, access_list)
+                authorizer = settings.LILY_AUTHORIZER_CLASS(event, access_list)
 
             # -- add current command_name for easier reference
             request.command_name = name
