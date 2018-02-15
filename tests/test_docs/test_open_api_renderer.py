@@ -7,7 +7,7 @@ import yaml
 
 from lily.base.command import Meta, Output
 from lily.base import serializers
-from lily.docs.open_api_renderer import Renderer, ViewsIndexRender
+from lily.docs import open_api_renderer
 
 
 class OpenAPIRenderer(TestCase):
@@ -29,10 +29,13 @@ paths:
         '''
         template_file.write(template_content)
 
-        self.mocker.patch(
-            'docs.open_api_renderer.BASE_TEMPLATE_PATH', str(template_file))
-        self.mocker.patch.object(ViewsIndexRender, 'render')
-        self.mocker.patch.object(Renderer, 'render_paths').return_value = {
+        self.mocker.patch.object(
+            open_api_renderer, 'BASE_TEMPLATE_PATH', str(template_file))
+        self.mocker.patch.object(open_api_renderer.ViewsIndexRender, 'render')
+        self.mocker.patch.object(
+            open_api_renderer.Renderer,
+            'render_paths'
+        ).return_value = {
             '/test/it': {
                 'get': {'hello': 'get'},
                 'post': {
@@ -53,7 +56,7 @@ paths:
             },
         }
 
-        rendered = yaml.load(Renderer(Mock()).render())
+        rendered = yaml.load(open_api_renderer.Renderer(Mock()).render())
         assert rendered['openapi'] == '2.0.1'
         assert rendered['info'] == {'title': 'hi there'}
         paths = rendered['paths']
@@ -77,7 +80,10 @@ paths:
             name = serializers.CharField()
 
         urlpatterns = Mock()
-        self.mocker.patch.object(Renderer, 'get_examples').return_value = {
+        self.mocker.patch.object(
+            open_api_renderer.Renderer,
+            'get_examples'
+        ).return_value = {
             'LIST_ITEMS': {
                 '502 (SERVER_ERROR)': {
                     'response': {
@@ -113,7 +119,8 @@ paths:
             }
         }
 
-        rendered_paths = Renderer(urlpatterns).render_paths(views_index)
+        rendered_paths = (
+            open_api_renderer.Renderer(urlpatterns).render_paths(views_index))
 
         assert rendered_paths == {
             '/items/': {

@@ -110,8 +110,10 @@ class CommandLinkTestCase(TestCase):
     # resolve
     #
     def test_resolve(self):
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',
@@ -147,8 +149,9 @@ class CommandLinkTestCase(TestCase):
         }
 
     def test_resolve__with_body(self):
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',
@@ -186,8 +189,9 @@ class CommandLinkTestCase(TestCase):
         }
 
     def test_resolve__with_query(self):
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',
@@ -225,9 +229,11 @@ class CommandLinkTestCase(TestCase):
         }
 
     def test_resolve__warning_if_link_not_completed(self):
-        warning = self.mocker.patch('base.serializers.event.Warning')
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+
+        warning = self.mocker.patch.object(serializers.event, 'Warning')
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',
@@ -307,8 +313,8 @@ class CommandLinkTestCase(TestCase):
     # resolve_pre_computed
     #
     def test_resolve_pre_computed__body(self):
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+        self.mocker.patch.object(
+            serializers, 'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',
@@ -365,8 +371,10 @@ class CommandLinkTestCase(TestCase):
         }
 
     def test_resolve_pre_computed__query(self):
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',
@@ -420,8 +428,9 @@ class CommandLinkTestCase(TestCase):
     # resolve_with_result
     #
     def test_resolve_with_result(self):
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',

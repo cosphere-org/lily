@@ -510,8 +510,9 @@ class CommandTestCase(TestCase):
         request = Mock(
             body=dump_to_bytes({"name": "John", "age": 81}),
             META=get_auth_headers(u.id, MENTOR))
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'MAKE_IT_BETTER': {
                     'service_base_uri': 'http://192.11.2.1:9000',

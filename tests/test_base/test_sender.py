@@ -10,8 +10,8 @@ from lily.base import sender
 
 def test_send__makes_the_right_calls(mocker):
 
-    email_server_mock = mocker.patch('base.sender.email_server')
-    mocker.patch('base.sender.settings.EMAIL_SENDER_FROM', 'test@ab.com')
+    email_server_mock = mocker.patch.object(sender, 'email_server')
+    mocker.patch.object(sender.settings, 'EMAIL_SENDER_FROM', 'test@ab.com')
 
     sendmail = email_server_mock.return_value.__enter__.return_value.sendmail
 
@@ -24,8 +24,8 @@ def test_send__makes_the_right_calls(mocker):
 
 def test_send__raises_error(mocker):
 
-    logger_mock = mocker.patch('base.sender.logger')
-    email_server_mock = mocker.patch('base.sender.email_server')
+    logger_mock = mocker.patch.object(sender, 'logger')
+    email_server_mock = mocker.patch.object(sender, 'email_server')
     sendmail_mock = (
         email_server_mock.return_value.__enter__.return_value.sendmail)
     sendmail_mock.side_effect = SMTPException

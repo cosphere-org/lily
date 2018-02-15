@@ -8,7 +8,7 @@ from django.conf.urls import url
 import pytest
 from mock import Mock
 
-from conf.urls_api import urlpatterns
+from conf.urls import urlpatterns
 
 from lily.base.command import command, Input, Output, Meta
 from lily.base.events import EventFactory

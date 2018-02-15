@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from base import serializers, parsers
+from . import serializers, parsers
 
 
 class MissingReturnStatementError(Exception):

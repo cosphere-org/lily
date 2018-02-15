@@ -6,7 +6,7 @@ import string
 
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadData
 
-from base.events import EventFactory
+from .events import EventFactory
 
 
 logger = logging.getLogger()
