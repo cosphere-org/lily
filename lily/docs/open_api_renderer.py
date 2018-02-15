@@ -111,5 +111,5 @@ class Renderer:
         return paths
 
     def get_examples(self):
-        with open(settings.DOCS_TEST_EXAMPLES_FILE) as f:
+        with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE) as f:
             return json.loads(f.read())

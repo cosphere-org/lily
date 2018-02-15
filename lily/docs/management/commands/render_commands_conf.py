@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.save_to_file(
-            settings.DOCS_COMMANDS_CONF_FILE,
+            settings.LILY_DOCS_COMMANDS_CONF_FILE,
             CommandsConfRenderer(urlpatterns).render())
 
         self.stdout.write(

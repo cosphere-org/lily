@@ -37,7 +37,7 @@ class Client(DjangoClient):
         try:
             command_conf = getattr(fn.view_class, http_verb).command_conf
 
-            with open(settings.DOCS_TEST_EXAMPLES_FILE, 'r') as f:
+            with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE, 'r') as f:
                 examples = json.loads(f.read() or '{}')
 
                 command_name = command_conf['name']
@@ -101,7 +101,7 @@ class Client(DjangoClient):
                 # except KeyError:
                 #     pass
 
-            with open(settings.DOCS_TEST_EXAMPLES_FILE, 'w') as f:
+            with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE, 'w') as f:
                 f.write(json.dumps(examples, indent=4))
 
         except AttributeError:
