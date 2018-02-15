@@ -3,7 +3,6 @@
 import os
 
 from django.conf import settings
-from lily.base.utils import import_from_string
 
 
 SECRET_KEY = 'not.really.needed'
@@ -28,8 +27,7 @@ DOCS_MARKDOWN_SPEC_FILE = os.path.join(BASE_DIR, '../', 'DOCS.md')
 LILY_AUTHORIZER_CLASS = getattr(
     settings,
     'LILY_AUTHORIZER_CLASS',
-    import_from_string('lily.base.authorizer.Authorizer')
-)
+    'lily.base.authorizer.Authorizer')
 
 
 # !!!!!!!!!!!!!!!!!
