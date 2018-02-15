@@ -16,13 +16,17 @@ ALLOWED_HOSTS = ["*"]
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-DOCS_TEST_EXAMPLES_FILE = os.path.join(BASE_DIR, 'docs', 'test_examples.json')
+LILY_DOCS_TEST_EXAMPLES_FILE = os.path.join(
+    BASE_DIR, 'docs', 'test_examples.json')
 
-DOCS_OPEN_API_SPEC_FILE = os.path.join(BASE_DIR, 'docs', 'open_api_spec.json')
+LILY_DOCS_OPEN_API_SPEC_FILE = os.path.join(
+    BASE_DIR, 'docs', 'open_api_spec.json')
 
-DOCS_COMMANDS_CONF_FILE = os.path.join(BASE_DIR, 'docs', 'commands_conf.json')
+LILY_DOCS_COMMANDS_CONF_FILE = os.path.join(
+    BASE_DIR, 'docs', 'commands_conf.json')
 
-DOCS_MARKDOWN_SPEC_FILE = os.path.join(BASE_DIR, '../', 'DOCS.md')
+LILY_DOCS_MARKDOWN_SPEC_FILE = os.path.join(
+    BASE_DIR, '../', 'DOCS.md')
 
 LILY_AUTHORIZER_CLASS = getattr(
     settings,
