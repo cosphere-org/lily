@@ -8,18 +8,19 @@ import logging
 
 from rest_framework import serializers as drf_serializers
 from rest_framework.serializers import (  # noqa
-    ListSerializer,
-    SerializerMethodField,
+    BooleanField,
     CharField,
     ChoiceField,
-    IntegerField,
-    BooleanField,
-    FloatField,
-    EmailField,
-    URLField,
+    DecimalField,
     DictField,
-    ListField,
+    EmailField,
+    FloatField,
+    IntegerField,
     JSONField,
+    ListField,
+    ListSerializer,
+    SerializerMethodField,
+    URLField,
     ValidationError,
 )
 

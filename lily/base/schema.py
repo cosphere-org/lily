@@ -155,6 +155,7 @@ def is_simple_field(field):
             serializers.EmailField,
             serializers.FloatField,
             serializers.IntegerField,
+            serializers.DecimalField,
             serializers.URLField,
             serializers.JSONField,
         ))
@@ -206,6 +207,12 @@ def simple_field_to_schema(field):
 
         if field.max_value:
             field_schema['maximum'] = field.max_value
+
+    elif is_field(serializers.DecimalField):
+
+        field_schema = {
+            'type': 'string',
+        }
 
     elif is_field(serializers.FloatField):
 

@@ -13,7 +13,6 @@ import pytest
 
 from lily.base.command import (
     EventFactory,
-    # Authorizer,
     Meta,
     Input,
     Output,

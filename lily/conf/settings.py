@@ -14,6 +14,9 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
+#
+# LILY SPECIFIC SETTINGS
+#
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 LILY_DOCS_TEST_EXAMPLES_FILE = os.path.join(

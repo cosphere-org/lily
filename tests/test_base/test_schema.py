@@ -182,6 +182,9 @@ class SerializerToSchemaTestCase(TestCase):
 
             uri = serializers.URLField(required=False)
 
+            amount = serializers.DecimalField(
+                required=False, max_digits=5, decimal_places=3)
+
             json = serializers.JSONField()
 
         assert to_schema(SimpleFieldsSerializer) == {
@@ -221,6 +224,9 @@ class SerializerToSchemaTestCase(TestCase):
                 'json': {
                     'type': 'object',
                 },
+                'amount': {
+                    'type': 'string',
+                }
             },
         }
 
