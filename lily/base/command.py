@@ -8,6 +8,7 @@ from django.db import transaction
 from django.db.utils import DatabaseError
 
 from .events import EventFactory
+from .utils import import_from_string
 
 
 class Meta:
@@ -130,7 +131,8 @@ def command(
         def inner(self, request, *args, **kwargs):
 
             if access_list:
-                authorizer = settings.LILY_AUTHORIZER_CLASS(event, access_list)
+                authorizer = import_from_string(
+                    settings.LILY_AUTHORIZER_CLASS)(event, access_list)
 
             # -- add current command_name for easier reference
             request.command_name = name

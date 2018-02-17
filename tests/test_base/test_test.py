@@ -98,7 +98,7 @@ class ClientTestCase(TestCase):
         examples_file = self.tmpdir.mkdir('docs').join('examples.json')
         examples_file.write('{}')
         self.mocker.patch(
-            'base.test.settings.DOCS_TEST_EXAMPLES_FILE',
+            'base.test.settings.LILY_DOCS_TEST_EXAMPLES_FILE',
             str(examples_file))
 
         return examples_file
