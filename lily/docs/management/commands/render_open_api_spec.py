@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         self.save_to_file(
-            settings.DOCS_OPEN_API_SPEC_FILE,
+            settings.LILY_DOCS_OPEN_API_SPEC_FILE,
             OpenAPIRenderer(urlpatterns).render())
 
         self.stdout.write(

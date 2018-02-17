@@ -17,7 +17,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         self.save_to_file(
-            settings.DOCS_MARKDOWN_SPEC_FILE,
+            settings.LILY_DOCS_MARKDOWN_SPEC_FILE,
             MarkdownRenderer(urlpatterns).render())
 
         self.stdout.write(
