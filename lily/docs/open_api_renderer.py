@@ -7,7 +7,7 @@ import yaml
 from django.template import engines
 from django.conf import settings
 
-from base.schema import to_schema
+from ..base.schema import to_schema
 from .views_index_renderer import Renderer as ViewsIndexRender
 
 

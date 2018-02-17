@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from base.schema import to_schema
+from ..base.schema import to_schema
 
 from .views_index_renderer import Renderer as ViewsIndexRender
 
