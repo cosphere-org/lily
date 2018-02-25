@@ -3,7 +3,6 @@
 import json
 
 from django.conf import settings
-from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.utils import DatabaseError
 
@@ -100,6 +99,10 @@ class Input:
             return parsed.data, data
 
     def get_user(self, request):
+        # -- this will only be called in services which are directly
+        # -- having access to the User model
+        from django.contrib.auth.models import User
+
         try:
             return User.objects.get(id=request.user_id)
 
