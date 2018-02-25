@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 
 from django.test import TestCase
 from django.views.generic import View
@@ -102,6 +103,39 @@ class ClientTestCase(TestCase):
             str(examples_file))
 
         return examples_file
+
+    def test_create_file_if_does_not_exist(self):
+        examples_file_dir = self.tmpdir.mkdir('docs')
+        filepath = os.path.join(str(examples_file_dir), 'examples007.json')
+
+        self.mocker.patch(
+            'base.test.settings.LILY_DOCS_TEST_EXAMPLES_FILE', filepath)
+
+        response = Client().get('/test/it/')
+
+        examples_file = open(filepath, 'r')
+        assert response.status_code == 200
+        assert json.loads(examples_file.read()) == {
+            'GET_IT': {
+                '200 (LISTED)': {
+                    'method': 'get',
+                    'description': 'LISTED',
+                    'request': {
+                        'path': '/test/it/',
+                    },
+                    'response': {
+                        'status': 200,
+                        'content_type': 'application/json',
+                        'content': {
+                            '@type': 'test',
+                            '@event': 'LISTED',
+                            'hello': 'get.a',
+                        },
+                    },
+
+                },
+            },
+        }
 
     def test_single_response(self):
         examples_file = self.prepare_example_file()

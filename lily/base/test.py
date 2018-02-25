@@ -37,69 +37,73 @@ class Client(DjangoClient):
         try:
             command_conf = getattr(fn.view_class, http_verb).command_conf
 
-            with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE, 'r') as f:
-                examples = json.loads(f.read() or '{}')
+            try:
+                with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE, 'r+') as f:
+                    examples = json.loads(f.read() or '{}')
 
-                command_name = command_conf['name']
-                examples.setdefault(command_name, {})
+            except FileNotFoundError:
+                examples = {}
 
-                response_json = response.json()
-                example_key = '{status} ({event})'.format(
-                    status=response.status_code,
-                    event=response_json['@event'])
+            command_name = command_conf['name']
+            examples.setdefault(command_name, {})
 
-                # -- construct the request
-                request = {}
-                path = response.request["PATH_INFO"]
+            response_json = response.json()
+            example_key = '{status} ({event})'.format(
+                status=response.status_code,
+                event=response_json['@event'])
 
-                if response.request.get("QUERY_STRING"):
-                    path = '{path}?{query_string}'.format(
-                        path=path,
-                        query_string=response.request["QUERY_STRING"])
+            # -- construct the request
+            request = {}
+            path = response.request["PATH_INFO"]
 
-                request['path'] = path
-                request_kwargs = deepcopy(kwargs)
-                data = request_kwargs.get('data')
-                if data:
-                    data = request_kwargs.pop('data')
+            if response.request.get("QUERY_STRING"):
+                path = '{path}?{query_string}'.format(
+                    path=path,
+                    query_string=response.request["QUERY_STRING"])
 
-                    if http_verb.upper() in ['POST', 'PUT']:
-                        if isinstance(data, dict):
-                            request['content'] = data
+            request['path'] = path
+            request_kwargs = deepcopy(kwargs)
+            data = request_kwargs.get('data')
+            if data:
+                data = request_kwargs.pop('data')
 
-                        else:
-                            request['content'] = json.loads(data)
+                if http_verb.upper() in ['POST', 'PUT']:
+                    if isinstance(data, dict):
+                        request['content'] = data
 
-                if request_kwargs:
-                    def normalize_header(h):
-                        return h.upper().replace('_', '-').replace('HTTP-', '')
+                    else:
+                        request['content'] = json.loads(data)
 
-                    request['headers'] = {
-                        normalize_header(h): v
-                        for h, v in request_kwargs.items()}
+            if request_kwargs:
+                def normalize_header(h):
+                    return h.upper().replace('_', '-').replace('HTTP-', '')
 
-                examples[command_name][example_key] = {
-                    'method': http_verb,
-                    'description': response_json['@event'],
-                    'request': request,
-                    'response': {
-                        'status': response.status_code,
-                        'content_type': response['Content-Type'],
-                        'content': response_json,
-                    },
-                }
-                # try:
-                #     payload = str(
-                #         response.request['wsgi.input'].read(), 'utf8')
+                request['headers'] = {
+                    normalize_header(h): v
+                    for h, v in request_kwargs.items()}
 
-                #     if payload:
-                #         examples[command_name][example_key]['request'] = {
-                #             'content_type': response.request['CONTENT_TYPE'],
-                #             'content': json.loads(payload),
-                #         }
+            examples[command_name][example_key] = {
+                'method': http_verb,
+                'description': response_json['@event'],
+                'request': request,
+                'response': {
+                    'status': response.status_code,
+                    'content_type': response['Content-Type'],
+                    'content': response_json,
+                },
+            }
+            # try:
+            #     payload = str(
+            #         response.request['wsgi.input'].read(), 'utf8')
 
-                # except KeyError:
-                #     pass
+            #     if payload:
+            #         examples[command_name][example_key]['request'] = {
+            #             'content_type': response.request['CONTENT_TYPE'],
+            #             'content': json.loads(payload),
+            #         }
+
+            # except KeyError:
+            #     pass
 
             with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE, 'w') as f:
                 f.write(json.dumps(examples, indent=4))
