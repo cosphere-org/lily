@@ -248,10 +248,11 @@ def command(
 
                 return e.response_class(e.data)
 
-            except Exception:
+            except Exception as err:
                 e = event.ServerError(
                     'GENERIC_ERROR_OCCURRED',
                     context=request,
+                    data={'errors': str(err)},
                     is_critical=True)
 
                 return e.response_class(e.data)
