@@ -593,9 +593,9 @@ class CommandTestCase(TestCase):
         request = Mock(user_id=u.id, META=get_auth_headers(u.id))
         view = TestView()
         self.mocker.patch.object(view, 'some_stuff').side_effect = [
-            DatabaseError, Exception]
+            DatabaseError, Exception('hi there')]
 
-        TestView.delete.__name__ == 'decorated_inner'
+        assert TestView.delete.__name__ == 'decorated_inner'
 
         # -- db error
         response = view.delete(request)
@@ -613,6 +613,45 @@ class CommandTestCase(TestCase):
         assert response.status_code == 500
         assert to_json(response) == {
             '@event': 'GENERIC_ERROR_OCCURRED',
+            '@type': 'error',
+            'errors': ['hi there'],
+            'user_id': u.id,
+        }
+
+    #
+    # GENERIC DOES NOT EXIST ERROR
+    #
+    def test_does_not_exist(self):
+
+        u = User.objects.create_user(username='jacky')
+        request = Mock(user_id=u.id, META=get_auth_headers(u.id))
+        view = TestView()
+        self.mocker.patch.object(view, 'some_stuff').side_effect = (
+            lambda: User.objects.get(id=4930))
+
+        response = view.delete(request)
+
+        assert response.status_code == 404
+        assert to_json(response) == {
+            '@event': 'COULD_NOT_FIND_USER',
+            '@type': 'error',
+            'user_id': u.id,
+        }
+
+    def test_multiple_objects_returned(self):
+
+        u = User.objects.create_user(username='jacky')
+        u = User.objects.create_user(username='jacks')
+        request = Mock(user_id=u.id, META=get_auth_headers(u.id))
+        view = TestView()
+        self.mocker.patch.object(view, 'some_stuff').side_effect = (
+            lambda: User.objects.get(username__contains='jack'))
+
+        response = view.delete(request)
+
+        assert response.status_code == 500
+        assert to_json(response) == {
+            '@event': 'FOUND_MULTIPLE_INSTANCES_OF_USER',
             '@type': 'error',
             'user_id': u.id,
         }

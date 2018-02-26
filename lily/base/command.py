@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import json
+import re
 
 from django.conf import settings
 from django.db import transaction
 from django.db.utils import DatabaseError
+from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
 from .events import EventFactory
 from .utils import import_from_string
@@ -157,6 +159,28 @@ def command(
                 # -- mechanism happened
                 return fn(self, request, *args, **kwargs)
 
+            except ObjectDoesNotExist as e:
+                # -- Rather Hacky way of fetching the name of model
+                # -- which raised the DoesNotExist error
+                model_name = str(e).split()[0].upper()
+                e = event.DoesNotExist(
+                    'COULD_NOT_FIND_{}'.format(model_name),
+                    context=request,
+                    is_critical=True)
+                return e.response_class(e.data)
+
+            except MultipleObjectsReturned as e:
+                # -- Rather Hacky way of fetching the name of model
+                # -- which raised the MultipleObjectsReturned error
+                m = re.search(r'than one\s+(?P<model_name>\w+)\s+', str(e))
+                model_name = m.group('model_name').upper()
+
+                e = event.ServerError(
+                    'FOUND_MULTIPLE_INSTANCES_OF_{}'.format(model_name),
+                    context=request,
+                    is_critical=True)
+                return e.response_class(e.data)
+
             except EventFactory.BaseSuccessException as e:
                 # -- serialized output
                 if output:
@@ -252,7 +276,7 @@ def command(
                 e = event.ServerError(
                     'GENERIC_ERROR_OCCURRED',
                     context=request,
-                    data={'errors': str(err)},
+                    data={'errors': [str(err)]},
                     is_critical=True)
 
                 return e.response_class(e.data)
