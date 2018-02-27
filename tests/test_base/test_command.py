@@ -505,6 +505,11 @@ class CommandTestCase(TestCase):
         assert TestView.post.command_conf == {
             'name': 'MAKE_IT',
             'method': 'post',
+            'source': {
+                'filepath': '/tests/test_base/test_command.py',
+                'start_line': 345,
+                'end_line': 356,
+            },
             'meta': TestView.meta,
             'path_params_annotations': {},
             'access_list': ['PREMIUM', 'SUPER_PREMIUM'],

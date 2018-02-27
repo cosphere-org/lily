@@ -2,6 +2,7 @@
 
 import json
 import re
+import inspect
 
 from django.conf import settings
 from django.db import transaction
@@ -240,10 +241,17 @@ def command(
 
         # -- the below specs are available shortly after the code compilation
         # -- and therefore can be made available on runtime
+        code, firstline = inspect.getsourcelines(fn)
         inner.command_conf = {
             'name': name,
             'method': fn.__name__,
             'meta': meta,
+            'source': {
+                'filepath': inspect.getfile(fn).replace(
+                    settings.LILY_PROJECT_BASE, ''),
+                'start_line': firstline,
+                'end_line': firstline + len(code),
+            },
             'path_params_annotations': fn.__annotations__,
             'access_list': access_list,
             'input': input,

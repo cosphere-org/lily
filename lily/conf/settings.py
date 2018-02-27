@@ -36,6 +36,8 @@ LILY_AUTHORIZER_CLASS = getattr(
     'LILY_AUTHORIZER_CLASS',
     'lily.base.authorizer.Authorizer')
 
+LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
+
 #
 # Internationalization
 #
