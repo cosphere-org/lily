@@ -279,8 +279,10 @@ class CommandLinkTestCase(TestCase):
                 data={'from': 'CALLER_COMMAND', 'to': 'SOME_COMMAND'})]
 
     def test_resolve__prevent_if_no_access(self):
-        self.mocker.patch(
-            'base.serializers.COMMANDS_CONF',
+
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',
@@ -309,12 +311,51 @@ class CommandLinkTestCase(TestCase):
             Mock(account_type='LEARNER'), {'card_id': 167}, 'payment_card'
         ) == {}
 
+    def test_resolve__allow_if_no_access_list(self):
+
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
+            {
+                'SOME_COMMAND': {
+                    'name': 'SOME_COMMAND',
+                    'service_base_uri': 'http://192.11.2.1:9000',
+                    'method': 'post',
+                    'path_conf': {
+                        'path': '/payment_cards/{card_id}/something/',
+                        'parameters': [
+                            {
+                                'name': 'card_id',
+                                'in': 'path',
+                                'description': None,
+                                'required': True,
+                                'type': 'integer'
+                            },
+                        ],
+                    },
+                    'access_list': None,
+                }
+            })
+
+        cl = serializers.CommandLink(
+            'SOME_COMMAND', {'card_id': '$response.body#/card_id'})
+
+        assert cl.resolve(
+            Mock(account_type='LEARNER'), {'card_id': 167}, 'payment_card'
+        ) == {
+            'method': 'post',
+            'name': 'SOME_COMMAND',
+            'uri': 'http://192.11.2.1:9000/payment_cards/167/something/',
+        }
+
     #
     # resolve_pre_computed
     #
     def test_resolve_pre_computed__body(self):
+
         self.mocker.patch.object(
-            serializers, 'COMMANDS_CONF',
+            serializers,
+            'COMMANDS_CONF',
             {
                 'SOME_COMMAND': {
                     'name': 'SOME_COMMAND',

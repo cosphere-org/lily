@@ -55,6 +55,10 @@ class MissingTypeError(Exception):
 
 class Serializer(drf_serializers.Serializer):
 
+    def __init__(self, *args, fields_subset=None, **kwargs):
+        self._fields_subset = fields_subset
+        super(Serializer, self).__init__(*args, **kwargs)
+
     def to_internal_value(self, data):
 
         try:
@@ -74,7 +78,14 @@ class Serializer(drf_serializers.Serializer):
 
     def to_representation(self, instance):
 
-        body = super(Serializer, self).to_representation(instance)
+        if self._fields_subset:
+            body = {
+                f: getattr(instance, f)
+                for f in self._fields_subset
+            }
+
+        else:
+            body = super(Serializer, self).to_representation(instance)
 
         # -- transform `at__` to `@`
         original = deepcopy(body)
@@ -189,7 +200,7 @@ class CommandLink:
 
         # -- only authorized users can view commands giving client extra
         # -- information about what which user can see / or do
-        if request.account_type not in access_list:
+        if access_list and request.account_type not in access_list:
             return {}
 
         resolved_parameters = self.resolve_parameters(request, response, _type)
