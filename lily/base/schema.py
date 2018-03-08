@@ -151,13 +151,15 @@ def is_simple_field(field):
             serializers.BooleanField,
             serializers.CharField,
             serializers.ChoiceField,
+            serializers.DateField,
+            serializers.DateTimeField,
+            serializers.DecimalField,
             serializers.DictField,
             serializers.EmailField,
             serializers.FloatField,
             serializers.IntegerField,
-            serializers.DecimalField,
-            serializers.URLField,
             serializers.JSONField,
+            serializers.URLField,
         ))
 
 
@@ -182,6 +184,18 @@ def simple_field_to_schema(field):
         field_schema = {
             'type': 'string',
             'format': 'uri',
+        }
+
+    elif is_field(serializers.DateField):
+        field_schema = {
+            'type': 'string',
+            'format': 'date',
+        }
+
+    elif is_field(serializers.DateTimeField):
+        field_schema = {
+            'type': 'string',
+            'format': 'date-time',
         }
 
     elif is_field(serializers.CharField):

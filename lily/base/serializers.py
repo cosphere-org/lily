@@ -11,6 +11,8 @@ from rest_framework.serializers import (  # noqa
     BooleanField,
     CharField,
     ChoiceField,
+    DateField,
+    DateTimeField,
     DecimalField,
     DictField,
     EmailField,

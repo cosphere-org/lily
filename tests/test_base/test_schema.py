@@ -187,12 +187,19 @@ class SerializerToSchemaTestCase(TestCase):
 
             json = serializers.JSONField()
 
-        assert to_schema(SimpleFieldsSerializer) == {
+            date_of_birth = serializers.DateField()
+
+            created_at = serializers.DateTimeField()
+
+        expected = {
             'type': 'object',
             'required': [
                 'number', 'is_correct', 'price', 'choice', 'name',
-                'email', 'json'],
+                'email', 'json', 'date_of_birth', 'created_at'],
             'properties': {
+                'amount': {
+                    'type': 'string',
+                },
                 'number': {
                     'type': 'number',
                 },
@@ -224,11 +231,17 @@ class SerializerToSchemaTestCase(TestCase):
                 'json': {
                     'type': 'object',
                 },
-                'amount': {
+                'date_of_birth': {
                     'type': 'string',
+                    'format': 'date',
+                },
+                'created_at': {
+                    'type': 'string',
+                    'format': 'date-time',
                 }
             },
         }
+        assert to_schema(SimpleFieldsSerializer) == expected
 
     def test_list_field(self):
         class Serializer(serializers.Serializer):
