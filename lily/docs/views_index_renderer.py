@@ -3,7 +3,7 @@
 from copy import copy
 import re
 
-from django.core.urlresolvers import RegexURLResolver, RegexURLPattern
+from django.urls import URLResolver, URLPattern
 
 
 class Renderer:
@@ -33,27 +33,27 @@ class Renderer:
         for pattern in patterns:
             inner_path_patterns = copy(path_patterns)
             if inner_path_patterns:
-                inner_path_patterns.append(pattern.regex.pattern)
+                inner_path_patterns.append(pattern.pattern.regex.pattern)
 
             else:
-                inner_path_patterns = [pattern.regex.pattern]
+                inner_path_patterns = [pattern.pattern.regex.pattern]
 
-            if isinstance(pattern, RegexURLResolver):
+            if isinstance(pattern, URLResolver):
                 views_index.update(
                     self.crawl_views(
                         pattern.url_patterns, inner_path_patterns))
 
-            elif isinstance(pattern, RegexURLPattern):
+            elif isinstance(pattern, URLPattern):
                 view_name = pattern.callback.__name__
 
                 ignore_views = [
-                    "serve",
-                    "add_view",
-                    "change_view",
-                    "changelist_view",
-                    "history_view",
-                    "delete_view",
-                    "RedirectView",
+                    'serve',
+                    'add_view',
+                    'change_view',
+                    'changelist_view',
+                    'history_view',
+                    'delete_view',
+                    'RedirectView',
                 ]
 
                 if view_name not in ignore_views:

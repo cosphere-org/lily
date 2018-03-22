@@ -5,7 +5,7 @@ import os
 
 from django.test import TestCase
 from django.views.generic import View
-from django.conf.urls import url
+from django.urls import re_path
 import pytest
 from mock import Mock
 
@@ -85,7 +85,8 @@ class SampleView(View):
             'DELETED', context=request, data={'hello': 'delete'})
 
 
-urlpatterns.append(url(r'^test/it/$', SampleView.as_view(), name='test.it'))
+urlpatterns.append(
+    re_path(r'^test/it/$', SampleView.as_view(), name='test.it'))
 
 
 class ClientTestCase(TestCase):

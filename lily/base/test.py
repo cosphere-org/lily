@@ -3,7 +3,7 @@
 import json
 from copy import deepcopy
 
-from django.core.urlresolvers import get_resolver
+from django.urls import get_resolver
 from django.test import Client as DjangoClient
 from django.conf import settings
 
@@ -12,7 +12,6 @@ class MissingConfError(Exception):
     pass
 
 
-# FIXME: test it!
 class Client(DjangoClient):
 
     resolver = get_resolver(None)
@@ -32,7 +31,7 @@ class Client(DjangoClient):
     def _make_request(self, http_verb, *args, **kwargs):
         response = getattr(super(Client, self), http_verb)(*args, **kwargs)
 
-        fn = self.resolver.resolve(response.request["PATH_INFO"]).func
+        fn = self.resolver.resolve(response.request['PATH_INFO']).func
 
         try:
             command_conf = getattr(fn.view_class, http_verb).command_conf
@@ -54,12 +53,12 @@ class Client(DjangoClient):
 
             # -- construct the request
             request = {}
-            path = response.request["PATH_INFO"]
+            path = response.request['PATH_INFO']
 
-            if response.request.get("QUERY_STRING"):
+            if response.request.get('QUERY_STRING'):
                 path = '{path}?{query_string}'.format(
                     path=path,
-                    query_string=response.request["QUERY_STRING"])
+                    query_string=response.request['QUERY_STRING'])
 
             request['path'] = path
             request_kwargs = deepcopy(kwargs)

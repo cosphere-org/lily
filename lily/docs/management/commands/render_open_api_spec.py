@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
+from importlib import import_module
 import json
 
 from django.core.management.base import BaseCommand
 from django.conf import settings
 import yaml
 
-from conf.urls_api import urlpatterns
 from ...open_api_renderer import Renderer as OpenAPIRenderer
 
 
@@ -18,6 +18,8 @@ class Command(BaseCommand):
             f.write(json.dumps(yaml.load(content), indent=4))
 
     def handle(self, *args, **options):
+        urlpatterns = import_module(settings.ROOT_URLCONF).urlpatterns
+
         self.save_to_file(
             settings.LILY_DOCS_OPEN_API_SPEC_FILE,
             OpenAPIRenderer(urlpatterns).render())

@@ -1,6 +1,6 @@
 
 # foundations
-Django==1.10
+Django==2.0
 djangorestframework==3.7.7
 
 # utils

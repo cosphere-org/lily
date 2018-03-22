@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 
-import re
 from unittest import TestCase
 
-from mock import MagicMock, Mock
-from django.urls import RegexURLPattern, RegexURLResolver
+from mock import Mock
+from django.urls import re_path, include
 from django.views.generic import View
 import pytest
 
@@ -38,8 +37,8 @@ class ViewsIndexRendererTestCase(TestCase):
         hi_view, yo_view = HiView.as_view(), YoView.as_view()
 
         renderer = Renderer([
-            RegexURLPattern(r'^hi/there$', hi_view, {}, 'hi.there'),
-            RegexURLPattern(r'^hiyo', yo_view, {}, 'hiyo'),
+            re_path(r'^hi/there$', hi_view, name='hi.there'),
+            re_path(r'^hiyo', yo_view, name='hiyo'),
         ])
 
         assert renderer.render() == {
@@ -85,24 +84,18 @@ class ViewsIndexRendererTestCase(TestCase):
             def put(self):
                 pass
 
-        def resolver(regex, url_patterns):
-            return MagicMock(
-                regex=re.compile(regex),
-                url_patterns=url_patterns,
-                spec=RegexURLResolver)
-
         hi_view, yo_view, wat_view = (
             HiView.as_view(), YoView.as_view(), WatView.as_view())
 
         renderer = Renderer([
-            resolver(r'^payment/$', [
-                RegexURLPattern(r'^hi/there$', hi_view, {}, 'hi.there'),
-                resolver(r'^now/(?P<when>\d+)/$', [
-                    RegexURLPattern(r'^yes/$', yo_view, {}, 'yo'),
-                    RegexURLPattern(r'^wat/$', wat_view, {}, 'wat'),
-                ]),
-            ]),
-            RegexURLPattern('^hiyo', yo_view, {}, 'yo'),
+            re_path(r'^payment/$', include([
+                re_path(r'^hi/there$', hi_view, 'hi.there'),
+                re_path(r'^now/(?P<when>\d+)/$', include([
+                    re_path(r'^yes/$', yo_view, 'yo'),
+                    re_path(r'^wat/$', wat_view, 'wat'),
+                ])),
+            ])),
+            re_path('^hiyo', yo_view, 'yo'),
         ])
 
         assert renderer.render() == {
