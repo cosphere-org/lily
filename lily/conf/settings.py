@@ -39,6 +39,15 @@ LILY_AUTHORIZER_CLASS = getattr(
 LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
 
 #
+# ASYNC
+#
+LILY_ASYNC_LOCK_DB_HOST = 'localhost'
+
+LILY_ASYNC_LOCK_DB_PORT = 6379
+
+LILY_ASYNC_LOCK_DB_INDEX = 1
+
+#
 # Internationalization
 #
 LANGUAGE_CODE = 'en-us'
