@@ -156,6 +156,37 @@ ACCOUNT_CONFIRMED_TO_HAVE_REQUESTED_SUBSCRIPTION = (
 ACCOUNT_MARKED_FOR_DOWNGRADE = 'ACCOUNT_MARKED_FOR_DOWNGRADE'
 
 
+def cause_effect(
+        on_created=None,
+        on_updated=None,
+        on_removed=None,
+        created=None,
+        updated=None,
+        removed=None):
+
+    # -- CAUSE -> prefix
+    if on_created:
+        prefix = 'ON_{}_CREATED'.format(on_created._meta.model_name.upper())
+
+    if on_updated:
+        prefix = 'ON_{}_UPDATED'.format(on_updated._meta.model_name.upper())
+
+    if on_removed:
+        prefix = 'ON_{}_REMOVED'.format(on_removed._meta.model_name.upper())
+
+    # -- RESULT -> suffix
+    if created:
+        suffix = '{}_CREATED'.format(created._meta.model_name.upper())
+
+    if updated:
+        suffix = '{}_UPDATED'.format(updated._meta.model_name.upper())
+
+    if removed:
+        suffix = '{}_REMOVED'.format(removed._meta.model_name.upper())
+
+    return '{prefix}_{suffix}'.format(prefix=prefix, suffix=suffix)
+
+
 class EventFactory:
 
     def __init__(self, logger):
