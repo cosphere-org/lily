@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.db.models.expressions import RawSQL
 
 
 class ImmutableModel(models.Model):
@@ -19,3 +20,14 @@ class ImmutableModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class ExtraColumn(RawSQL):
+
+    def __init__(self, sql, params, output_field=None):
+
+        super(ExtraColumn, self).__init__(
+            sql, params, output_field=output_field)
+
+    def get_group_by_cols(self):
+        return []
