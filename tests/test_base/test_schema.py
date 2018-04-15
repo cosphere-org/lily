@@ -148,6 +148,8 @@ class SerializerToSchemaTestCase(TestCase):
                 },
                 'age': {
                     'type': 'number',
+                    'minimum': -2147483648,
+                    'maximum': 2147483647
                 },
                 'is_underaged': {
                     'type': 'boolean',
@@ -385,6 +387,8 @@ class SerializerToSchemaTestCase(TestCase):
                         },
                         'age': {
                             'type': 'number',
+                            'minimum': -2147483648,
+                            'maximum': 2147483647
                         },
                         'is_underaged': {
                             'type': 'boolean',

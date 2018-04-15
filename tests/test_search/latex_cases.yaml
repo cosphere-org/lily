@@ -1,0 +1,517 @@
+
+#
+# General
+#
+- description: no latex exists so no transformation takes place
+  text: no latex
+  english_expected: no latex
+  polish_expected: no latex
+
+- description: simple latex - nothing to transform
+  text: easy $$ latex $$
+  english_expected: easy latex
+  polish_expected: easy latex
+
+- description: one can use dollars!
+  text: the cost is $$ 10 $ $$ or $$ 2.5$ $$ or $$ 1.5 $ or $2.34 $$
+  english_expected: the cost is 10 $ or 2.5$ or 1.5 $ or $2.34
+  polish_expected: the cost is 10 $ or 2.5$ or 1.5 $ or $2.34
+
+- description: replacing same formula multiple times
+  text: easy $$ latex $$ and again $$ latex $$ and again $$ latex $$
+  english_expected: easy latex and again latex and again latex
+  polish_expected: easy latex and again latex and again latex
+
+
+#
+# Special symbols
+#
+- description: infinity
+  text: $$ \\infty ^ 2 $$
+  english_expected: infty infinity squared
+  polish_expected: infty nieskończoność do kwadratu
+
+- description: dimension
+  text: "$$ \\dim \\vec{f} $$"
+  english_expected: dim dimension of vector f
+  polish_expected: dim wymiar wektor f
+
+- description: degree
+  text: "$$ -10^\\degree $$ is considered cold but $$ 32^{\\degree}$$ is hot"
+  english_expected: >
+    minus 10 degree degrees is considered cold but 32 degree degrees is hot
+  polish_expected: >
+    minus 10 degree stopni is considered cold but 32 degree stopni is hot
+
+- description: limits
+  text: "$$ \\sum\\limits_{a}^{b} x = 1 $$"
+  english_expected: sum sum of in limits a b x equals to 1
+  polish_expected: sum suma w granicach a b x równa się 1
+
+
+#
+# Accent Functions
+#
+- description: time derivative (dot)
+  text: "$$ \\dot{x} = \\frac{\\Delta x}{\\Delta t} $$"
+  english_expected: >
+    time derivative of x equals to fraction change delta of x divided by
+    change delta of t
+  polish_expected: >
+    pochodna po czasie z x równa się ułamek zmiana delta x dzielone przez
+    zmiana delta t
+
+- description: average (bar)
+  text: "$$ \\bar{price} = \\frac{\\sum prices}{\\sum items} $$"
+  english_expected: >
+    average price equals to fraction sum sum of prices divided by sum sum of
+    items
+  polish_expected: >
+    średnia price równa się ułamek sum suma prices dzielone przez sum suma items
+
+- description: vector (vec)
+  text: "$$ \\vec{F} = m\\vec{a} $$"
+  english_expected: vector F equals to m vector a
+  polish_expected: wektor F równa się m wektor a
+
+- description: operator (hat)
+  text: "$$ \\hat{F} = m\\hat{a} $$"
+  english_expected: operator F equals to m operator a
+  polish_expected: operator F równa się m operator a
+
+#
+# Arithmetic
+#
+- description: basic arithmetic
+  text: $$ 2* (3a+x) - 7 *b / 89 + 3 $$
+  english_expected: 2 times 3a plus x minus 7 times b divided by 89 plus 3
+  polish_expected: >
+    2 razy mnożone przez 3a plus x minus 7 razy mnożone przez b dzielone przez
+    89 plus 3
+
+- description: Pythagorean theorem
+  text: "$$ a^2 + b^{ 2 } = c^2 $$"
+  english_expected: a squared plus b squared equals to c squared
+  polish_expected: a do kwadratu plus b do kwadratu równa się c do kwadratu
+
+- description: many repetition of same pattern
+  text: "$$ \\frac{\\frac{\\frac{\\frac{a}{b}}{c}}{d}}{e} $$"
+  english_expected: >
+    fraction fraction fraction frac a b divided by c divided by d divided by e
+  polish_expected: >
+    ułamek ułamek ułamek frac a b dzielone przez c dzielone przez d dzielone
+    przez e
+
+#
+# Number Relations
+#
+- description: approximation
+  text: $$ 2.4 \\approx 2 $$
+  english_expected: 2.4 is approximately 2
+  polish_expected: 2.4 równa się w przybliżeniu 2
+
+- description: less than equal
+  text: $$ 2\\alpha \\leq 2x^2 $$
+  english_expected: 2 alpha is less than equal to 2x squared
+  polish_expected: 2 alfa jest mniejsze lub równe 2x do kwadratu
+
+- description: much smaller than
+  text: $$ 2 x ^ 2 \\ll \\exp x $$
+  english_expected: 2 x squared is much smaller than exp exponent function of x
+  polish_expected: >
+    2 x do kwadratu jest dużo mniejsze niż exp funkcja wykładnicza z x
+
+- description: greater than equal
+  text: "$$ \\frac{2}{3x} \\geq \\pi $$"
+  english_expected: fraction 2 divided by 3x is greater than equal to number pi
+  polish_expected: ułamek 2 dzielone przez 3x jest większe lub równe liczba pi
+
+- description: much greater than
+  text: "$$ \\exp{2x - 11} \\gg x^100 $$"
+  english_expected: >
+    exp exponent function of 2x minus 11 is much greater than x to the power
+    of 100
+  polish_expected: >
+    exp funkcja wykładnicza z 2x minus 11 jest dużo większe niż x podniesione
+    do potęgi 100
+
+
+#
+# Fractions
+#
+- description: simple fraction
+  text: "some latex $$ \\frac{a}{b} $$"
+  english_expected: some latex fraction a divided by b
+  polish_expected: some latex ułamek a dzielone przez b
+
+- description: simple fraction - dfrac
+  text: "some latex $$ \\dfrac{a}{b} $$"
+  english_expected: some latex fraction a divided by b
+  polish_expected: some latex ułamek a dzielone przez b
+
+- description: simple fraction - tfrac
+  text: "some latex $$ \\tfrac{a}{b} $$"
+  english_expected: some latex fraction a divided by b
+  polish_expected: some latex ułamek a dzielone przez b
+
+- description: nested fractions
+  text: "$$ \\frac{\\frac{a + b}{x ^ 2}}{b} = 3x $$"
+  english_expected: >
+    fraction fraction a plus b divided by x squared divided by b equals to 3x
+  polish_expected: >
+    ułamek ułamek a plus b dzielone przez x do kwadratu dzielone przez b
+    równa się 3x
+
+- description: multiple nested fractions
+  text: >
+    $$ \\frac{\\frac{a + b}{x ^ 2}}{b} = 3x $$ and $$ \\frac{velocity}{2}=g $$
+  english_expected: >
+    fraction fraction a plus b divided by x squared divided by b equals to 3x
+    and fraction velocity divided by 2 equals to g
+  polish_expected: >
+    ułamek ułamek a plus b dzielone przez x do kwadratu dzielone przez b
+    równa się 3x and ułamek velocity dzielone przez 2 równa się g
+
+- description: simple fraction (over and frac)
+  text: "$$ 2a + {\\frac{a}{2} \\over \\pi} $$"
+  english_expected: >
+    2a plus fraction fraction a divided by 2 divided by number pi
+  polish_expected: >
+    2a plus ułamek ułamek a dzielone przez 2 dzielone przez liczba pi
+
+
+#
+# Complex Numbers
+#
+- description: imaginary part
+  text: "$$ \\Im{a + ib} = b $$"
+  english_expected: imaginary part of a plus ib equals to b
+  polish_expected: część urojona zespolona z a plus ib równa się b
+
+- description: imaginary part
+  text: "$$ \\Re{a + ib} = a $$"
+  english_expected: real part of a plus ib equals to a
+  polish_expected: część rzeczywista z a plus ib równa się a
+
+
+#
+# Polynomials
+#
+- description: simple polynomial
+  text: $$ x^3 + 1.45 * x ^ 2 - a_0 x = 45 $$
+  english_expected: >
+    x to the power of 3 plus 1.45 times x squared minus a 0 x equals to 45
+  polish_expected: >
+    x podniesione do potęgi 3 plus 1.45 razy mnożone przez x do kwadratu minus
+    a 0 x równa się 45
+
+- description: more complex polynomial
+  text: "$$ 45 x^11 - 11x^34 = x ^ { - 2} / 2 $$"
+  english_expected: >
+    45 x to the power of 11 minus 11x to the power of 34 equals to x to the
+    power of minus 2 divided by 2
+  polish_expected: >
+    45 x podniesione do potęgi 11 minus 11x podniesione do potęgi 34 równa się
+    x podniesione do potęgi minus 2 dzielone przez 2
+
+- description: square root
+  text: "$$ \\sqrt{\\sqrt{x}}^4 = x $$"
+  english_expected: >
+    sqrt square root function of sqrt square root function of x to the power
+    of 4 equals to x
+  polish_expected: >
+    sqrt funkcja pierwiastek kwadratowy z sqrt funkcja pierwiastek kwadratowy
+    z x podniesione do potęgi 4 równa się x
+
+
+#
+# Calculus
+#
+
+# limits
+- description: simple limit
+  text: "$$\\lim_{x\\to\\infty} f(x)$$"
+  english_expected: lim limit x to infty infinity f x
+  polish_expected: lim granica x dążące do infty nieskończoność f x
+
+- description: "max & min"
+  text: "$$ \\max{\\vec{A}} \\neq \\min{\\vec{B}} $$"
+  english_expected: >
+    max maximum of vector A not equals to min minimum of vector B
+  polish_expected: max maksimum z wektor A jest różne od min minimum z wektor B
+
+- description: Infimum
+  text: "$$ \\inf{\\vec{A}} \\neq \\liminf{\\vec{B}} $$"
+  english_expected: >
+    inf infimum of vector A not equals to liminf infimum limit vector B
+  polish_expected: >
+    inf infimum z wektor A jest różne od liminf granica infimum wektor B
+
+- description: Supremum
+  text: "$$ \\sup{\\vec{A}} \\neq \\limsup{\\vec{B}} $$"
+  english_expected: >
+    sup supremum of vector A not equals to limsup supremum limit vector B
+  polish_expected: >
+    sup supremum z wektor A jest różne od limsup granica supremum wektor B
+
+# sums
+- description: Sum
+  text: "$$\\sum_{n=1}^{\\infty} 2^{-n} = 1$$"
+  english_expected: >
+    sum sum of n equals to 1 infty infinity 2 minus n equals to 1
+  polish_expected: >
+    sum suma n równa się 1 infty nieskończoność 2 minus n równa się 1
+
+# products
+- description: Product
+  text: "$$\\prod_{i=a}^{b} f(i)$$"
+  english_expected: prod product of i equals to a b f i
+  polish_expected: prod iloczyn i równa się a b f i
+
+# derivatives
+- description: Nabla and partial
+  text: "$$\\Nabla f = \\frac{\\partial f_x}{\\partial x}$$"
+  english_expected: >
+    divergence nabla of f equals to fraction partial partial derivative
+    f x divided by partial partial derivative x
+  polish_expected: >
+    dywergencja nabla f równa się ułamek partial pochodna cząstkowa f x
+    dzielone przez partial pochodna cząstkowa x
+
+# indefinite integrals
+- description: simple indefinite integral (intop)
+  text: "$$ \\intop f(x)dx $$"
+  english_expected: int indefinite integral of f x dx
+  polish_expected: int całka nieoznaczona z f x dx
+
+- description: simple indefinite integral (smallint)
+  text: "$$ \\smallint f(x)dx $$"
+  english_expected: int indefinite integral of f x dx
+  polish_expected: int całka nieoznaczona z f x dx
+
+- description: simple indefinite integral
+  text: "$$ \\int f(x)dx $$"
+  english_expected: int indefinite integral of f x dx
+  polish_expected: int całka nieoznaczona z f x dx
+
+- description: more complex indefinite integral (double integral)
+  text: "$$ \\iint f(x, y)dydx $$"
+  english_expected: int indefinite integral of f x y dydx
+  polish_expected: int całka nieoznaczona z f x y dydx
+
+- description: more complex indefinite integral (triple integral)
+  text: "$$ \\iiint f(x,y,z)dydzdx $$"
+  english_expected: int indefinite integral of f x y z dydzdx
+  polish_expected: int całka nieoznaczona z f x y z dydzdx
+
+- description: more complex indefinite integral (quadrapole integral)
+  text: "$$ \\iiiint f(x,y,z, t)dydzdxdt $$"
+  english_expected: int indefinite integral of f x y z t dydzdxdt
+  polish_expected: int całka nieoznaczona z f x y z t dydzdxdt
+
+- description: contour indefinite integral
+  text: "$$ \\oint f(x)dx $$"
+  english_expected: int countour indefinite integral of f x dx
+  polish_expected: int całka nieoznaczona po konturze z f x dx
+
+- description: contour 2 dimensional indefinite integral
+  text: "$$ \\oiint f(x, y)dydx $$"
+  english_expected: int countour indefinite integral of f x y dydx
+  polish_expected: int całka nieoznaczona po konturze z f x y dydx
+
+# definite integrals
+- description: simple definite integral
+  text: "$$ \\int_{a}^{b} f(x)dx $$"
+  english_expected: int definite integral from a to b of f x dx
+  polish_expected: int całka oznaczona od a do b z f x dx
+
+- description: simple definite integral (limits order inversed)
+  text: "$$ \\int^{b}_{a} f(x)dx $$"
+  english_expected: int definite integral from a to b of f x dx
+  polish_expected: int całka oznaczona od a do b z f x dx
+
+- description: oint over surface
+  text: "$$ \\oint_{V} f(x)dx $$"
+  english_expected: int countour definite integral from V to f of x dx
+  polish_expected: int całka oznaczona po konturze od V do f z x dx
+
+#
+# Greek letters
+#
+- description: number pi
+  text: "$$ \\exp(i\\pi)=1 $$"
+  english_expected: exp exponent function of i number pi equals to 1
+  polish_expected: exp funkcja wykładnicza z i liczba pi równa się 1
+
+- description: delta
+  text: "$$ \\delta x $$"
+  english_expected: delta x
+  polish_expected: delta x
+
+- description: Delta
+  text: "$$ \\vec{v} = \\frac{\\Delta \\vec x }{\\Delta t} $$"
+  english_expected: >
+    vector v equals to fraction change delta of vector x divided by change
+    delta of t
+  polish_expected: >
+    wektor v równa się ułamek zmiana delta wektor x dzielone przez zmiana
+    delta t
+
+
+#
+# Trigonometry
+#
+- description: arc sine function
+  text: "$$ \\arcsin{ \\frac{\\pi}{2} } $$"
+  english_expected: >
+    arcsin inverse arc sine function of fraction number pi divided by 2
+  polish_expected: >
+    arcsin funkcja arkus sinus z ułamek liczba pi dzielone przez 2
+
+- description: sine function
+  text: "$$ \\sin{ 2\\omega \\times t } $$"
+  english_expected: sin sine function of 2 omega times t
+  polish_expected: sin funkcja sinus z 2 omega razy mnożone przez t
+
+- description: hyperbolic sine function
+  text: "$$ \\sinh{ 2x - 12y } $$"
+  english_expected: sinh hyperbolic sine function of 2x minus 12y
+  polish_expected: sinh funkcja sinus hiperboliczny z 2x minus 12y
+
+- description: arc cosine function
+  text: "$$ \\arccos{ 2 } $$"
+  english_expected: arccos inverse arc cosine function of 2
+  polish_expected: arccos funkcja arkus kosinus z 2
+
+- description: cosine function
+  text: "$$ \\cos{ 2\\pi\\omega * t } $$"
+  english_expected: cos cosine function of 2 number pi omega times t
+  polish_expected: cos funkcja kosinus z 2 liczba pi omega razy mnożone przez t
+
+- description: hyperbolic cosine function
+  text: "$$ \\cosh{ \\sqrt(\\frac{\\pi}{2}) } $$"
+  english_expected: >
+    cosh hyperbolic cosine function of sqrt square root function of fraction
+    number pi divided by 2
+  polish_expected: >
+    cosh funkcja kosinus hiperboliczny z sqrt funkcja pierwiastek kwadratowy z
+    ułamek liczba pi dzielone przez 2
+
+- description: arc tangent function
+  text: "$$ \\arctan^2{ 2 } $$"
+  english_expected: arctan inverse arc tangent function of squared 2
+  polish_expected: arctan funkcja arkus tangens z do kwadratu 2
+
+- description: tangent function
+  text: "$$ \\tan{ \\pi } $$"
+  english_expected: tan tangent function of number pi
+  polish_expected: tan funkcja tangens z liczba pi
+
+- description: hyperbolic tangent function
+  text: "$$ \\tanh{ x ^ 4 + 2x^66 } $$"
+  english_expected: >
+    tanh hyperbolic tangent function of x to the power of 4 plus 2x to the
+    power of 66
+  polish_expected: >
+    tanh funkcja tangens hiperboliczny z x podniesione do potęgi 4 plus 2x
+    podniesione do potęgi 66
+
+- description: arc cotangent function
+  text: "$$ \\arccot{ 2 } ^ 2 $$"
+  english_expected: arccot inverse arc cotangent function of 2 squared
+  polish_expected: arccot funkcja arkus kotangens z 2 do kwadratu
+
+- description: cotangent function
+  text: "$$ \\cot{ \\alpha + \\beta^2 } $$"
+  english_expected: cot cotangent function of alpha plus beta squared
+  polish_expected: cot funkcja kotangens z alfa plus beta do kwadratu
+
+- description: hyperbolic cotangent function
+  text: "$$ \\coth{ \\sqrt{2} / 3 } $$"
+  english_expected: >
+    coth hyperbolic cotangent function of sqrt square root function of 2
+    divided by 3
+  polish_expected: >
+    coth funkcja kotangens hiperboliczny z sqrt funkcja pierwiastek kwadratowy
+    z 2 dzielone przez 3
+
+
+#
+# Logarithms and Exponent functions
+#
+- description: exponent function
+  text: "$$ \\exp \\sqrt{2}  $$"
+  english_expected: exp exponent function of sqrt square root function of 2
+  polish_expected: >
+    exp funkcja wykładnicza z sqrt funkcja pierwiastek kwadratowy z 2
+
+- description: natural logarithm
+  text: "$$ \\ln \\ln \\frac{n}{m}  $$"
+  english_expected: >
+    ln natural logarithm function of ln natural logarithm function of
+    fraction n divided by m
+  polish_expected: >
+    ln funkcja logarytm naturalny z ln funkcja logarytm naturalny z ułamek n
+    dzielone przez m
+
+- description: general logarithm
+  text: "$$ \\exp \\log_{10}{n}  $$"
+  english_expected: exp exponent function of log logarithm function of 10 n
+  polish_expected: exp funkcja wykładnicza z log funkcja logarytm z 10 n
+
+#
+# Binomials and factorials
+#
+- description: simple binomial expression (using choose syntax)
+  text: "$$ { n \\choose k } $$"
+  english_expected: choose binomial n choose k
+  polish_expected: choose kombinacja n nad k
+
+- description: simple binomial expression (using choose syntax) - complex
+  text: "$$ { \\alpha \\choose \\frac{ a + b }{ 2 } } $$"
+  english_expected: choose binomial alpha choose fraction a plus b divided by 2
+  polish_expected: choose kombinacja alfa nad ułamek a plus b dzielone przez 2
+
+- description: simple binomial expression (using binom syntax)
+  text: "$$ \\binom{n}{k} $$"
+  english_expected: binom binomial n choose k
+  polish_expected: binom kombinacja n nad k
+
+# FIXME: this case needs to be addressed by complex parser
+# for now it's good enough and produces correct keywords.
+# More complex parser besides producing slightly better ordering
+# will bring much more complexity therefore the decision behind its
+# implementation needs to be carefully thought through
+- description: simple binomial expression (using binom syntax) - complex
+  text: "$$ \\binom{ \\sqrt{ \\frac{a}{4} }}{ 2+ \\int_a^bf(x)dx } $$"
+  #   english_expected: >
+  #     binomial square root function of fraction a divided by 4 choose 2 plus
+  #     definite integral from a to b of f x dx
+  # the below produces correct keywords but the expression created is
+  # nonsensical. In order to reproduce correct ordering and nesting one
+  # would have to provide full LaTeX parser
+  english_expected: >
+    binom binomial sqrt square root function of choose fraction a 4 divided by
+    2 plus int definite integral from a to b of f x dx
+  polish_expected: >
+    binom kombinacja sqrt funkcja pierwiastek kwadratowy z nad ułamek a
+    4 dzielone przez 2 plus int całka oznaczona od a do b z f x dx
+
+- description: simple binomial expression (size version t)
+  text: "$$ \\tbinom  {n}  {k} $$"
+  english_expected: binom binomial n choose k
+  polish_expected: binom kombinacja n nad k
+
+- description: simple binomial expression (size version d)
+  text: "$$ \\dbinom  {n} { a_1, b_4 } $$"
+  english_expected: binom binomial n choose a 1 b 4
+  polish_expected: binom kombinacja n nad a 1 b 4
+
+- description: binomial coefficient definition
+  text: "$$ \\binom{n}{k} = \\frac{n!}{k!(n-k)!} $$"
+  english_expected: >
+    binom binomial n choose k equals to fraction n factorial divided by k
+    factorial n minus k factorial
+  polish_expected: >
+    binom kombinacja n nad k równa się ułamek n silnia dzielone przez k
+    silnia n minus k silnia

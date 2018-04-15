@@ -1,6 +1,7 @@
 
 # foundations
 Django==2.0
+psycopg2==2.5.4
 djangorestframework==3.7.7
 
 # utils
@@ -13,3 +14,15 @@ itsdangerous==0.24
 # async tasks
 celery==4.0.0
 redis==2.10.5
+
+# utils
+requests==2.13.0
+
+# language detection
+PyYAML==3.11
+detectlanguage==1.2.1
+
+# search
+# somehow this stopped working and we were forced to use direct from
+# github installation using eggs
+trans==2.1.0  # escape accented characters

@@ -48,6 +48,13 @@ LILY_ASYNC_LOCK_DB_PORT = 6379
 LILY_ASYNC_LOCK_DB_INDEX = 1
 
 #
+# Language Detection API Key
+# To be replaced by in-house solution which doesn't have to travel over the
+# network !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#
+DETECT_LANGUAGE_API_KEY = 'fake.key'
+
+#
 # Internationalization
 #
 LANGUAGE_CODE = 'en-us'
@@ -68,6 +75,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'docs',
     'base',
+    'search',
     'django.contrib.contenttypes',
     'django.contrib.auth',
 ]
@@ -75,8 +83,12 @@ INSTALLED_APPS = [
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'index.db'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'lily',
+        'USER': 'maciej',
+        'PASSWORD': '',
+        'HOST': '127.0.0.1',
+        'PORT': '5434',
     },
 }
 

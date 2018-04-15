@@ -1,0 +1,639 @@
+aa:
+    name: Afar
+    configuration: simple
+
+ab:
+    name: Abkhazian
+    configuration: simple
+
+af:
+    name: Afrikaans
+    configuration: simple
+
+ak:
+    name: Akan
+    configuration: simple
+
+am:
+    name: Amharic
+    configuration: simple
+
+ar:
+    name: Arabic
+    configuration: simple
+
+as:
+    name: Assamese
+    configuration: simple
+
+ay:
+    name: Aymara
+    configuration: simple
+
+az:
+    name: Azerbaijani
+    configuration: simple
+
+ba:
+    name: Bashkir
+    configuration: simple
+
+be:
+    name: Belarusian
+    configuration: simple
+
+bg:
+    name: Bulgarian
+    configuration: simple
+
+bh:
+    name: Bihari
+    configuration: simple
+
+bi:
+    name: Bislama
+    configuration: simple
+
+bn:
+    name: Bengali
+    configuration: simple
+
+bo:
+    name: Tibetan
+    configuration: simple
+
+br:
+    name: Breton
+    configuration: simple
+
+bs:
+    name: Bosnian
+    configuration: simple
+
+ca:
+    name: Catalan
+    configuration: simple
+
+ceb:
+    name: Cebuano
+    configuration: simple
+
+chr:
+    name: Cherokee
+    configuration: simple
+
+co:
+    name: Corsican
+    configuration: simple
+
+crs:
+    name: Seselwa
+    configuration: simple
+
+cs:
+    name: Czech
+    configuration: simple
+
+cy:
+    name: Welsh
+    configuration: simple
+
+da:
+    name: Danish
+    configuration: danish
+
+de:
+    name: German
+    configuration: german
+
+dv:
+    name: Dhivehi
+    configuration: simple
+
+dz:
+    name: Dzongkha
+    configuration: simple
+
+el:
+    name: Greek
+    configuration: simple
+
+en:
+    name: English
+    configuration: english
+
+eo:
+    name: Esperanto
+    configuration: simple
+
+es:
+    name: Spanish
+    configuration: spanish
+
+et:
+    name: Estonian
+    configuration: simple
+
+eu:
+    name: Basque
+    configuration: simple
+
+fa:
+    name: Persian
+    configuration: simple
+
+fi:
+    name: Finnish
+    configuration: finnish
+
+fj:
+    name: Fijian
+    configuration: simple
+
+fo:
+    name: Faroese
+    configuration: simple
+
+fr:
+    name: French
+    configuration: french
+
+fy:
+    name: Frisian
+    configuration: simple
+
+ga:
+    name: Irish
+    configuration: simple
+
+gd:
+    name: Scots Gaelic
+    configuration: simple
+
+gl:
+    name: Galician
+    configuration: simple
+
+gn:
+    name: Guarani
+    configuration: simple
+
+gu:
+    name: Gujarati
+    configuration: simple
+
+gv:
+    name: Manx
+    configuration: simple
+
+ha:
+    name: Hausa
+    configuration: simple
+
+haw:
+    name: Hawaiian
+    configuration: simple
+
+hi:
+    name: Hindi
+    configuration: simple
+
+hmn:
+    name: Hmong
+    configuration: simple
+
+hr:
+    name: Croatian
+    configuration: simple
+
+ht:
+    name: Haitian Creole
+    configuration: simple
+
+hu:
+    name: Hungarian
+    configuration: hungarian
+
+hy:
+    name: Armenian
+    configuration: simple
+
+ia:
+    name: Interlingua
+    configuration: simple
+
+id:
+    name: Indonesian
+    configuration: simple
+
+ie:
+    name: Interlingue
+    configuration: simple
+
+ig:
+    name: Igbo
+    configuration: simple
+
+ik:
+    name: Inupiak
+    configuration: simple
+
+is:
+    name: Icelandic
+    configuration: simple
+
+it:
+    name: Italian
+    configuration: italian
+
+iu:
+    name: Inuktitut
+    configuration: simple
+
+iw:
+    name: Hebrew
+    configuration: simple
+
+ja:
+    name: Japanese
+    configuration: simple
+
+jw:
+    name: Javanese
+    configuration: simple
+
+ka:
+    name: Georgian
+    configuration: simple
+
+kha:
+    name: Khasi
+    configuration: simple
+
+kk:
+    name: Kazakh
+    configuration: simple
+
+kl:
+    name: Greenlandic
+    configuration: simple
+
+km:
+    name: Khmer
+    configuration: simple
+
+kn:
+    name: Kannada
+    configuration: simple
+
+ko:
+    name: Korean
+    configuration: simple
+
+ks:
+    name: Kashmiri
+    configuration: simple
+
+ku:
+    name: Kurdish
+    configuration: simple
+
+ky:
+    name: Kyrgyz
+    configuration: simple
+
+la:
+    name: Latin
+    configuration: simple
+
+lb:
+    name: Luxembourgish
+    configuration: simple
+
+lg:
+    name: Ganda
+    configuration: simple
+
+lif:
+    name: Limbu
+    configuration: simple
+
+ln:
+    name: Lingala
+    configuration: simple
+
+lo:
+    name: Laothian
+    configuration: simple
+
+lt:
+    name: Lithuanian
+    configuration: simple
+
+lv:
+    name: Latvian
+    configuration: simple
+
+mfe:
+    name: Mauritian Creole
+    configuration: simple
+
+mg:
+    name: Malagasy
+    configuration: simple
+
+mi:
+    name: Maori
+    configuration: simple
+
+mk:
+    name: Macedonian
+    configuration: simple
+
+ml:
+    name: Malayalam
+    configuration: simple
+
+mn:
+    name: Mongolian
+    configuration: simple
+
+mr:
+    name: Marathi
+    configuration: simple
+
+ms:
+    name: Malay
+    configuration: simple
+
+mt:
+    name: Maltese
+    configuration: simple
+
+my:
+    name: Burmese
+    configuration: simple
+
+na:
+    name: Nauru
+    configuration: simple
+
+ne:
+    name: Nepali
+    configuration: simple
+
+nl:
+    name: Dutch
+    configuration: dutch
+
+no:
+    name: Norwegian
+    configuration: norwegian
+
+nr:
+    name: Ndebele
+    configuration: simple
+
+nso:
+    name: Pedi
+    configuration: simple
+
+ny:
+    name: Nyanja
+    configuration: simple
+
+oc:
+    name: Occitan
+    configuration: simple
+
+om:
+    name: Oromo
+    configuration: simple
+
+or:
+    name: Oriya
+    configuration: simple
+
+pa:
+    name: Punjabi
+    configuration: simple
+
+pl:
+    name: Polish
+    configuration: polish
+
+ps:
+    name: Pashto
+    configuration: simple
+
+pt:
+    name: Portuguese
+    configuration: portuguese
+
+qu:
+    name: Quechua
+    configuration: simple
+
+rm:
+    name: Rhaeto Romance
+    configuration: simple
+
+rn:
+    name: Rundi
+    configuration: simple
+
+ro:
+    name: Romanian
+    configuration: romanian
+
+ru:
+    name: Russian
+    configuration: russian
+
+rw:
+    name: Kinyarwanda
+    configuration: simple
+
+sa:
+    name: Sanskrit
+    configuration: simple
+
+sco:
+    name: Scots
+    configuration: simple
+
+sd:
+    name: Sindhi
+    configuration: simple
+
+sg:
+    name: Sango
+    configuration: simple
+
+si:
+    name: Sinhalese
+    configuration: simple
+
+sk:
+    name: Slovak
+    configuration: simple
+
+sl:
+    name: Slovenian
+    configuration: simple
+
+sm:
+    name: Samoan
+    configuration: simple
+
+sn:
+    name: Shona
+    configuration: simple
+
+so:
+    name: Somali
+    configuration: simple
+
+sq:
+    name: Albanian
+    configuration: simple
+
+sr:
+    name: Serbian
+    configuration: simple
+
+ss:
+    name: Siswant
+    configuration: simple
+
+st:
+    name: Sesotho
+    configuration: simple
+
+su:
+    name: Sundanese
+    configuration: simple
+
+sv:
+    name: Swedish
+    configuration: swedish
+
+sw:
+    name: Swahili
+    configuration: simple
+
+syr:
+    name: Syriac
+    configuration: simple
+
+ta:
+    name: Tamil
+    configuration: simple
+
+te:
+    name: Telugu
+    configuration: simple
+
+tg:
+    name: Tajik
+    configuration: simple
+
+th:
+    name: Thai
+    configuration: simple
+
+ti:
+    name: Tigrinya
+    configuration: simple
+
+tk:
+    name: Turkmen
+    configuration: simple
+
+tl:
+    name: Tagalog
+    configuration: simple
+
+tn:
+    name: Tswana
+    configuration: simple
+
+to:
+    name: Tonga
+    configuration: simple
+
+tr:
+    name: Turkish
+    configuration: turkish
+
+ts:
+    name: Tsonga
+    configuration: simple
+
+tt:
+    name: Tatar
+    configuration: simple
+
+ug:
+    name: Uighur
+    configuration: simple
+
+uk:
+    name: Ukrainian
+    configuration: simple
+
+ur:
+    name: Urdu
+    configuration: simple
+
+uz:
+    name: Uzbek
+    configuration: simple
+
+ve:
+    name: Venda
+    configuration: simple
+
+vi:
+    name: Vietnamese
+    configuration: simple
+
+vo:
+    name: Volapuk
+    configuration: simple
+
+war:
+    name: Waray Philippines
+    configuration: simple
+
+wo:
+    name: Wolof
+    configuration: simple
+
+xh:
+    name: Xhosa
+    configuration: simple
+
+yi:
+    name: Yiddish
+    configuration: simple
+
+yo:
+    name: Yoruba
+    configuration: simple
+
+za:
+    name: Zhuang
+    configuration: simple
+
+zh:
+    name: Chinese
+    configuration: simple
+
+zh-Hant:
+    name: Chineset
+    configuration: simple
+
+zu:
+    name: Zulu
+    configuration: simple
