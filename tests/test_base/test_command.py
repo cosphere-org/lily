@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import json
+from contextlib import ContextDecorator
 
 from django.test import TestCase
 from django.db.utils import DatabaseError
 from django.contrib.auth.models import User
 from django.views.generic import View
 from django_fake_model import models as fake_models
-from django.db import models
+from django.db import models, transaction
 from mock import Mock
 import pytest
 
@@ -507,8 +508,8 @@ class CommandTestCase(TestCase):
             'method': 'post',
             'source': {
                 'filepath': '/tests/test_base/test_command.py',
-                'start_line': 345,
-                'end_line': 356,
+                'start_line': 346,
+                'end_line': 357,
             },
             'meta': TestView.meta,
             'path_params_annotations': {},
@@ -592,15 +593,39 @@ class CommandTestCase(TestCase):
     #
     # ATOMICITY
     #
-    def test_atomicity(self):
+    def test_atomicity__correct_exceptions_are_visible_for_the_roolback(self):
+
+        class AtomicContext(ContextDecorator):
+
+            exception = None
+
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def __enter__(self):
+                pass
+
+            def __exit__(self, exc_type, exc, exc_tb):
+                self.__class__.exception = exc
+
+        self.mocker.patch.object(transaction, 'atomic', AtomicContext)
 
         u = User.objects.create_user(username='jacky')
         request = Mock(user_id=u.id, META=get_auth_headers(u.id))
         view = TestView()
         self.mocker.patch.object(view, 'some_stuff').side_effect = [
-            DatabaseError, Exception('hi there')]
+            # -- database error
+            DatabaseError,
 
-        assert TestView.delete.__name__ == 'decorated_inner'
+            # -- generic exception
+            Exception('hi there'),
+
+            # -- lily exception
+            event.BrokenRequest(
+                'ERROR!',
+                context=event.Context(user_id=u.id)
+            ),
+        ]
 
         # -- db error
         response = view.delete(request)
@@ -611,6 +636,7 @@ class CommandTestCase(TestCase):
             '@type': 'error',
             'user_id': u.id,
         }
+        assert isinstance(AtomicContext.exception, DatabaseError)
 
         # -- generic error
         response = view.delete(request)
@@ -622,6 +648,68 @@ class CommandTestCase(TestCase):
             'errors': ['hi there'],
             'user_id': u.id,
         }
+        assert isinstance(AtomicContext.exception, Exception)
+
+        # -- not a success exception
+        response = view.delete(request)
+
+        assert response.status_code == 400
+        assert to_json(response) == {
+            '@event': 'ERROR!',
+            '@type': 'error',
+            'user_id': u.id,
+        }
+        assert isinstance(AtomicContext.exception, event.BrokenRequest)
+
+    def test_atomicity__success_response_is_not_visible_to_rollback(self):
+
+        class AtomicContext(ContextDecorator):
+
+            exception = None
+
+            def __init__(self, *args, **kwargs):
+                pass
+
+            def __enter__(self):
+                pass
+
+            def __exit__(self, exc_type, exc, exc_tb):
+                self.__class__.exception = exc
+
+        self.mocker.patch.object(transaction, 'atomic', AtomicContext)
+
+        u = User.objects.create_user(username='jacky')
+        request = Mock(user_id=u.id, META=get_auth_headers(u.id))
+        view = TestView()
+        self.mocker.patch.object(view, 'some_stuff').side_effect = [
+
+            # -- lily success exception
+            event.Success(
+                'SUCCESS!',
+                context=event.Context(user_id=u.id)
+            ),
+
+            # -- lily created exception
+            event.Created(
+                'CREATED!',
+                context=event.Context(user_id=u.id)
+            ),
+
+        ]
+
+        # -- success exception
+        response = view.delete(request)
+
+        assert response.status_code == 200
+        assert to_json(response) == {'@event': 'SUCCESS!'}
+        assert AtomicContext.exception is None
+
+        # -- created exception
+        response = view.delete(request)
+
+        assert response.status_code == 201
+        assert to_json(response) == {'@event': 'CREATED!'}
+        assert AtomicContext.exception is None
 
     #
     # GENERIC DOES NOT EXIST ERROR

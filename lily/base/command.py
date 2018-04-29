@@ -158,7 +158,24 @@ def command(
                 # -- if not exception will be raised we return whatever it
                 # -- was returned since most likely some default Django's
                 # -- mechanism happened
-                return fn(self, request, *args, **kwargs)
+                if not is_atomic:
+                    return fn(self, request, *args, **kwargs)
+
+                else:
+                    success_exception = None
+                    with transaction.atomic():
+                        try:
+                            return fn(self, request, *args, **kwargs)
+
+                        except EventFactory.BaseSuccessException as e:
+                            success_exception = e
+
+                    # -- re-raise success exceptions outside of the
+                    # -- transaction block in order to make sure that it
+                    # -- would not be interpreted by `atomic` block as an
+                    # -- error
+                    if success_exception:
+                        raise success_exception
 
             except ObjectDoesNotExist as e:
                 # -- Rather Hacky way of fetching the name of model
@@ -239,6 +256,25 @@ def command(
 
                 return response
 
+            # -- handle gracefully database and generic exceptions
+            # -- to make sure that lily valid response will be generated
+            except DatabaseError:
+                e = event.ServerError(
+                    'DATABASE_ERROR_OCCURRED',
+                    context=request,
+                    is_critical=True)
+
+                return e.response_class(e.data)
+
+            except Exception as err:
+                e = event.ServerError(
+                    'GENERIC_ERROR_OCCURRED',
+                    context=request,
+                    data={'errors': [str(err)]},
+                    is_critical=True)
+
+                return e.response_class(e.data)
+
         # -- the below specs are available shortly after the code compilation
         # -- and therefore can be made available on runtime
         code, firstline = inspect.getsourcelines(fn)
@@ -258,42 +294,6 @@ def command(
             'output': output,
         }
 
-        def decorated_inner(self, request, *args, **kwargs):
-            """
-            Since the whole API of Lily is driven by Exceptions we must
-            apply the transaction decorator level above the `view` itself
-            since otherwise we would not be able to `commit` correctly
-            since in Lily even the successful responses are raising
-            Exceptions therefore causing the transaction to `rollback`.
-
-            """
-
-            decorated = transaction.atomic(inner)
-            try:
-                return decorated(self, request, *args, **kwargs)
-
-            except DatabaseError:
-                e = event.ServerError(
-                    'DATABASE_ERROR_OCCURRED',
-                    context=request,
-                    is_critical=True)
-
-                return e.response_class(e.data)
-
-            except Exception as err:
-                e = event.ServerError(
-                    'GENERIC_ERROR_OCCURRED',
-                    context=request,
-                    data={'errors': [str(err)]},
-                    is_critical=True)
-
-                return e.response_class(e.data)
-
-        if is_atomic:
-            decorated_inner.command_conf = inner.command_conf
-            return decorated_inner
-
-        else:
-            return inner
+        return inner
 
     return command_inner
