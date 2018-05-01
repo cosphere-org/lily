@@ -218,9 +218,10 @@ class EventFactory:
 
     class Context:
 
-        def __init__(self, user_id=None, **kwargs):
+        def __init__(self, user_id=None, email=None, origin=None):
             self.user_id = user_id
-            self.data = kwargs
+            self.email = email
+            self.origin = origin
 
     class BaseSuccessException(Exception):
 
@@ -268,6 +269,15 @@ class EventFactory:
                 '@type': 'error',
                 '@event': event,
             })
+
+            origin = getattr(context, 'origin', None)
+            if origin:
+                self.data['@origin'] = origin
+
+            email = getattr(context, 'email', None)
+            if email:
+                self.data['@email'] = email
+
             self.is_critical = is_critical
 
             # -- notify about the event

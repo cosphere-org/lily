@@ -140,6 +140,8 @@ class InputTestCase(TestCase):
 
         request = Mock(
             GET=RequestGet(title=['hi there'], prices=['what']),
+            email=None,
+            origin=None,
             user_id=902)
 
         try:
@@ -185,7 +187,12 @@ class InputTestCase(TestCase):
     def test_parse_body__broken_json(self):
         input = self._prepare_body_parser()
 
-        request = Mock(body='{not json', user_id=902)
+        request = Mock(
+            body='{not json',
+            email=None,
+            origin=None,
+            user_id=902)
+
         try:
             input.parse_body(request, command_name='MAKE_IT')
 
@@ -206,7 +213,11 @@ class InputTestCase(TestCase):
 
         # -- amount too big error
         request = Mock(
-            body=b'{"title": "hi there", "amount": 20}', user_id=902)
+            body=b'{"title": "hi there", "amount": 20}',
+            user_id=902,
+            email=None,
+            origin=None)
+
         try:
             input.parse_body(request, command_name='MAKE_IT')
 
@@ -228,7 +239,12 @@ class InputTestCase(TestCase):
             raise AssertionError('didn\'t raise error!')
 
         # -- amount is title
-        request = Mock(body=b'{"amount": 19}', user_id=902)
+        request = Mock(
+            body=b'{"amount": 19}',
+            user_id=902,
+            email=None,
+            origin=None)
+
         try:
             input.parse_body(request, command_name='MAKE_IT')
 
@@ -263,7 +279,12 @@ class InputTestCase(TestCase):
     def test_get_user__does_not_exist(self):
         input = self._prepare_body_parser()
 
-        request = Mock(body=b'{"title": "hi", "amount": 19}', user_id=190)
+        request = Mock(
+            body=b'{"title": "hi", "amount": 19}',
+            origin=None,
+            email=None,
+            user_id=190)
+
         try:
             input.get_user(request)
 
@@ -508,8 +529,8 @@ class CommandTestCase(TestCase):
             'method': 'post',
             'source': {
                 'filepath': '/tests/test_base/test_command.py',
-                'start_line': 346,
-                'end_line': 357,
+                'start_line': 367,
+                'end_line': 378,
             },
             'meta': TestView.meta,
             'path_params_annotations': {},
@@ -525,20 +546,20 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            body=dump_to_bytes({"name": "John", "age": 81}),
+            body=dump_to_bytes({'name': 'John', 'age': 81}),
             META=get_auth_headers(u.id))
         view = TestView()
 
         response = view.post(request, 19)
 
-        assert request.input.body == {"name": "John", "age": 81}
+        assert request.input.body == {'name': 'John', 'age': 81}
         assert response.status_code == 200
 
     def test_input__user(self):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            body=dump_to_bytes({"name": "John", "age": 81}),
+            body=dump_to_bytes({'name': 'John', 'age': 81}),
             META=get_auth_headers(u.id))
         view = TestView()
 
@@ -555,7 +576,7 @@ class CommandTestCase(TestCase):
         meta = get_auth_headers(u.id)
         meta['SERVER_NAME'] = 'testserver'
         request = Mock(
-            body=dump_to_bytes({"amount": 81}),
+            body=dump_to_bytes({'amount': 81}),
             user_id=u.id,
             META=meta)
         view = TestView()
@@ -575,8 +596,10 @@ class CommandTestCase(TestCase):
         meta = get_auth_headers(u.id)
         meta['SERVER_NAME'] = 'testserver'
         request = Mock(
-            body=dump_to_bytes({"not_amount": 81}),
+            body=dump_to_bytes({'not_amount': 81}),
             user_id=u.id,
+            email=None,
+            origin=None,
             META=meta)
         view = TestView()
 
@@ -611,7 +634,11 @@ class CommandTestCase(TestCase):
         self.mocker.patch.object(transaction, 'atomic', AtomicContext)
 
         u = User.objects.create_user(username='jacky')
-        request = Mock(user_id=u.id, META=get_auth_headers(u.id))
+        request = Mock(
+            user_id=u.id,
+            email=None,
+            origin=None,
+            META=get_auth_headers(u.id))
         view = TestView()
         self.mocker.patch.object(view, 'some_stuff').side_effect = [
             # -- database error
@@ -623,7 +650,7 @@ class CommandTestCase(TestCase):
             # -- lily exception
             event.BrokenRequest(
                 'ERROR!',
-                context=event.Context(user_id=u.id)
+                context=event.Context(user_id=u.id, origin='SERVICE')
             ),
         ]
 
@@ -657,6 +684,7 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'ERROR!',
             '@type': 'error',
+            '@origin': 'SERVICE',
             'user_id': u.id,
         }
         assert isinstance(AtomicContext.exception, event.BrokenRequest)
@@ -679,7 +707,11 @@ class CommandTestCase(TestCase):
         self.mocker.patch.object(transaction, 'atomic', AtomicContext)
 
         u = User.objects.create_user(username='jacky')
-        request = Mock(user_id=u.id, META=get_auth_headers(u.id))
+        request = Mock(
+            user_id=u.id,
+            email=None,
+            origin=None,
+            META=get_auth_headers(u.id))
         view = TestView()
         self.mocker.patch.object(view, 'some_stuff').side_effect = [
 
@@ -717,7 +749,11 @@ class CommandTestCase(TestCase):
     def test_does_not_exist(self):
 
         u = User.objects.create_user(username='jacky')
-        request = Mock(user_id=u.id, META=get_auth_headers(u.id))
+        request = Mock(
+            user_id=u.id,
+            email=None,
+            origin=None,
+            META=get_auth_headers(u.id))
         view = TestView()
         self.mocker.patch.object(view, 'some_stuff').side_effect = (
             lambda: User.objects.get(id=4930))
@@ -735,7 +771,11 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         u = User.objects.create_user(username='jacks')
-        request = Mock(user_id=u.id, META=get_auth_headers(u.id))
+        request = Mock(
+            user_id=u.id,
+            email=None,
+            origin=None,
+            META=get_auth_headers(u.id))
         view = TestView()
         self.mocker.patch.object(view, 'some_stuff').side_effect = (
             lambda: User.objects.get(username__contains='jack'))
