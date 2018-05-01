@@ -223,6 +223,11 @@ class EventFactory:
             self.email = email
             self.origin = origin
 
+            self.data = {
+                'user_id': self.user_id,
+                'origin': self.origin,
+            }
+
     class BaseSuccessException(Exception):
 
         def __init__(
