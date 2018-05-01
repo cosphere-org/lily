@@ -218,7 +218,7 @@ class EventFactory:
 
     class Context:
 
-        def __init__(self, user_id=None, email=None, origin=None):
+        def __init__(self, user_id=None, email=None, origin=None, **kwargs):
             self.user_id = user_id
             self.email = email
             self.origin = origin
@@ -226,7 +226,9 @@ class EventFactory:
             self.data = {
                 'user_id': self.user_id,
                 'origin': self.origin,
+
             }
+            self.data.update(kwargs)
 
     class BaseSuccessException(Exception):
 
