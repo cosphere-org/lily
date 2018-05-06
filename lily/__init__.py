@@ -5,5 +5,3 @@ from .base.input import *  # noqa
 from .base.output import *  # noqa
 from .base.command import *  # noqa
 from .base import *  # noqa
-
-__version__ = '0.1.6'
