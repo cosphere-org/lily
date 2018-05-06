@@ -6,11 +6,11 @@ from mock import Mock
 
 from lily.base.command import Input
 from lily.base import parsers
-from lily.docs.commands_conf_renderer import (
+from lily.docs.renderers.commands import (
     simplify_json_schema,
-    CommandsConfRenderer,
-    ViewsIndexRender,
+    CommandsRenderer,
 )
+from lily.docs.renderers.base import BaseRenderer
 
 
 @pytest.mark.parametrize(
@@ -119,7 +119,7 @@ class CommandsConfRendererTestCase(TestCase):
 
         urlpatterns = Mock()
         self.mocker.patch.object(
-            ViewsIndexRender, 'render'
+            BaseRenderer, 'render'
         ).return_value = {
             '/items/{item_id}': {
                 'path_conf': {'params': []},
@@ -139,7 +139,7 @@ class CommandsConfRendererTestCase(TestCase):
             },
         }
 
-        conf = CommandsConfRenderer(urlpatterns).render()
+        conf = CommandsRenderer(urlpatterns).render()
 
         assert conf == {
             'LIST_ITEM': {
@@ -163,7 +163,7 @@ class CommandsConfRendererTestCase(TestCase):
 
         urlpatterns = Mock()
         self.mocker.patch.object(
-            ViewsIndexRender, 'render'
+            BaseRenderer, 'render'
         ).return_value = {
             '/items/': {
                 'path_conf': {'params': []},
@@ -175,7 +175,7 @@ class CommandsConfRendererTestCase(TestCase):
             },
         }
 
-        conf = CommandsConfRenderer(urlpatterns).render()
+        conf = CommandsRenderer(urlpatterns).render()
 
         assert conf == {
             'CREATE_ITEM': {
@@ -200,7 +200,7 @@ class CommandsConfRendererTestCase(TestCase):
 
         urlpatterns = Mock()
         self.mocker.patch.object(
-            ViewsIndexRender, 'render'
+            BaseRenderer, 'render'
         ).return_value = {
             '/items/': {
                 'path_conf': {'params': []},
@@ -212,7 +212,7 @@ class CommandsConfRendererTestCase(TestCase):
             },
         }
 
-        conf = CommandsConfRenderer(urlpatterns).render()
+        conf = CommandsRenderer(urlpatterns).render()
 
         assert conf == {
             'LIST_ITEM': {

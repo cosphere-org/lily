@@ -6,15 +6,16 @@ from django.test import TestCase
 from mock import Mock
 import pytest
 
-from lily.base.command import Meta
-from lily.docs.markdown_renderer import Renderer, ViewsIndexRender
+from lily.base.meta import Meta, Domain
+from lily.docs.renderers.markdown import MarkdownRenderer
+from lily.docs.renderers.base import BaseRenderer
 
 
 def remove_white_chars(x):
     return re.sub('\s+', '', x)
 
 
-class MarkdownRenderer(TestCase):
+class MarkdownRendererTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
     def initfixture(self, mocker, tmpdir):
@@ -23,7 +24,7 @@ class MarkdownRenderer(TestCase):
 
     def test_render(self):
 
-        self.mocker.patch.object(ViewsIndexRender, 'render').return_value = {
+        self.mocker.patch.object(BaseRenderer, 'render').return_value = {
             '/items/': {
                 'path_conf': {
                     'path': '/items/',
@@ -34,18 +35,20 @@ class MarkdownRenderer(TestCase):
                     'meta': Meta(
                         title='hi there',
                         description='what?',
-                        tags=['items management']),
+                        domain=Domain(id='d', name='items management')),
                 },
                 'post': {
                     'name': 'CREATED',
                     'meta': Meta(
                         title='hi there',
                         description='what?',
-                        tags=['items management']),
+                        domain=Domain(id='d', name='items management')),
                 }
             }
         }
-        self.mocker.patch.object(Renderer, 'get_examples').return_value = {
+        self.mocker.patch.object(
+            MarkdownRenderer, 'get_examples'
+        ).return_value = {
             'CREATED': {
                 '201 (CREATED)': {
                     'response': {
@@ -111,7 +114,7 @@ class MarkdownRenderer(TestCase):
         }
 
         assert remove_white_chars(
-            Renderer(Mock()).render()
+            MarkdownRenderer(Mock()).render()
         ) == remove_white_chars('''
 
             # CoSphere API

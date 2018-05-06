@@ -7,46 +7,51 @@ import yaml
 from django.template import engines
 from django.conf import settings
 
-from ..base.schema import to_schema
-from .views_index_renderer import Renderer as ViewsIndexRender
+from lily.base.schema import to_schema
+from .base import BaseRenderer
 
 
 BASE_DIR = os.path.dirname(__file__)
 
 
-BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './open_api_spec_base.yaml')
+BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './open_api_base.yaml')
 
 
 engine = engines['django']
 
 
-class Renderer:
+class OpenApiRenderer(BaseRenderer):
+    """
+    DEPRECATED: this renderer is not longer supported and soon will
+    become obsolete and will be removed from the lily base modules.
+
+    """
 
     def __init__(self, urlpatterns):
         self.urlpatterns = urlpatterns
 
     def render(self):
 
-        views_index = ViewsIndexRender(self.urlpatterns).render()
+        base_index = super(OpenApiRenderer, self).render(self.urlpatterns)
 
         with open(BASE_TEMPLATE_PATH, 'r') as f:
             template = engine.from_string(f.read())
 
         return template.render({
             'version': '1.0.0',
-            'paths': self.to_yaml(self.render_paths(views_index)),
+            'paths': self.to_yaml(self.render_paths(base_index)),
         })
 
     def to_yaml(self, data, spaces_count=4):
         raw_yaml = yaml.dump(data, default_flow_style=False, indent=4)
         return raw_yaml.replace('\n', '\n' + spaces_count * ' ')
 
-    def render_paths(self, views_index):
+    def render_paths(self, base_index):
 
         paths = {}
         examples = self.get_examples()
 
-        for path, conf in views_index.items():
+        for path, conf in base_index.items():
             commands = {
                 'parameters': conf['path_conf']['parameters']
             }
@@ -99,7 +104,7 @@ class Renderer:
                     commands[method] = {
                         'operationId': method_conf['name'],
                         'summary': meta['title'],
-                        'tags': meta['tags'],
+                        'tags': [meta['domain']],
                         'description': meta['description'],
                     }
 

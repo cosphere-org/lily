@@ -5,12 +5,15 @@ from mock import Mock
 import pytest
 import yaml
 
-from lily.base.command import Meta, Output
+from lily.base.meta import Meta, Domain
+from lily.base.output import Output
 from lily.base import serializers
-from lily.docs import open_api_renderer
+from lily.docs.renderers import open_api
+from lily.docs.renderers.open_api import OpenApiRenderer
+from lily.docs.renderers.base import BaseRenderer
 
 
-class OpenAPIRenderer(TestCase):
+class OpenAPIRendererTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
     def initfixture(self, mocker, tmpdir):
@@ -19,7 +22,7 @@ class OpenAPIRenderer(TestCase):
 
     def test_render(self):
 
-        template_file = self.tmpdir.join('open_api_spec_base.yaml')
+        template_file = self.tmpdir.join('open_api_base.yaml')
         template_content = '''
 openapi: 2.0.1
 info:
@@ -30,10 +33,10 @@ paths:
         template_file.write(template_content)
 
         self.mocker.patch.object(
-            open_api_renderer, 'BASE_TEMPLATE_PATH', str(template_file))
-        self.mocker.patch.object(open_api_renderer.ViewsIndexRender, 'render')
+            open_api, 'BASE_TEMPLATE_PATH', str(template_file))
+        self.mocker.patch.object(BaseRenderer, 'render')
         self.mocker.patch.object(
-            open_api_renderer.Renderer,
+            OpenApiRenderer,
             'render_paths'
         ).return_value = {
             '/test/it': {
@@ -56,7 +59,7 @@ paths:
             },
         }
 
-        rendered = yaml.load(open_api_renderer.Renderer(Mock()).render())
+        rendered = yaml.load(OpenApiRenderer(Mock()).render())
         assert rendered['openapi'] == '2.0.1'
         assert rendered['info'] == {'title': 'hi there'}
         paths = rendered['paths']
@@ -81,7 +84,7 @@ paths:
 
         urlpatterns = Mock()
         self.mocker.patch.object(
-            open_api_renderer.Renderer,
+            OpenApiRenderer,
             'get_examples'
         ).return_value = {
             'LIST_ITEMS': {
@@ -109,18 +112,16 @@ paths:
                 'get': {
                     'name': 'LIST_ITEMS',
                     'output': Output(
-                        logger=Mock(),
                         serializer=ItemSerializer),
                     'meta': Meta(
                         title='hi there',
                         description='what?',
-                        tags=['tag_it']),
+                        domain=Domain(id='d', name='d')),
                 }
             }
         }
 
-        rendered_paths = (
-            open_api_renderer.Renderer(urlpatterns).render_paths(views_index))
+        rendered_paths = OpenApiRenderer(urlpatterns).render_paths(views_index)
 
         assert rendered_paths == {
             '/items/': {
@@ -129,7 +130,7 @@ paths:
                     'operationId': 'LIST_ITEMS',
                     'description': 'what?',
                     'summary': 'hi there',
-                    'tags': ['tag_it'],
+                    'tags': ['d'],
                     'responses': {
                         '502 (SERVER_ERROR)': {
                             'description': 'SERVER_ERROR',

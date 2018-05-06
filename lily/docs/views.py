@@ -1,19 +1,48 @@
 # -*- coding: utf-8 -*-
 
 import json
-import os
 
 from django.views.generic import View
+from django.conf import settings
 
-from base.events import JsonResponse
+from base import serializers
+from base.command import command
+from base.meta import Meta, Domain
+from base.access import Access
+from base.input import Input
+from base.output import Output
 
 
-BASE_DIR = os.path.dirname(__file__)
+class DocsBlueprintView(View):
 
+    class CommandsConfSerializer(serializers.Serializer):
+        _type = 'commands_config'
 
-class OpenAPISpecView(View):
+        commands_config = serializers.JSONField()
 
-    def get(self, service_name):
-        spec_path = os.path.join(BASE_DIR, 'open_api_spec.json')
-        with open(spec_path, 'r') as f:
-            return JsonResponse(json.loads(f.read()))
+    @command(
+        name='LIST_COMMANDS_CONF_FOR_SERVICE',
+
+        meta=Meta(
+            title='Serve commands conf available in the service',
+            description='''
+                It serves all commands configuration which are exposed in
+                the given instance of the service.
+
+            ''',
+            domain=Domain(id='internal', name='Internal Management')),
+
+        access=Access(
+            access_list=settings.LILY_DOCS_VIEWS_ACCESS_LIST),
+
+        input=Input(with_user=False),
+
+        output=Output(
+            serializer=CommandsConfSerializer),
+    )
+    def get(self, request):
+
+        with open(settings.LILY_DOCS_COMMANDS_CONF_FILE) as conf:
+            raise self.event.Success(
+                'COMMANDS_CONF_FOR_SERVICE_LISTED',
+                instance={'commands_config': json.loads(conf.read())})

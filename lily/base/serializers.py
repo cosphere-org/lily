@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import json
 import re
 import os
 from copy import deepcopy
@@ -43,8 +42,12 @@ event = EventFactory(logger)
 
 BASE_DIR = os.path.dirname(__file__)
 
-COMMANDS_CONF = json.loads(
-    open(os.path.join(BASE_DIR, '../docs/commands_conf.json')).read())
+
+# FIXME: !!!!!!!!!!1 figure out a way of fetching this on service start-up
+# COMMANDS_CONF = json.loads(
+#     open(os.path.join(BASE_DIR, '../docs/commands_conf.json')).read())
+
+COMMANDS_CONF = {}
 
 
 class MissingTypeError(Exception):
@@ -193,7 +196,7 @@ class CommandLink:
             # -- access_list is added by the Authorizer if at this stage
             # -- one cannot see it that means that Authorizer was not called
             # -- before this code was executed
-            access_list = command_conf['access_list']
+            access_list = command_conf['access']['access_list']
             service_base_uri = command_conf['service_base_uri']
             path_conf = command_conf['path_conf']
             path, parameters_conf = path_conf['path'], path_conf['parameters']

@@ -6,7 +6,7 @@ import re
 from django.urls import URLResolver, URLPattern
 
 
-class Renderer:
+class BaseRenderer:
 
     def __init__(self, urlpatterns):
         self.urlpatterns = urlpatterns

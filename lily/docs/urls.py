@@ -8,8 +8,13 @@ from . import views
 urlpatterns = [
 
     url(
-        r'^spec/$',
-        views.OpenAPISpecView.as_view(),
-        name='open_api_spec_view'),
+        r'^blueprint/$',
+        views.DocsBlueprintView.as_view(),
+        name='blueprint'),
+
+    # url(
+    #     r'^commands_conf/$',
+    #     views.DocsCommandConfView.as_view(),
+    #     name='command_conf'),
 
 ]

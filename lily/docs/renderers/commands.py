@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from ..base.schema import to_schema
-
-from .views_index_renderer import Renderer as ViewsIndexRender
+from lily.base.schema import to_schema
+from .base import BaseRenderer
 
 
 def simplify_json_schema(schema):
@@ -43,15 +42,15 @@ def simplify_json_schema(schema):
     return simplified
 
 
-class CommandsConfRenderer:
+class CommandsRenderer(BaseRenderer):
 
     def __init__(self, urlpatterns):
         self.urlpatterns = urlpatterns
 
     def render(self):
         rendered = {}
-        views_index = ViewsIndexRender(self.urlpatterns).render()
-        for path, conf in views_index.items():
+        base_index = super(CommandsRenderer, self).render(self.urlpatterns)
+        for path, conf in base_index.items():
             for method in ['post', 'get', 'put', 'delete']:
                 try:
                     method_conf = conf[method]
@@ -68,6 +67,7 @@ class CommandsConfRenderer:
                     rendered[command_name] = {
                         'method': method,
                         'access_list': method_conf['access_list'],
+                        # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
                         # FIXME: make it into the real path use env variables
                         # to achieve that
                         'service_base_uri': 'http://localhost:8080',

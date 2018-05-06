@@ -14,29 +14,64 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 #
 # LILY SPECIFIC SETTINGS
 #
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-LILY_DOCS_TEST_EXAMPLES_FILE = os.path.join(
-    BASE_DIR, 'docs', 'test_examples.json')
+#
+# GENERAL
+#
+LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
 
-LILY_DOCS_OPEN_API_SPEC_FILE = os.path.join(
-    BASE_DIR, 'docs', 'open_api_spec.json')
+LILY_SERVICE_NAME = 'LILY_SERVICE'
 
-LILY_DOCS_COMMANDS_CONF_FILE = os.path.join(
-    BASE_DIR, 'docs', 'commands_conf.json')
+LILY_SERVICE_VERSION = '0.1.4.whatever'
 
-LILY_DOCS_MARKDOWN_SPEC_FILE = os.path.join(
-    BASE_DIR, '../', 'DOCS.md')
+LILY_SERVICE_REPOSITORY_URI = 'https://bitbucket.org/goodai/lily'
 
+#
+# AUTHORIZER
+#
 LILY_AUTHORIZER_CLASS = getattr(
     settings,
     'LILY_AUTHORIZER_CLASS',
     'lily.base.authorizer.Authorizer')
 
-LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
+#
+# ENTRYPOINT
+#
+LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = None
+
+#
+# DOCS
+#
+LILY_DOCS_BASE_DIR = os.path.join(BASE_DIR, './.docs')
+
+LILY_DOCS_VIEWS_ACCESS_LIST = None
+
+# !!!! DEPRECATED
+# FIXME: !!!!!!!!!!!!!!
+# -- replace with some generic stuff
+LILY_DOCS_TEST_EXAMPLES_FILE = os.path.join(
+    BASE_DIR, 'docs', 'test_examples.json')
+
+# !!!! DEPRECATED
+# FIXME: !!!!!!!!!!!!!!
+LILY_DOCS_OPEN_API_SPEC_FILE = os.path.join(
+    BASE_DIR, 'docs', 'open_api_spec.json')
+
+# !!!! DEPRECATED
+# FIXME: !!!!!!!!!!!!!!
+LILY_DOCS_COMMANDS_CONF_FILE = os.path.join(
+    BASE_DIR, 'docs', 'commands_conf.json')
+
+# !!!! DEPRECATED
+# FIXME: !!!!!!!!!!!!!!
+LILY_DOCS_MARKDOWN_SPEC_FILE = os.path.join(
+    BASE_DIR, '../', 'DOCS.md')
 
 #
 # ASYNC

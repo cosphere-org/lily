@@ -7,10 +7,10 @@ from django.urls import re_path, include
 from django.views.generic import View
 import pytest
 
-from lily.docs.views_index_renderer import Renderer
+from lily.docs.renderers.base import BaseRenderer
 
 
-class ViewsIndexRendererTestCase(TestCase):
+class BaseRendererTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
     def initfixtures(self, mocker):
@@ -36,7 +36,7 @@ class ViewsIndexRendererTestCase(TestCase):
 
         hi_view, yo_view = HiView.as_view(), YoView.as_view()
 
-        renderer = Renderer([
+        renderer = BaseRenderer([
             re_path(r'^hi/there$', hi_view, name='hi.there'),
             re_path(r'^hiyo', yo_view, name='hiyo'),
         ])
@@ -87,7 +87,7 @@ class ViewsIndexRendererTestCase(TestCase):
         hi_view, yo_view, wat_view = (
             HiView.as_view(), YoView.as_view(), WatView.as_view())
 
-        renderer = Renderer([
+        renderer = BaseRenderer([
             re_path(r'^payment/$', include([
                 re_path(r'^hi/there$', hi_view, 'hi.there'),
                 re_path(r'^now/(?P<when>\d+)/$', include([
@@ -169,7 +169,7 @@ class ViewsIndexRendererTestCase(TestCase):
     #
     def test_url_pattern_to_conf__returns_path_conf__no_params(self):
 
-        renderer = Renderer(Mock())
+        renderer = BaseRenderer(Mock())
 
         assert renderer.url_pattern_to_dict(
             ['^payments/', '^subscriptions/register/$']
@@ -188,7 +188,7 @@ class ViewsIndexRendererTestCase(TestCase):
 
     def test_url_pattern_to_conf__returns_path_conf__int_param(self):
 
-        renderer = Renderer(Mock())
+        renderer = BaseRenderer(Mock())
 
         assert renderer.url_pattern_to_dict(
             ['^payments/', '^payment_cards/(?P<payment_card_id>\\d+)$']
@@ -209,7 +209,7 @@ class ViewsIndexRendererTestCase(TestCase):
 
     def test_url_pattern_to_conf__returns_path_conf__string_param(self):
 
-        renderer = Renderer(Mock())
+        renderer = BaseRenderer(Mock())
 
         assert renderer.url_pattern_to_dict([
             '^payments/',
@@ -231,7 +231,7 @@ class ViewsIndexRendererTestCase(TestCase):
 
     def test_url_pattern_to_conf__returns_path_conf__many_params(self):
 
-        renderer = Renderer(Mock())
+        renderer = BaseRenderer(Mock())
 
         assert renderer.url_pattern_to_dict([
             '^cards/',

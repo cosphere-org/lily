@@ -131,7 +131,10 @@ class CommandLinkTestCase(TestCase):
                             },
                         ],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    },
                 }
             })
 
@@ -169,7 +172,10 @@ class CommandLinkTestCase(TestCase):
                             },
                         ],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    },
                     'body': {'some': 'thing'},
                 }
             })
@@ -209,7 +215,10 @@ class CommandLinkTestCase(TestCase):
                             },
                         ],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    },
                     'query': {'some': 'thing'},
                 }
             })
@@ -258,7 +267,10 @@ class CommandLinkTestCase(TestCase):
                             },
                         ],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    },
                 }
             })
 
@@ -300,7 +312,10 @@ class CommandLinkTestCase(TestCase):
                             },
                         ],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    },
                 }
             })
 
@@ -333,7 +348,10 @@ class CommandLinkTestCase(TestCase):
                             },
                         ],
                     },
-                    'access_list': None,
+                    'access': {
+                        'access_list': None,
+                        'is_private': False,
+                    },
                 }
             })
 
@@ -365,7 +383,10 @@ class CommandLinkTestCase(TestCase):
                         'path': '/payment_cards/',
                         'parameters': [],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    },
                     'body': {
                         '@type': 'object',
                         'value': {
@@ -425,7 +446,10 @@ class CommandLinkTestCase(TestCase):
                         'path': '/payment_cards/',
                         'parameters': [],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    },
                     'query': {
                         '@type': 'object',
                         'value': {
@@ -481,7 +505,10 @@ class CommandLinkTestCase(TestCase):
                         'path': '/payment_cards/',
                         'parameters': [],
                     },
-                    'access_list': ['MENTOR'],
+                    'access': {
+                        'access_list': ['MENTOR'],
+                        'is_private': False,
+                    }
                 }
             })
 

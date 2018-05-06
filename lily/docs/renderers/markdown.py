@@ -9,13 +9,13 @@ from collections import OrderedDict
 from django.template import engines
 from django.conf import settings
 
-from .views_index_renderer import Renderer as ViewsIndexRender
+from .base import BaseRenderer
 
 
 BASE_DIR = os.path.dirname(__file__)
 
 
-BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './markdown_spec_base.md')
+BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './markdown_base.md')
 
 
 engine = engines['django']
@@ -37,14 +37,19 @@ def dump_or_none(x):
         return json.dumps(x, indent=4, sort_keys=True)
 
 
-class Renderer:
+class MarkdownRenderer(BaseRenderer):
+    """
+    DEPRECATED: this renderer is not longer supported and soon will
+    become obsolete and will be removed from the lily base modules.
+
+    """
 
     def __init__(self, urlpatterns):
         self.urlpatterns = urlpatterns
 
     def render(self):
 
-        views_index = ViewsIndexRender(self.urlpatterns).render()
+        base_index = super(MarkdownRenderer, self).render(self.urlpatterns)
 
         with open(BASE_TEMPLATE_PATH, 'r') as f:
             template = engine.from_string(f.read())
@@ -52,7 +57,7 @@ class Renderer:
         examples = self.get_examples()
         document_tree = {}
 
-        for path, conf in views_index.items():
+        for path, conf in base_index.items():
             for method in ['post', 'get', 'put', 'delete']:
                 try:
                     method_conf = conf[method]
@@ -64,9 +69,8 @@ class Renderer:
                     meta = method_conf['meta'].serialize()
                     name = method_conf['name']
 
-                    # -- currently we only take into account first tag!
-                    tag = meta['tags'][0]
-                    document_tree.setdefault(tag, [])
+                    domain = meta['domain']
+                    document_tree.setdefault(domain, [])
 
                     try:
                         command_examples = examples[name]
@@ -75,7 +79,7 @@ class Renderer:
                         logger.error('Missing examples for {}'.format(name))
 
                     else:
-                        document_tree[tag].append({
+                        document_tree[domain].append({
                             'title': '{name}: {method} {path}'.format(
                                 name=name,
                                 method=method.upper(),

@@ -11,7 +11,11 @@ from mock import Mock
 
 from conf.urls import urlpatterns
 
-from lily.base.command import command, Input, Output, Meta
+from lily.base.command import command
+from lily.base.meta import Meta, Domain
+from lily.base.access import Access
+from lily.base.input import Input
+from lily.base.output import Output
 from lily.base.events import EventFactory
 from lily.base import serializers
 from lily.base.test import Client
@@ -31,58 +35,70 @@ class SampleView(View):
 
     @command(
         name='POST_IT',
-        meta=Meta(title='post it', description='post it', tags=[]),
-        access_list=[],
+        meta=Meta(
+            title='post it',
+            description='post it',
+            domain=Domain(id='d', name='d')),
+        access=Access(access_list=[]),
         input=Input(with_user=False),
-        output=Output(logger=Mock(), serializer=SampleSerializer))
+        output=Output(serializer=SampleSerializer))
     def post(self, request):
         raise event.Created(
-            'CREATED', context=request, data={'hello': 'post'})
+            event='CREATED', context=request, data={'hello': 'post'})
 
     @command(
         name='GET_IT',
-        meta=Meta(title='get it', description='get it', tags=[]),
-        access_list=[],
+        meta=Meta(
+            title='get it',
+            description='get it',
+            domain=Domain(id='d', name='d')),
+        access=Access(access_list=[]),
         input=Input(with_user=False),
-        output=Output(logger=Mock(), serializer=SampleSerializer))
+        output=Output(serializer=SampleSerializer))
     def get(self, request):
 
         _type = request.GET.get('type')
         if _type in ['a', None]:
             raise event.Success(
-                'LISTED', context=request, data={'hello': 'get.a'})
+                event='LISTED', context=request, data={'hello': 'get.a'})
 
         if _type == 'b':
             raise event.Success(
-                'LISTED', context=request, data={'hello': 'get.b'})
+                event='LISTED', context=request, data={'hello': 'get.b'})
 
         if _type == 'c':
             raise event.Success(
-                'LISTED_AGAIN', context=request, data={'hello': 'get.c'})
+                event='LISTED_AGAIN', context=request, data={'hello': 'get.c'})
 
         if _type == 'd':
             raise event.DoesNotExist(
-                'ERROR_LISTED', context=request, data={'hello': 'get.d'})
+                event='ERROR_LISTED', context=request, data={'hello': 'get.d'})
 
     @command(
         name='PUT_IT',
-        meta=Meta(title='put it', description='put it', tags=[]),
-        access_list=[],
+        meta=Meta(
+            title='put it',
+            description='put it',
+            domain=Domain(id='d', name='d')),
+        access=Access(access_list=[]),
         input=Input(with_user=False),
-        output=Output(logger=Mock(), serializer=SampleSerializer))
+        output=Output(serializer=SampleSerializer))
     def put(self, request):
         raise event.Success(
-            'UPDATED', context=request, data={'hello': 'put'})
+            event='UPDATED', context=request, data={'hello': 'put'})
 
     @command(
         name='DELETE_IT',
-        meta=Meta(title='delete it', description='delete it', tags=[]),
-        access_list=[],
+        meta=Meta(
+            title='delete it',
+            description='delete it',
+            domain=Domain(id='d', name='d')),
+        access=Access(access_list=[]),
         input=Input(with_user=False),
-        output=Output(logger=Mock(), serializer=SampleSerializer))
+        output=Output(serializer=SampleSerializer))
     def delete(self, request):
         raise event.Success(
-            'DELETED', context=request, data={'hello': 'delete'})
+            event='DELETED', context=request, data={'hello': 'delete'})
 
 
 urlpatterns.append(
