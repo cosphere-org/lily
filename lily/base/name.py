@@ -137,7 +137,6 @@ class BaseVerb:
     def render_event_name(self, request=None, e=None):
 
         if request and e:
-            # fixme: test it!!!!!!!!
             if not isinstance(e, self.finalizers):
                 raise EventFactory.BrokenRequest(
                     event=(
@@ -201,18 +200,17 @@ class Conjunction:
         return Phrase
 
 
-# FIXME: test it!
 class ConstantName(BaseVerb):
 
     def __init__(self, command_name):
         self.command_name = command_name
 
     def render_command_name(self):
-        return self.command_name
+        return self.transform(self.command_name)
 
     def render_event_name(self, request, e):
 
-        return e.event
+        return self.transform(e.event)
 
 
 class Execute(BaseVerb):
@@ -226,7 +224,6 @@ class Execute(BaseVerb):
 
         super(Execute, self).__init__(noun)
 
-    # fixme: test it!!!!!!!!
     def render_event_name(self, request=None, e=None):
 
         if request and e:

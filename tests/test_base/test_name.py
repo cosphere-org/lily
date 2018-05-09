@@ -7,6 +7,7 @@ import pytest
 from lily.base.name import (
     to_past,
     BaseVerb,
+    ConstantName,
     Create,
     Update,
     Upsert,
@@ -15,9 +16,24 @@ from lily.base.name import (
     Delete,
     Execute,
 )
+from lily.base.events import EventFactory
 
 
-class VerbaTestCase(TestCase):
+class ConstantNameTestCase(TestCase):
+
+    def test_render_command_name(self):
+        c = ConstantName('hi  there')
+
+        assert c.render_command_name() == 'HI_THERE'
+
+    def test_render_event_name(self):
+        c = ConstantName('hi  there')
+
+        assert c.render_event_name(
+            Mock(), Mock(event='hello yo')) == 'HELLO_YO'
+
+
+class VerbsTestCase(TestCase):
 
     def test_accepts_string_noun_or_model(self):
 
@@ -42,6 +58,26 @@ class VerbaTestCase(TestCase):
 
         assert v.render_command_name() == 'GREET_CARD'
 
+    def test_render_event_name__wrong_finalizer(self):
+
+        # -- Success instead of Created
+        try:
+            assert Create('Car').render_event_name(
+                Mock(), EventFactory.Success())
+
+        except EventFactory.BrokenRequest as e:
+            assert e.event == (
+                'INVALID_FINALIZER_USED_FOR_SPECIFIC_COMMAND_DETECTED')
+
+        # -- Updated instead of Deleted
+        try:
+            assert Delete('Car').render_event_name(
+                Mock(), EventFactory.Updated())
+
+        except EventFactory.BrokenRequest as e:
+            assert e.event == (
+                'INVALID_FINALIZER_USED_FOR_SPECIFIC_COMMAND_DETECTED')
+
 
 class ExecuteTestCase(TestCase):
 
@@ -49,6 +85,27 @@ class ExecuteTestCase(TestCase):
 
         assert Execute('Get', 'Car').render_command_name() == 'GET_CAR'
         assert Execute('Get', 'Car').render_event_name() == 'CAR_GOT'
+
+    def test_render_event_name__wrong_finalizer(self):
+
+        try:
+            assert Execute('Get', 'Car').render_event_name(
+                Mock(), EventFactory.Success())
+
+        except EventFactory.BrokenRequest as e:
+            assert e.event == (
+                'INVALID_FINALIZER_USED_FOR_SPECIFIC_COMMAND_DETECTED')
+
+
+class UpsertTestCase(TestCase):
+
+    def test_render_event_name__accepts_many_finalizers(self):
+
+        assert Upsert('Car').render_event_name(
+            Mock(), EventFactory.Created()) == 'CAR_CREATED'
+
+        assert Upsert('Box').render_event_name(
+            Mock(), EventFactory.Updated()) == 'BOX_UPDATED'
 
 
 @pytest.mark.parametrize(
