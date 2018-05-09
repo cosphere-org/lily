@@ -15,7 +15,7 @@ requirements_path = os.path.join(
 setup(
     name=SERVICE_NAME,
     description='Lily',
-    version='0.1.6',
+    version='0.1.7',
     author='CoSphere Tech Team',
     packages=find_packages(),
     install_requires=open(requirements_path).readlines(),
