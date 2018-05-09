@@ -15,6 +15,7 @@ from .utils import import_from_string
 from .access import Access
 from .input import Input
 from .output import Output
+from .name import ConstantName
 
 
 logger = logging.getLogger()
@@ -31,16 +32,8 @@ def command(
         output=None,
         is_atomic=False):
 
-    # -- handle event and command name
-    if not isinstance(name, str):
-        event_name = name.render_event_name()
-        command_name = name.render_command_name()
-
-    else:
-        event_name = None
-        command_name = name
-
     # -- defaults
+    name = (isinstance(name, str) and ConstantName(name)) or name
     access = access or Access(access_list=None)
     input = input or Input()
     output = output or Output(serializer=serializers.EmptySerializer)
@@ -53,7 +46,7 @@ def command(
             self.event = event
 
             # -- add current command_name for easier reference
-            request.command_name = command_name
+            request.command_name = name.render_command_name()
 
             try:
                 #
@@ -70,7 +63,7 @@ def command(
                 #
                 if input:
                     input.set_event_factory(event).parse(
-                        request, command_name=command_name)
+                        request, command_name=name.render_command_name())
 
                 #
                 # IS_ATOMIC
@@ -90,7 +83,9 @@ def command(
                             return fn(self, request, *args, **kwargs)
 
                         except EventFactory.BaseSuccessException as e:
-                            e.extend(context=request, event=event_name).log()
+                            e.extend(
+                                context=request,
+                                event=name.render_event_name(request, e)).log()
 
                             success_exception = e
 
@@ -102,7 +97,9 @@ def command(
                         raise success_exception
 
             except EventFactory.BaseSuccessException as e:
-                e.extend(context=request, event=event_name).log()
+                e.extend(
+                    context=request,
+                    event=name.render_event_name(request, e)).log()
 
                 #
                 # OUTPUT
@@ -112,7 +109,7 @@ def command(
                         e.instance,
                         context={
                             'request': request,
-                            'command_name': command_name,
+                            'command_name': name.render_command_name(),
                         }).data
 
                 else:
@@ -120,7 +117,7 @@ def command(
                         data=e.data,
                         context={
                             'request': request,
-                            'command_name': command_name,
+                            'command_name': name.render_command_name(),
                         })
 
                     #
@@ -198,7 +195,7 @@ def command(
         # -- and therefore can be made available on runtime
         code, firstline = inspect.getsourcelines(fn)
         inner.command_conf = {
-            'name': command_name,
+            'name': name.render_command_name(),
             'method': fn.__name__,
             'meta': meta,
             'source': {

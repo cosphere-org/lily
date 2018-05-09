@@ -55,7 +55,7 @@ class ExecuteTestCase(TestCase):
     'verb, expected_command, expected_event', [
         (Create('home'), 'CREATE_HOME', 'HOME_CREATED'),
         (Update('candy'), 'UPDATE_CANDY', 'CANDY_UPDATED'),
-        (Upsert('home'), 'UPSERT_HOME', 'HOME_UPSERTED'),
+        (Upsert('home'), 'UPSERT_HOME', 'HOME_CREATED'),
         (Read('bicycle'), 'READ_BICYCLE', 'BICYCLE_READ'),
         (List('box'), 'LIST_BOX', 'BOX_LISTED'),
         (Delete('home'), 'DELETE_HOME', 'HOME_DELETED'),
@@ -64,7 +64,9 @@ class ExecuteTestCase(TestCase):
 def test_verbs(verb, expected_command, expected_event):
 
     assert verb.render_command_name() == expected_command
-    assert verb.render_event_name() == expected_event
+
+    e = verb.finalizers[0]()
+    assert verb.render_event_name(Mock(), e) == expected_event
 
 
 @pytest.mark.parametrize(
@@ -119,4 +121,6 @@ def test_to_past(verb, expected):
 def test_cause_and_effect(phrase, expected_command, expected_event):
 
     assert phrase.render_command_name() == expected_command
-    assert phrase.render_event_name() == expected_event
+
+    e = phrase.effect.finalizers[0]()
+    assert phrase.render_event_name(Mock(), e) == expected_event
