@@ -61,6 +61,7 @@ class EventFactory:
         self.Read.logger = logger
         self.Listed.logger = logger
         self.Updated.logger = logger
+        self.BulkUpdated.logger = logger
         self.Executed.logger = logger
         self.Deleted.logger = logger
 
@@ -108,6 +109,8 @@ class EventFactory:
     # SUCCESS RESPONSES
     #
     class BaseSuccessException(Exception):
+
+        verb = None
 
         def __init__(
                 self,
@@ -170,6 +173,12 @@ class EventFactory:
         response_class = Json200
 
     class Updated(BaseSuccessException):
+        response_class = Json200
+
+    class BulkUpdated(BaseSuccessException):
+
+        verb = 'bulk_updated'
+
         response_class = Json200
 
     class Deleted(BaseSuccessException):

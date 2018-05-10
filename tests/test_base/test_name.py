@@ -8,14 +8,16 @@ from lily.base.name import (
     to_past,
     to_plural,
     BaseVerb,
+    BulkUpdate,
     ConstantName,
     Create,
-    Update,
-    Upsert,
-    Read,
-    List,
     Delete,
     Execute,
+    List,
+    Read,
+    ReadOrCreate,
+    Update,
+    Upsert,
 )
 from lily.base.events import EventFactory
 
@@ -142,6 +144,8 @@ class ListTestCase(TestCase):
         (List('box'), 'LIST_BOXES', 'BOXES_LISTED'),
         (Delete('home'), 'DELETE_HOME', 'HOME_DELETED'),
         (Execute('buy', 'home'), 'BUY_HOME', 'HOME_BOUGHT'),
+        (ReadOrCreate('home'), 'READ_OR_CREATE_HOME', 'HOME_READ'),
+        (BulkUpdate('lock'), 'BULK_UPDATE_LOCK', 'LOCK_BULK_UPDATED'),
     ])
 def test_verbs(verb, expected_command, expected_event):
 

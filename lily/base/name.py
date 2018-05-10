@@ -163,7 +163,7 @@ class BaseVerb:
                     context=request)
 
             return '{noun}_{past_verb}'.format(
-                past_verb=self.transform(e.__class__.__name__),
+                past_verb=self.transform(e.verb or e.__class__.__name__),
                 noun=self.noun)
 
         else:
@@ -299,8 +299,22 @@ class Update(BaseVerb):
     verb = 'update'
 
 
+class BulkUpdate(BaseVerb):
+
+    finalizers = (EventFactory.BulkUpdated,)
+
+    verb = 'bulk_update'
+
+
 class Delete(BaseVerb):
 
     finalizers = (EventFactory.Deleted,)
 
     verb = 'delete'
+
+
+class ReadOrCreate(BaseVerb):
+
+    finalizers = (EventFactory.Read, EventFactory.Created)
+
+    verb = 'read_or_create'
