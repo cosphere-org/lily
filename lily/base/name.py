@@ -183,6 +183,16 @@ class BaseVerb:
         return Conjunction(effect=self)
 
 
+class BaseVerbWithPluralNoun(BaseVerb):
+
+    def __init__(self, noun):
+
+        if not isinstance(noun, str):
+            noun = noun._meta.model_name
+
+        super(BaseVerbWithPluralNoun, self).__init__(to_plural(noun))
+
+
 class Conjunction:
 
     def __init__(self, effect):
@@ -278,18 +288,11 @@ class Read(BaseVerb):
     verb = 'read'
 
 
-class List(BaseVerb):
+class List(BaseVerbWithPluralNoun):
 
     finalizers = (EventFactory.Listed,)
 
     verb = 'list'
-
-    def __init__(self, noun):
-
-        if not isinstance(noun, str):
-            noun = noun._meta.model_name
-
-        super(List, self).__init__(to_plural(noun))
 
 
 class Update(BaseVerb):
@@ -299,11 +302,18 @@ class Update(BaseVerb):
     verb = 'update'
 
 
-class BulkUpdate(BaseVerb):
+class BulkUpdate(BaseVerbWithPluralNoun):
 
     finalizers = (EventFactory.BulkUpdated,)
 
     verb = 'bulk_update'
+
+
+class BulkDelete(BaseVerbWithPluralNoun):
+
+    finalizers = (EventFactory.BulkDeleted,)
+
+    verb = 'bulk_delete'
 
 
 class Delete(BaseVerb):

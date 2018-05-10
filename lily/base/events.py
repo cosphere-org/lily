@@ -64,6 +64,7 @@ class EventFactory:
         self.BulkUpdated.logger = logger
         self.Executed.logger = logger
         self.Deleted.logger = logger
+        self.BulkDeleted.logger = logger
 
         # -- 201
         self.Created.logger = logger
@@ -178,6 +179,12 @@ class EventFactory:
     class BulkUpdated(BaseSuccessException):
 
         verb = 'bulk_updated'
+
+        response_class = Json200
+
+    class BulkDeleted(BaseSuccessException):
+
+        verb = 'bulk_deleted'
 
         response_class = Json200
 

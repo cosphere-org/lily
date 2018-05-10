@@ -8,6 +8,7 @@ from lily.base.name import (
     to_past,
     to_plural,
     BaseVerb,
+    BulkDelete,
     BulkUpdate,
     ConstantName,
     Create,
@@ -145,7 +146,8 @@ class ListTestCase(TestCase):
         (Delete('home'), 'DELETE_HOME', 'HOME_DELETED'),
         (Execute('buy', 'home'), 'BUY_HOME', 'HOME_BOUGHT'),
         (ReadOrCreate('home'), 'READ_OR_CREATE_HOME', 'HOME_READ'),
-        (BulkUpdate('lock'), 'BULK_UPDATE_LOCK', 'LOCK_BULK_UPDATED'),
+        (BulkUpdate('lock'), 'BULK_UPDATE_LOCKS', 'LOCKS_BULK_UPDATED'),
+        (BulkDelete('cat'), 'BULK_DELETE_CATS', 'CATS_BULK_DELETED'),
     ])
 def test_verbs(verb, expected_command, expected_event):
 

@@ -1,24 +1,24 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
-            "method": "get",
+            "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "//",
                 "headers": {
                     "X-CS-USER-ID": 190,
                     "X-CS-ACCOUNT-TYPE": "WHATEVER"
-                }
+                },
+                "path": "//"
             },
+            "method": "get",
             "response": {
+                "status": 200,
+                "content_type": "application/json",
                 "content": {
                     "@event": "ENTRY_POINT_READ",
-                    "version": "2.5.6",
-                    "@type": "entrypoint"
-                },
-                "status": 200,
-                "content_type": "application/json"
-            },
-            "description": "ENTRY_POINT_READ"
+                    "@type": "entrypoint",
+                    "version": "2.5.6"
+                }
+            }
         }
     }
 }
