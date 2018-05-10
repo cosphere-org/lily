@@ -286,6 +286,9 @@ class List(BaseVerb):
 
     def __init__(self, noun):
 
+        if not isinstance(noun, str):
+            noun = noun._meta.model_name
+
         super(List, self).__init__(to_plural(noun))
 
 

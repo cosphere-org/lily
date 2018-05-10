@@ -113,10 +113,14 @@ class ListTestCase(TestCase):
 
     def test_applies_pluralization(self):
 
+        user = Mock(_meta=Mock(model_name='User'))
+
         # -- render_command_name
         assert List('Car').render_command_name() == 'LIST_CARS'
 
         assert List('boxes').render_command_name() == 'LIST_BOXES'
+
+        assert List(user).render_command_name() == 'LIST_USERS'
 
         # -- render_event_name
         assert List('Car').render_event_name(
@@ -124,6 +128,9 @@ class ListTestCase(TestCase):
 
         assert List('boxes').render_event_name(
             Mock(), EventFactory.Listed()) == 'BOXES_LISTED'
+
+        assert List(user).render_event_name(
+            Mock(), EventFactory.Listed()) == 'USERS_LISTED'
 
 
 @pytest.mark.parametrize(
