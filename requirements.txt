@@ -26,3 +26,4 @@ detectlanguage==1.2.1
 # somehow this stopped working and we were forced to use direct from
 # github installation using eggs
 trans==2.1.0  # escape accented characters
+inflect==0.3.1

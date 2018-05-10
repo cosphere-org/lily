@@ -2,7 +2,12 @@
 
 import re
 
+import inflect
+
 from .events import EventFactory
+
+
+INFLECT_ENGINE = inflect.engine()
 
 
 IRREGULAR_FORMS = {
@@ -63,6 +68,19 @@ END_HUSHERS = set([
     'wn',
     'x',
 ])
+
+
+def to_plural(noun):
+    """ Forgiving plural form transformer
+
+    If the `noun` is already in the plural form no transformation will be
+    applied.
+
+    """
+    if not INFLECT_ENGINE.singular_noun(noun):
+        return INFLECT_ENGINE.plural(noun)
+
+    return noun
 
 
 def to_past(verb):
@@ -265,6 +283,10 @@ class List(BaseVerb):
     finalizers = (EventFactory.Listed,)
 
     verb = 'list'
+
+    def __init__(self, noun):
+
+        super(List, self).__init__(to_plural(noun))
 
 
 class Update(BaseVerb):

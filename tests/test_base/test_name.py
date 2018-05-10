@@ -6,6 +6,7 @@ import pytest
 
 from lily.base.name import (
     to_past,
+    to_plural,
     BaseVerb,
     ConstantName,
     Create,
@@ -108,13 +109,30 @@ class UpsertTestCase(TestCase):
             Mock(), EventFactory.Updated()) == 'BOX_UPDATED'
 
 
+class ListTestCase(TestCase):
+
+    def test_applies_pluralization(self):
+
+        # -- render_command_name
+        assert List('Car').render_command_name() == 'LIST_CARS'
+
+        assert List('boxes').render_command_name() == 'LIST_BOXES'
+
+        # -- render_event_name
+        assert List('Car').render_event_name(
+            Mock(), EventFactory.Listed()) == 'CARS_LISTED'
+
+        assert List('boxes').render_event_name(
+            Mock(), EventFactory.Listed()) == 'BOXES_LISTED'
+
+
 @pytest.mark.parametrize(
     'verb, expected_command, expected_event', [
         (Create('home'), 'CREATE_HOME', 'HOME_CREATED'),
         (Update('candy'), 'UPDATE_CANDY', 'CANDY_UPDATED'),
         (Upsert('home'), 'UPSERT_HOME', 'HOME_CREATED'),
         (Read('bicycle'), 'READ_BICYCLE', 'BICYCLE_READ'),
-        (List('box'), 'LIST_BOX', 'BOX_LISTED'),
+        (List('box'), 'LIST_BOXES', 'BOXES_LISTED'),
         (Delete('home'), 'DELETE_HOME', 'HOME_DELETED'),
         (Execute('buy', 'home'), 'BUY_HOME', 'HOME_BOUGHT'),
     ])
@@ -162,6 +180,24 @@ def test_to_past(verb, expected):
 
 
 @pytest.mark.parametrize(
+    'noun, expected', [
+        # -- regular
+        ('apple', 'apples'),
+        ('card', 'cards'),
+
+        # -- irregular
+        ('wolf', 'wolves'),
+
+        # -- plural stay plural
+        ('paths', 'paths'),
+        ('wolves', 'wolves'),
+    ])
+def test_to_plural(noun, expected):
+
+    assert to_plural(noun) == expected
+
+
+@pytest.mark.parametrize(
     'phrase, expected_command, expected_event', [
         (
             Create('card').after.Delete('user'),
@@ -171,8 +207,8 @@ def test_to_past(verb, expected):
 
         (
             List('payment').after.Upsert('card'),
-            'LIST_PAYMENT_AFTER_UPSERT_CARD',
-            'PAYMENT_LISTED_AFTER_CARD_UPSERTED',
+            'LIST_PAYMENTS_AFTER_UPSERT_CARD',
+            'PAYMENTS_LISTED_AFTER_CARD_UPSERTED',
         ),
     ])
 def test_cause_and_effect(phrase, expected_command, expected_event):
