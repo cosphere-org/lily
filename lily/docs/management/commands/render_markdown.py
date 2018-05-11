@@ -5,7 +5,7 @@ from importlib import import_module
 from django.core.management.base import BaseCommand
 from django.conf import settings
 
-from ...markdown_renderer import Renderer as MarkdownRenderer
+from ...renderers.markdown import MarkdownRenderer
 
 
 class Command(BaseCommand):

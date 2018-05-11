@@ -8,17 +8,21 @@ from lily.base.name import (
     to_past,
     to_plural,
     BaseVerb,
-    BulkDelete,
-    BulkUpdate,
     ConstantName,
-    Create,
-    Delete,
     Execute,
-    List,
+    # -- CRUD
+    Create,
     Read,
-    ReadOrCreate,
     Update,
-    Upsert,
+    Delete,
+    # -- BULK CRUD
+    BulkCreate,
+    BulkRead,
+    BulkUpdate,
+    BulkDelete,
+    # -- CONDITIONAL CRUD
+    CreateOrUpdate,
+    CreateOrRead,
 )
 from lily.base.events import EventFactory
 
@@ -64,10 +68,10 @@ class VerbsTestCase(TestCase):
 
     def test_render_event_name__wrong_finalizer(self):
 
-        # -- Success instead of Created
+        # -- Success Executed of Created
         try:
             assert Create('Car').render_event_name(
-                Mock(), EventFactory.Success())
+                Mock(), EventFactory.Executed())
 
         except EventFactory.BrokenRequest as e:
             assert e.event == (
@@ -94,60 +98,74 @@ class ExecuteTestCase(TestCase):
 
         try:
             assert Execute('Get', 'Car').render_event_name(
-                Mock(), EventFactory.Success())
+                Mock(), EventFactory.Created())
 
         except EventFactory.BrokenRequest as e:
             assert e.event == (
                 'INVALID_FINALIZER_USED_FOR_SPECIFIC_COMMAND_DETECTED')
 
 
-class UpsertTestCase(TestCase):
+class CreateOrUpdateTestCase(TestCase):
 
     def test_render_event_name__accepts_many_finalizers(self):
 
-        assert Upsert('Car').render_event_name(
+        assert CreateOrUpdate('Car').render_event_name(
             Mock(), EventFactory.Created()) == 'CAR_CREATED'
 
-        assert Upsert('Box').render_event_name(
+        assert CreateOrUpdate('Box').render_event_name(
             Mock(), EventFactory.Updated()) == 'BOX_UPDATED'
 
 
-class ListTestCase(TestCase):
+class CreateOrReadTestCase(TestCase):
+
+    def test_render_event_name__accepts_many_finalizers(self):
+
+        assert CreateOrRead('Car').render_event_name(
+            Mock(), EventFactory.Created()) == 'CAR_CREATED'
+
+        assert CreateOrRead('Box').render_event_name(
+            Mock(), EventFactory.Read()) == 'BOX_READ'
+
+
+class BulkReadTestCase(TestCase):
 
     def test_applies_pluralization(self):
 
         user = Mock(_meta=Mock(model_name='User'))
 
         # -- render_command_name
-        assert List('Car').render_command_name() == 'LIST_CARS'
+        assert BulkRead('Car').render_command_name() == 'BULK_READ_CARS'
 
-        assert List('boxes').render_command_name() == 'LIST_BOXES'
+        assert BulkRead('boxes').render_command_name() == 'BULK_READ_BOXES'
 
-        assert List(user).render_command_name() == 'LIST_USERS'
+        assert BulkRead(user).render_command_name() == 'BULK_READ_USERS'
 
         # -- render_event_name
-        assert List('Car').render_event_name(
-            Mock(), EventFactory.Listed()) == 'CARS_LISTED'
+        assert BulkRead('Car').render_event_name(
+            Mock(), EventFactory.BulkRead()) == 'CARS_BULK_READ'
 
-        assert List('boxes').render_event_name(
-            Mock(), EventFactory.Listed()) == 'BOXES_LISTED'
+        assert BulkRead('boxes').render_event_name(
+            Mock(), EventFactory.BulkRead()) == 'BOXES_BULK_READ'
 
-        assert List(user).render_event_name(
-            Mock(), EventFactory.Listed()) == 'USERS_LISTED'
+        assert BulkRead(user).render_event_name(
+            Mock(), EventFactory.BulkRead()) == 'USERS_BULK_READ'
 
 
 @pytest.mark.parametrize(
     'verb, expected_command, expected_event', [
+        # -- CRUD
         (Create('home'), 'CREATE_HOME', 'HOME_CREATED'),
         (Update('candy'), 'UPDATE_CANDY', 'CANDY_UPDATED'),
-        (Upsert('home'), 'UPSERT_HOME', 'HOME_CREATED'),
         (Read('bicycle'), 'READ_BICYCLE', 'BICYCLE_READ'),
-        (List('box'), 'LIST_BOXES', 'BOXES_LISTED'),
         (Delete('home'), 'DELETE_HOME', 'HOME_DELETED'),
-        (Execute('buy', 'home'), 'BUY_HOME', 'HOME_BOUGHT'),
-        (ReadOrCreate('home'), 'READ_OR_CREATE_HOME', 'HOME_READ'),
+        # -- BULK CRUD
+        (BulkCreate('box'), 'BULK_CREATE_BOXES', 'BOXES_BULK_CREATED'),
+        (BulkRead('box'), 'BULK_READ_BOXES', 'BOXES_BULK_READ'),
         (BulkUpdate('lock'), 'BULK_UPDATE_LOCKS', 'LOCKS_BULK_UPDATED'),
         (BulkDelete('cat'), 'BULK_DELETE_CATS', 'CATS_BULK_DELETED'),
+        (Execute('buy', 'home'), 'BUY_HOME', 'HOME_BOUGHT'),
+        (CreateOrUpdate('home'), 'CREATE_OR_UPDATE_HOME', 'HOME_CREATED'),
+        (CreateOrRead('home'), 'READ_OR_CREATE_HOME', 'HOME_CREATED'),
     ])
 def test_verbs(verb, expected_command, expected_event):
 
@@ -219,9 +237,9 @@ def test_to_plural(noun, expected):
         ),
 
         (
-            List('payment').after.Upsert('card'),
-            'LIST_PAYMENTS_AFTER_UPSERT_CARD',
-            'PAYMENTS_LISTED_AFTER_CARD_UPSERTED',
+            BulkRead('payment').after.CreateOrUpdate('card'),
+            'BULK_READ_PAYMENTS_AFTER_CREATE_OR_UPDATE_CARD',
+            'PAYMENTS_BULK_READ_AFTER_CARD_CREATE_OR_UPDATED',
         ),
     ])
 def test_cause_and_effect(phrase, expected_command, expected_event):

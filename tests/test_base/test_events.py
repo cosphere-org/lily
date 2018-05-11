@@ -99,12 +99,16 @@ class BaseErrorExceptionTestCase(TestCase):
         # SUCCESS RESPONSES
         #
         (EventFactory.Executed, 200),
+
         (EventFactory.Created, 201),
-        (EventFactory.Success, 200),
         (EventFactory.Read, 200),
-        (EventFactory.Listed, 200),
         (EventFactory.Updated, 200),
         (EventFactory.Deleted, 200),
+
+        (EventFactory.BulkCreated, 201),
+        (EventFactory.BulkRead, 200),
+        (EventFactory.BulkUpdated, 200),
+        (EventFactory.BulkDeleted, 200),
 
         #
         # ERROR RESPONSES

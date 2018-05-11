@@ -59,15 +59,15 @@ class SampleView(View):
 
         _type = request.GET.get('type')
         if _type in ['a', None]:
-            raise event.Success(
+            raise event.Executed(
                 event='LISTED', context=request, data={'hello': 'get.a'})
 
         if _type == 'b':
-            raise event.Success(
+            raise event.Executed(
                 event='LISTED', context=request, data={'hello': 'get.b'})
 
         if _type == 'c':
-            raise event.Success(
+            raise event.Executed(
                 event='LISTED_AGAIN', context=request, data={'hello': 'get.c'})
 
         if _type == 'd':
@@ -84,7 +84,7 @@ class SampleView(View):
         input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def put(self, request):
-        raise event.Success(
+        raise event.Executed(
             event='UPDATED', context=request, data={'hello': 'put'})
 
     @command(
@@ -97,7 +97,7 @@ class SampleView(View):
         input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def delete(self, request):
-        raise event.Success(
+        raise event.Executed(
             event='DELETED', context=request, data={'hello': 'delete'})
 
 

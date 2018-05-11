@@ -183,27 +183,39 @@ class BaseVerb:
         return Conjunction(effect=self)
 
 
-class BaseVerbWithPluralNoun(BaseVerb):
+class BaseBulkVerb(BaseVerb):
 
     def __init__(self, noun):
 
         if not isinstance(noun, str):
             noun = noun._meta.model_name
 
-        super(BaseVerbWithPluralNoun, self).__init__(to_plural(noun))
+        super(BaseBulkVerb, self).__init__(to_plural(noun))
 
 
 class Conjunction:
 
     def __init__(self, effect):
         self.effect = effect
+
+        # -- Generic Execute
+        self.Execute = self.phrase(Execute, effect)
+
+        # -- CRUD
         self.Create = self.phrase(Create, effect)
         self.Read = self.phrase(Read, effect)
-        self.List = self.phrase(List, effect)
-        self.Upsert = self.phrase(Upsert, effect)
         self.Update = self.phrase(Update, effect)
         self.Delete = self.phrase(Delete, effect)
-        self.Execute = self.phrase(Execute, effect)
+
+        # -- BULK CRUD
+        self.BulkCreate = self.phrase(BulkCreate, effect)
+        self.BulkRead = self.phrase(BulkRead, effect)
+        self.BulkUpdate = self.phrase(BulkUpdate, effect)
+        self.BulkDelete = self.phrase(BulkDelete, effect)
+
+        # -- CONDITIONAL CRUD
+        self.CreateOrUpdate = self.phrase(CreateOrUpdate, effect)
+        self.CreateOrRead = self.phrase(CreateOrRead, effect)
 
     def phrase(self, cause_cls, effect):
 
@@ -267,18 +279,14 @@ class Execute(BaseVerb):
             noun=self.noun)
 
 
+#
+# CRUD
+#
 class Create(BaseVerb):
 
     finalizers = (EventFactory.Created,)
 
     verb = 'create'
-
-
-class Upsert(BaseVerb):
-
-    finalizers = (EventFactory.Created, EventFactory.Updated)
-
-    verb = 'upsert'
 
 
 class Read(BaseVerb):
@@ -288,32 +296,11 @@ class Read(BaseVerb):
     verb = 'read'
 
 
-class List(BaseVerbWithPluralNoun):
-
-    finalizers = (EventFactory.Listed,)
-
-    verb = 'list'
-
-
 class Update(BaseVerb):
 
     finalizers = (EventFactory.Updated,)
 
     verb = 'update'
-
-
-class BulkUpdate(BaseVerbWithPluralNoun):
-
-    finalizers = (EventFactory.BulkUpdated,)
-
-    verb = 'bulk_update'
-
-
-class BulkDelete(BaseVerbWithPluralNoun):
-
-    finalizers = (EventFactory.BulkDeleted,)
-
-    verb = 'bulk_delete'
 
 
 class Delete(BaseVerb):
@@ -323,8 +310,49 @@ class Delete(BaseVerb):
     verb = 'delete'
 
 
-class ReadOrCreate(BaseVerb):
+#
+# BULK CRUD
+#
+class BulkCreate(BaseBulkVerb):
 
-    finalizers = (EventFactory.Read, EventFactory.Created)
+    finalizers = (EventFactory.BulkCreated,)
+
+    verb = 'bulk_create'
+
+
+class BulkRead(BaseBulkVerb):
+
+    finalizers = (EventFactory.BulkRead,)
+
+    verb = 'bulk_read'
+
+
+class BulkUpdate(BaseBulkVerb):
+
+    finalizers = (EventFactory.BulkUpdated,)
+
+    verb = 'bulk_update'
+
+
+class BulkDelete(BaseBulkVerb):
+
+    finalizers = (EventFactory.BulkDeleted,)
+
+    verb = 'bulk_delete'
+
+
+#
+# CONDITIONAL CRUD
+#
+class CreateOrUpdate(BaseVerb):
+
+    finalizers = (EventFactory.Created, EventFactory.Updated)
+
+    verb = 'create_or_update'
+
+
+class CreateOrRead(BaseVerb):
+
+    finalizers = (EventFactory.Created, EventFactory.Read)
 
     verb = 'read_or_create'

@@ -105,7 +105,7 @@ class TestView(View):
             access_list=['PREMIUM', 'SUPER_PREMIUM'])
     )
     def post(self, request, user_id):
-        raise self.event.Success(
+        raise self.event.Executed(
             event='MADE_IT',
             instance=FakeClient(name="Jake"))
 
@@ -118,7 +118,7 @@ class TestView(View):
         input=Input(with_user=False),
         output=output)
     def get(self, request):
-        raise self.event.Success(
+        raise self.event.Executed(
             event='GET_IT',
             instance=FakeClient(name="Jake"))
 
@@ -131,7 +131,7 @@ class TestView(View):
         output=Output(serializer=SimpleSerializer))
     def put(self, request):
 
-        raise self.event.Success(
+        raise self.event.Executed(
             event='BROKEN',
             context=request,
             data=json.loads(request.body.decode('utf8')))
@@ -148,7 +148,7 @@ class TestView(View):
 
         self.some_stuff()
 
-        raise self.event.Success(event='ATOMIC', context=request, data={})
+        raise self.event.Executed(event='ATOMIC', context=request, data={})
 
     def some_stuff(self):
         pass
@@ -454,7 +454,7 @@ class CommandTestCase(TestCase):
         self.mocker.patch.object(view, 'some_stuff').side_effect = [
 
             # -- lily success exception
-            event.Success(
+            event.Executed(
                 event='SUCCESS!',
                 context=event.Context(user_id=u.id)
             ),

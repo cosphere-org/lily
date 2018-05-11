@@ -49,7 +49,7 @@ class MarkdownRenderer(BaseRenderer):
 
     def render(self):
 
-        base_index = super(MarkdownRenderer, self).render(self.urlpatterns)
+        base_index = super(MarkdownRenderer, self).render()
 
         with open(BASE_TEMPLATE_PATH, 'r') as f:
             template = engine.from_string(f.read())

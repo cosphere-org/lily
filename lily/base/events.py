@@ -56,19 +56,23 @@ class EventFactory:
         # -- warning - no http response
         self.Warning.logger = logger
 
-        # -- 200
-        self.Success.logger = logger
-        self.Read.logger = logger
-        self.Listed.logger = logger
-        self.Updated.logger = logger
-        self.BulkUpdated.logger = logger
         self.Executed.logger = logger
-        self.Deleted.logger = logger
-        self.BulkDeleted.logger = logger
 
-        # -- 201
+        # -- CRUD
+        self.Read.logger = logger
+        self.Updated.logger = logger
+        self.Deleted.logger = logger
         self.Created.logger = logger
 
+        # -- BULK CRUD
+        self.BulkCreated.logger = logger
+        self.BulkUpdated.logger = logger
+        self.BulkRead.logger = logger
+        self.BulkDeleted.logger = logger
+
+        #
+        # ERRORS
+        #
         # -- 400
         self.BrokenRequest.logger = logger
 
@@ -161,19 +165,34 @@ class EventFactory:
     class Executed(BaseSuccessException):
         response_class = Json200
 
+    #
+    # CRUD
+    #
     class Created(BaseSuccessException):
         response_class = Json201
-
-    class Success(BaseSuccessException):
-        response_class = Json200
 
     class Read(BaseSuccessException):
         response_class = Json200
 
-    class Listed(BaseSuccessException):
+    class Updated(BaseSuccessException):
         response_class = Json200
 
-    class Updated(BaseSuccessException):
+    class Deleted(BaseSuccessException):
+        response_class = Json200
+
+    #
+    # BULK CRUD
+    #
+    class BulkCreated(BaseSuccessException):
+
+        verb = 'bulk_created'
+
+        response_class = Json201
+
+    class BulkRead(BaseSuccessException):
+
+        verb = 'bulk_read'
+
         response_class = Json200
 
     class BulkUpdated(BaseSuccessException):
@@ -186,9 +205,6 @@ class EventFactory:
 
         verb = 'bulk_deleted'
 
-        response_class = Json200
-
-    class Deleted(BaseSuccessException):
         response_class = Json200
 
     #
