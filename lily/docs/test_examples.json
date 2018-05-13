@@ -1,69 +1,69 @@
 {
-    "READ_COMMANDS_CONF": {
-        "200 (COMMANDS_CONF_READ)": {
-            "request": {
-                "headers": {
-                    "X-CS-USER-ID": 190,
-                    "X-CS-ACCOUNT-TYPE": "ADMIN"
-                },
-                "path": "/docs/blueprint_spec/"
-            },
-            "description": "COMMANDS_CONF_READ",
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
             "method": "get",
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "path": "//",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "WHATEVER",
+                    "X-CS-USER-ID": 190
+                }
+            },
             "response": {
                 "content_type": "application/json",
-                "status": 200,
                 "content": {
-                    "@event": "COMMANDS_CONF_READ",
-                    "@type": "commands_config",
-                    "spec": {}
+                    "@type": "entrypoint",
+                    "version": "2.5.6",
+                    "@event": "ENTRY_POINT_READ"
+                },
+                "status": 200
+            }
+        }
+    },
+    "READ_COMMANDS_CONF": {
+        "200 (COMMANDS_CONF_READ)": {
+            "method": "get",
+            "description": "COMMANDS_CONF_READ",
+            "request": {
+                "path": "/docs/blueprint_spec/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
                 }
+            },
+            "response": {
+                "content_type": "application/json",
+                "content": {
+                    "spec": {},
+                    "@type": "commands_config",
+                    "@event": "COMMANDS_CONF_READ"
+                },
+                "status": 200
             }
         }
     },
     "READ_TYPESCRIPT_SPEC": {
         "200 (TYPESCRIPT_SPEC_READ)": {
+            "method": "get",
+            "description": "TYPESCRIPT_SPEC_READ",
             "request": {
                 "path": "/docs/typescript_spec/",
                 "headers": {
-                    "X-CS-USER-ID": 190,
-                    "X-CS-ACCOUNT-TYPE": "ADMIN"
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
                 }
             },
-            "description": "TYPESCRIPT_SPEC_READ",
-            "method": "get",
             "response": {
                 "content_type": "application/json",
-                "status": 200,
                 "content": {
                     "spec": {
                         "some": "spec"
                     },
                     "@type": "typescript_spec",
                     "@event": "TYPESCRIPT_SPEC_READ"
-                }
-            }
-        }
-    },
-    "READ_ENTRY_POINT": {
-        "200 (ENTRY_POINT_READ)": {
-            "request": {
-                "path": "//",
-                "headers": {
-                    "X-CS-USER-ID": 190,
-                    "X-CS-ACCOUNT-TYPE": "WHATEVER"
-                }
-            },
-            "description": "ENTRY_POINT_READ",
-            "method": "get",
-            "response": {
-                "content_type": "application/json",
-                "status": 200,
-                "content": {
-                    "version": "2.5.6",
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ"
-                }
+                },
+                "status": 200
             }
         }
     }
