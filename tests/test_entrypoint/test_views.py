@@ -5,7 +5,7 @@ from django.urls import reverse
 import pytest
 from mock import Mock
 
-from base.test import Client
+from lily.base.test import Client
 
 
 class EntryPointViewTestCase(TestCase):

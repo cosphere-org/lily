@@ -6,7 +6,7 @@ import os
 
 from django.conf import settings
 
-from base import serializers, parsers, config
+from lily.base import serializers, parsers, config
 
 
 class MissingReturnStatementError(Exception):

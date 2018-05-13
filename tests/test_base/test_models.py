@@ -5,7 +5,7 @@ from django.db import models
 from django_fake_model import models as fake_models
 import pytest
 
-from base.models import ImmutableModel
+from lily.base.models import ImmutableModel
 
 
 class ImmutableEntity(fake_models.FakeModel, ImmutableModel):

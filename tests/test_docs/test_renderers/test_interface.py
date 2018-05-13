@@ -5,7 +5,7 @@ from django.db import models
 import pytest
 from mock import Mock, call
 
-from base import serializers, parsers
+from lily.base import serializers, parsers
 from docs.renderers.interface import (
     Enum,
     Interface,
