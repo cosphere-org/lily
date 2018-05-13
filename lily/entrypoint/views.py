@@ -3,12 +3,12 @@
 from django.views.generic import View
 from django.conf import settings
 
-from base import serializers, name
-from base.command import command
-from base.meta import Meta, Domain
-from base.access import Access
-from base.output import Output
-from base import config
+from lily.base import serializers, name
+from lily.base.command import command
+from lily.base.meta import Meta, Domain
+from lily.base.access import Access
+from lily.base.output import Output
+from lily.base import config
 
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
