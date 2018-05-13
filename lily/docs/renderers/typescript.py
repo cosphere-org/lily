@@ -4,6 +4,7 @@ from .base import BaseRenderer
 from .interface import InterfaceRenderer
 
 
+# FIXME: test it!!!!!!!!!!!!!
 class TypeScriptSpecRenderer(BaseRenderer):
 
     def __init__(self, urlpatterns):

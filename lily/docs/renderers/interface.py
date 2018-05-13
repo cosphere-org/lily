@@ -141,9 +141,10 @@ class InterfaceRenderer:
 
             # -- all not covered cases should raise an Error
             else:
+                # FIXME: test it!!!!!
                 raise MissingInterfaceMappingError(
                     '{serializer}.{name}'.format(
-                        serializer=serializer.__name__,
+                        serializer=self.get_name(serializer),
                         name=name))
 
         return interface
