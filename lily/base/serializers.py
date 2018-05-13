@@ -23,6 +23,7 @@ from rest_framework.serializers import (  # noqa
     SerializerMethodField,
     URLField,
     ValidationError,
+    ReadOnlyField,
 )
 
 from .events import EventFactory

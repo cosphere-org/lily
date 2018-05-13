@@ -214,6 +214,7 @@ class InterfaceRenderer:
                 serializers.IntegerField,
                 serializers.JSONField,
                 serializers.URLField,
+                serializers.ReadOnlyField,
             ))
 
     def simple_field_to_interface(self, name, field):
@@ -222,6 +223,11 @@ class InterfaceRenderer:
 
         if is_field((serializers.BooleanField,)):
             return 'boolean'
+
+        # FIXME: figure out how to fetch the type hidden behind ReadOnly
+        # Field!!!!!!!!!!!!!
+        elif is_field((serializers.ReadOnlyField,)):
+            return 'any'
 
         elif is_field((
             serializers.EmailField,
