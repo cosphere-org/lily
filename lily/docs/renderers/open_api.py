@@ -7,7 +7,7 @@ import yaml
 from django.template import engines
 from django.conf import settings
 
-from lily.base.schema import to_schema
+from .schema import to_schema
 from .base import BaseRenderer
 
 

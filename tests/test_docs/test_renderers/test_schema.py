@@ -4,7 +4,7 @@ from django.test import TestCase
 from django.db import models
 
 from lily.base import serializers, parsers
-from lily.base.schema import to_schema
+from lily.docs.renderers.schema import to_schema
 
 
 class Person(models.Model):

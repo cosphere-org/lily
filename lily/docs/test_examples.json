@@ -1,6 +1,7 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
+            "description": "ENTRY_POINT_READ",
             "request": {
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "WHATEVER",
@@ -9,15 +10,14 @@
                 "path": "//"
             },
             "response": {
+                "status": 200,
+                "content_type": "application/json",
                 "content": {
                     "@event": "ENTRY_POINT_READ",
-                    "@type": "entrypoint",
-                    "version": "2.5.6"
-                },
-                "content_type": "application/json",
-                "status": 200
+                    "version": "2.5.6",
+                    "@type": "entrypoint"
+                }
             },
-            "description": "ENTRY_POINT_READ",
             "method": "get"
         }
     }

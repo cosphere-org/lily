@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from lily.base.schema import to_schema
+from .schema import to_schema
 from .base import BaseRenderer
 
 

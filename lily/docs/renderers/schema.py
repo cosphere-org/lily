@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from . import serializers, parsers
+from lily.base import serializers, parsers
 
 
 class MissingReturnStatementError(Exception):

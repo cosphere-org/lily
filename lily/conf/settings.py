@@ -26,11 +26,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #
 LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
 
-LILY_SERVICE_NAME = 'LILY_SERVICE'
-
-LILY_SERVICE_VERSION = '0.1.4.whatever'
-
-LILY_SERVICE_REPOSITORY_URI = 'https://bitbucket.org/goodai/lily'
+LILY_CONFIG_FILE_PATH = os.path.join(
+    LILY_PROJECT_BASE, 'lily/conf/config.yaml')
 
 #
 # AUTHORIZER

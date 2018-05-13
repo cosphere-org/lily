@@ -1,0 +1,9 @@
+
+name: lily
+description: Lily MicroService Framework for Humans
+author: CoSphere Tech Team
+repository: https://bitbucket.org/goodai/lily
+
+# -- FIXME: !!!!!! this would have to be filled automatically
+version: 0.1.16
+last_commit_hash: f999909cdeae276c3d207b806763077535e25d86
