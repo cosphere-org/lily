@@ -50,6 +50,7 @@ class TypeScriptSpecRenderer(BaseRenderer):
                         },
                         'method': method,
                         'interfaces': interfaces,
+                        'path_conf': method_conf['path_conf'],
                         # FIXME: add path specification
                         # FIXME: add tests cases for a given command!!!!
                     }

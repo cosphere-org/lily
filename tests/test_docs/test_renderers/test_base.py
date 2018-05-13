@@ -119,12 +119,8 @@ class BaseRendererTestCase(TestCase):
                     'parameters': [
                         {
                             'name': 'when',
-                            'in': 'path',
                             'description': '',
-                            'required': True,
-                            'schema': {
-                                'type': 'integer',
-                            },
+                            'type': 'integer',
                         }
                     ],
                 },
@@ -141,12 +137,8 @@ class BaseRendererTestCase(TestCase):
                     'parameters': [
                         {
                             'name': 'when',
-                            'in': 'path',
                             'description': '',
-                            'required': True,
-                            'schema': {
-                                'type': 'integer',
-                            },
+                            'type': 'integer',
                         }
                     ],
                 },
@@ -197,12 +189,8 @@ class BaseRendererTestCase(TestCase):
             'parameters': [
                 {
                     'name': 'payment_card_id',
-                    'in': 'path',
                     'description': '',
-                    'required': True,
-                    'schema': {
-                        'type': 'integer',
-                    }
+                    'type': 'integer',
                 }
             ]
         }
@@ -219,12 +207,8 @@ class BaseRendererTestCase(TestCase):
             'parameters': [
                 {
                     'name': 'card_id',
-                    'in': 'path',
                     'description': '',
-                    'required': True,
-                    'schema': {
-                        'type': 'string',
-                    },
+                    'type': 'string',
                 }
             ]
         }
@@ -243,21 +227,13 @@ class BaseRendererTestCase(TestCase):
             'parameters': [
                 {
                     'name': 'card_id',
-                    'in': 'path',
                     'description': '',
-                    'required': True,
-                    'schema': {
-                        'type': 'string',
-                    },
+                    'type': 'string',
                 },
                 {
                     'name': 'messageId',
-                    'in': 'path',
                     'description': '',
-                    'required': True,
-                    'schema': {
-                        'type': 'integer',
-                    },
+                    'type': 'integer',
                 },
             ]
         }

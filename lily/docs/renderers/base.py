@@ -106,15 +106,12 @@ class BaseRenderer:
                     pattern[span[0]:span[1]],
                     '{{{name}}}'.format(name=param_name))
 
+                # FIXME: test it!!!
                 parameters.append({
                     'name': param_name,
-                    'in': 'path',
+                    'type': param_type,
                     # FIXME: add description to the parameters
                     'description': '',
-                    'required': True,
-                    'schema': {
-                        'type': param_type
-                    }
                 })
 
             else:
