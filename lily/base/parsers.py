@@ -9,25 +9,29 @@ from .serializers import *  # noqa
 
 class QueryParser(drf_serializers.Serializer):
 
+    # FIXME: test it!!!!!!!!!!
     def __init__(self, *args, **kwargs):
 
-        data = {}
-        for field_name, field_class in self.fields.items():
+        raw_data = kwargs.get('data')
 
-            if not isinstance(field_class, ListField):
-                try:
-                    data[field_name] = kwargs['data'][field_name]
+        if raw_data:
+            data = {}
+            for field_name, field_class in self.fields.items():
 
-                # -- ignore key errors since they all will be caught
-                # -- by the validation
-                except (KeyError, IndexError):
-                    pass
+                if not isinstance(field_class, ListField):
+                    try:
+                        data[field_name] = raw_data[field_name]
 
-            else:
-                data[field_name] = kwargs['data'].getlist(field_name)
+                    # -- ignore key errors since they all will be caught
+                    # -- by the validation
+                    except (KeyError, IndexError):
+                        pass
 
-        kwargs['data'] = data
-        super(QueryParser, self).__init__(*args, **kwargs)
+                else:
+                    data[field_name] = raw_data.getlist(field_name)
+
+            kwargs['data'] = data
+            super(QueryParser, self).__init__(*args, **kwargs)
 
 
 class PageQueryParser(QueryParser):
