@@ -4,7 +4,6 @@ from django.conf import settings
 import yaml
 
 
-# FIXME: test it!!!!!
 class Config:
 
     def __init__(self):

@@ -8,13 +8,13 @@ from . import views
 urlpatterns = [
 
     url(
-        r'^blueprint/$',
-        views.DocsBlueprintView.as_view(),
-        name='blueprint'),
+        r'^blueprint_spec/$',
+        views.BlueprintSpecView.as_view(),
+        name='blueprint_spec'),
 
-    # url(
-    #     r'^commands_conf/$',
-    #     views.DocsCommandConfView.as_view(),
-    #     name='command_conf'),
+    url(
+        r'^typescript_spec/$',
+        views.TypeScriptSpecView.as_view(),
+        name='typescript_spec'),
 
 ]

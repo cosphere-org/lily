@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from .config import config  # noqa
+from .conf import config  # noqa

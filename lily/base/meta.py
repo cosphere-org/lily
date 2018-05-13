@@ -1,12 +1,23 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 
 class Meta:
 
     def __init__(self, title, domain, description=None):
         self.title = title
-        self.description = description
+        self.description = self.transform_description(description)
         self.domain = domain
+
+    # FIXME: test it!!!
+    def transform_description(self, description):
+
+        if description:
+            description = description.strip()
+            description = re.sub(r'\n +', ' ', description)
+
+        return description
 
     def serialize(self):
         return {
@@ -19,7 +30,7 @@ class Meta:
 class Domain:
 
     def __init__(self, id, name):
-        self.id = id
+        self.id = id.lower()
         self.name = name
 
     def serialize(self):

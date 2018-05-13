@@ -29,6 +29,7 @@ class Client(DjangoClient):
         return self._make_request('delete', *args, **kwargs)
 
     def _make_request(self, http_verb, *args, **kwargs):
+
         response = getattr(super(Client, self), http_verb)(*args, **kwargs)
 
         fn = self.resolver.resolve(response.request['PATH_INFO']).func
@@ -47,9 +48,21 @@ class Client(DjangoClient):
             examples.setdefault(command_name, {})
 
             response_json = response.json()
-            example_key = '{status} ({event})'.format(
-                status=response.status_code,
-                event=response_json['@event'])
+
+            # -- render example key name
+            try:
+                extra_desc = kwargs.pop('extra_desc')
+
+            except KeyError:
+                example_key = '{status} ({event})'.format(
+                    status=response.status_code,
+                    event=response_json['@event'])
+
+            else:
+                example_key = '{status} ({event}) - {extra_desc}'.format(
+                    status=response.status_code,
+                    event=response_json['@event'],
+                    extra_desc=extra_desc)
 
             # -- construct the request
             request = {}

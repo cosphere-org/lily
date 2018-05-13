@@ -182,6 +182,34 @@ class ClientTestCase(TestCase):
             },
         }
 
+    def test_with_extra_desc(self):
+        examples_file = self.prepare_example_file()
+
+        response = Client().get('/test/it/', extra_desc='special')
+
+        assert response.status_code == 200
+        assert json.loads(examples_file.read()) == {
+            'GET_IT': {
+                '200 (LISTED) - special': {
+                    'method': 'get',
+                    'description': 'LISTED',
+                    'request': {
+                        'path': '/test/it/',
+                    },
+                    'response': {
+                        'status': 200,
+                        'content_type': 'application/json',
+                        'content': {
+                            '@type': 'test',
+                            '@event': 'LISTED',
+                            'hello': 'get.a',
+                        },
+                    },
+
+                },
+            },
+        }
+
     def test_multiple_different_responses_single_endpoint(self):
         examples_file = self.prepare_example_file()
 

@@ -1,48 +1,80 @@
 # -*- coding: utf-8 -*-
 
-import json
+from importlib import import_module
 
 from django.views.generic import View
 from django.conf import settings
 
-from base import serializers
+from base import serializers, name
 from base.command import command
 from base.meta import Meta, Domain
 from base.access import Access
-from base.input import Input
 from base.output import Output
+from .renderers.typescript import TypeScriptSpecRenderer
 
 
-class DocsBlueprintView(View):
+class TypeScriptSpecView(View):
 
-    class CommandsConfSerializer(serializers.Serializer):
-        _type = 'commands_config'
+    class TypeScriptSpecSerializer(serializers.Serializer):
+        _type = 'typescript_spec'
 
-        commands_config = serializers.JSONField()
+        spec = serializers.JSONField()
 
     @command(
-        name='LIST_COMMANDS_CONF_FOR_SERVICE',
+        name=name.Read('TYPESCRIPT_SPEC'),
 
         meta=Meta(
-            title='Serve commands conf available in the service',
+            title='Serve TypeScript spec required by the TypeScript client',
             description='''
-                It serves all commands configuration which are exposed in
-                the given instance of the service.
+                It serves all publicly available commands and their
+                configuration served in the form easily consumable by the
+                TypeScript Client generator.
 
             ''',
-            domain=Domain(id='internal', name='Internal Management')),
+            domain=Domain(id='docs', name='Docs Management')),
 
         access=Access(
+            is_private=True,
             access_list=settings.LILY_DOCS_VIEWS_ACCESS_LIST),
 
-        input=Input(with_user=False),
-
-        output=Output(
-            serializer=CommandsConfSerializer),
+        output=Output(serializer=TypeScriptSpecSerializer),
     )
     def get(self, request):
 
-        with open(settings.LILY_DOCS_COMMANDS_CONF_FILE) as conf:
-            raise self.event.Success(
-                'COMMANDS_CONF_FOR_SERVICE_LISTED',
-                instance={'commands_config': json.loads(conf.read())})
+        raise self.event.Read(
+            {'spec': TypeScriptSpecRenderer(self.get_urlpatterns()).render()})
+
+    def get_urlpatterns(self):
+        return import_module(settings.ROOT_URLCONF).urlpatterns
+
+
+# FIXME: this still requires some extra work!!!
+class BlueprintSpecView(View):
+
+    class BlueprintSpecSerializer(serializers.Serializer):
+        _type = 'commands_config'
+
+        spec = serializers.JSONField()
+
+    @command(
+        name=name.Read('BLUEPRINT_SPEC'),
+
+        meta=Meta(
+            title='Serve Blueprint spec for the Blueprint docs generator',
+            description='''
+                It serves all publicly available commands and their
+                configuration served in the form easily consumable by the
+                Blueprint Docs generator.
+
+            ''',
+            domain=Domain(id='docs', name='Docs Management')),
+
+        access=Access(
+            is_private=True,
+            access_list=settings.LILY_DOCS_VIEWS_ACCESS_LIST),
+
+        output=Output(serializer=BlueprintSpecSerializer),
+    )
+    def get(self, request):
+
+        raise self.event.Read({'spec': {}})

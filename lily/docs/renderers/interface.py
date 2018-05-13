@@ -6,7 +6,7 @@ import os
 
 from django.conf import settings
 
-from lily.base import serializers, parsers, config
+from base import serializers, parsers, config
 
 
 class MissingReturnStatementError(Exception):
@@ -49,24 +49,34 @@ class InterfaceRenderer:
 
         # -- figure out with which type of Serializer or Parser we're
         # -- dealing with
-        if serializers.Serializer in serializer.__mro__:
+        if inspect.isclass(serializer):
+            instance = serializer()
+
+        else:
+            instance = serializer
+
+        if isinstance(instance, serializers.Serializer):
             self.type = SERIALIZER_TYPES.RESPONSE
 
-        elif parsers.BodyParser in serializer.__mro__:
+        elif isinstance(instance, parsers.BodyParser):
             self.type = SERIALIZER_TYPES.REQUEST_BODY
 
-        elif parsers.QueryParser in serializer.__mro__:
+        elif isinstance(instance, parsers.QueryParser):
             self.type = SERIALIZER_TYPES.REQUEST_QUERY
 
-        # -- fill meta data
+        self.serializer = serializer
+
+        # -- fill in the meta data
+        self.meta = self.get_meta(serializer)
+
+    def get_meta(self, serializer):
         path = inspect.getfile(serializer)
         path = path.replace(settings.LILY_PROJECT_BASE, '')
-        self.meta = {
+
+        return {
             'first_line': inspect.getsourcelines(serializer)[1],
             'path': path,
         }
-
-        self.serializer = serializer
 
     def render(self):
         return self.serializer_to_interface(self.serializer)
@@ -307,7 +317,6 @@ class Interface:
                     o[k] = serialize(v.interface)
 
                 elif isinstance(v, ArrayValue):
-                    # FIXME: test it!!!!!!!!!
                     if isinstance(v.value, Enum):
                         o[k] = {
                             '__type': 'array',
@@ -332,11 +341,9 @@ class Interface:
             return o
 
         return {
-            'interface': {
-                'uri': self.get_repository_uri(),
-                'name': self.serialize_name(),
-                'interface': serialize(self.interface),
-            },
+            'uri': self.get_repository_uri(),
+            'name': self.serialize_name(),
+            'interface': serialize(self.interface),
             'enums': {enum.name: enum.values for enum in enums},
         }
 
@@ -351,6 +358,12 @@ class Interface:
             return 'RequestQuery'
 
     def get_repository_uri(self):
+        """ Bitbucket specific repository uri generator.
+
+        TODO: Make it to work for github too.
+
+        """
+
         return os.path.join(
             config.repository,
             'src',
@@ -368,26 +381,24 @@ class Interface:
             # -- if enum of that name already exists
             if name in enums:
                 # -- compare its value with the one currently processing
-                existing = enums[name]
-
-                if set(existing) != set(enum.values):
+                if set(enums[name].values) != set(enum.values):
                     duplicated_names.setdefault(name, [])
                     duplicated_names[name].append(enum)
 
             else:
                 enum.name = name
-                enums[name] = enum.values
+                enums[name] = enum
 
         for name, duplicated_enums in duplicated_names.items():
             for i, enum in enumerate(duplicated_enums):
                 enum.name = '{name}{index}'.format(name=name, index=i + 1)
-                enums[enum.name] = enum.values
+                enums[enum.name] = enum
 
-        return self.enums
+        return list(enums.values())
 
     def serialize_enum_name(self, enum):
 
-        name = underscore_to_camel(enum.name)
+        name = to_camelcase(enum.name)
 
         if self.type == SERIALIZER_TYPES.RESPONSE:
             return 'Response{}'.format(name)
@@ -399,7 +410,7 @@ class Interface:
             return 'RequestQuery{}'.format(name)
 
 
-def underscore_to_camel(name):
+def to_camelcase(name):
     tokens = re.split(r'\_+', name)
 
     return ''.join([token.capitalize() for token in tokens])

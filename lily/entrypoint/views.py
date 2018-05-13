@@ -3,13 +3,17 @@
 from django.views.generic import View
 from django.conf import settings
 
-from base import serializers, name as n
+from base import serializers, name
 from base.command import command
 from base.meta import Meta, Domain
 from base.access import Access
 from base.output import Output
+from base import config
 
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# FIXME: here I should serve names of all COMMANDS that current services
+# enables + their external dependencies!!!!!
 class EntryPointView(View):
 
     class EntryPointSerializer(serializers.Serializer):
@@ -19,13 +23,14 @@ class EntryPointView(View):
         version = serializers.CharField()
 
     @command(
-        name=n.Read('Entry Point'),
+        name=name.Read('ENTRY_POINT'),
 
         meta=Meta(
             title='Entry Point View',
             domain=Domain(id='EntryPoint', name='EntryPoint Management')),
 
         access=Access(
+            is_private=True,
             access_list=settings.LILY_ENTRYPOINT_VIEWS_ACCESS_LIST),
 
         output=Output(
@@ -33,7 +38,4 @@ class EntryPointView(View):
     )
     def get(self, request):
 
-        raise self.event.Read({'version': self.get_version()})
-
-    def get_version(self):
-        return settings.LILY_SERVICE_VERSION
+        raise self.event.Read({'version': config.version})
