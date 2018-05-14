@@ -8,7 +8,7 @@ import pytest
 
 from lily.base.meta import Meta, Domain
 from lily.docs.renderers.markdown import MarkdownRenderer
-from lily.docs.renderers.base import BaseRenderer
+from lily.entrypoint.renderers.base import BaseRenderer
 
 
 def remove_white_chars(x):

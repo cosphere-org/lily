@@ -8,7 +8,7 @@ import pytest
 # from lily.base import serializers, parsers
 # from lily.docs.renderers.typescript import CommandsRenderer
 # from lily.docs.renderers.base import BaseRenderer
-from lily.docs.renderers.typescript import to_camelcase
+from lily.entrypoint.renderers.commands import to_camelcase
 
 
 class CommandsRendererTestCase(TestCase):

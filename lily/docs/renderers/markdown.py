@@ -9,7 +9,7 @@ from collections import OrderedDict
 from django.template import engines
 from django.conf import settings
 
-from .base import BaseRenderer
+from lily.entrypoint.renderers.base import BaseRenderer
 
 
 BASE_DIR = os.path.dirname(__file__)

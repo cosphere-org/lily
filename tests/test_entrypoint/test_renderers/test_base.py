@@ -7,7 +7,7 @@ from django.urls import re_path, include
 from django.views.generic import View
 import pytest
 
-from lily.docs.renderers.base import BaseRenderer
+from lily.entrypoint.renderers.base import BaseRenderer
 
 
 class BaseRendererTestCase(TestCase):

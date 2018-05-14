@@ -6,7 +6,7 @@ import pytest
 from mock import Mock, call
 
 from lily.base import serializers, parsers
-from docs.renderers.schema import (
+from lily.entrypoint.renderers.schema import (
     Schema,
     ArrayValue,
     SchemaRenderer,
@@ -512,7 +512,7 @@ class SchemaRendererTestCase(TestCase):
     def test_get_repository_uri(self):
 
         self.mocker.patch(
-            'docs.renderers.schema.config',
+            'lily.entrypoint.renderers.schema.config',
             Mock(repository='http://repo', last_commit_hash='1234'))
 
         schema = SchemaRenderer(HumanSerializer).render()
@@ -534,7 +534,7 @@ class SchemaRendererTestCase(TestCase):
         getfile = Mock(return_value='/home/projects/lily/a/views.py')
         getsourcelines = Mock(return_value=[None, 11])
         self.mocker.patch(
-            'docs.renderers.schema.inspect',
+            'lily.entrypoint.renderers.schema.inspect',
             Mock(getfile=getfile, getsourcelines=getsourcelines))
 
         renderer = SchemaRenderer(HumanSerializer)
