@@ -35,10 +35,10 @@ class EntryPointViewTestCase(TestCase):
             'entrypoint.views.EntryPointView.get_urlpatterns',
         ).return_value = urlpatterns
 
-        respose = self.app.get(self.uri, **self.auth_headers)
+        response = self.app.get(self.uri, **self.auth_headers)
 
-        assert respose.status_code == 200
-        assert respose.json() == {
+        assert response.status_code == 200
+        assert response.json() == {
             '@type': 'entrypoint',
             '@event': 'ENTRY_POINT_READ',
             'version': '2.5.6',

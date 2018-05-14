@@ -66,6 +66,29 @@ class InputTestCase(TestCase):
 
         assert data == {'title': 'hi there', 'prices': [67, 89, 11]}
 
+    def test_parse_query__all_missing(self):
+        class QueryParser(parsers.QueryParser):
+            title = parsers.CharField()
+            prices = parsers.ListField(child=parsers.IntegerField())
+
+        input = Input(query_parser=QueryParser)
+        input.event = event
+
+        request = Mock(
+            GET=RequestGet(),
+            email=None,
+            origin=None,
+            user_id=902)
+
+        try:
+            input.parse_query(request)
+
+        except EventFactory.BrokenRequest as e:
+            assert e.event == 'QUERY_DID_NOT_VALIDATE'
+
+        else:
+            raise AssertionError
+
     def test_parse_query__event__query_did_not_validate(self):
         class QueryParser(parsers.QueryParser):
             title = parsers.CharField()

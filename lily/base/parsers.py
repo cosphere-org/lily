@@ -14,7 +14,7 @@ class QueryParser(drf_serializers.Serializer):
 
         raw_data = kwargs.get('data')
 
-        if raw_data:
+        if raw_data is not None:
             data = {}
             for field_name, field_class in self.fields.items():
 
