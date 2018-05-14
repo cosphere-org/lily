@@ -26,10 +26,6 @@ class CommandsRenderer(BaseRenderer):
                     pass
 
                 else:
-                    # -- take into account public commands
-                    if method_conf['access'].is_private:
-                        continue
-
                     # -- INTERFACES
                     schemas = {}
                     schemas['output'] = SchemaRenderer(

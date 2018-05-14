@@ -11,12 +11,15 @@ from lily.base.meta import Meta, Domain
 from lily.base.access import Access
 from lily.base.output import Output
 from .renderers.typescript import CommandsRenderer
+from lily.base import config
 
 
 class CommandsView(View):
 
     class CommandsSerializer(serializers.Serializer):
         _type = 'commands_list'
+
+        version = serializers.CharField()
 
         commands = serializers.JSONField()
 
@@ -43,7 +46,10 @@ class CommandsView(View):
     def get(self, request):
 
         raise self.event.BulkRead(
-            {'commands': CommandsRenderer(self.get_urlpatterns()).render()})
+            {
+                'version': config.version,
+                'commands': CommandsRenderer(self.get_urlpatterns()).render(),
+            })
 
     def get_urlpatterns(self):
         return import_module(settings.ROOT_URLCONF).urlpatterns

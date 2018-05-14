@@ -25,6 +25,8 @@ class CommandsViewTestCase(TestCase):
 
     def test_get(self):
 
+        self.mocker.patch('docs.views.config', Mock(version='2.5.6'))
+
         renderer = self.mocker.patch('docs.views.CommandsRenderer')
         render = Mock(return_value={'some': 'spec'})
         renderer.return_value = Mock(render=render)
@@ -39,6 +41,7 @@ class CommandsViewTestCase(TestCase):
         assert respose.json() == {
             '@type': 'commands_list',
             '@event': 'COMMANDS_BULK_READ',
+            'version': '2.5.6',
             'commands': {'some': 'spec'},
         }
         assert renderer.call_args_list == [call(urlpatterns)]

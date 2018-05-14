@@ -1,7 +1,7 @@
 {
     "BULK_READ_COMMANDS": {
         "200 (COMMANDS_BULK_READ)": {
-            "method": "get",
+            "description": "COMMANDS_BULK_READ",
             "request": {
                 "path": "/docs/commands/",
                 "headers": {
@@ -9,23 +9,23 @@
                     "X-CS-USER-ID": 190
                 }
             },
-            "description": "COMMANDS_BULK_READ",
             "response": {
                 "content": {
+                    "version": "2.5.6",
                     "@type": "commands_list",
+                    "@event": "COMMANDS_BULK_READ",
                     "commands": {
                         "some": "spec"
-                    },
-                    "@event": "COMMANDS_BULK_READ"
+                    }
                 },
-                "status": 200,
-                "content_type": "application/json"
-            }
+                "content_type": "application/json",
+                "status": 200
+            },
+            "method": "get"
         }
     },
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
-            "method": "get",
             "response": {
                 "content": {
                     "version": "2.5.6",
@@ -35,43 +35,20 @@
                 "content_type": "application/json",
                 "status": 200
             },
-            "description": "ENTRY_POINT_READ",
             "request": {
                 "path": "//",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "WHATEVER",
                     "X-CS-USER-ID": 190
                 }
-            }
-        }
-    },
-    "READ_TYPESCRIPT_SPEC": {
-        "200 (TYPESCRIPT_SPEC_READ)": {
-            "method": "get",
-            "request": {
-                "path": "/docs/typescript_spec/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
             },
-            "description": "TYPESCRIPT_SPEC_READ",
-            "response": {
-                "content": {
-                    "@type": "typescript_spec",
-                    "spec": {
-                        "some": "spec"
-                    },
-                    "@event": "TYPESCRIPT_SPEC_READ"
-                },
-                "status": 200,
-                "content_type": "application/json"
-            }
+            "method": "get",
+            "description": "ENTRY_POINT_READ"
         }
     },
     "READ_COMMANDS_CONF": {
         "200 (COMMANDS_CONF_READ)": {
-            "method": "get",
+            "description": "COMMANDS_CONF_READ",
             "request": {
                 "path": "/docs/blueprint_spec/",
                 "headers": {
@@ -79,15 +56,39 @@
                     "X-CS-USER-ID": 190
                 }
             },
-            "description": "COMMANDS_CONF_READ",
+            "method": "get",
             "response": {
                 "content": {
                     "@type": "commands_config",
-                    "spec": {},
-                    "@event": "COMMANDS_CONF_READ"
+                    "@event": "COMMANDS_CONF_READ",
+                    "spec": {}
                 },
-                "status": 200,
-                "content_type": "application/json"
+                "content_type": "application/json",
+                "status": 200
+            }
+        }
+    },
+    "READ_TYPESCRIPT_SPEC": {
+        "200 (TYPESCRIPT_SPEC_READ)": {
+            "description": "TYPESCRIPT_SPEC_READ",
+            "request": {
+                "path": "/docs/typescript_spec/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "method": "get",
+            "response": {
+                "content": {
+                    "@type": "typescript_spec",
+                    "@event": "TYPESCRIPT_SPEC_READ",
+                    "spec": {
+                        "some": "spec"
+                    }
+                },
+                "content_type": "application/json",
+                "status": 200
             }
         }
     }
