@@ -23,7 +23,7 @@ class Meta:
         return {
             'title': self.title,
             'description': self.description,
-            'domain': self.domain.name,
+            'domain': self.domain.serialize(),
         }
 
 

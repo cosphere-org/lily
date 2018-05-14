@@ -90,7 +90,6 @@ class SchemaRendererTestCase(TestCase):
         ).return_value = 'http://hi.there#123'
 
         assert SchemaRenderer(HumanBodyParser).render().serialize() == {
-            'name': 'RequestBody',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -115,7 +114,6 @@ class SchemaRendererTestCase(TestCase):
         ).return_value = 'http://hi.there#123'
 
         assert SchemaRenderer(HumanQueryParser).render().serialize() == {
-            'name': 'RequestQuery',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -143,7 +141,6 @@ class SchemaRendererTestCase(TestCase):
         ).return_value = 'http://hi.there#123'
 
         assert SchemaRenderer(HumanSerializer).render().serialize() == {
-            'name': 'Response',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -173,7 +170,6 @@ class SchemaRendererTestCase(TestCase):
         assert SchemaRenderer(
             HumanModelSerializer
         ).render().serialize() == {
-            'name': 'Response',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -238,7 +234,6 @@ class SchemaRendererTestCase(TestCase):
         assert SchemaRenderer(
             SimpleFieldsSerializer
         ).render().serialize() == {
-            'name': 'Response',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -306,7 +301,6 @@ class SchemaRendererTestCase(TestCase):
                 child=HumanSerializer())
 
         assert SchemaRenderer(Serializer).render().serialize() == {
-            'name': 'Response',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -378,7 +372,6 @@ class SchemaRendererTestCase(TestCase):
         assert SchemaRenderer(
             MethodDerivedFieldsSerializer
         ).render().serialize() == {
-            'name': 'Response',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -445,7 +438,6 @@ class SchemaRendererTestCase(TestCase):
         ).return_value = 'http://hi.there#123'
 
         expected = {
-            'name': 'Response',
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -732,6 +724,5 @@ def test_serialize(raw_schema, expected):
     schema.schema = raw_schema
 
     serialized = schema.serialize()
-    del serialized['name']
     del serialized['uri']
     assert serialized == expected

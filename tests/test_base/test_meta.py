@@ -38,11 +38,14 @@ class MetaTestCase(TestCase):
         assert m.serialize() == {
             'title': 'hi there',
             'description': 'this is it',
-            'domain': 'aaa',
+            'domain': {
+                'id': 'a',
+                'name': 'aaa',
+            },
         }
 
 
-class AccessTestCase(TestCase):
+class DomainTestCase(TestCase):
 
     def test_required_fields(self):
         # -- missing id

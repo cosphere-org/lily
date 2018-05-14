@@ -69,7 +69,7 @@ class MarkdownRenderer(BaseRenderer):
                     meta = method_conf['meta'].serialize()
                     name = method_conf['name']
 
-                    domain = meta['domain']
+                    domain = meta['domain']['name']
                     document_tree.setdefault(domain, [])
 
                     try:

@@ -7,14 +7,14 @@ from .schema import SchemaRenderer
 
 
 # FIXME: test it!!!!!!!!!!!!!
-class TypeScriptSpecRenderer(BaseRenderer):
+class CommandsRenderer(BaseRenderer):
 
     def __init__(self, urlpatterns):
         self.urlpatterns = urlpatterns
 
     def render(self):
 
-        base_index = super(TypeScriptSpecRenderer, self).render()
+        base_index = super(CommandsRenderer, self).render()
         rendered = {}
 
         for path, conf in base_index.items():
@@ -32,28 +32,25 @@ class TypeScriptSpecRenderer(BaseRenderer):
 
                     # -- INTERFACES
                     schemas = {}
-                    schemas['response'] = SchemaRenderer(
+                    schemas['output'] = SchemaRenderer(
                         method_conf['output'].serializer).render().serialize()
 
                     if method_conf['input'].query_parser:
-                        schemas['request_query'] = SchemaRenderer(
+                        schemas['input_query'] = SchemaRenderer(
                             method_conf['input'].query_parser
                         ).render().serialize()
 
                     if method_conf['input'].body_parser:
-                        schemas['request_body'] = SchemaRenderer(
+                        schemas['input_body'] = SchemaRenderer(
                             method_conf['input'].body_parser
                         ).render().serialize()
 
                     rendered[method_conf['name']] = {
-                        'meta': {
-                            'domain': method_conf['meta'].domain.id,
-                            'title': method_conf['meta'].title,
-                            'description': method_conf['meta'].description,
-                        },
                         'method': method,
-                        'schemas': schemas,
                         'path_conf': conf['path_conf'],
+                        'meta': method_conf['meta'].serialize(),
+                        'access': method_conf['access'].serialize(),
+                        'schemas': schemas,
                         # FIXME: add tests cases for a given command!!!!
                     }
 

@@ -8,9 +8,9 @@ from mock import Mock, call
 from lily.base.test import Client
 
 
-class TypeScriptSpecViewCase(TestCase):
+class CommandsViewTestCase(TestCase):
 
-    uri = reverse('docs:typescript_spec')
+    uri = reverse('docs:commands')
 
     @pytest.fixture(autouse=True)
     def initfixtures(self, mocker):
@@ -25,20 +25,20 @@ class TypeScriptSpecViewCase(TestCase):
 
     def test_get(self):
 
-        renderer = self.mocker.patch('docs.views.TypeScriptSpecRenderer')
+        renderer = self.mocker.patch('docs.views.CommandsRenderer')
         render = Mock(return_value={'some': 'spec'})
         renderer.return_value = Mock(render=render)
         urlpatterns = Mock()
         self.mocker.patch(
-            'docs.views.TypeScriptSpecView.get_urlpatterns',
+            'docs.views.CommandsView.get_urlpatterns',
         ).return_value = urlpatterns
 
         respose = self.app.get(self.uri, **self.auth_headers)
 
         assert respose.status_code == 200
         assert respose.json() == {
-            '@type': 'typescript_spec',
-            '@event': 'TYPESCRIPT_SPEC_READ',
-            'spec': {'some': 'spec'},
+            '@type': 'commands_list',
+            '@event': 'COMMANDS_BULK_READ',
+            'commands': {'some': 'spec'},
         }
         assert renderer.call_args_list == [call(urlpatterns)]

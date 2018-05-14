@@ -13,8 +13,8 @@ urlpatterns = [
         name='blueprint_spec'),
 
     url(
-        r'^typescript_spec/$',
-        views.TypeScriptSpecView.as_view(),
-        name='typescript_spec'),
+        r'^commands/$',
+        views.CommandsView.as_view(),
+        name='commands'),
 
 ]

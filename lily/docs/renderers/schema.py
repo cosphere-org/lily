@@ -424,19 +424,9 @@ class Schema:
 
         return {
             'uri': self.get_repository_uri(),
-            'name': self.serialize_name(),
+            # 'name': self.serialize_name(),
             'schema': schema,
         }
-
-    def serialize_name(self):
-        if self.type == SERIALIZER_TYPES.RESPONSE:
-            return 'Response'
-
-        elif self.type == SERIALIZER_TYPES.REQUEST_BODY:
-            return 'RequestBody'
-
-        elif self.type == SERIALIZER_TYPES.REQUEST_QUERY:
-            return 'RequestQuery'
 
     def get_repository_uri(self):
         """ Bitbucket specific repository uri generator.
