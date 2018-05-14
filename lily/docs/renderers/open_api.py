@@ -1,120 +1,120 @@
-# -*- coding: utf-8 -*-
+# # -*- coding: utf-8 -*-
 
-import os
-import json
+# import os
+# import json
 
-import yaml
-from django.template import engines
-from django.conf import settings
+# import yaml
+# from django.template import engines
+# from django.conf import settings
 
-from .schema import to_schema
-from .base import BaseRenderer
-
-
-BASE_DIR = os.path.dirname(__file__)
+# from .schema import to_schema
+# from .base import BaseRenderer
 
 
-BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './open_api_base.yaml')
+# BASE_DIR = os.path.dirname(__file__)
 
 
-engine = engines['django']
+# BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './open_api_base.yaml')
 
 
-class OpenApiRenderer(BaseRenderer):
-    """
-    DEPRECATED: this renderer is not longer supported and soon will
-    become obsolete and will be removed from the lily base modules.
+# engine = engines['django']
 
-    """
 
-    def __init__(self, urlpatterns):
-        self.urlpatterns = urlpatterns
+# class OpenApiRenderer(BaseRenderer):
+#     """
+#     DEPRECATED: this renderer is not longer supported and soon will
+#     become obsolete and will be removed from the lily base modules.
 
-    def render(self):
+#     """
 
-        base_index = super(OpenApiRenderer, self).render(self.urlpatterns)
+#     def __init__(self, urlpatterns):
+#         self.urlpatterns = urlpatterns
 
-        with open(BASE_TEMPLATE_PATH, 'r') as f:
-            template = engine.from_string(f.read())
+#     def render(self):
 
-        return template.render({
-            'version': '1.0.0',
-            'paths': self.to_yaml(self.render_paths(base_index)),
-        })
+#         base_index = super(OpenApiRenderer, self).render(self.urlpatterns)
 
-    def to_yaml(self, data, spaces_count=4):
-        raw_yaml = yaml.dump(data, default_flow_style=False, indent=4)
-        return raw_yaml.replace('\n', '\n' + spaces_count * ' ')
+#         with open(BASE_TEMPLATE_PATH, 'r') as f:
+#             template = engine.from_string(f.read())
 
-    def render_paths(self, base_index):
+#         return template.render({
+#             'version': '1.0.0',
+#             'paths': self.to_yaml(self.render_paths(base_index)),
+#         })
 
-        paths = {}
-        examples = self.get_examples()
+#     def to_yaml(self, data, spaces_count=4):
+#         raw_yaml = yaml.dump(data, default_flow_style=False, indent=4)
+#         return raw_yaml.replace('\n', '\n' + spaces_count * ' ')
 
-        for path, conf in base_index.items():
-            commands = {
-                'parameters': conf['path_conf']['parameters']
-            }
-            for method in ['post', 'get', 'put', 'delete']:
-                try:
-                    method_conf = conf[method]
+#     def render_paths(self, base_index):
 
-                except KeyError:
-                    # FIXME: test it!
-                    # FIXME: create a WARNING to info the creator about
-                    # some of the views which are still not translated
-                    # to the new format
-                    continue
+#         paths = {}
+#         examples = self.get_examples()
 
-                else:
-                    # -- input parser
-                    # body_parser = method_conf['input'].body_parser
+#         for path, conf in base_index.items():
+#             commands = {
+#                 'parameters': conf['path_conf']['parameters']
+#             }
+#             for method in ['post', 'get', 'put', 'delete']:
+#                 try:
+#                     method_conf = conf[method]
 
-                    # -- output serializer
-                    serializer = method_conf['output'].serializer
+#                 except KeyError:
+#                     # FIXME: test it!
+#                     # FIXME: create a WARNING to info the creator about
+#                     # some of the views which are still not translated
+#                     # to the new format
+#                     continue
 
-                    meta = method_conf['meta'].serialize()
-                    name = method_conf['name']
-                    responses = {}
-                    try:
-                        path_examples = examples[name]
+#                 else:
+#                     # -- input parser
+#                     # body_parser = method_conf['input'].body_parser
 
-                    except KeyError:
-                        # FIXME: Error that some methods have no examples
-                        # meaning that they have no tests
-                        pass
+#                     # -- output serializer
+#                     serializer = method_conf['output'].serializer
 
-                    else:
-                        responses = {
-                            t: {
-                                'description': e['description'],
-                                'content': {
-                                    e['response']['content_type']: {
-                                        'schema': dict(
-                                            title=serializer.__name__,
-                                            example=e['response']['content'],
-                                            **to_schema(serializer)),
-                                    }
-                                }
-                            }
-                            for t, e in path_examples.items()
-                            if e['method'] == method
-                        }
+#                     meta = method_conf['meta'].serialize()
+#                     name = method_conf['name']
+#                     responses = {}
+#                     try:
+#                         path_examples = examples[name]
 
-                    commands[method] = {
-                        'operationId': method_conf['name'],
-                        'summary': meta['title'],
-                        'tags': [meta['domain']],
-                        'description': meta['description'],
-                    }
+#                     except KeyError:
+#                         # FIXME: Error that some methods have no examples
+#                         # meaning that they have no tests
+#                         pass
 
-                    if responses:
-                        commands[method]['responses'] = responses
+#                     else:
+#                         responses = {
+#                             t: {
+#                                 'description': e['description'],
+#                                 'content': {
+#                                     e['response']['content_type']: {
+#                                         'schema': dict(
+#                                             title=serializer.__name__,
+#                                             example=e['response']['content'],
+#                                             **to_schema(serializer)),
+#                                     }
+#                                 }
+#                             }
+#                             for t, e in path_examples.items()
+#                             if e['method'] == method
+#                         }
 
-            paths[conf['path_conf']['path']] = commands
+#                     commands[method] = {
+#                         'operationId': method_conf['name'],
+#                         'summary': meta['title'],
+#                         'tags': [meta['domain']],
+#                         'description': meta['description'],
+#                     }
 
-        return paths
+#                     if responses:
+#                         commands[method]['responses'] = responses
 
-    def get_examples(self):
-        with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE) as f:
-            return json.loads(f.read())
+#             paths[conf['path_conf']['path']] = commands
+
+#         return paths
+
+#     def get_examples(self):
+#         with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE) as f:
+#             return json.loads(f.read())

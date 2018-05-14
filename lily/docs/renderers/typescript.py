@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import re
+
 from .base import BaseRenderer
-from .interface import InterfaceRenderer
+from .schema import SchemaRenderer
 
 
 # FIXME: test it!!!!!!!!!!!!!
@@ -29,17 +31,17 @@ class TypeScriptSpecRenderer(BaseRenderer):
                         continue
 
                     # -- INTERFACES
-                    interfaces = {}
-                    interfaces['response'] = InterfaceRenderer(
+                    schemas = {}
+                    schemas['response'] = SchemaRenderer(
                         method_conf['output'].serializer).render().serialize()
 
                     if method_conf['input'].query_parser:
-                        interfaces['request_query'] = InterfaceRenderer(
+                        schemas['request_query'] = SchemaRenderer(
                             method_conf['input'].query_parser
                         ).render().serialize()
 
                     if method_conf['input'].body_parser:
-                        interfaces['request_query'] = InterfaceRenderer(
+                        schemas['request_body'] = SchemaRenderer(
                             method_conf['input'].body_parser
                         ).render().serialize()
 
@@ -50,19 +52,58 @@ class TypeScriptSpecRenderer(BaseRenderer):
                             'description': method_conf['meta'].description,
                         },
                         'method': method,
-                        'interfaces': interfaces,
-                        # !!!!!!!!!!!!!!!!
-                        # 'path_conf': method_conf['path_conf'],
-                        # FIXME: add path specification
+                        'schemas': schemas,
+                        'path_conf': conf['path_conf'],
                         # FIXME: add tests cases for a given command!!!!
                     }
 
         return rendered
 
-# CLIENT RENDERER
-# 1. in the 1st attempt save the repo locally
-# 2. produce all interfaces for a list of service-typescript files
-# 3. make sure that none command is duplicated
-#    (take entity service and fragment service)
-# 4. push to github with new tag!!!
-# 5. pull from github the template
+# class Enum:
+
+#     def __init__(self, name, values):
+#         self.name = name
+#         self.values = list(values)
+    # def remove_enums_duplicates(self):
+
+    #     enums = {}
+    #     duplicated_names = {}
+    #     for enum in self.enums:
+    #         name = self.serialize_enum_name(enum)
+
+    #         # -- if enum of that name already exists
+    #         if name in enums:
+    #             # -- compare its value with the one currently processing
+    #             if set(enums[name].values) != set(enum.values):
+    #                 duplicated_names.setdefault(name, [])
+    #                 duplicated_names[name].append(enum)
+
+    #         else:
+    #             enum.name = name
+    #             enums[name] = enum
+
+    #     for name, duplicated_enums in duplicated_names.items():
+    #         for i, enum in enumerate(duplicated_enums):
+    #             enum.name = '{name}{index}'.format(name=name, index=i + 1)
+    #             enums[enum.name] = enum
+
+    #     return list(enums.values())
+
+    # def serialize_enum_name(self, enum):
+
+    #     name = to_camelcase(enum.name)
+
+    #     if self.type == SERIALIZER_TYPES.RESPONSE:
+    #         return 'Response{}'.format(name)
+
+    #     elif self.type == SERIALIZER_TYPES.REQUEST_BODY:
+    #         return 'RequestBody{}'.format(name)
+
+    #     elif self.type == SERIALIZER_TYPES.REQUEST_QUERY:
+    #         return 'RequestQuery{}'.format(name)
+
+
+def to_camelcase(name):
+    tokens = re.split(r'\_+', name)
+
+    return ''.join([token.capitalize() for token in tokens])

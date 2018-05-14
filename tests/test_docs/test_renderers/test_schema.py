@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.db import models
+import pytest
+from mock import Mock, call
 
 from lily.base import serializers, parsers
-from lily.docs.renderers.schema import to_schema
+from docs.renderers.schema import (
+    Schema,
+    ArrayValue,
+    SchemaRenderer,
+)
 
 
-class Person(models.Model):
+class Human(models.Model):
 
     name = models.CharField(max_length=100)
 
@@ -19,29 +25,29 @@ class Person(models.Model):
         app_label = 'base'
 
 
-class PersonQueryParser(parsers.QueryParser):
+class HumanQueryParser(parsers.QueryParser):
     name = serializers.CharField(max_length=123, required=False)
 
     age = serializers.IntegerField(min_value=18)
 
 
-class PersonBodyParser(parsers.BodyParser):
+class HumanBodyParser(parsers.BodyParser):
     name = serializers.CharField(max_length=123, required=False)
 
     age = serializers.IntegerField(min_value=18)
 
 
-class PersonSerializer(serializers.Serializer):
+class HumanSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=123, required=False)
 
     age = serializers.IntegerField(min_value=18)
 
 
-class PersonModelSerializer(serializers.ModelSerializer):
+class HumanModelSerializer(serializers.ModelSerializer):
     is_underaged = serializers.SerializerMethodField()
 
     class Meta:
-        model = Person
+        model = Human
         fields = ('name', 'age', 'is_ready', 'is_underaged')
 
     def get_is_underaged(self, instance) -> bool:
@@ -61,54 +67,68 @@ class FoodSerializer(serializers.Serializer):
 
 class PartySerializer(serializers.Serializer):
 
-    guests = PersonSerializer(many=True)
+    guests = HumanSerializer(many=True)
 
-    host = PersonModelSerializer()
+    host = HumanModelSerializer()
 
     food = FoodSerializer()
 
 
-class SerializerToSchemaTestCase(TestCase):
+class SchemaRendererTestCase(TestCase):
 
-    def test_one_can_call_it_with_class_or_instance(self):
-
-        assert (
-            to_schema(PersonSerializer) ==
-            to_schema(PersonSerializer()))
+    @pytest.fixture(autouse=True)
+    def initfixtures(self, mocker):
+        self.mocker = mocker
 
     #
     # Body Parser
     #
     def test_person_body_parser(self):
 
-        assert to_schema(PersonBodyParser) == {
-            'type': 'object',
-            'required': ['age'],
-            'properties': {
-                'age': {
-                    'type': 'number',
-                    'minimum': 18,
-                },
-                'name': {
-                    'type': 'string',
-                    'maxLength': 123,
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(HumanBodyParser).render().serialize() == {
+            'name': 'RequestBody',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': ['age'],
+                'properties': {
+                    'age': {
+                        'type': 'integer',
+                        'minimum': 18,
+                    },
+                    'name': {
+                        'maxLength': 123,
+                        'type': 'string',
+                    },
                 },
             },
         }
 
     def test_person_query_parser(self):
 
-        assert to_schema(PersonQueryParser) == {
-            'type': 'object',
-            'required': ['age'],
-            'properties': {
-                'age': {
-                    'type': 'number',
-                    'minimum': 18,
-                },
-                'name': {
-                    'type': 'string',
-                    'maxLength': 123,
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(HumanQueryParser).render().serialize() == {
+            'name': 'RequestQuery',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': ['age'],
+                'properties': {
+                    'age': {
+                        'type': 'integer',
+                        'minimum': 18,
+                    },
+                    'name': {
+                        'maxLength': 123,
+                        'type': 'string',
+                    },
                 },
             },
         }
@@ -118,17 +138,25 @@ class SerializerToSchemaTestCase(TestCase):
     #
     def test_person_serializer(self):
 
-        assert to_schema(PersonSerializer) == {
-            'type': 'object',
-            'required': ['age'],
-            'properties': {
-                'age': {
-                    'type': 'number',
-                    'minimum': 18,
-                },
-                'name': {
-                    'type': 'string',
-                    'maxLength': 123,
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(HumanSerializer).render().serialize() == {
+            'name': 'Response',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': ['age'],
+                'properties': {
+                    'age': {
+                        'type': 'integer',
+                        'minimum': 18,
+                    },
+                    'name': {
+                        'maxLength': 123,
+                        'type': 'string',
+                    },
                 },
             },
         }
@@ -138,25 +166,35 @@ class SerializerToSchemaTestCase(TestCase):
     #
     def test_person_model_serializer(self):
 
-        assert to_schema(PersonModelSerializer) == {
-            'type': 'object',
-            'required': ['name', 'is_underaged'],
-            'properties': {
-                'name': {
-                    'type': 'string',
-                    'maxLength': 100,
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(
+            HumanModelSerializer
+        ).render().serialize() == {
+            'name': 'Response',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'name': {
+                        'type': 'string',
+                        'maxLength': 100,
+                    },
+                    'age': {
+                        'minimum': -2147483648,
+                        'maximum': 2147483647,
+                        'type': 'integer',
+                    },
+                    'is_underaged': {
+                        'type': 'boolean',
+                    },
+                    'is_ready': {
+                        'type': 'boolean',
+                    },
                 },
-                'age': {
-                    'type': 'number',
-                    'minimum': -2147483648,
-                    'maximum': 2147483647
-                },
-                'is_underaged': {
-                    'type': 'boolean',
-                },
-                'is_ready': {
-                    'type': 'boolean',
-                },
+                'required': ['name', 'is_underaged'],
             },
         }
 
@@ -164,6 +202,10 @@ class SerializerToSchemaTestCase(TestCase):
     # Method Derived Serializer Fields
     #
     def test_simple_fields(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
 
         class SimpleFieldsSerializer(serializers.Serializer):
 
@@ -193,92 +235,106 @@ class SerializerToSchemaTestCase(TestCase):
 
             created_at = serializers.DateTimeField()
 
-        expected = {
-            'type': 'object',
-            'required': [
-                'number', 'is_correct', 'price', 'choice', 'name',
-                'email', 'json', 'date_of_birth', 'created_at'],
-            'properties': {
-                'amount': {
-                    'type': 'string',
+        assert SchemaRenderer(
+            SimpleFieldsSerializer
+        ).render().serialize() == {
+            'name': 'Response',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': [
+                    'number', 'is_correct', 'price', 'choice', 'name',
+                    'email', 'json', 'date_of_birth', 'created_at'],
+                'properties': {
+                    'amount': {
+                        'type': 'string',
+                    },
+                    'number': {
+                        'type': 'integer',
+                    },
+                    'is_correct': {
+                        'type': 'boolean',
+                    },
+                    'price': {
+                        'type': 'number',
+                    },
+                    'choice': {
+                        'type': 'string',
+                        'enum': ['AA', 'BB'],
+                    },
+                    'name': {
+                        'maxLength': 11,
+                        'type': 'string',
+                    },
+                    'data': {
+                        'type': 'object',
+                    },
+                    'email': {
+                        'type': 'string',
+                        'format': 'email',
+                    },
+                    'uri': {
+                        'type': 'string',
+                        'format': 'uri',
+                    },
+                    'json': {
+                        'type': 'object',
+                    },
+                    'date_of_birth': {
+                        'type': 'string',
+                        'format': 'date',
+                    },
+                    'created_at': {
+                        'type': 'string',
+                        'format': 'date-time',
+                    }
                 },
-                'number': {
-                    'type': 'number',
-                },
-                'is_correct': {
-                    'type': 'boolean',
-                },
-                'price': {
-                    'type': 'number',
-                },
-                'choice': {
-                    'type': 'string',
-                    'enum': ['AA', 'BB'],
-                },
-                'name': {
-                    'maxLength': 11,
-                    'type': 'string',
-                },
-                'data': {
-                    'type': 'object',
-                },
-                'email': {
-                    'type': 'string',
-                    'format': 'email',
-                },
-                'uri': {
-                    'type': 'string',
-                    'format': 'uri',
-                },
-                'json': {
-                    'type': 'object',
-                },
-                'date_of_birth': {
-                    'type': 'string',
-                    'format': 'date',
-                },
-                'created_at': {
-                    'type': 'string',
-                    'format': 'date-time',
-                }
-            },
+            }
         }
-        assert to_schema(SimpleFieldsSerializer) == expected
 
     def test_list_field(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
         class Serializer(serializers.Serializer):
             numbers = serializers.ListField(
                 child=serializers.IntegerField())
 
             person = serializers.ListField(
-                child=PersonSerializer())
+                child=HumanSerializer())
 
-        assert to_schema(Serializer) == {
-            'type': 'object',
-            'required': ['numbers', 'person'],
-            'properties': {
-                'person': {
-                    'items': {
-                        'required': ['age'],
-                        'type': 'object',
-                        'properties': {
-                            'name': {
-                                'maxLength': 123,
-                                'type': 'string'
-                            },
-                            'age': {
-                                'type': 'number',
-                                'minimum': 18
+        assert SchemaRenderer(Serializer).render().serialize() == {
+            'name': 'Response',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': ['numbers', 'person'],
+                'properties': {
+                    'person': {
+                        'type': 'array',
+                        'items': {
+                            'required': ['age'],
+                            'type': 'object',
+                            'properties': {
+                                'name': {
+                                    'maxLength': 123,
+                                    'type': 'string'
+                                },
+                                'age': {
+                                    'type': 'integer',
+                                    'minimum': 18
+                                },
                             },
                         },
                     },
-                    'type': 'array'
-                },
-                'numbers': {
-                    'items': {
-                        'type': 'number'
+                    'numbers': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'integer'
+                        },
                     },
-                    'type': 'array'
                 },
             },
         }
@@ -287,6 +343,10 @@ class SerializerToSchemaTestCase(TestCase):
     # Method Derived Serializer Fields
     #
     def test_method_derived_fields(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
 
         class MethodDerivedFieldsSerializer(serializers.Serializer):
 
@@ -309,34 +369,55 @@ class SerializerToSchemaTestCase(TestCase):
             def get_names(self, *args, **kwargs) -> [str]:
                 return ['Jake', 'John']
 
-            def get_hosts(self, *args, **kwargs) -> [PersonSerializer]:
+            def get_hosts(self, *args, **kwargs) -> [HumanSerializer]:
                 return [{'name': 'John', 'age': 24}]
 
-            def get_owner(self, *args, **kwargs) -> PersonSerializer:
+            def get_owner(self, *args, **kwargs) -> HumanSerializer:
                 return {'name': 'John', 'age': 24}
 
-        assert to_schema(MethodDerivedFieldsSerializer) == {
-            'type': 'object',
-            'required': ['number', 'ingredients', 'names', 'hosts', 'owner'],
-            'properties': {
-                'number': {
-                    'type': 'float',
-                },
-                'ingredients': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'integer',
+        assert SchemaRenderer(
+            MethodDerivedFieldsSerializer
+        ).render().serialize() == {
+            'name': 'Response',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': [
+                    'number', 'ingredients', 'names', 'hosts', 'owner'],
+                'properties': {
+                    'number': {
+                        'type': 'number',
                     },
-                },
-                'names': {
-                    'type': 'array',
-                    'items': {
-                        'type': 'string',
+                    'ingredients': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'number',
+                        },
                     },
-                },
-                'hosts': {
-                    'type': 'array',
-                    'items': {
+                    'names': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'string',
+                        },
+                    },
+                    'hosts': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'required': ['age'],
+                            'properties': {
+                                'name': {
+                                    'type': 'string',
+                                    'maxLength': 123,
+                                },
+                                'age': {
+                                    'type': 'integer',
+                                    'minimum': 18,
+                                },
+                            },
+                        },
+                    },
+                    'owner': {
                         'type': 'object',
                         'required': ['age'],
                         'properties': {
@@ -345,23 +426,9 @@ class SerializerToSchemaTestCase(TestCase):
                                 'maxLength': 123,
                             },
                             'age': {
-                                'type': 'number',
+                                'type': 'integer',
                                 'minimum': 18,
                             },
-                        },
-                    },
-                },
-                'owner': {
-                    'type': 'object',
-                    'required': ['age'],
-                    'properties': {
-                        'name': {
-                            'type': 'string',
-                            'maxLength': 123,
-                        },
-                        'age': {
-                            'type': 'number',
-                            'minimum': 18,
                         },
                     },
                 },
@@ -373,64 +440,298 @@ class SerializerToSchemaTestCase(TestCase):
     #
     def test_nested_party_serializer(self):
 
-        assert to_schema(PartySerializer) == {
-            'type': 'object',
-            'required': ['guests', 'host', 'food'],
-            'properties': {
-                'host': {
-                    'type': 'object',
-                    'required': ['name', 'is_underaged'],
-                    'properties': {
-                        'name': {
-                            'type': 'string',
-                            'maxLength': 100,
-                        },
-                        'age': {
-                            'type': 'number',
-                            'minimum': -2147483648,
-                            'maximum': 2147483647
-                        },
-                        'is_underaged': {
-                            'type': 'boolean',
-                        },
-                        'is_ready': {
-                            'type': 'boolean',
-                        },
-                    },
-                },
-                'food': {
-                    'type': 'object',
-                    'required': ['provider', 'amount'],
-                    'properties': {
-                        'provider': {
-                            'type': 'object',
-                            'properties': {
-                                'name': {
-                                    'type': 'string',
-                                },
-                            },
-                        },
-                        'amount': {
-                            'type': 'number',
-                        },
-                    },
-                },
-                'guests': {
-                    'type': 'array',
-                    'items': {
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        expected = {
+            'name': 'Response',
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': ['guests', 'host', 'food'],
+                'properties': {
+                    'host': {
                         'type': 'object',
-                        'required': ['age'],
+                        'required': ['name', 'is_underaged'],
                         'properties': {
                             'name': {
                                 'type': 'string',
-                                'maxLength': 123,
+                                'maxLength': 100,
                             },
                             'age': {
-                                'type': 'number',
-                                'minimum': 18,
+                                'type': 'integer',
+                                'minimum': -2147483648,
+                                'maximum': 2147483647
+                            },
+                            'is_underaged': {
+                                'type': 'boolean',
+                            },
+                            'is_ready': {
+                                'type': 'boolean',
+                            },
+                        },
+                    },
+                    'food': {
+                        'type': 'object',
+                        'required': ['provider', 'amount'],
+                        'properties': {
+                            'provider': {
+                                'type': 'object',
+                                'properties': {
+                                    'name': {
+                                        'type': 'string',
+                                    },
+                                },
+                                'required': [],
+                            },
+                            'amount': {
+                                'type': 'integer',
+                            },
+                        },
+                    },
+                    'guests': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'required': ['age'],
+                            'properties': {
+                                'name': {
+                                    'type': 'string',
+                                    'maxLength': 123,
+                                },
+                                'age': {
+                                    'type': 'integer',
+                                    'minimum': 18,
+                                },
                             },
                         },
                     },
                 },
             },
         }
+
+        assert SchemaRenderer(
+            PartySerializer).render().serialize() == expected
+
+    #
+    # test_get_repository_uri
+    #
+    def test_get_repository_uri(self):
+
+        self.mocker.patch(
+            'docs.renderers.schema.config',
+            Mock(repository='http://repo', last_commit_hash='1234'))
+
+        schema = SchemaRenderer(HumanSerializer).render()
+        schema.meta = {
+            'path': '/some/path',
+            'first_line': 11,
+        }
+
+        assert (
+            schema.get_repository_uri() ==
+            'http://repo/src/1234/some/path/#lines-11')
+
+    #
+    # get_meta
+    #
+    @override_settings(LILY_PROJECT_BASE='/home/projects/lily')
+    def test_get_meta(self):
+
+        getfile = Mock(return_value='/home/projects/lily/a/views.py')
+        getsourcelines = Mock(return_value=[None, 11])
+        self.mocker.patch(
+            'docs.renderers.schema.inspect',
+            Mock(getfile=getfile, getsourcelines=getsourcelines))
+
+        renderer = SchemaRenderer(HumanSerializer)
+
+        assert renderer.get_meta(HumanSerializer) == {
+            'first_line': 11,
+            'path': '/a/views.py',
+        }
+        assert getfile.call_args_list == [
+            call(HumanSerializer), call(HumanSerializer)]
+        assert getsourcelines.call_args_list == [
+            call(HumanSerializer), call(HumanSerializer)]
+
+
+def get_schema(raw_schema):
+
+    schema = SchemaRenderer(HumanSerializer).render()
+    schema.schema = raw_schema
+
+    return schema
+
+
+@pytest.mark.parametrize(
+    'raw_schema, expected',
+    [
+        # -- empty to empty
+        (
+            {
+                'type': 'object',
+                'properties': {},
+                'required': [],
+            },
+            {'schema': {}},
+        ),
+
+        # -- single value schema
+        (
+            {
+                'type': 'object',
+                'properties': {
+                    'name': 'string',
+                },
+                'required': ['name'],
+            },
+            {
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'name': 'string',
+                    },
+                    'required': ['name'],
+                },
+            }
+        ),
+
+        #
+        # Nested Schemas
+        #
+        (
+            {
+                'type': 'object',
+                'required': ['owner'],
+                'properties': {
+                    'owner': get_schema({
+                        'type': 'object',
+                        'properties': {
+                            'name': 'string',
+                            'ingredient': get_schema({
+                                'type': 'object',
+                                'required': ['is_ready', 'name'],
+                                'properties': {
+                                    'name': 'string',
+                                    'is_ready': 'boolean',
+                                    'creator': get_schema({
+                                        'type': 'object',
+                                        'required': [],
+                                        'properties': {
+                                            'age': 'number',
+                                        },
+                                    }),
+                                },
+                            }),
+                        },
+                        'required': ['name'],
+                    }),
+                },
+            },
+            {
+                'schema': {
+                    'type': 'object',
+                    'required': ['owner'],
+                    'properties': {
+                        'owner': {
+                            'type': 'object',
+                            'properties': {
+                                'name': 'string',
+                                'ingredient': {
+                                    'type': 'object',
+                                    'required': ['is_ready', 'name'],
+                                    'properties': {
+                                        'name': 'string',
+                                        'is_ready': 'boolean',
+                                        'creator': {
+                                            'type': 'object',
+                                            'required': [],
+                                            'properties': {
+                                                'age': 'number',
+                                            },
+                                        },
+                                    },
+                                },
+                            },
+                            'required': ['name'],
+                        },
+                    },
+                },
+            }
+        ),
+
+        #
+        # ArrayValue
+        #
+
+        # -- Schema - ArrayValue
+        (
+            {
+                'type': 'object',
+                'required': ['owner'],
+                'properties': {
+                    'owner': ArrayValue(get_schema({
+                        'type': 'object',
+                        'required': [],
+                        'properties': {
+                            'name': 'string',
+                            'age': 'number',
+                        },
+                    })),
+                },
+            },
+            {
+                'schema': {
+                    'type': 'object',
+                    'required': ['owner'],
+                    'properties': {
+                        'owner': {
+                            'type': 'array',
+                            'items': {
+                                'type': 'object',
+                                'required': [],
+                                'properties': {
+                                    'name': 'string',
+                                    'age': 'number',
+                                },
+                            },
+                        },
+                    },
+                },
+            }
+        ),
+
+        # -- simple type - ArrayValue
+        (
+            {
+                'type': 'object',
+                'required': ['choices'],
+                'properties': {
+                    'choices': ArrayValue('string'),
+                }
+            },
+            {
+                'schema': {
+                    'type': 'object',
+                    'required': ['choices'],
+                    'properties': {
+                        'choices': {
+                            'type': 'array',
+                            'items': 'string',
+                        },
+                    }
+                },
+            }
+        ),
+    ])
+def test_serialize(raw_schema, expected):
+
+    schema = SchemaRenderer(HumanSerializer).render()
+    schema.schema = raw_schema
+
+    serialized = schema.serialize()
+    del serialized['name']
+    del serialized['uri']
+    assert serialized == expected
