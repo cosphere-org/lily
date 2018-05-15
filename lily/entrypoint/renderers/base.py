@@ -1,9 +1,18 @@
 # -*- coding: utf-8 -*-
 
 from copy import copy
+import logging
 import re
 
 from django.urls import URLResolver, URLPattern
+
+from lily.base.events import EventFactory
+
+
+logger = logging.getLogger()
+
+
+event = EventFactory(logger)
 
 
 class BaseRenderer:
@@ -13,19 +22,36 @@ class BaseRenderer:
 
     def render(self):
         views_index = self.crawl_views(self.urlpatterns)
+        commands_index = {}
+
         for path, view_conf in views_index.items():
             view = views_index[path]['callback'].view_class
 
             for method in ['post', 'get', 'put', 'delete']:
                 try:
-                    view_conf[method] = getattr(view, method).command_conf
+                    fn = getattr(view, method)
 
                 except AttributeError:
                     pass
 
-            del views_index[path]['callback']
+                else:
+                    try:
+                        command_name = fn.command_conf['name']
 
-        return views_index
+                    except AttributeError:
+                        raise event.BrokenRequest(
+                            'NOT_LILY_COMPATIBLE_VIEW_DETECTED',
+                            data={
+                                'name': views_index[path]['name'],
+                            })
+
+                    commands_index[command_name] = {
+                        'method': method,
+                        'path_conf': views_index[path]['path_conf'],
+                    }
+                    commands_index[command_name].update(fn.command_conf)
+
+        return commands_index
 
     def crawl_views(self, patterns, path_patterns=None):
         views_index = {}
@@ -86,12 +112,12 @@ class BaseRenderer:
         ]
 
         parameters = []
-
+        path = pattern
         while True:
             param_pattern = re.compile(
                 r'\(\?P\<(?P<param_name>\w+)\>(?P<param_pattern>[\\dw\+]+)\)')
 
-            match = param_pattern.search(pattern)
+            match = param_pattern.search(path)
             if match:
                 span = match.span()
                 param_name = match.groupdict()['param_name']
@@ -102,8 +128,8 @@ class BaseRenderer:
                         param_type = parameter_type_def['type']
                         break
 
-                pattern = pattern.replace(
-                    pattern[span[0]:span[1]],
+                path = path.replace(
+                    path[span[0]:span[1]],
                     '{{{name}}}'.format(name=param_name))
 
                 parameters.append({
@@ -117,6 +143,7 @@ class BaseRenderer:
                 break
 
         return {
-            'path': pattern,
+            'path': path,
+            'pattern': pattern,
             'parameters': parameters
         }

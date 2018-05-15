@@ -1,102 +1,93 @@
 # -*- coding: utf-8 -*-
 
+from importlib import import_module
+import json
 import re
+
+from django.conf import settings
 
 from .base import BaseRenderer
 from .schema import SchemaRenderer
 
 
-# FIXME: test it!!!!!!!!!!!!!
 class CommandsRenderer(BaseRenderer):
 
-    def __init__(self, urlpatterns):
-        self.urlpatterns = urlpatterns
+    def __init__(self, with_examples=False):
+        self.urlpatterns = self.get_urlpatterns()
+
+        self.with_examples = with_examples
+        if with_examples:
+            self.examples = self.get_all_examples()
+
+        else:
+            self.examples = {}
+
+    def get_urlpatterns(self):
+        return import_module(settings.ROOT_URLCONF).urlpatterns
 
     def render(self):
 
-        base_index = super(CommandsRenderer, self).render()
+        commands_index = super(CommandsRenderer, self).render()
         rendered = {}
 
-        for path, conf in base_index.items():
-            for method in ['post', 'get', 'put', 'delete']:
-                try:
-                    method_conf = conf[method]
+        for name, conf in commands_index.items():
 
-                except KeyError:
-                    pass
+            path_conf = conf['path_conf']
+            method = conf['method']
+            meta = conf['meta']
+            access = conf['access']
+            input_ = conf['input']
+            output = conf['output']
+            source = conf['source']
 
-                else:
-                    # -- INTERFACES
-                    schemas = {}
-                    schemas['output'] = SchemaRenderer(
-                        method_conf['output'].serializer).render().serialize()
+            configuration = {
+                'method': method,
+                'path_conf': path_conf,
+                'meta': meta,
+                'source': source,
+                'access': access,
+            }
 
-                    if method_conf['input'].query_parser:
-                        schemas['input_query'] = SchemaRenderer(
-                            method_conf['input'].query_parser
-                        ).render().serialize()
+            # -- EXAMPLES
+            if self.with_examples:
+                configuration['examples'] = self.get_examples(
+                    name, path_conf.pop('pattern'))
 
-                    if method_conf['input'].body_parser:
-                        schemas['input_body'] = SchemaRenderer(
-                            method_conf['input'].body_parser
-                        ).render().serialize()
+            # -- SCHEMAS
+            schemas = {}
+            schemas['output'] = SchemaRenderer(
+                output.serializer).render().serialize()
 
-                    rendered[method_conf['name']] = {
-                        'method': method,
-                        'path_conf': conf['path_conf'],
-                        'meta': method_conf['meta'].serialize(),
-                        'access': method_conf['access'].serialize(),
-                        'schemas': schemas,
-                        # FIXME: add tests cases for a given command!!!!
-                    }
+            if input_.query_parser:
+                schemas['input_query'] = SchemaRenderer(
+                    input_.query_parser).render().serialize()
+
+            if input_.body_parser:
+                schemas['input_body'] = SchemaRenderer(
+                    input_.body_parser).render().serialize()
+
+            configuration['schemas'] = schemas
+            rendered[name] = configuration
 
         return rendered
 
-# class Enum:
+    def get_all_examples(self):
+        # FIXME: !!!!! change the name of the file --> maybe store directly in
+        # the module!!! --> check based on the caching mechanism!!!
+        with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE) as f:
+            return json.loads(f.read())
 
-#     def __init__(self, name, values):
-#         self.name = name
-#         self.values = list(values)
-    # def remove_enums_duplicates(self):
+    def get_examples(self, command_name, path_pattern):
+        try:
+            examples = self.examples[command_name]
 
-    #     enums = {}
-    #     duplicated_names = {}
-    #     for enum in self.enums:
-    #         name = self.serialize_enum_name(enum)
+        except KeyError:
+            return {}
 
-    #         # -- if enum of that name already exists
-    #         if name in enums:
-    #             # -- compare its value with the one currently processing
-    #             if set(enums[name].values) != set(enum.values):
-    #                 duplicated_names.setdefault(name, [])
-    #                 duplicated_names[name].append(enum)
+        else:
+            for example in examples.values():
+                path = example['request']['path']
+                parameters = re.compile(path_pattern).search(path)
+                example['request']['parameters'] = parameters.groupdict()
 
-    #         else:
-    #             enum.name = name
-    #             enums[name] = enum
-
-    #     for name, duplicated_enums in duplicated_names.items():
-    #         for i, enum in enumerate(duplicated_enums):
-    #             enum.name = '{name}{index}'.format(name=name, index=i + 1)
-    #             enums[enum.name] = enum
-
-    #     return list(enums.values())
-
-    # def serialize_enum_name(self, enum):
-
-    #     name = to_camelcase(enum.name)
-
-    #     if self.type == SERIALIZER_TYPES.RESPONSE:
-    #         return 'Response{}'.format(name)
-
-    #     elif self.type == SERIALIZER_TYPES.REQUEST_BODY:
-    #         return 'RequestBody{}'.format(name)
-
-    #     elif self.type == SERIALIZER_TYPES.REQUEST_QUERY:
-    #         return 'RequestQuery{}'.format(name)
-
-
-def to_camelcase(name):
-    tokens = re.split(r'\_+', name)
-
-    return ''.join([token.capitalize() for token in tokens])
+            return examples

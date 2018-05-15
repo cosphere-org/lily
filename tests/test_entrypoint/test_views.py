@@ -3,7 +3,7 @@
 from django.test import TestCase
 from django.urls import reverse
 import pytest
-from mock import Mock, call
+from mock import Mock
 
 from lily.base.test import Client
 
@@ -30,10 +30,6 @@ class EntryPointViewTestCase(TestCase):
         renderer = self.mocker.patch('entrypoint.views.CommandsRenderer')
         render = Mock(return_value={'some': 'spec'})
         renderer.return_value = Mock(render=render)
-        urlpatterns = Mock()
-        self.mocker.patch(
-            'entrypoint.views.EntryPointView.get_urlpatterns',
-        ).return_value = urlpatterns
 
         response = self.app.get(self.uri, **self.auth_headers)
 
@@ -44,4 +40,3 @@ class EntryPointViewTestCase(TestCase):
             'version': '2.5.6',
             'commands': {'some': 'spec'},
         }
-        assert renderer.call_args_list == [call(urlpatterns)]

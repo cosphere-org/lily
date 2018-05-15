@@ -1,18 +1,37 @@
 # -*- coding: utf-8 -*-
 
-from importlib import import_module
-
 from django.views.generic import View
 from django.conf import settings
 
 from lily.base import serializers, parsers, name
 from lily.base.command import command
-from lily.base.meta import Meta, Domain
-from lily.base.access import Access
+from lily.base.meta import Meta, MetaSerializer, Domain
+from lily.base.source import SourceSerializer
+from lily.base.access import Access, AccessSerializer
 from lily.base.input import Input
 from lily.base.output import Output
 from .renderers.commands import CommandsRenderer
 from lily.base import config
+
+
+class CommandSerializer(serializers.Serializer):
+
+    _type = 'command'
+
+    method = serializers.ChoiceField(
+        choices=('post', 'get', 'put', 'delete'))
+
+    path_conf = serializers.JSONField()
+
+    meta = MetaSerializer()
+
+    access = AccessSerializer()
+
+    source = SourceSerializer()
+
+    schemas = serializers.JSONField()
+
+    examples = serializers.JSONField(required=False)
 
 
 class EntryPointView(View):
@@ -22,12 +41,16 @@ class EntryPointView(View):
 
         version = serializers.CharField()
 
-        commands = serializers.JSONField()
+        commands = CommandSerializer(many=True)
 
     class QueryParser(parsers.QueryParser):
 
         # FIXME: test it!!!
         commands = parsers.ListField(child=parsers.CharField(), default=None)
+
+        with_schemas = parsers.BooleanField(default=True)
+
+        with_examples = parsers.BooleanField(default=False)
 
     @command(
         name=name.Read('ENTRY_POINT'),
@@ -38,7 +61,7 @@ class EntryPointView(View):
                 Serve Service Entry Point data:
                 - current version of the service
                 - list of all available commands together with their
-                  configuration
+                  configurations
                 - examples collected for a given service.
 
             ''',
@@ -55,17 +78,23 @@ class EntryPointView(View):
     def get(self, request):
 
         command_names = request.input.query['commands']
-        commands = CommandsRenderer(self.get_urlpatterns()).render()
+
+        with_schemas = request.input.query['with_schemas']
+
+        with_examples = request.input.query['with_examples']
+
+        commands = CommandsRenderer(with_examples).render()
         if command_names:
             commands = {
                 command_name: commands[command_name]
                 for command_name in command_names}
+
+        if not with_schemas:
+            for c in commands:
+                del c['schema']
 
         raise self.event.Read(
             {
                 'version': config.version,
                 'commands': commands,
             })
-
-    def get_urlpatterns(self):
-        return import_module(settings.ROOT_URLCONF).urlpatterns

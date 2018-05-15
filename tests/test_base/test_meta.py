@@ -3,7 +3,7 @@
 from django.test import TestCase
 import pytest
 
-from lily.base.meta import Meta, Domain
+from lily.base.meta import Meta, MetaSerializer, Domain, DomainSerializer
 
 
 class MetaTestCase(TestCase):
@@ -28,17 +28,22 @@ class MetaTestCase(TestCase):
         assert m.description == 'this is it'
         assert m.domain == Domain(id='d', name='d')
 
-    def test_serialize(self):
+
+class MetaSerializerTestCase(TestCase):
+
+    def test_serialization(self):
 
         m = Meta(
             title='hi there',
             description='this is it',
             domain=Domain(id='a', name='aaa'))
 
-        assert m.serialize() == {
+        assert MetaSerializer(m).data == {
+            '@type': 'meta',
             'title': 'hi there',
             'description': 'this is it',
             'domain': {
+                '@type': 'domain',
                 'id': 'a',
                 'name': 'aaa',
             },
@@ -63,13 +68,57 @@ class DomainTestCase(TestCase):
         assert d.id == 'cards'
         assert d.name == 'Cards Management'
 
-    def test_serialize(self):
+
+class DomainSerializerTestCase(TestCase):
+
+    def test_serialization(self):
 
         d = Domain(
             id='super',
             name='Super Management')
 
-        assert d.serialize() == {
+        assert DomainSerializer(d).data == {
+            '@type': 'domain',
             'id': 'super',
             'name': 'Super Management',
         }
+
+
+@pytest.mark.parametrize(
+    'description, expected',
+    [
+        # -- empty to empty
+        (
+            '',
+            '',
+        ),
+
+        # -- nothing to transform
+        (
+            'hello world',
+            'hello world',
+        ),
+
+        # -- prefix white chars
+        (
+            '\t\t   hello\n world',
+            'hello world',
+        ),
+
+        # -- suffix white chars
+        (
+            'hello\n world \t\t\n  \n',
+            'hello world',
+        ),
+
+        # -- single space delimiter
+        (
+            'hello\nworld',
+            'hello world',
+        ),
+    ])
+def test_transform_description(description, expected):
+
+    m = Meta(title='...', domain=Domain(id='d', name='d'))
+
+    assert m.transform_description(description) == expected

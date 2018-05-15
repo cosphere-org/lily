@@ -8,6 +8,7 @@ from django.views.generic import View
 import pytest
 
 from lily.entrypoint.renderers.base import BaseRenderer
+from lily.base.events import EventFactory
 
 
 class BaseRendererTestCase(TestCase):
@@ -17,7 +18,7 @@ class BaseRendererTestCase(TestCase):
         self.mocker = mocker
 
     #
-    # get_views_index
+    # render
     #
     def test_render__simple_flat_url_patterns(self):
 
@@ -25,41 +26,47 @@ class BaseRendererTestCase(TestCase):
             def post(self):
                 pass
 
-        class YoView(View):
+            post.command_conf = {
+                'name': 'Hi',
+                'some': 'hi.conf',
+            }
+
+        class HelloView(View):
             def delete(self):
                 pass
 
-            delete.command_conf = {'some': 'conf'}
+            delete.command_conf = {
+                'name': 'Hello',
+                'some': 'hello.conf',
+            }
 
-            def put(self):
-                pass
-
-        hi_view, yo_view = HiView.as_view(), YoView.as_view()
+        hi_view, hello_view = HiView.as_view(), HelloView.as_view()
 
         renderer = BaseRenderer([
             re_path(r'^hi/there$', hi_view, name='hi.there'),
-            re_path(r'^hiyo', yo_view, name='hiyo'),
+            re_path(r'^hiyo', hello_view, name='hiyo'),
         ])
 
         assert renderer.render() == {
-            '/hi/there': {
-                'name': 'HiView',
-                'path_patterns': ['^hi/there$'],
+            'Hi': {
+                'method': 'post',
                 'path_conf': {
                     'path': '/hi/there',
+                    'pattern': r'/hi/there',
                     'parameters': [],
                 },
+                'name': 'Hi',
+                'some': 'hi.conf',
             },
-            '/hiyo': {
-                'name': 'YoView',
-                'path_patterns': ['^hiyo'],
+            'Hello': {
+                'method': 'delete',
                 'path_conf': {
                     'path': '/hiyo',
+                    'pattern': '/hiyo',
                     'parameters': [],
                 },
-                'delete': {
-                    'some': 'conf'
-                },
+                'name': 'Hello',
+                'some': 'hello.conf',
             },
         }
 
@@ -69,20 +76,28 @@ class BaseRendererTestCase(TestCase):
             def post(self):
                 pass
 
-            post.command_conf = {'post_conf': 'here it goes'}
+            post.command_conf = {
+                'name': 'Hi',
+                'conf': 'hi',
+            }
 
         class WatView(View):
             def get(self):
                 pass
 
+            get.command_conf = {
+                'name': 'Wat',
+                'conf.wat': 'wat',
+            }
+
         class YoView(View):
             def delete(self):
                 pass
 
-            delete.command_conf = {'some': 'conf'}
-
-            def put(self):
-                pass
+            delete.command_conf = {
+                'name': 'Yo',
+                'conf': 'yo',
+            }
 
         hi_view, yo_view, wat_view = (
             HiView.as_view(), YoView.as_view(), WatView.as_view())
@@ -95,27 +110,25 @@ class BaseRendererTestCase(TestCase):
                     re_path(r'^wat/$', wat_view, 'wat'),
                 ])),
             ])),
-            re_path('^hiyo', yo_view, 'yo'),
         ])
 
         assert renderer.render() == {
-            '/payment/hi/there': {
-                'name': 'HiView',
-                'path_patterns': [r'^payment/$', r'^hi/there$'],
+            'Hi': {
+                'name': 'Hi',
+                'method': 'post',
                 'path_conf': {
                     'path': '/payment/hi/there',
+                    'pattern': r'/payment/hi/there',
                     'parameters': [],
                 },
-                'post': {
-                    'post_conf': 'here it goes',
-                }
+                'conf': 'hi',
             },
-            '/payment/now/{when}/yes/': {
-                'name': 'YoView',
-                'path_patterns': [
-                    r'^payment/$', r'^now/(?P<when>\d+)/$', r'^yes/$'],
+            'Yo': {
+                'name': 'Yo',
+                'method': 'delete',
                 'path_conf': {
                     'path': '/payment/now/{when}/yes/',
+                    'pattern': r'/payment/now/(?P<when>\d+)/yes/',
                     'parameters': [
                         {
                             'name': 'when',
@@ -124,16 +137,14 @@ class BaseRendererTestCase(TestCase):
                         }
                     ],
                 },
-                'delete': {
-                    'some': 'conf'
-                },
+                'conf': 'yo',
             },
-            '/payment/now/{when}/wat/': {
-                'name': 'WatView',
-                'path_patterns': [
-                    r'^payment/$', r'^now/(?P<when>\d+)/$', r'^wat/$'],
+            'Wat': {
+                'name': 'Wat',
+                'method': 'get',
                 'path_conf': {
                     'path': '/payment/now/{when}/wat/',
+                    'pattern': r'/payment/now/(?P<when>\d+)/wat/',
                     'parameters': [
                         {
                             'name': 'when',
@@ -142,19 +153,22 @@ class BaseRendererTestCase(TestCase):
                         }
                     ],
                 },
-            },
-            '/hiyo': {
-                'name': 'YoView',
-                'path_patterns': ['^hiyo'],
-                'path_conf': {
-                    'path': '/hiyo',
-                    'parameters': [],
-                },
-                'delete': {
-                    'some': 'conf'
-                },
+                'conf.wat': 'wat',
             },
         }
+
+    def test_render__not_lily_compatible_view(self):
+
+        class HiView(View):
+            def post(self):
+                pass
+
+        renderer = BaseRenderer([
+            re_path(r'^hi/there$', HiView.as_view(), name='hi.there'),
+        ])
+
+        with pytest.raises(EventFactory.BrokenRequest):
+            renderer.render()
 
     #
     # url_pattern_to_conf
@@ -167,6 +181,7 @@ class BaseRendererTestCase(TestCase):
             ['^payments/', '^subscriptions/register/$']
         ) == {
             'path': '/payments/subscriptions/register/',
+            'pattern': '/payments/subscriptions/register/',
             'parameters': []
         }
 
@@ -175,6 +190,7 @@ class BaseRendererTestCase(TestCase):
             ['^payments/$', '^subscriptions/register/$', '^/now$']
         ) == {
             'path': '/payments/subscriptions/register/now',
+            'pattern': '/payments/subscriptions/register/now',
             'parameters': []
         }
 
@@ -186,6 +202,7 @@ class BaseRendererTestCase(TestCase):
             ['^payments/', '^payment_cards/(?P<payment_card_id>\\d+)$']
         ) == {
             'path': '/payments/payment_cards/{payment_card_id}',
+            'pattern': '/payments/payment_cards/(?P<payment_card_id>\\d+)',
             'parameters': [
                 {
                     'name': 'payment_card_id',
@@ -204,6 +221,8 @@ class BaseRendererTestCase(TestCase):
             '^payment_cards/(?P<card_id>\\w+)/mark_as_default/$'
         ]) == {
             'path': '/payments/payment_cards/{card_id}/mark_as_default/',
+            'pattern': (
+                '/payments/payment_cards/(?P<card_id>\\w+)/mark_as_default/'),
             'parameters': [
                 {
                     'name': 'card_id',
@@ -224,6 +243,8 @@ class BaseRendererTestCase(TestCase):
             '^(?P<messageId>\\d+)/$'
         ]) == {
             'path': '/cards/{card_id}/with/{messageId}/',
+            'pattern': (
+                '/cards/(?P<card_id>\\w+)/with/(?P<messageId>\\d+)/'),
             'parameters': [
                 {
                     'name': 'card_id',

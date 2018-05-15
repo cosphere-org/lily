@@ -2,7 +2,7 @@
 
 from django.test import TestCase
 
-from lily.base.access import Access
+from lily.base.access import Access, AccessSerializer
 
 
 class AccessTestCase(TestCase):
@@ -23,13 +23,17 @@ class AccessTestCase(TestCase):
         assert a.access_list == ['SUPER_USER']
         assert a.is_private is True
 
+
+class AccessSerializerTestCase(TestCase):
+
     def test_serialize(self):
 
         a = Access(
             access_list=['SUPER_USER'],
             is_private=True)
 
-        assert a.serialize() == {
+        assert AccessSerializer(a).data == {
+            '@type': 'access',
             'is_private': True,
             'access_list': ['SUPER_USER'],
         }

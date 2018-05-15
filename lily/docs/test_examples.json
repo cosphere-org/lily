@@ -1,120 +1,120 @@
 {
-    "READ_ENTRY_POINT": {
-        "500 (GENERIC_ERROR_OCCURRED)": {
-            "method": "get",
-            "request": {
-                "path": "/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "description": "GENERIC_ERROR_OCCURRED",
-            "response": {
-                "content": {
-                    "@type": "error",
-                    "user_id": "anonymous",
-                    "@event": "GENERIC_ERROR_OCCURRED",
-                    "errors": [
-                        "Cannot call `.is_valid()` as no `data=` keyword argument was passed when instantiating the serializer instance."
-                    ]
-                },
-                "content_type": "application/json",
-                "status": 500
-            }
-        },
-        "200 (ENTRY_POINT_READ)": {
-            "description": "ENTRY_POINT_READ",
-            "method": "get",
-            "response": {
-                "content": {
-                    "@type": "entrypoint",
-                    "commands": {
-                        "some": "spec"
-                    },
-                    "@event": "ENTRY_POINT_READ",
-                    "version": "2.5.6"
-                },
-                "content_type": "application/json",
-                "status": 200
-            },
-            "request": {
-                "path": "/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            }
-        }
-    },
-    "BULK_READ_COMMANDS": {
-        "200 (COMMANDS_BULK_READ)": {
-            "method": "get",
-            "request": {
-                "path": "/docs/commands/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "description": "COMMANDS_BULK_READ",
-            "response": {
-                "content": {
-                    "@type": "commands_list",
-                    "commands": {
-                        "some": "spec"
-                    },
-                    "@event": "COMMANDS_BULK_READ",
-                    "version": "2.5.6"
-                },
-                "content_type": "application/json",
-                "status": 200
-            }
-        }
-    },
     "READ_COMMANDS_CONF": {
         "200 (COMMANDS_CONF_READ)": {
             "method": "get",
-            "request": {
-                "path": "/docs/blueprint_spec/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
+            "response": {
+                "content_type": "application/json",
+                "status": 200,
+                "content": {
+                    "@event": "COMMANDS_CONF_READ",
+                    "@type": "commands_config",
+                    "spec": {}
                 }
             },
             "description": "COMMANDS_CONF_READ",
-            "response": {
-                "content": {
-                    "@type": "commands_config",
-                    "@event": "COMMANDS_CONF_READ",
-                    "spec": {}
+            "request": {
+                "headers": {
+                    "X-CS-USER-ID": 190,
+                    "X-CS-ACCOUNT-TYPE": "ADMIN"
                 },
+                "path": "/docs/blueprint_spec/"
+            }
+        }
+    },
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
+            "method": "get",
+            "response": {
                 "content_type": "application/json",
-                "status": 200
+                "status": 200,
+                "content": {
+                    "@type": "entrypoint",
+                    "version": "2.5.6",
+                    "@event": "ENTRY_POINT_READ",
+                    "commands": {
+                        "some": "spec"
+                    }
+                }
+            },
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "headers": {
+                    "X-CS-USER-ID": 190,
+                    "X-CS-ACCOUNT-TYPE": "ADMIN"
+                },
+                "path": "/"
+            }
+        },
+        "500 (GENERIC_ERROR_OCCURRED)": {
+            "method": "get",
+            "request": {
+                "headers": {
+                    "X-CS-USER-ID": 190,
+                    "X-CS-ACCOUNT-TYPE": "ADMIN"
+                },
+                "path": "/"
+            },
+            "description": "GENERIC_ERROR_OCCURRED",
+            "response": {
+                "content_type": "application/json",
+                "status": 500,
+                "content": {
+                    "errors": [
+                        "render() takes 1 positional argument but 2 were given"
+                    ],
+                    "@event": "GENERIC_ERROR_OCCURRED",
+                    "@type": "error",
+                    "user_id": "anonymous"
+                }
             }
         }
     },
     "READ_TYPESCRIPT_SPEC": {
         "200 (TYPESCRIPT_SPEC_READ)": {
             "method": "get",
-            "request": {
-                "path": "/docs/typescript_spec/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "description": "TYPESCRIPT_SPEC_READ",
             "response": {
+                "content_type": "application/json",
+                "status": 200,
                 "content": {
-                    "@type": "typescript_spec",
                     "@event": "TYPESCRIPT_SPEC_READ",
+                    "@type": "typescript_spec",
                     "spec": {
                         "some": "spec"
                     }
+                }
+            },
+            "description": "TYPESCRIPT_SPEC_READ",
+            "request": {
+                "headers": {
+                    "X-CS-USER-ID": 190,
+                    "X-CS-ACCOUNT-TYPE": "ADMIN"
                 },
+                "path": "/docs/typescript_spec/"
+            }
+        }
+    },
+    "BULK_READ_COMMANDS": {
+        "200 (COMMANDS_BULK_READ)": {
+            "method": "get",
+            "response": {
                 "content_type": "application/json",
-                "status": 200
+                "status": 200,
+                "content": {
+                    "@type": "commands_list",
+                    "version": "2.5.6",
+                    "@event": "COMMANDS_BULK_READ",
+                    "commands": {
+                        "some": "spec"
+                    }
+                }
+            },
+            "description": "COMMANDS_BULK_READ",
+            "request": {
+                "headers": {
+                    "X-CS-USER-ID": 190,
+                    "X-CS-ACCOUNT-TYPE": "ADMIN"
+                },
+                "path": "/docs/commands/"
             }
         }
     }

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import inspect
 import logging
 
 from django.conf import settings
@@ -13,6 +12,7 @@ from .events import EventFactory
 from . import serializers
 from .utils import import_from_string
 from .access import Access
+from .source import Source
 from .input import Input
 from .output import Output
 from .name import ConstantName
@@ -193,18 +193,11 @@ def command(
 
         # -- the below specs are available shortly after the code compilation
         # -- and therefore can be made available on runtime
-        code, firstline = inspect.getsourcelines(fn)
         inner.command_conf = {
             'name': name.render_command_name(),
             'method': fn.__name__,
             'meta': meta,
-            'source': {
-                'filepath': inspect.getfile(fn).replace(
-                    settings.LILY_PROJECT_BASE, ''),
-                'start_line': firstline,
-                'end_line': firstline + len(code),
-            },
-            'path_params_annotations': fn.__annotations__,
+            'source': Source(fn),
             'access': access,
             'input': input,
             'output': output,
