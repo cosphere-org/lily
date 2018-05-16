@@ -17,7 +17,7 @@ from .renderers.commands import CommandsRenderer
 from lily.base import config
 
 
-def get_cache_filepath(self):
+def get_cache_filepath():
     return os.path.join(
         os.path.dirname(__file__), '.cache_commands.json')
 
