@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from copy import copy
+from copy import copy, deepcopy
 import logging
 import re
 
@@ -47,7 +47,8 @@ class BaseRenderer:
 
                     commands_index[command_name] = {
                         'method': method.upper(),
-                        'path_conf': views_index[path]['path_conf'],
+                        # FIXME: test it!!!
+                        'path_conf': deepcopy(views_index[path]['path_conf']),
                     }
                     commands_index[command_name].update(fn.command_conf)
 
