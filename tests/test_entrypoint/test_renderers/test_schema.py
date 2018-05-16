@@ -10,6 +10,7 @@ from lily.entrypoint.renderers.schema import (
     Schema,
     ArrayValue,
     SchemaRenderer,
+    MissingSchemaMappingError,
 )
 
 
@@ -505,6 +506,19 @@ class SchemaRendererTestCase(TestCase):
 
         assert SchemaRenderer(
             PartySerializer).render().serialize() == expected
+
+    def test_missing_mapping(self):
+
+        class UnknownField:
+            pass
+
+        class Serializer:
+
+            def get_fields(self):
+                return {'name': UnknownField()}
+
+        with pytest.raises(MissingSchemaMappingError):
+            SchemaRenderer(Serializer).render().serialize()
 
     #
     # test_get_repository_uri

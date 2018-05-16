@@ -33,6 +33,12 @@ class Meta:
         self.description = self.transform_description(description)
         self.domain = domain
 
+    def __eq__(self, other):
+        return (
+            self.title == other.title and
+            self.description == other.description and
+            self.domain == other.domain)
+
     def transform_description(self, description):
 
         if description:

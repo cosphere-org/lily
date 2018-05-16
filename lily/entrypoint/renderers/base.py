@@ -46,7 +46,7 @@ class BaseRenderer:
                             })
 
                     commands_index[command_name] = {
-                        'method': method,
+                        'method': method.upper(),
                         'path_conf': views_index[path]['path_conf'],
                     }
                     commands_index[command_name].update(fn.command_conf)

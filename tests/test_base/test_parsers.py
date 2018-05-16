@@ -91,3 +91,10 @@ class QueryParserTestCases(TestCase):
             assert parser.is_valid() is True
             assert parser.data == {
                 'price': expected_price, 'value': expected_value}
+
+    def test_init__data_is_optional(self):
+        class QueryParser(parsers.QueryParser):
+            is_ready = parsers.BooleanField()
+
+        # -- no error is raised
+        QueryParser()

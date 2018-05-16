@@ -45,30 +45,7 @@ LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = None
 #
 # DOCS
 #
-LILY_DOCS_BASE_DIR = os.path.join(BASE_DIR, './.docs')
-
 LILY_DOCS_VIEWS_ACCESS_LIST = None
-
-# !!!! DEPRECATED
-# FIXME: !!!!!!!!!!!!!!
-# -- replace with some generic stuff
-LILY_DOCS_TEST_EXAMPLES_FILE = os.path.join(
-    BASE_DIR, 'docs', 'test_examples.json')
-
-# !!!! DEPRECATED
-# FIXME: !!!!!!!!!!!!!!
-LILY_DOCS_OPEN_API_SPEC_FILE = os.path.join(
-    BASE_DIR, 'docs', 'open_api_spec.json')
-
-# !!!! DEPRECATED
-# FIXME: !!!!!!!!!!!!!!
-LILY_DOCS_COMMANDS_CONF_FILE = os.path.join(
-    BASE_DIR, 'docs', 'commands_conf.json')
-
-# !!!! DEPRECATED
-# FIXME: !!!!!!!!!!!!!!
-LILY_DOCS_MARKDOWN_SPEC_FILE = os.path.join(
-    BASE_DIR, '../', 'DOCS.md')
 
 #
 # ASYNC

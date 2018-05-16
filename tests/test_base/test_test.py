@@ -115,9 +115,9 @@ class ClientTestCase(TestCase):
     def prepare_example_file(self):
         examples_file = self.tmpdir.mkdir('docs').join('examples.json')
         examples_file.write('{}')
-        self.mocker.patch(
-            'base.test.settings.LILY_DOCS_TEST_EXAMPLES_FILE',
-            str(examples_file))
+        get_examples_filepath = self.mocker.patch(
+            'lily.base.test.get_examples_filepath')
+        get_examples_filepath.return_value = str(examples_file)
 
         return examples_file
 
@@ -125,8 +125,9 @@ class ClientTestCase(TestCase):
         examples_file_dir = self.tmpdir.mkdir('docs')
         filepath = os.path.join(str(examples_file_dir), 'examples007.json')
 
-        self.mocker.patch(
-            'base.test.settings.LILY_DOCS_TEST_EXAMPLES_FILE', filepath)
+        get_examples_filepath = self.mocker.patch(
+            'lily.base.test.get_examples_filepath')
+        get_examples_filepath.return_value = filepath
 
         response = Client().get('/test/it/')
 

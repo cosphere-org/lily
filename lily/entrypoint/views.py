@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import json
+import os
+
 from django.views.generic import View
 from django.conf import settings
 
@@ -14,12 +17,17 @@ from .renderers.commands import CommandsRenderer
 from lily.base import config
 
 
+def get_cache_filepath(self):
+    return os.path.join(
+        os.path.dirname(__file__), '.cache_commands.json')
+
+
 class CommandSerializer(serializers.Serializer):
 
     _type = 'command'
 
     method = serializers.ChoiceField(
-        choices=('post', 'get', 'put', 'delete'))
+        choices=('POST', 'GET', 'PUT', 'DELETE'))
 
     path_conf = serializers.JSONField()
 
@@ -29,7 +37,7 @@ class CommandSerializer(serializers.Serializer):
 
     source = SourceSerializer()
 
-    schemas = serializers.JSONField()
+    schemas = serializers.JSONField(required=False)
 
     examples = serializers.JSONField(required=False)
 
@@ -41,11 +49,10 @@ class EntryPointView(View):
 
         version = serializers.CharField()
 
-        commands = CommandSerializer(many=True)
+        commands = serializers.DictField(child=CommandSerializer())
 
     class QueryParser(parsers.QueryParser):
 
-        # FIXME: test it!!!
         commands = parsers.ListField(child=parsers.CharField(), default=None)
 
         with_schemas = parsers.BooleanField(default=True)
@@ -83,18 +90,56 @@ class EntryPointView(View):
 
         with_examples = request.input.query['with_examples']
 
-        commands = CommandsRenderer(with_examples).render()
+        commands = self.get_commands()
+
         if command_names:
             commands = {
                 command_name: commands[command_name]
                 for command_name in command_names}
 
         if not with_schemas:
-            for c in commands:
-                del c['schema']
+            for c in commands.values():
+                del c['schemas']
+
+        if not with_examples:
+            for c in commands.values():
+                del c['examples']
 
         raise self.event.Read(
             {
                 'version': config.version,
                 'commands': commands,
             })
+
+    # FIXME: !!! this could be easily moved to some generic class and
+    # I could use it as a poor's man cache just before the response
+    def get_commands(self):
+        cache_filepath = get_cache_filepath()
+
+        # -- attempt to fetch `commands` from the local cache. If successful
+        # -- check if it was rendered for the newest version of the service
+        try:
+            with open(cache_filepath, 'r') as f:
+                data = json.loads(f.read())
+
+                if data['version'] == config.version:
+                    return data['commands']
+
+        except FileNotFoundError:
+            pass
+
+        # -- if reached here there were no `commands` or they were outdated
+        commands = CommandsRenderer().render()
+        commands = {
+            name: CommandSerializer(conf).data
+            for name, conf in commands.items()
+        }
+
+        # -- save in the cache for the future reference
+        with open(cache_filepath, 'w') as f:
+            f.write(json.dumps({
+                'version': config.version,
+                'commands': commands,
+            }))
+
+        return commands

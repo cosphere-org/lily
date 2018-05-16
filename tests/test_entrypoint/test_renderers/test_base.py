@@ -49,7 +49,7 @@ class BaseRendererTestCase(TestCase):
 
         assert renderer.render() == {
             'Hi': {
-                'method': 'post',
+                'method': 'POST',
                 'path_conf': {
                     'path': '/hi/there',
                     'pattern': r'/hi/there',
@@ -59,7 +59,7 @@ class BaseRendererTestCase(TestCase):
                 'some': 'hi.conf',
             },
             'Hello': {
-                'method': 'delete',
+                'method': 'DELETE',
                 'path_conf': {
                     'path': '/hiyo',
                     'pattern': '/hiyo',
@@ -115,7 +115,7 @@ class BaseRendererTestCase(TestCase):
         assert renderer.render() == {
             'Hi': {
                 'name': 'Hi',
-                'method': 'post',
+                'method': 'POST',
                 'path_conf': {
                     'path': '/payment/hi/there',
                     'pattern': r'/payment/hi/there',
@@ -125,7 +125,7 @@ class BaseRendererTestCase(TestCase):
             },
             'Yo': {
                 'name': 'Yo',
-                'method': 'delete',
+                'method': 'DELETE',
                 'path_conf': {
                     'path': '/payment/now/{when}/yes/',
                     'pattern': r'/payment/now/(?P<when>\d+)/yes/',
@@ -141,7 +141,7 @@ class BaseRendererTestCase(TestCase):
             },
             'Wat': {
                 'name': 'Wat',
-                'method': 'get',
+                'method': 'GET',
                 'path_conf': {
                     'path': '/payment/now/{when}/wat/',
                     'pattern': r'/payment/now/(?P<when>\d+)/wat/',

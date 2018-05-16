@@ -261,21 +261,19 @@ class CommandTestCase(TestCase):
 
     def test_conf__is_saved_on_function(self):
 
+        source = TestView.post.command_conf.pop('source')
         assert TestView.post.command_conf == {
             'name': 'MAKE_IT',
             'method': 'post',
-            'source': {
-                'filepath': '/tests/test_base/test_command.py',
-                'start_line': 99,
-                'end_line': 111,
-            },
             'meta': TestView.meta,
-            'path_params_annotations': {},
             'access': Access(
                 access_list=['PREMIUM', 'SUPER_PREMIUM']),
             'input': TestView.input,
             'output': TestView.output,
         }
+        assert source.filepath == '/tests/test_base/test_command.py'
+        assert source.start_line == 99
+        assert source.end_line == 110
 
     #
     # INPUT

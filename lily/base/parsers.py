@@ -9,7 +9,6 @@ from .serializers import *  # noqa
 
 class QueryParser(drf_serializers.Serializer):
 
-    # FIXME: test it!!!!!!!!!!
     def __init__(self, *args, **kwargs):
 
         raw_data = kwargs.get('data')

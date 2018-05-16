@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import json
-from django.test import TestCase, override_settings
+
+from django.test import TestCase
 from collections import OrderedDict
 
 import pytest
@@ -22,6 +23,13 @@ class CommandsRendererTestCase(TestCase):
     def initfixtures(self, mocker, tmpdir):
         self.mocker = mocker
         self.tmpdir = tmpdir
+
+        examples = self.tmpdir.join('examples.json')
+        examples.write('{}')
+        self.examples_filepath = str(examples)
+        self.mocker.patch(
+            'lily.entrypoint.renderers.commands.get_examples_filepath'
+        ).return_value = self.examples_filepath
 
     def test_render(self):
         renderer = self.mocker.patch(
@@ -56,7 +64,7 @@ class CommandsRendererTestCase(TestCase):
             }
         }
 
-        assert CommandsRenderer(False).render() == {
+        assert CommandsRenderer().render() == {
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -64,7 +72,6 @@ class CommandsRendererTestCase(TestCase):
                 'path_conf': {
                     'parameters': [],
                     'path': '/hi',
-                    'pattern': '/hi',
                 },
                 'schemas': {
                     'input_body': {'body': 'schema'},
@@ -72,6 +79,7 @@ class CommandsRendererTestCase(TestCase):
                     'output': {'output': 'schema'},
                 },
                 'source': source,
+                'examples': {},
             }
         }
 
@@ -133,7 +141,7 @@ class CommandsRendererTestCase(TestCase):
                 }
             )])
 
-        assert CommandsRenderer(False).render() == {
+        assert CommandsRenderer().render() == {
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -141,7 +149,6 @@ class CommandsRendererTestCase(TestCase):
                 'path_conf': {
                     'parameters': [],
                     'path': '/hi',
-                    'pattern': '/hi',
                 },
                 'schemas': {
                     'input_body': {'body': 'read.schema'},
@@ -149,6 +156,7 @@ class CommandsRendererTestCase(TestCase):
                     'output': {'output': 'read.schema'},
                 },
                 'source': source,
+                'examples': {},
             },
             'DELETE_TASK': {
                 'access': access,
@@ -156,7 +164,6 @@ class CommandsRendererTestCase(TestCase):
                 'method': 'delete',
                 'path_conf': {
                     'path': '/hi/{id}',
-                    'pattern': '/hi/(?P<id>\\d+)',
                     'parameters': [{'name': 'id', 'type': 'integer'}],
                 },
                 'schemas': {
@@ -165,6 +172,7 @@ class CommandsRendererTestCase(TestCase):
                     'output': {'output': 'delete.schema'},
                 },
                 'source': source,
+                'examples': {},
             },
         }
 
@@ -201,54 +209,54 @@ class CommandsRendererTestCase(TestCase):
             }
         }
 
-        f = self.tmpdir.mkdir('test').join('examples.json')
-        f.write(json.dumps({
-            'READ_CARD': {
-                '200 (OK)': {
-                    'request': {
-                        'path': '/hi',
-                    },
-                }
-            }
-        }))
-
-        with override_settings(LILY_DOCS_TEST_EXAMPLES_FILE=str(f)):
-            assert CommandsRenderer(True).render() == {
+        with open(self.examples_filepath, 'w') as f:
+            f.write(json.dumps({
                 'READ_CARD': {
-                    'access': access,
-                    'meta': meta,
-                    'method': 'get',
-                    'path_conf': {
-                        'parameters': [],
-                        'path': '/hi',
-                    },
-                    'schemas': {
-                        'input_body': {'body': 'schema'},
-                        'input_query': {'query': 'schema'},
-                        'output': {'output': 'schema'},
-                    },
-                    'source': source,
-                    'examples': {
-                        '200 (OK)': {
-                            'request': {
-                                'path': '/hi',
-                                'parameters': {},
-                            },
+                    '200 (OK)': {
+                        'request': {
+                            'path': '/hi',
+                            'parameters': {},
                         },
                     },
-                }
+                },
+            }))
+
+        assert CommandsRenderer().render() == {
+            'READ_CARD': {
+                'access': access,
+                'meta': meta,
+                'method': 'get',
+                'path_conf': {
+                    'parameters': [],
+                    'path': '/hi',
+                },
+                'schemas': {
+                    'input_body': {'body': 'schema'},
+                    'input_query': {'query': 'schema'},
+                    'output': {'output': 'schema'},
+                },
+                'source': source,
+                'examples': {
+                    '200 (OK)': {
+                        'request': {
+                            'path': '/hi',
+                            'parameters': {},
+                        },
+                    },
+                },
             }
+        }
 
     def test_render__no_commands(self):
         self.mocker.patch.object(BaseRenderer, 'render').return_value = {}
 
-        assert CommandsRenderer(True).render() == {}
+        assert CommandsRenderer().render() == {}
 
     #
     # get_examples
     #
     def test_get_examples(self):
-        renderer = CommandsRenderer(True)
+        renderer = CommandsRenderer()
         renderer.examples = {
             'COMMAND_A': {
                 '200 (OK)': {
@@ -278,7 +286,7 @@ class CommandsRendererTestCase(TestCase):
         }
 
     def test_get_examples__no_examples(self):
-        renderer = CommandsRenderer(True)
+        renderer = CommandsRenderer()
         renderer.examples = {
             'COMMAND_A': {'hi': 'there'},
         }
@@ -286,7 +294,7 @@ class CommandsRendererTestCase(TestCase):
         assert renderer.get_examples('COMMAND_B', r'') == {}
 
     def test_get_examples__with_pamaterized_paths(self):
-        renderer = CommandsRenderer(True)
+        renderer = CommandsRenderer()
         renderer.examples = {
             'COMMAND_A': {
                 '200 (OK)': {

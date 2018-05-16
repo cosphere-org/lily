@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 
+import os
 import json
 from copy import deepcopy
 
 from django.urls import get_resolver
 from django.test import Client as DjangoClient
-from django.conf import settings
 
 
 class MissingConfError(Exception):
@@ -38,7 +38,7 @@ class Client(DjangoClient):
             command_conf = getattr(fn.view_class, http_verb).command_conf
 
             try:
-                with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE, 'r+') as f:
+                with open(get_examples_filepath(), 'r+') as f:
                     examples = json.loads(f.read() or '{}')
 
             except FileNotFoundError:
@@ -104,20 +104,8 @@ class Client(DjangoClient):
                     'content': response_json,
                 },
             }
-            # try:
-            #     payload = str(
-            #         response.request['wsgi.input'].read(), 'utf8')
 
-            #     if payload:
-            #         examples[command_name][example_key]['request'] = {
-            #             'content_type': response.request['CONTENT_TYPE'],
-            #             'content': json.loads(payload),
-            #         }
-
-            # except KeyError:
-            #     pass
-
-            with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE, 'w') as f:
+            with open(get_examples_filepath(), 'w') as f:
                 f.write(json.dumps(examples, indent=4))
 
         except AttributeError:
@@ -127,3 +115,8 @@ class Client(DjangoClient):
             })
 
         return response
+
+
+def get_examples_filepath():
+    return os.path.join(
+        os.path.dirname(__file__), '.cache_examples.json')

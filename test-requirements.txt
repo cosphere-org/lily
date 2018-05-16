@@ -9,3 +9,6 @@ pytest-pythonpath==0.7.1
 pytest==2.8.7
 pytz==2015.7
 PyYAML==3.11
+
+# fake data
+fake-factory==0.5.6

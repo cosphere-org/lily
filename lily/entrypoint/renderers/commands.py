@@ -6,21 +6,16 @@ import re
 
 from django.conf import settings
 
+from lily.base.test import get_examples_filepath
 from .base import BaseRenderer
 from .schema import SchemaRenderer
 
 
 class CommandsRenderer(BaseRenderer):
 
-    def __init__(self, with_examples=False):
+    def __init__(self, ):
         self.urlpatterns = self.get_urlpatterns()
-
-        self.with_examples = with_examples
-        if with_examples:
-            self.examples = self.get_all_examples()
-
-        else:
-            self.examples = {}
+        self.examples = self.get_all_examples()
 
     def get_urlpatterns(self):
         return import_module(settings.ROOT_URLCONF).urlpatterns
@@ -49,9 +44,8 @@ class CommandsRenderer(BaseRenderer):
             }
 
             # -- EXAMPLES
-            if self.with_examples:
-                configuration['examples'] = self.get_examples(
-                    name, path_conf.pop('pattern'))
+            configuration['examples'] = self.get_examples(
+                name, path_conf.pop('pattern'))
 
             # -- SCHEMAS
             schemas = {}
@@ -72,9 +66,7 @@ class CommandsRenderer(BaseRenderer):
         return rendered
 
     def get_all_examples(self):
-        # FIXME: !!!!! change the name of the file --> maybe store directly in
-        # the module!!! --> check based on the caching mechanism!!!
-        with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE) as f:
+        with open(get_examples_filepath()) as f:
             return json.loads(f.read())
 
     def get_examples(self, command_name, path_pattern):

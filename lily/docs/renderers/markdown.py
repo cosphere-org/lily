@@ -7,9 +7,10 @@ import logging
 from collections import OrderedDict
 
 from django.template import engines
-from django.conf import settings
 
 from lily.entrypoint.renderers.base import BaseRenderer
+from lily.base.meta import MetaSerializer
+from lily.base.test import get_examples_filepath
 
 
 BASE_DIR = os.path.dirname(__file__)
@@ -66,7 +67,7 @@ class MarkdownRenderer(BaseRenderer):
                     pass
 
                 else:
-                    meta = method_conf['meta'].serialize()
+                    meta = MetaSerializer(method_conf['meta']).data
                     name = method_conf['name']
 
                     domain = meta['domain']['name']
@@ -118,5 +119,5 @@ class MarkdownRenderer(BaseRenderer):
             key=lambda x: x[0]))
 
     def get_examples(self):
-        with open(settings.LILY_DOCS_TEST_EXAMPLES_FILE) as f:
+        with open(get_examples_filepath()) as f:
             return json.loads(f.read())

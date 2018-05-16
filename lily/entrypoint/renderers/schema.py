@@ -25,7 +25,7 @@ class MissingMethodForFieldError(Exception):
     """
 
 
-class MissingInterfaceMappingError(Exception):
+class MissingSchemaMappingError(Exception):
     """
     When mapping between any type of a field in the Serializer and schema
     is missing.
@@ -63,6 +63,9 @@ class SchemaRenderer:
 
         elif isinstance(instance, parsers.QueryParser):
             self.type = SERIALIZER_TYPES.REQUEST_QUERY
+
+        else:
+            self.type = None
 
         self.serializer = serializer
 
@@ -141,8 +144,7 @@ class SchemaRenderer:
 
             # -- all not covered cases should raise an Error
             else:
-                # FIXME: test it!!!!!
-                raise MissingInterfaceMappingError(
+                raise MissingSchemaMappingError(
                     '{serializer}.{name}'.format(
                         serializer=self.get_name(serializer),
                         name=name))
