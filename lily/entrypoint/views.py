@@ -18,8 +18,7 @@ from lily.base import config
 
 
 def get_cache_filepath():
-    return os.path.join(
-        os.path.dirname(__file__), '.cache_commands.json')
+    return os.path.join(settings.LILY_CACHE_DIR, 'commands.json')
 
 
 class CommandSerializer(serializers.Serializer):
@@ -49,6 +48,8 @@ class EntryPointView(View):
 
         version = serializers.CharField()
 
+        name = serializers.CharField()
+
         commands = serializers.DictField(child=CommandSerializer())
 
     class QueryParser(parsers.QueryParser):
@@ -58,6 +59,8 @@ class EntryPointView(View):
         with_schemas = parsers.BooleanField(default=True)
 
         with_examples = parsers.BooleanField(default=False)
+
+        is_private = parsers.BooleanField(default=None)
 
     @command(
         name=name.Read('ENTRY_POINT'),
@@ -76,7 +79,7 @@ class EntryPointView(View):
 
         access=Access(
             is_private=True,
-            access_list=settings.LILY_DOCS_VIEWS_ACCESS_LIST),
+            access_list=settings.LILY_ENTRYPOINT_VIEWS_ACCESS_LIST),
 
         input=Input(query_parser=QueryParser),
 
@@ -90,6 +93,8 @@ class EntryPointView(View):
 
         with_examples = request.input.query['with_examples']
 
+        is_private = request.input.query['is_private']
+
         commands = self.get_commands()
 
         if command_names:
@@ -97,16 +102,22 @@ class EntryPointView(View):
                 command_name: commands[command_name]
                 for command_name in command_names}
 
-        if not with_schemas:
-            for c in commands.values():
+        for c in commands.values():
+            if not with_schemas:
                 del c['schemas']
 
-        if not with_examples:
-            for c in commands.values():
+            if not with_examples:
                 del c['examples']
+
+        if is_private is not None:
+            commands = {
+                name: command
+                for name, command in commands.items()
+                if command['access']['is_private'] == is_private}
 
         raise self.event.Read(
             {
+                'name': config.name,
                 'version': config.version,
                 'commands': commands,
             })

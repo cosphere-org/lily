@@ -22,14 +22,22 @@ class EntryPointViewTestCase(TestCase):
         self.mocker = mocker
         self.tmpdir = tmpdir
 
-        self.mocker.patch('entrypoint.views.config', Mock(version='2.5.6'))
-
     def setUp(self):
         self.app = Client()
         self.auth_headers = {
             'HTTP_X_CS_ACCOUNT_TYPE': 'ADMIN',
             'HTTP_X_CS_USER_ID': 190,
         }
+
+        class Config:
+            def __init__(self, **kwargs):
+                for k, v in kwargs.items():
+                    setattr(self, k, v)
+
+        self.mocker.patch(
+            'entrypoint.views.config',
+            Config(version='2.5.6', name='test'))
+
         self.cache_filepath = str(self.tmpdir.join('.cache.json'))
         self.mocker.patch(
             'entrypoint.views.get_cache_filepath'
@@ -49,6 +57,7 @@ class EntryPointViewTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            'name': 'test',
             'version': '2.5.6',
             'commands': {
                 'UPDATE_HELLO': CommandSerializer(c).data,
@@ -98,6 +107,7 @@ class EntryPointViewTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            'name': 'test',
             'version': '2.5.6',
             'commands': {
                 'UPDATE_HELLO': CommandSerializer(c0).data,
@@ -118,6 +128,7 @@ class EntryPointViewTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            'name': 'test',
             'version': '2.5.6',
             'commands': {
                 'READ_PAYMENTS': CommandSerializer(c1).data,
@@ -156,6 +167,57 @@ class EntryPointViewTestCase(TestCase):
         commands = response.json()['commands']
         assert commands['UPDATE_HELLO'].get('examples') is not None
         assert renderer.call_args_list == [call()]
+
+    def test_get__is_private(self):
+
+        renderer = self.mocker.patch('entrypoint.views.CommandsRenderer')
+        c0 = eg.command(is_private=True)
+        c1 = eg.command(is_private=False)
+        c2 = eg.command(is_private=True)
+        render = Mock(return_value={
+            'UPDATE_HELLO': c0,
+            'CREATE_HELLO': c1,
+            'DELETE_HELLO': c2,
+        })
+        renderer.return_value = Mock(render=render)
+
+        # -- show only private commands
+        response = self.app.get(
+            self.uri,
+            data={'is_private': True},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        del c0['examples']
+        del c2['examples']
+        assert response.json() == {
+            '@event': 'ENTRY_POINT_READ',
+            '@type': 'entrypoint',
+            'name': 'test',
+            'version': '2.5.6',
+            'commands': {
+                'UPDATE_HELLO': CommandSerializer(c0).data,
+                'DELETE_HELLO': CommandSerializer(c2).data,
+            },
+        }
+
+        # -- show only public commands
+        response = self.app.get(
+            self.uri,
+            data={'is_private': False},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        del c1['examples']
+        assert response.json() == {
+            '@event': 'ENTRY_POINT_READ',
+            '@type': 'entrypoint',
+            'name': 'test',
+            'version': '2.5.6',
+            'commands': {
+                'CREATE_HELLO': CommandSerializer(c1).data,
+            },
+        }
 
     def test_get__from_cache(self):
 

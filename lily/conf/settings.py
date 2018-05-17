@@ -29,6 +29,8 @@ LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
 LILY_CONFIG_FILE_PATH = os.path.join(
     LILY_PROJECT_BASE, 'lily/conf/config.yaml')
 
+LILY_CACHE_DIR = os.path.join(BASE_DIR, '.lily-cache')
+
 #
 # AUTHORIZER
 #
@@ -41,11 +43,6 @@ LILY_AUTHORIZER_CLASS = getattr(
 # ENTRYPOINT
 #
 LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = None
-
-#
-# DOCS
-#
-LILY_DOCS_VIEWS_ACCESS_LIST = None
 
 #
 # ASYNC

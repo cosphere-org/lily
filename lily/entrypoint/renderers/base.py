@@ -22,8 +22,10 @@ class BaseRenderer:
 
     def render(self):
         views_index = self.crawl_views(self.urlpatterns)
-        commands_index = {}
 
+        self.validate_index(views_index)
+
+        commands_index = {}
         for path, view_conf in views_index.items():
             view = views_index[path]['callback'].view_class
 
@@ -47,7 +49,6 @@ class BaseRenderer:
 
                     commands_index[command_name] = {
                         'method': method.upper(),
-                        # FIXME: test it!!!
                         'path_conf': deepcopy(views_index[path]['path_conf']),
                     }
                     commands_index[command_name].update(fn.command_conf)
@@ -148,3 +149,22 @@ class BaseRenderer:
             'pattern': pattern,
             'parameters': parameters
         }
+
+    def validate_index(self, views_index):
+
+        view_paths_count = {}
+        for view_conf in views_index.values():
+            view_name = view_conf['callback'].view_class.__name__
+
+            view_paths_count.setdefault(view_name, 0)
+            view_paths_count[view_name] += 1
+
+        duplicates = [
+            view_name
+            for view_name, view_path_count in view_paths_count.items()
+            if view_path_count > 1]
+
+        if duplicates:
+            raise event.ServerError(
+                'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED',
+                data={'duplicates': duplicates})

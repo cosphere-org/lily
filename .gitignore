@@ -56,6 +56,4 @@ docker-compose.yml
 # django
 collectedstatic
 
-# lily fields
-.cache_commands.json
-.cache_examples.json
+lily/.lily-cache/

@@ -4,12 +4,17 @@ import os
 import json
 from copy import deepcopy
 
+from django.conf import settings
 from django.urls import get_resolver
 from django.test import Client as DjangoClient
 
 
 class MissingConfError(Exception):
     pass
+
+
+def get_examples_filepath():
+    return os.path.join(settings.LILY_CACHE_DIR, 'examples.json')
 
 
 class Client(DjangoClient):
@@ -29,6 +34,13 @@ class Client(DjangoClient):
         return self._make_request('delete', *args, **kwargs)
 
     def _make_request(self, http_verb, *args, **kwargs):
+
+        def assure_path_exists(path):
+            dir_path = os.path.dirname(path)
+            if not os.path.exists(dir_path):
+                os.makedirs(dir_path)
+
+        assure_path_exists(get_examples_filepath())
 
         response = getattr(super(Client, self), http_verb)(*args, **kwargs)
 
@@ -115,8 +127,3 @@ class Client(DjangoClient):
             })
 
         return response
-
-
-def get_examples_filepath():
-    return os.path.join(
-        os.path.dirname(__file__), '.cache_examples.json')

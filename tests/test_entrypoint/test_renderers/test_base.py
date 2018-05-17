@@ -70,6 +70,87 @@ class BaseRendererTestCase(TestCase):
             },
         }
 
+    def test_render__same_path_many_commands(self):
+
+        class HiView(View):
+            def post(self):
+                pass
+
+            post.command_conf = {
+                'name': 'Hi',
+                'some': 'hi.conf',
+            }
+
+            def delete(self):
+                pass
+
+            delete.command_conf = {
+                'name': 'Hello',
+                'some': 'hello.conf',
+            }
+
+        hi_view = HiView.as_view()
+
+        renderer = BaseRenderer([
+            re_path(r'^hi/there$', hi_view, name='hi.there'),
+        ])
+
+        assert renderer.render() == {
+            'Hi': {
+                'method': 'POST',
+                'path_conf': {
+                    'path': '/hi/there',
+                    'pattern': r'/hi/there',
+                    'parameters': [],
+                },
+                'name': 'Hi',
+                'some': 'hi.conf',
+            },
+            'Hello': {
+                'method': 'DELETE',
+                'path_conf': {
+                    'path': '/hi/there',
+                    'pattern': r'/hi/there',
+                    'parameters': [],
+                },
+                'name': 'Hello',
+                'some': 'hello.conf',
+            },
+        }
+
+    def test_render__command_belongs_to_many_paths_error(self):
+
+        class HiView(View):
+            def post(self):
+                pass
+
+            post.command_conf = {
+                'name': 'Hi',
+                'some': 'hi.conf',
+            }
+
+        hi_view = HiView.as_view()
+
+        renderer = BaseRenderer([
+            re_path(r'^hi/there$', hi_view, name='hi.there'),
+            re_path(r'^hello/there$', hi_view, name='hello.there'),
+        ])
+
+        try:
+            renderer.render()
+
+        except EventFactory.ServerError as e:
+            assert e.event == 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED'
+            assert e.data == {
+                '@event': 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED',
+                '@type': 'error',
+                'duplicates': ['HiView'],
+                'user_id': None,
+            }
+
+        else:
+            raise AssertionError('should raise error')
+
     def test_crawl_views__deep_url_patterns(self):
 
         class HiView(View):

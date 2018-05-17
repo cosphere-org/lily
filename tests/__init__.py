@@ -10,10 +10,13 @@ faker = Faker()
 
 class EntityGenerator:
 
-    def command(self):
+    def command(self, is_private=None):
 
         def fn():
             pass
+
+        if is_private is None:
+            is_private = random.choice([True, False])
 
         command = {
             'method': random.choice(['GET', 'POST', 'PUT', 'DELETE']),
@@ -23,7 +26,7 @@ class EntityGenerator:
                 description=faker.sentence(),
                 domain=Domain(id='d', name='domain')),
             'access': Access(
-                is_private=random.choice([True, False]),
+                is_private=is_private,
                 access_list=['ANY']),
             'source': Source(fn),
             'schemas': {'some': 'schemas'},
