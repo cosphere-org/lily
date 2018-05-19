@@ -163,7 +163,7 @@ def command(
             except MultipleObjectsReturned as e:
                 # -- Rather Hacky way of fetching the name of model
                 # -- which raised the MultipleObjectsReturned error
-                m = re.search(r'than one\s+(?P<model_name>\w+)\s+', str(e))
+                m = re.search(r'than one\s+(?P<model_name>\w+)', str(e))
                 model_name = m.group('model_name').upper()
 
                 e = event.ServerError(
