@@ -12,21 +12,34 @@ INFLECT_ENGINE = inflect.engine()
 
 IRREGULAR_FORMS = {
     'break': 'broke',
+    'broadcast': 'broadcast',
     'buy': 'bought',
     'come': 'came',
+    'cost': 'cost',
+    'cut': 'cut',
     'eat': 'ate',
     'feel': 'felt',
     'get': 'got',
     'go': 'went',
     'hear': 'heard',
+    'hit': 'hit',
+    'hurt': 'hurt',
     'is': 'was',
+    'let': 'let',
     'lose': 'lost',
     'make': 'made',
     'pay': 'paid',
+    'put': 'put',
+    'quit': 'quit',
+    'read': 'read',
+    'reset': 'reset',
+    'reset': 'reset',
     'see': 'saw',
+    'send': 'sent',
     'sing': 'sang',
     'sit': 'sat',
     'sleep': 'slept',
+    'spread': 'spread',
     'teach': 'taught',
     'tell': 'told',
     'understand': 'understood',
@@ -36,20 +49,6 @@ IRREGULAR_FORMS = {
 EXCEPTION_FORMS = {
     'refer': 'referred',
 }
-
-
-SINGLE_FORMS = set([
-    'broadcast',
-    'cost',
-    'cut',
-    'hit',
-    'hurt',
-    'let',
-    'put',
-    'quit',
-    'read',
-    'spread',
-])
 
 
 VOWELS = set(['a', 'e', 'i', 'o', 'u', 'y'])
@@ -91,9 +90,6 @@ def to_past(verb):
 
     elif verb in EXCEPTION_FORMS:
         return EXCEPTION_FORMS[verb]
-
-    elif verb in SINGLE_FORMS:
-        return verb
 
     # -- last letter is `e`
     elif verb[-1] == 'e':
