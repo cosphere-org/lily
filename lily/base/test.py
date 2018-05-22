@@ -14,7 +14,7 @@ class MissingConfError(Exception):
 
 
 def get_examples_filepath():
-    return os.path.join(settings.LILY_CACHE_DIR, 'examples.json')
+    return os.path.join(settings.LILY_CACHE_DIR, 'api_examples.json')
 
 
 class Client(DjangoClient):

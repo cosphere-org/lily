@@ -29,7 +29,7 @@ LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
 LILY_CONFIG_FILE_PATH = os.path.join(
     LILY_PROJECT_BASE, 'lily/conf/config.yaml')
 
-LILY_CACHE_DIR = os.path.join(BASE_DIR, '.lily-cache')
+LILY_CACHE_DIR = os.path.join(BASE_DIR, '.commands')
 
 #
 # AUTHORIZER

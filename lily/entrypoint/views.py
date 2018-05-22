@@ -18,7 +18,7 @@ from lily.base import config
 
 
 def get_cache_filepath():
-    return os.path.join(settings.LILY_CACHE_DIR, 'commands.json')
+    return os.path.join(settings.LILY_CACHE_DIR, 'entrypoint.json')
 
 
 class CommandSerializer(serializers.Serializer):

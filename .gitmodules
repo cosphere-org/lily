@@ -1,0 +1,3 @@
+[submodule "lily/docs/renderers/cosphere-angular-client"]
+	path = lily/docs/renderers/cosphere-angular-client
+	url = git@bitbucket.org:goodai/cosphere-angular-client.git
