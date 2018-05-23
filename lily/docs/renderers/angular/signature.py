@@ -42,12 +42,12 @@ class Signature:
                 ', '.join([to_arg(p) for p in self.path_parameters]))
 
         # -- query
-        if self.request_query:
+        if not self.request_query.is_empty():
             input_signature.append(
                 'params: {}'.format(self.request_query.name))
 
         # -- body
-        if self.request_body:
+        if not self.request_body.is_empty():
             input_signature.append(
                 'body: {}'.format(self.request_body.name))
 
@@ -72,11 +72,11 @@ class Signature:
             call_args_signature.append("'{}'".format(path))
 
         # -- query
-        if self.request_query:
+        if not self.request_query.is_empty():
             call_args_signature.append('{ params }')
 
         # -- body
-        if self.request_body:
+        if not self.request_body.is_empty():
             call_args_signature.append('body')
 
         return ', '.join(call_args_signature)

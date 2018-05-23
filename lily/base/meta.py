@@ -1,13 +1,35 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import re
+from django.conf import settings
 
 from . import serializers
+from .events import EventFactory
+
+
+logger = logging.getLogger()
+
+
+event = EventFactory(logger)
 
 
 class Domain:
 
     def __init__(self, id, name):
+        if (len(id) > settings.LILY_MAX_DOMAIN_ID_LENGTH or
+                re.search(r'\s+', id)):
+            raise event.BrokenRequest(
+                'BROKEN_ARGS_DETECTED',
+                data={
+                    'errors': {
+                        'id': [
+                            'should be shorter than {} characters and do '
+                            'not contain white characters.'.format(
+                                settings.LILY_MAX_DOMAIN_ID_LENGTH),
+                        ]
+                    }
+                })
         self.id = id.lower()
         self.name = name
 

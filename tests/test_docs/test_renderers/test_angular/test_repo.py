@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-import os
 import subprocess
+import os
 
 from django.test import TestCase
 import pytest
@@ -13,8 +13,9 @@ from lily.docs.renderers.angular.repo import Repo
 class RepoTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
-    def initfixture(self, mocker):
+    def initfixture(self, mocker, tmpdir):
         self.mocker = mocker
+        self.tmpdir = tmpdir
 
     #
     # GIT
@@ -99,6 +100,43 @@ class RepoTestCase(TestCase):
         assert check_output.call_args_list == [
             call('hello', shell=True, stderr=subprocess.STDOUT)]
 
+    #
+    # DIR / FILES
+    #
+    def test_clear_dir(self):
+        base_dir = self.tmpdir.mkdir('base')
+        hi_dir = base_dir.mkdir('hi')
+        hi_dir.join('hello.txt').write('hi')
+        hi_dir.join('bye.md').write('bye')
+        Repo.base_path = str(base_dir)
+
+        r = Repo()
+
+        assert sorted(os.listdir(str(hi_dir))) == ['bye.md', 'hello.txt']
+
+        r.clear_dir('hi')
+
+        assert os.listdir(str(hi_dir)) == []
+
+    def test_create_dir(self):
+        hi_dir = self.tmpdir.mkdir('hi')
+        Repo.base_path = str(hi_dir)
+
+        r = Repo()
+
+        r.create_dir('hello')
+
+        assert os.path.exists(os.path.join(str(hi_dir), 'hello')) is True
+
+    def test_create_dir__twice(self):
+        hi_dir = self.tmpdir.mkdir('hi')
+        Repo.base_path = str(hi_dir)
+
+        r = Repo()
+
+        r.create_dir('hello')
+        r.create_dir('hello')
+
 
 @pytest.mark.parametrize(
     'current_version, upgrade_type, expected_version',
@@ -125,9 +163,9 @@ def test_repo_upgrade_version(
         current_version, upgrade_type, expected_version, tmpdir):
 
     path = tmpdir.mkdir('repo')
-    os.chdir(str(path))
     package = path.join('package.json')
     package.write('"version": "{}"'.format(current_version))
+    Repo.base_path = str(path)
     r = Repo()
 
     assert r.upgrade_version(upgrade_type) == expected_version

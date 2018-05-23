@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
 import os
+import shutil
 import re
 import subprocess
 
 
 class Repo:
+
+    def __init__(self):
+        self.cd_to_repo()
 
     class VERSION_UPGRADE:  # noqa
         MAJOR = 'MAJOR'
@@ -37,6 +41,27 @@ class Repo:
 
     def git(self, command):
         self.execute('git {}'.format(command))
+
+    #
+    # DIR / FILES
+    #
+    def clear_dir(self, path):
+
+        path = re.sub('^/', '', path)
+        path = os.path.join(os.getcwd(), path)
+
+        for filename in os.listdir(path):
+            os.remove(os.path.join(path, filename))
+
+    def create_dir(self, path):
+        path = re.sub('^/', '', path)
+        path = os.path.join(os.getcwd(), path)
+
+        try:
+            os.mkdir(path)
+
+        except FileExistsError:
+            pass
 
     #
     # NPM

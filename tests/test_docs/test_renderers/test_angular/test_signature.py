@@ -5,10 +5,14 @@ from django.test import TestCase
 from lily.docs.renderers.angular.signature import Signature
 
 
-class Req:
+class MockInterface:
 
-    def __init__(self, name):
+    def __init__(self, name=None, is_empty=False):
         self.name = name
+        self._is_empty = is_empty
+
+    def is_empty(self):
+        return self._is_empty
 
 
 class SignatureTestCase(TestCase):
@@ -18,7 +22,11 @@ class SignatureTestCase(TestCase):
     #
     def test_input__nothing(self):
 
-        s = Signature(path='/cards', path_parameters=[])
+        s = Signature(
+            path='/cards',
+            path_parameters=[],
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(is_empty=True))
 
         assert s.input == ''
 
@@ -27,7 +35,9 @@ class SignatureTestCase(TestCase):
         # -- single parameter
         s = Signature(
             path='/cards/{card_id}',
-            path_parameters=[{'name': 'card_id', 'type': int}])
+            path_parameters=[{'name': 'card_id', 'type': int}],
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(is_empty=True))
 
         assert s.input == 'cardId: number'
 
@@ -38,7 +48,9 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
                 {'name': 'name', 'type': str},
-            ])
+            ],
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(is_empty=True))
 
         assert s.input == 'cardId: number, userId: string, name: string'
 
@@ -47,7 +59,8 @@ class SignatureTestCase(TestCase):
         s = Signature(
             path='/cards/',
             path_parameters=[],
-            request_query=Req(name='ReadCardRequestQuery'))
+            request_query=MockInterface(name='ReadCardRequestQuery'),
+            request_body=MockInterface(is_empty=True))
 
         assert s.input == 'params: ReadCardRequestQuery'
 
@@ -59,7 +72,8 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
-            request_query=Req(name='ReadCardRequestQuery'))
+            request_query=MockInterface(name='ReadCardRequestQuery'),
+            request_body=MockInterface(is_empty=True))
 
         assert s.input == (
             'cardId: number, userId: string, params: ReadCardRequestQuery')
@@ -69,7 +83,8 @@ class SignatureTestCase(TestCase):
         s = Signature(
             path='/paths/',
             path_parameters=[],
-            request_body=Req(name='ReadCardRequestBody'))
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(name='ReadCardRequestBody'))
 
         assert s.input == 'body: ReadCardRequestBody'
 
@@ -81,7 +96,8 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
-            request_body=Req(name='ReadCardRequestBody'))
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(name='ReadCardRequestBody'))
 
         assert s.input == (
             'cardId: number, userId: string, body: ReadCardRequestBody')
@@ -91,7 +107,11 @@ class SignatureTestCase(TestCase):
     #
     def test_call_args__nothing(self):
 
-        s = Signature(path='/cards', path_parameters=[])
+        s = Signature(
+            path='/cards',
+            path_parameters=[],
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(is_empty=True))
 
         assert s.call_args == "'/cards'"
 
@@ -100,7 +120,9 @@ class SignatureTestCase(TestCase):
         # -- single parameter
         s = Signature(
             path='/cards/{card_id}',
-            path_parameters=[{'name': 'card_id', 'type': int}])
+            path_parameters=[{'name': 'card_id', 'type': int}],
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(is_empty=True))
 
         assert s.call_args == '`/cards/${cardId}`'
 
@@ -111,7 +133,9 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
                 {'name': 'name', 'type': str},
-            ])
+            ],
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(is_empty=True))
 
         assert s.call_args == (
             '`/cards/${cardId}/${name}/users/${userId}`')
@@ -121,7 +145,8 @@ class SignatureTestCase(TestCase):
         s = Signature(
             path='/paths/',
             path_parameters=[],
-            request_query=Req(name='ReadPathRequestQuery'))
+            request_query=MockInterface(name='ReadPathRequestQuery'),
+            request_body=MockInterface(is_empty=True))
 
         assert s.call_args == (
             "'/paths/', { params }")
@@ -134,7 +159,8 @@ class SignatureTestCase(TestCase):
                 {'name': 'path_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
-            request_query=Req(name='ReadPathRequestQuery'))
+            request_query=MockInterface(name='ReadPathRequestQuery'),
+            request_body=MockInterface(is_empty=True))
 
         assert s.call_args == (
             '`/paths/${pathId}/users/${userId}`, { params }')
@@ -144,7 +170,8 @@ class SignatureTestCase(TestCase):
         s = Signature(
             path='/cards/',
             path_parameters=[],
-            request_body=Req(name='ReadCardRequestBody'))
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(name='ReadCardRequestBody'))
 
         assert s.call_args == "'/cards/', body"
 
@@ -156,6 +183,7 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
-            request_body=Req(name='ReadCardRequestBody'))
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(name='ReadCardRequestBody'))
 
         assert s.call_args == '`/cards/${cardId}/users/${userId}`, body'

@@ -4,6 +4,7 @@ from django.test import TestCase
 import pytest
 
 from lily.base.meta import Meta, MetaSerializer, Domain, DomainSerializer
+from lily.base.events import EventFactory
 
 
 class MetaTestCase(TestCase):
@@ -67,6 +68,28 @@ class DomainTestCase(TestCase):
 
         assert d.id == 'cards'
         assert d.name == 'Cards Management'
+
+    def test_invalid_id(self):
+
+        try:
+            Domain(id='cards manager', name='...')
+
+        except EventFactory.BrokenRequest as e:
+            assert e.event == 'BROKEN_ARGS_DETECTED'
+            assert e.data == {
+                '@event': 'BROKEN_ARGS_DETECTED',
+                '@type': 'error',
+                'user_id': None,
+                'errors': {
+                    'id': [
+                        'should be shorter than 32 characters and do '
+                        'not contain white characters.',
+                    ]
+                }
+            }
+
+        else:
+            raise AssertionError('should raise exception')
 
 
 class DomainSerializerTestCase(TestCase):

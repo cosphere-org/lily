@@ -4,54 +4,54 @@
             "method": "get",
             "response": {
                 "status": 200,
+                "content_type": "application/json",
                 "content": {
-                    "version": "2.5.6",
-                    "@event": "ENTRY_POINT_READ",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "POST",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "source": {
-                                "start_line": 15,
-                                "end_line": 16,
-                                "filepath": "/tests/__init__.py",
-                                "@type": "source"
-                            },
-                            "@type": "command",
-                            "meta": {
-                                "title": "Neque ratione occaecati enim.",
-                                "description": "Blanditiis numquam dolorem deleniti explicabo corrupti.",
-                                "domain": {
-                                    "name": "domain",
-                                    "id": "d",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
                             "access": {
-                                "is_private": false,
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "@type": "access"
+                                "@type": "access",
+                                "is_private": true
+                            },
+                            "meta": {
+                                "@type": "meta",
+                                "domain": {
+                                    "@type": "domain",
+                                    "name": "domain",
+                                    "id": "d"
+                                },
+                                "description": "Quod eveniet omnis modi corrupti.",
+                                "title": "Porro porro nemo illo possimus doloribus accusantium dolores nobis."
+                            },
+                            "method": "GET",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "@type": "command",
+                            "source": {
+                                "start_line": 15,
+                                "@type": "source",
+                                "end_line": 16,
+                                "filepath": "/tests/__init__.py"
                             }
                         }
                     },
                     "name": "test",
+                    "version": "2.5.6",
+                    "@event": "ENTRY_POINT_READ",
                     "@type": "entrypoint"
-                },
-                "content_type": "application/json"
+                }
             },
+            "description": "ENTRY_POINT_READ",
             "request": {
+                "path": "/?with_schemas=False",
                 "headers": {
                     "X-CS-USER-ID": 190,
                     "X-CS-ACCOUNT-TYPE": "ADMIN"
-                },
-                "path": "/?with_schemas=False"
-            },
-            "description": "ENTRY_POINT_READ"
+                }
+            }
         }
     }
 }

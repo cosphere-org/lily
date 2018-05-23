@@ -2,7 +2,7 @@
 
 from .interface import Interface
 from .signature import Signature
-from .utils import to_camelcase
+from .utils import to_camelcase, normalize_indentation
 
 
 class Command:
@@ -11,85 +11,91 @@ class Command:
         self.name = name
         self.conf = conf
 
-    #
-    # GENERAL
-    #
-    @property
-    def method(self):
-        return self.conf['method'].lower()
+        # -- access attributes
+        self.method = self.conf['method'].lower()
+        self.camel_name = to_camelcase(self.name, first_lower=True)
 
-    @property
-    def camel_name(self):
-        return to_camelcase(self.name)
+        # -- META
+        self.domain_id = self.conf['meta']['domain']['id']
+        self.domain_name = self.conf['meta']['domain']['name']
+        self.title = self.conf['meta']['title']
+        self.description = self.conf['meta'].get('description')
 
-    #
-    # META
-    #
-    @property
-    def domain_id(self):
-        return self.conf['meta']['domain']['id']
+        # -- ACCESS
+        self.is_private = self.conf['access']['is_private']
 
-    @property
-    def title(self):
-        return self.conf['meta']['title']
-
-    @property
-    def description(self):
-        return self.conf['meta'].get('description')
+        # -- REQUEST / RESPONSE
+        self.path = self.conf['path_conf']['path']
+        self.path_parameters = self.conf['path_conf']['parameters']
+        self.request_query = Interface(
+            self.name,
+            Interface.TYPES.REQUEST_QUERY,
+            self.conf['schemas']['input_query'])
+        self.request_body = Interface(
+            self.name,
+            Interface.TYPES.REQUEST_BODY,
+            self.conf['schemas']['input_body'])
+        self.response = Interface(
+            self.name,
+            Interface.TYPES.RESPONSE,
+            self.conf['schemas']['output'])
+        self.signature = Signature(
+            self.path,
+            self.path_parameters,
+            self.request_query,
+            self.request_body)
 
     @property
     def header(self):
         if self.description:
-            return '''
+            return normalize_indentation('''
             /**
              * {self.title}
              * -------------
              *
              * {self.description}
              */
-            '''.format(self=self)
+            ''', 0).format(self=self)
 
         else:
-            return '''
+            return normalize_indentation('''
             /**
              * {self.title}
              */
-            '''.format(self=self)
+            ''', 0).format(self=self)
 
-    #
-    # ACCESS
-    #
-    @property
-    def is_private(self):
-        return self.conf['access']['is_private']
+    def render(self):
 
-    #
-    # REQUEST / RESPONSE
-    #
-    @property
-    def path(self):
-        return self.conf['path_conf']['path']
+        if self.method == 'get':
+            return normalize_indentation('''
+            {self.header}
+            public {self.camel_name}({self.signature.input}): DataState<{self.response.name}> {{
+                return this.client.getDataState<{self.response.name}>({self.signature.call_args});
+            }}
+            ''', 0).format(self=self)  # noqa
 
-    @property
-    def path_parameters(self):
-        return self.conf['path_conf']['parameters']
+        else:
+            return normalize_indentation('''
+            {self.header}
+            public {self.camel_name}({self.signature.input}): Observable<{self.response.name}> {{
+                return this.client
+                    .{self.method}<{self.response.name}>({self.signature.call_args})
+                    .pipe(filter(x => !_.isEmpty(x)));
+            }}
+            ''', 0).format(self=self)  # noqa
 
-    @property
-    def request_query(self):
-        return Interface(self.name, self.conf['schemas']['input_query'])
+    def render_facade(self):
 
-    @property
-    def request_body(self):
-        return Interface(self.name, self.conf['schemas']['input_body'])
+        if self.method == 'get':
+            return normalize_indentation('''
+                {self.camel_name}({self.signature.input}): DataState<{self.response.name}> {{
+                    return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args});
+                }}
+            ''', 0).format(self=self)  # noqa
 
-    @property
-    def response(self):
-        return Interface(self.name, self.conf['schemas']['output'])
-
-    @property
-    def signature(self):
-        return Signature(
-            self.path,
-            self.path_parameters,
-            self.request_query,
-            self.request_body)
+        else:
+            return normalize_indentation('''
+                {self.camel_name}({self.signature.input}): Observable<{self.response.name}> {{
+                    return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args});
+                }}
+            ''', 0).format(self=self)  # noqa

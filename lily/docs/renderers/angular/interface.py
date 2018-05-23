@@ -18,6 +18,9 @@ class Interface:
         self.schema = schema
         self.enums = []
 
+    def is_empty(self):
+        return self.schema is None or self.schema == {}
+
     def append_enum(self, field_name, values):
 
         index = 0
@@ -53,6 +56,9 @@ class Interface:
             suffix=suffix)
 
     def render(self):
+
+        if self.schema is None:
+            return ''
 
         def optional(name, schema):
             return name not in schema['required'] and '?' or ''

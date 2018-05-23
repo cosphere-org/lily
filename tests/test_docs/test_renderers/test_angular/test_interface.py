@@ -76,6 +76,12 @@ class InterfaceTestCase(TestCase):
             'READ_CARDS', Interface.TYPES.REQUEST_BODY, {}
         ).name == 'ReadCardsBody'
 
+    def test_is_empty(self):
+
+        assert Interface('X', 'X', None).is_empty() is True
+        assert Interface('X', 'X', {}).is_empty() is True
+        assert Interface('X', 'X', {'a': 'b'}).is_empty() is False
+
     def test_append_enum__no_duplicates(self):
 
         interface = Interface('READ_CARDS', Interface.TYPES.RESPONSE, {})
@@ -118,7 +124,13 @@ class InterfaceTestCase(TestCase):
 @pytest.mark.parametrize(
     'schema, expected',
     [
-        # -- case 0 - empty schema
+        # -- case 0 - None schema
+        (
+            None,
+            '',
+        ),
+
+        # -- case 1 - empty schema
         (
             {'type': 'object', 'properties': {}},
             normalize_indentation('''
@@ -127,7 +139,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 1 - simple schema
+        # -- case 2 - simple schema
         (
             {
                 'type': 'object',
@@ -151,7 +163,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 2 - simple array
+        # -- case 3 - simple array
         (
             {
                 'type': 'object',
@@ -177,7 +189,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 3 - enum
+        # -- case 4 - enum
         (
             {
                 'type': 'object',
@@ -206,7 +218,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 4 - enums
+        # -- case 5 - enums
         (
             {
                 'type': 'object',
@@ -246,7 +258,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 5 - enums array
+        # -- case 6 - enums array
         (
             {
                 'type': 'object',
@@ -278,7 +290,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 6 - 1 level deep nested
+        # -- case 7 - 1 level deep nested
         (
             {
                 'type': 'object',
@@ -312,7 +324,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 7 - 2 levels deep nested
+        # -- case 8 - 2 levels deep nested
         (
             {
                 'type': 'object',
@@ -358,7 +370,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 8 - nested array
+        # -- case 9 - nested array
         (
             {
                 'type': 'object',
@@ -395,7 +407,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 9 - nested with enums
+        # -- case 10 - nested with enums
         (
             {
                 'type': 'object',
@@ -437,7 +449,7 @@ class InterfaceTestCase(TestCase):
             }
             ''', 0)
         ),
-    ], ids=list([str(i) for i in range(10)]))
+    ], ids=list([str(i) for i in range(11)]))
 def test_render(schema, expected):
     result = Interface('READ_CARDS', Interface.TYPES.RESPONSE, schema).render()
 
