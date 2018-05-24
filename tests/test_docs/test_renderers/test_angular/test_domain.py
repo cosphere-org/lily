@@ -10,6 +10,9 @@ class PathTestCase(TestCase):
     def test_join(self):
         assert Path('/home/jake').join('photo.png') == '/home/jake/photo.png'
 
+    def test_join__with_extra_slash(self):
+        assert Path('/home/jake').join('/photo.png') == '/home/jake/photo.png'
+
 
 class DomainTestCase(TestCase):
 
@@ -26,4 +29,4 @@ class DomainTestCase(TestCase):
         path = Domain('cards', 'Cards Management').path
 
         assert isinstance(path, Path)
-        assert path.base_path == '/src/domains/cards'
+        assert path.base_path == './src/domains/cards'

@@ -2,15 +2,18 @@
 
 import os
 import re
+from collections import OrderedDict
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 import pytest
 from mock import call, Mock
+import requests
 
 from lily.docs.renderers.angular.renderer import AngularClientRenderer
 from lily.docs.renderers.angular.domain import Domain
 from lily.docs.renderers.angular.repo import Repo
 from lily.docs.renderers.angular.utils import normalize_indentation
+from lily.base.events import EventFactory
 
 
 def remove_white_chars(text):
@@ -35,10 +38,231 @@ class AngularClientRendererTestCase(TestCase):
         self.renderer = AngularClientRenderer()
 
     #
+    # render
+    #
+    def test_render(self):
+
+        repo = Mock()
+        self.mocker.patch.object(self.renderer, 'repo', repo)
+        group_commands_by_domain = self.mocker.patch.object(
+            self.renderer, 'group_commands_by_domain')
+        group_commands_by_domain.return_value = OrderedDict([
+            (Domain('cards', ''), {'cards': 'cards commands'}),
+            (Domain('paths', ''), {'paths': 'paths commands'}),
+        ])
+        render_api_ts = self.mocker.patch.object(
+            self.renderer, 'render_api_ts')
+        render_domain = self.mocker.patch.object(
+            self.renderer, 'render_domain')
+
+        self.renderer.render()
+
+        assert group_commands_by_domain.call_count == 1
+        assert render_api_ts.call_args_list == [
+            call(group_commands_by_domain.return_value)]
+        assert render_domain.call_args_list == [
+            call(Domain('cards', ''), ['cards commands']),
+            call(Domain('paths', ''), ['paths commands']),
+        ]
+        assert repo.pull.call_count == 1
+        assert repo.install.call_count == 1
+        assert repo.upgrade_version.call_count == 1
+        assert repo.build.call_count == 1
+        assert repo.add_all.call_count == 1
+        assert repo.commit.call_count == 1
+        assert repo.push.call_count == 1
+
+    #
     # group_commands_by_domain
     #
     def test_group_commands_by_domain(self):
-        pass
+
+        command0, command1, command2 = (
+            Mock(domain_id='cards', domain_name='...', is_private=False),
+            Mock(domain_id='paths', domain_name='...', is_private=False),
+            Mock(domain_id='cards', domain_name='...', is_private=False),
+        )
+        self.mocker.patch(
+            'lily.docs.renderers.angular.renderer.Command'
+        ).side_effect = [command0, command1, command2]
+        self.mocker.patch.object(
+            AngularClientRenderer,
+            'collect_entrypoints'
+        ).return_value = [
+            {
+                'commands': OrderedDict([
+                    ('CREATE_CARD', {'create_card': 'conf'}),
+                    ('REMOVE_PATH', {'remove_path': 'conf'}),
+                ]),
+            },
+            {
+                'commands': {
+                    'REMOVE_CARD': {'remove_card': 'conf'},
+                },
+            },
+        ]
+
+        commands_by_domain = self.renderer.group_commands_by_domain()
+
+        assert commands_by_domain == {
+            Domain('cards', ''): {
+                'CREATE_CARD': command0,
+                'REMOVE_CARD': command2,
+            },
+            Domain('paths', ''): {
+                'REMOVE_PATH': command1,
+            }
+        }
+
+    def test_group_commands_by_domain__is_private(self):
+
+        command0, command1, command2 = (
+            Mock(domain_id='cards', domain_name='...', is_private=False),
+            Mock(domain_id='paths', domain_name='...', is_private=True),
+            Mock(domain_id='cards', domain_name='...', is_private=True),
+        )
+        self.mocker.patch(
+            'lily.docs.renderers.angular.renderer.Command'
+        ).side_effect = [command0, command1, command2]
+        self.mocker.patch.object(
+            AngularClientRenderer,
+            'collect_entrypoints'
+        ).return_value = [
+            {
+                'commands': OrderedDict([
+                    ('CREATE_CARD', {'create_card': 'conf'}),
+                    ('REMOVE_PATH', {'remove_path': 'conf'}),
+                ]),
+            },
+            {
+                'commands': {
+                    'REMOVE_CARD': {'remove_card': 'conf'},
+                },
+            },
+        ]
+
+        commands_by_domain = self.renderer.group_commands_by_domain()
+
+        assert commands_by_domain == {
+            Domain('cards', ''): {
+                'CREATE_CARD': command0,
+            }
+        }
+
+    def test_group_commands_by_domain__duplicated_command(self):
+
+        command0, command1, command2 = (
+            Mock(domain_id='cards', domain_name='', is_private=False),
+            Mock(domain_id='paths', domain_name='', is_private=False),
+            Mock(domain_id='cards', domain_name='', is_private=False),
+        )
+        self.mocker.patch(
+            'lily.docs.renderers.angular.renderer.Command'
+        ).side_effect = [command0, command1, command2]
+        self.mocker.patch.object(
+            AngularClientRenderer,
+            'collect_entrypoints'
+        ).return_value = [
+            {
+                'commands': OrderedDict([
+                    ('CREATE_CARD', {'create_card': 'conf'}),
+                    ('REMOVE_PATH', {'remove_path': 'conf'}),
+                ]),
+            },
+            {
+                'commands': {
+                    'CREATE_CARD': {'remove_card': 'conf'},
+                },
+            },
+        ]
+
+        try:
+            self.renderer.group_commands_by_domain()
+
+        except EventFactory.ServerError as e:
+            assert e.data == {
+                '@event': 'DUPLICATE_PUBLIC_DOMAIN_COMMAND_DETECTED',
+                '@type': 'error',
+                'command_name': 'CREATE_CARD',
+                'domain_id': 'cards',
+                'user_id': None,
+            }
+
+        else:
+            raise AssertionError('should raise error')
+
+    #
+    # collect_entrypoints
+    #
+    @override_settings(LILY_COMMAND_ENTRYPOINTS=[
+        'http://localhost:8000',
+        'http://localhost:9000',
+    ])
+    def test_collect_entrypoints(self):
+
+        self.mocker.patch.object(requests, 'get').side_effect = [
+            Mock(
+                status_code=200,
+                json=Mock(return_value={
+                    'commands': OrderedDict([
+                        ('CREATE_CARD', {'create_card': 'conf'}),
+                        ('REMOVE_PATH', {'remove_path': 'conf'}),
+                    ]),
+                })),
+            Mock(
+                status_code=200,
+                json=Mock(return_value={
+                    'commands': {
+                        'REMOVE_CARD': {'remove_card': 'conf'},
+                    },
+                })),
+        ]
+
+        entrypoints = self.renderer.collect_entrypoints()
+
+        assert entrypoints == [
+            {
+                'commands': {
+                    'CREATE_CARD': {'create_card': 'conf'},
+                    'REMOVE_PATH': {'remove_path': 'conf'},
+                },
+            },
+            {'commands': {'REMOVE_CARD': {'remove_card': 'conf'}}},
+        ]
+
+    @override_settings(LILY_COMMAND_ENTRYPOINTS=[
+        'http://localhost:8000',
+        'http://localhost:9000',
+    ])
+    def test_collect_entrypoints__broken_service(self):
+
+        self.mocker.patch.object(requests, 'get').side_effect = [
+            Mock(
+                status_code=200,
+                json=Mock(return_value={
+                    'commands': OrderedDict([
+                        ('CREATE_CARD', {'create_card': 'conf'}),
+                        ('REMOVE_PATH', {'remove_path': 'conf'}),
+                    ]),
+                })),
+            Mock(
+                status_code=400,
+                json=Mock(return_value={})),
+        ]
+
+        try:
+            self.renderer.collect_entrypoints()
+
+        except EventFactory.ServerError as e:
+            assert e.data == {
+                '@event': 'BROKEN_SERVICE_DETECTED',
+                '@type': 'error',
+                'service': 'http://localhost:9000',
+                'user_id': None,
+            }
+
+        else:
+            raise AssertionError('should raise error')
 
     #
     # render_domain

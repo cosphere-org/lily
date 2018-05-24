@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 
 from .utils import to_camelcase
 
@@ -11,6 +12,7 @@ class Path:
         self.base_path = base_path
 
     def join(self, sub_path):
+        sub_path = re.sub('^/', '', sub_path)
         return os.path.join(self.base_path, sub_path)
 
 
@@ -23,7 +25,7 @@ class Domain:
 
     @property
     def path(self):
-        return Path('/src/domains/{}'.format(self.id))
+        return Path('./src/domains/{}'.format(self.id))
 
     def __hash__(self):
         return hash(self.id)

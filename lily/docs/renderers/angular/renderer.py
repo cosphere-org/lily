@@ -2,9 +2,9 @@
 
 import logging
 import os
-import json
 
 from django.conf import settings
+import requests
 
 from lily.base.events import EventFactory
 from .command import Command
@@ -24,32 +24,67 @@ class AngularClientRenderer:
     def __init__(self):
         self.repo = Repo()
 
-    # FIXME: test it!!!!
+    #
+    # MAIN
+    #
+    def render(self):
+        self.repo.pull()
+        self.repo.install()
+
+        # -- render domains
+        commands_by_domain = self.group_commands_by_domain()
+        self.render_api_ts(commands_by_domain)
+        for domain, commands in commands_by_domain.items():
+            self.render_domain(domain, list(commands.values()))
+
+        # !!!!!!!!!!!!
+        # FIXME: make it dynamical based on the versions of services
+        next_version = self.repo.upgrade_version(
+            self.repo.VERSION_UPGRADE.MINOR)
+
+        self.repo.build()
+        self.repo.add_all()
+        self.repo.commit(next_version)
+        self.repo.push()
+
     def group_commands_by_domain(self):
 
         commands_by_domain = {}
-        for filepath in settings.LILY_COMMAND_ENTRYPOINTS:
-            with open(filepath, 'r') as f:
-                content = json.loads(f.read())
-                for name, conf in content['commands'].items():
-                    command = Command(name, conf)
-                    domain = Domain(command.domain_id, command.domain_name)
+        for entrypoint in self.collect_entrypoints():
+            for name, conf in entrypoint['commands'].items():
+                command = Command(name, conf)
+                domain = Domain(command.domain_id, command.domain_name)
 
+                if not command.is_private:
                     commands_by_domain.setdefault(domain, {})
+                    if commands_by_domain[domain].get(name):
+                        raise event.ServerError(
+                            'DUPLICATE_PUBLIC_DOMAIN_COMMAND_DETECTED',
+                            data={
+                                'command_name': name,
+                                'domain_id': domain.id,
+                            })
 
-                    if not command.is_private:
-                        if commands_by_domain[domain].get(name):
-                            raise event.ServerError(
-                                'DUPLICATE_PIBLIC_DOMAIN_COMMAND_DETECTED',
-                                data={
-                                    'command_name': name,
-                                    'domain_id': domain
-                                })
-
-                        else:
-                            commands_by_domain[domain][name] = command
+                    else:
+                        commands_by_domain[domain][name] = command
 
         return commands_by_domain
+
+    def collect_entrypoints(self):
+
+        entrypoints = []
+        for url in settings.LILY_COMMAND_ENTRYPOINTS:
+            response = requests.get(url)
+
+            if response.status_code != 200:
+                raise event.ServerError(
+                    'BROKEN_SERVICE_DETECTED',
+                    data={'service': url})
+
+            else:
+                entrypoints.append(response.json())
+
+        return entrypoints
 
     #
     # Domain Specific Folder
@@ -193,27 +228,6 @@ class AngularClientRenderer:
             self.repo.base_path, 'src/services/api.service.ts')
         with open(path, 'w') as f:
             f.write('\n\n'.join(blocks))
-
-    # FIXME: test it!!!!
-    def render(self):
-        self.repo.pull()
-        self.repo.install()
-
-        # -- render domains
-        commands_by_domain = self.group_commands_by_domain()
-        self.render_api_ts(commands_by_domain)
-        for domain, commands in commands_by_domain.items():
-            self.render_domain(domain, commands.values())
-
-        # !!!!!!!!!!!!
-        # FIXME: make it dynamical based on the versions of services
-        next_version = self.repo.upgrade_version(
-            self.repo.VERSION_UPGRADE.MINOR)
-
-        self.repo.build()
-        self.repo.add_all()
-        self.repo.commit(next_version)
-        self.repo.push()
 
 
 if __name__ == '__main__':
