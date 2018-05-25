@@ -36,7 +36,11 @@ class AngularClientRenderer:
         self.render_api_ts(commands_by_domain)
         self.render_api_index_ts(commands_by_domain)
         for domain, commands in commands_by_domain.items():
-            self.render_domain(domain, list(commands.values()))
+            sorted_commands = []
+            for command_name in sorted(commands.keys()):
+                sorted_commands.append(commands[command_name])
+
+            self.render_domain(domain, sorted_commands)
 
         # !!!!!!!!!!!!
         # FIXME: make it dynamical based on the versions of services
@@ -51,14 +55,14 @@ class AngularClientRenderer:
     def group_commands_by_domain(self):
 
         commands_by_domain = {}
+        seen = []
         for entrypoint in self.collect_entrypoints():
             for name, conf in entrypoint['commands'].items():
                 command = Command(name, conf)
                 domain = Domain(command.domain_id, command.domain_name)
 
                 if not command.is_private:
-                    commands_by_domain.setdefault(domain, {})
-                    if commands_by_domain[domain].get(name):
+                    if name in seen:
                         raise event.ServerError(
                             'DUPLICATE_PUBLIC_DOMAIN_COMMAND_DETECTED',
                             data={
@@ -66,8 +70,9 @@ class AngularClientRenderer:
                                 'domain_id': domain.id,
                             })
 
-                    else:
-                        commands_by_domain[domain][name] = command
+                    commands_by_domain.setdefault(domain, {})
+                    commands_by_domain[domain][name] = command
+                    seen.append(name)
 
         return commands_by_domain
 

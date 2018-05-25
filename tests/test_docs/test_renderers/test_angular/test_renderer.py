@@ -47,8 +47,8 @@ class AngularClientRendererTestCase(TestCase):
         group_commands_by_domain = self.mocker.patch.object(
             self.renderer, 'group_commands_by_domain')
         group_commands_by_domain.return_value = OrderedDict([
-            (Domain('cards', ''), {'cards': 'cards commands'}),
-            (Domain('paths', ''), {'paths': 'paths commands'}),
+            (Domain('cards', ''), {'X': 'X', 'B': 'B'}),
+            (Domain('paths', ''), {'Z': 'Z', 'A': 'A'}),
         ])
         render_api_ts = self.mocker.patch.object(
             self.renderer, 'render_api_ts')
@@ -65,8 +65,8 @@ class AngularClientRendererTestCase(TestCase):
         assert render_api_ts.call_args_list == [
             call(group_commands_by_domain.return_value)]
         assert render_domain.call_args_list == [
-            call(Domain('cards', ''), ['cards commands']),
-            call(Domain('paths', ''), ['paths commands']),
+            call(Domain('cards', ''), ['B', 'X']),
+            call(Domain('paths', ''), ['A', 'Z']),
         ]
         assert repo.pull.call_count == 1
         assert repo.install.call_count == 1
@@ -158,7 +158,7 @@ class AngularClientRendererTestCase(TestCase):
         command0, command1, command2 = (
             Mock(domain_id='cards', domain_name='', is_private=False),
             Mock(domain_id='paths', domain_name='', is_private=False),
-            Mock(domain_id='cards', domain_name='', is_private=False),
+            Mock(domain_id='recall', domain_name='', is_private=False),
         )
         self.mocker.patch(
             'lily.docs.renderers.angular.renderer.Command'
@@ -188,7 +188,7 @@ class AngularClientRendererTestCase(TestCase):
                 '@event': 'DUPLICATE_PUBLIC_DOMAIN_COMMAND_DETECTED',
                 '@type': 'error',
                 'command_name': 'CREATE_CARD',
-                'domain_id': 'cards',
+                'domain_id': 'recall',
                 'user_id': None,
             }
 

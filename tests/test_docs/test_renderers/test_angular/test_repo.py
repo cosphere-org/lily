@@ -42,7 +42,7 @@ class RepoTestCase(TestCase):
 
         r.add_all()
 
-        assert git.call_args_list == [call('add -u .')]
+        assert git.call_args_list == [call('add .'), call('add -u .')]
 
     def test_commit(self):
         git = self.mocker.patch.object(Repo, 'git')
