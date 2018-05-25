@@ -9,10 +9,12 @@ class Signature:
 
     def __init__(
             self,
+            method,
             path,
             path_parameters,
             request_query=None,
             request_body=None):
+        self.method = method
         self.path = path
         self.path_parameters = path_parameters
         self.request_query = request_query
@@ -21,35 +23,21 @@ class Signature:
     @property
     def input(self):
 
-        def to_arg(parameter):
-            if parameter['type'] == int:
-                type_ = 'number'
-
-            elif parameter['type'] == str:
-                type_ = 'string'
-
-            else:
-                type_ = 'any'
-
-            return '{arg}: {type}'.format(
-                arg=to_camelcase(parameter['name'], first_lower=True),
-                type=type_)
-
         input_signature = []
         # -- path parameters
         if self.path_parameters:
             input_signature.append(
-                ', '.join([to_arg(p) for p in self.path_parameters]))
+                ', '.join([self.to_arg(p) for p in self.path_parameters]))
 
         # -- query
         if not self.request_query.is_empty():
             input_signature.append(
-                'params: {}'.format(self.request_query.name))
+                'params: X.{}'.format(self.request_query.name))
 
         # -- body
         if not self.request_body.is_empty():
             input_signature.append(
-                'body: {}'.format(self.request_body.name))
+                'body: X.{}'.format(self.request_body.name))
 
         return ', '.join(input_signature)
 
@@ -79,4 +67,44 @@ class Signature:
         if not self.request_body.is_empty():
             call_args_signature.append('body')
 
+        # -- when body is missing
+        elif self.method in ['put', 'post']:
+            call_args_signature.append('{}')
+
         return ', '.join(call_args_signature)
+
+    @property
+    def call_args_without_path(self):
+
+        call_args_signature = []
+
+        # -- path parameters
+        if self.path_parameters:
+            call_args_signature.append(
+                ', '.join([
+                    to_camelcase(p['name'], first_lower=True)
+                    for p in self.path_parameters]))
+
+        # -- query
+        if not self.request_query.is_empty():
+            call_args_signature.append('params')
+
+        # -- body
+        if not self.request_body.is_empty():
+            call_args_signature.append('body')
+
+        return ', '.join(call_args_signature)
+
+    def to_arg(self, parameter):
+        if parameter['type'] == int:
+            type_ = 'number'
+
+        elif parameter['type'] == str:
+            type_ = 'string'
+
+        else:
+            type_ = 'any'
+
+        return '{arg}: {type}'.format(
+            arg=to_camelcase(parameter['name'], first_lower=True),
+            type=type_)

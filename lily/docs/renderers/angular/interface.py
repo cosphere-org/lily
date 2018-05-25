@@ -12,10 +12,11 @@ class Interface:
 
         REQUEST_BODY = 'REQUEST_BODY'
 
-    def __init__(self, command_name, type_, schema):
+    def __init__(self, command_name, type_, schema, uri):
         self.command_name = command_name
         self.type = type_
         self.schema = schema
+        self.uri = uri
         self.enums = []
 
     def is_empty(self):
@@ -71,12 +72,21 @@ class Interface:
                 enum = self.append_enum(name, schema['enum'])
                 return enum.name
 
+            elif schema['type'] == 'boolean':
+                return 'boolean'
+
             elif schema['type'] == 'string':
                 return 'string'
 
+            elif schema['type'] == 'any':
+                return 'any'
+
             elif schema['type'] == 'object':
-                return to_interface(
-                    schema, indent=indent + 4, base_indent=indent)
+                if 'properties' in schema:
+                    return to_interface(
+                        schema, indent=indent + 4, base_indent=indent)
+                else:
+                    return 'Object'
 
         def to_interface(schema, indent=4, base_indent=0):
 
@@ -106,19 +116,29 @@ class Interface:
 
             return '\n'.join(lines)
 
-        interface = normalize_indentation(
-            'export interface {name} {interface_content}'.format(
-                name=self.name,
-                interface_content=to_interface(self.schema)), 0)
+        blocks = [normalize_indentation('''
+            /**
+             * {self.uri}
+             */
+        ''', 0).format(self=self)]
 
-        if self.enums:
-            components = [enum.render() for enum in self.enums]
-            components.append(interface)
-
-            return '\n\n'.join(components)
+        if not self.schema:
+            interface = 'export interface {name} {{}}'.format(name=self.name)
 
         else:
-            return interface
+            interface = normalize_indentation(
+                'export interface {name} {interface_content}'.format(
+                    name=self.name,
+                    interface_content=to_interface(self.schema)), 0)
+
+        if self.enums:
+            blocks.extend([enum.render() for enum in self.enums])
+            blocks.append(interface)
+
+        else:
+            blocks.append(interface)
+
+        return '\n\n'.join(blocks)
 
 
 class Enum:
@@ -147,4 +167,4 @@ class Enum:
         return 'export enum {name} {{\n{fields}\n}}'.format(
             name=self.name,
             fields='\n'.join(
-                ["    {v}: '{v}';".format(v=v) for v in sorted(self.values)]))
+                ["    {v} = '{v}',".format(v=v) for v in sorted(self.values)]))

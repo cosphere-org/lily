@@ -34,6 +34,7 @@ class AngularClientRenderer:
         # -- render domains
         commands_by_domain = self.group_commands_by_domain()
         self.render_api_ts(commands_by_domain)
+        self.render_api_index_ts(commands_by_domain)
         for domain, commands in commands_by_domain.items():
             self.render_domain(domain, list(commands.values()))
 
@@ -146,7 +147,7 @@ class AngularClientRenderer:
                 import * as _ from 'underscore';
 
                 import {{ ClientService, DataState }} from '../../services/client.service';
-                import * from './{domain_id}.model';
+                import * as X from './{domain_id}.models';
 
                 @Injectable()
                 export class {domain_camel_id}Domain {{
@@ -169,32 +170,38 @@ class AngularClientRenderer:
     #
     # API Service
     #
-    def render_api_ts(self, commands_by_domain):
-        domain_imports = []
-        for domain in commands_by_domain.keys():
-            domain_imports.append(normalize_indentation('''
-            import * from '../domains/{domain_id}/index';
+    def render_api_index_ts(self, commands_by_domain):
 
-            ''', 0).format(domain_id=domain.id))
+        blocks = []
+        for domain in sorted(commands_by_domain.keys(), key=lambda x: x.id):
+            blocks.append(
+                "export * from './{domain_id}/index';".format(
+                    domain_id=domain.id))
+
+        path = os.path.join(self.repo.base_path, 'src/domains/index.ts')
+        with open(path, 'w') as f:
+            f.write('\n'.join(blocks))
+
+    def render_api_ts(self, commands_by_domain):
 
         blocks = [
             normalize_indentation('''
                 /**
                  * Facade Service for all domains
                  */
-                import {{ Injectable, Injector }} from '@angular/core';
-                import {{ Observable }} from 'rxjs';
+                import { Injectable, Injector } from '@angular/core';
+                import { Observable } from 'rxjs';
 
-                import {{ DataState, Options }} from './index';
+                import { DataState, Options } from './index';
 
-                {domain_imports}
+                import * as X from '../domains/index';
 
                 @Injectable()
-                export class APIService {{
+                export class APIService {
 
-                    constructor(private injector: Injector) {{}}
+                    constructor(private injector: Injector) {}
 
-            ''', 0).format(domain_imports='\n'.join(sorted(domain_imports)))
+            ''', 0)
         ]
 
         for domain in sorted(commands_by_domain.keys(), key=lambda x: x.id):
@@ -203,11 +210,11 @@ class AngularClientRenderer:
                 /**
                  * {domain_name} domain
                  */
-                private _{domain_id}Domain: {domain_camel_id}Domain;
+                private _{domain_id}Domain: X.{domain_camel_id}Domain;
 
-                public get {domain_id}Domain(): {domain_camel_id}Domain {{
+                public get {domain_id}Domain(): X.{domain_camel_id}Domain {{
                     if (!this._{domain_id}Domain) {{
-                        this._{domain_id}Domain = this.injector.get({domain_camel_id}Domain);
+                        this._{domain_id}Domain = this.injector.get(X.{domain_camel_id}Domain);
                     }}
 
                     return this._{domain_id}Domain;
@@ -220,7 +227,8 @@ class AngularClientRenderer:
 
             for command_name in sorted(commands.keys()):
                 command = commands[command_name]
-                blocks.append(command.render_facade())
+                blocks.append(
+                    normalize_indentation(command.render_facade(), 4))
 
         blocks.append('}')
 
@@ -228,8 +236,3 @@ class AngularClientRenderer:
             self.repo.base_path, 'src/services/api.service.ts')
         with open(path, 'w') as f:
             f.write('\n\n'.join(blocks))
-
-
-if __name__ == '__main__':
-    renderer = AngularClientRenderer()
-    renderer.render()

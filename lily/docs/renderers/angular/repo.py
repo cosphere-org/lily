@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
 import re
 import subprocess
 
@@ -34,6 +33,7 @@ class Repo:
         self.git('pull origin master')
 
     def add_all(self):
+        self.git('add .')
         self.git('add -u .')
 
     def commit(self, version):
@@ -79,11 +79,21 @@ class Repo:
     # UTILS
     #
     def execute(self, command):
-        captured = subprocess.check_output(
-            command,
-            stderr=subprocess.STDOUT,
-            shell=True)
-        print(str(captured, encoding='utf8'))
+
+        print('[EXECUTE]', command)
+        try:
+            captured = subprocess.check_output(
+                command,
+                stderr=subprocess.STDOUT,
+                shell=True)
+
+        except subprocess.CalledProcessError as e:
+            print('--- [ERROR] ----------')
+            print(str(e.output, encoding='utf8'))
+            raise
+
+        else:
+            print(str(captured, encoding='utf8'))
 
     def upgrade_version(self, upgrade_type=VERSION_UPGRADE.PATCH):
 
@@ -99,9 +109,12 @@ class Repo:
 
             if upgrade_type == self.VERSION_UPGRADE.MAJOR:
                 major += 1
+                minor = 0
+                patch = 0
 
             elif upgrade_type == self.VERSION_UPGRADE.MINOR:
                 minor += 1
+                patch = 0
 
             elif upgrade_type == self.VERSION_UPGRADE.PATCH:
                 patch += 1

@@ -46,7 +46,12 @@ LILY_AUTHORIZER_CLASS = getattr(
 #
 LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = None
 
-LILY_COMMAND_ENTRYPOINTS = []
+# FIXME: !!! to be removed!!! it should be supplied by external service
+LILY_COMMAND_ENTRYPOINTS = [
+    'http://localhost:9000',
+    'http://localhost:10000',
+    'http://localhost:11000',
+]
 
 #
 # ASYNC

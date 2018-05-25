@@ -63,9 +63,9 @@ class CommandTestCase(TestCase):
                     ]
                 },
                 'schemas': {
-                    'input_query': request_query,
-                    'input_body': request_body,
-                    'output': response,
+                    'input_query': {'schema': request_query, 'uri': 'Q'},
+                    'input_body': {'schema': request_body, 'uri': 'B'},
+                    'output': {'schema': response, 'uri': 'R'},
                 }
             })
 
@@ -84,6 +84,7 @@ class CommandTestCase(TestCase):
         assert command.response == response_interface
         assert command.signature == command_signature
         assert signature.call_args_list == [call(
+            'post',
             '/tasks/{task_id}',
             [{'name': 'task_id', 'type': 'integer'}],
             request_query_interface,
@@ -91,9 +92,9 @@ class CommandTestCase(TestCase):
         )]
 
         assert interface.call_args_list == [
-            call('READ_TASK', 'REQUEST_QUERY', request_query),
-            call('READ_TASK', 'REQUEST_BODY', request_body),
-            call('READ_TASK', 'RESPONSE', response),
+            call('READ_TASK', 'REQUEST_QUERY', request_query, 'Q'),
+            call('READ_TASK', 'REQUEST_BODY', request_body, 'B'),
+            call('READ_TASK', 'RESPONSE', response, 'R'),
         ]
 
     def test_header(self):
@@ -118,9 +119,9 @@ class CommandTestCase(TestCase):
                     'parameters': []
                 },
                 'schemas': {
-                    'input_query': Mock(),
-                    'input_body': Mock(),
-                    'output': Mock(),
+                    'input_query': None,
+                    'input_body': None,
+                    'output': {'schema': {}, 'uri': ''},
                 }
             })
 
@@ -153,9 +154,9 @@ class CommandTestCase(TestCase):
                     'parameters': []
                 },
                 'schemas': {
-                    'input_query': Mock(),
-                    'input_body': Mock(),
-                    'output': Mock(),
+                    'input_query': None,
+                    'input_body': None,
+                    'output': {'schema': {}, 'uri': ''},
                 }
             })
 
@@ -191,9 +192,9 @@ class CommandTestCase(TestCase):
                     ]
                 },
                 'schemas': {
-                    'input_query': Mock(),
-                    'input_body': Mock(),
-                    'output': Mock(),
+                    'input_query': {'schema': {'hi': 'there'}, 'uri': ''},
+                    'input_body': None,
+                    'output': {'schema': {'hi': 'there'}, 'uri': ''},
                 }
             })
 
@@ -201,8 +202,8 @@ class CommandTestCase(TestCase):
             /**
              * Read Task
              */
-            public readTask(taskId: any, params: ReadTaskQuery, body: ReadTaskBody): DataState<ReadTaskResponse> {
-                return this.client.getDataState<ReadTaskResponse>(`/tasks/${taskId}`, { params }, body);
+            public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponse> {
+                return this.client.getDataState<X.ReadTaskResponse>(`/tasks/${taskId}`, { params });
             }
         ''', 0)  # noqa
 
@@ -228,8 +229,8 @@ class CommandTestCase(TestCase):
                 },
                 'schemas': {
                     'input_query': None,
-                    'input_body': Mock(),
-                    'output': Mock(),
+                    'input_body': {'schema': {'hi': 'there'}, 'uri': ''},
+                    'output': {'schema': {'hi': 'there'}, 'uri': ''},
                 }
             })
 
@@ -237,9 +238,9 @@ class CommandTestCase(TestCase):
             /**
              * Create Path
              */
-            public readTask(body: ReadTaskBody): Observable<ReadTaskResponse> {
+            public readTask(body: X.ReadTaskBody): Observable<X.ReadTaskResponse> {
                 return this.client
-                    .post<ReadTaskResponse>('/paths/', body)
+                    .post<X.ReadTaskResponse>('/paths/', body)
                     .pipe(filter(x => !_.isEmpty(x)));
             }
         ''', 0)  # noqa
@@ -270,15 +271,15 @@ class CommandTestCase(TestCase):
                     ]
                 },
                 'schemas': {
-                    'input_query': Mock(),
-                    'input_body': Mock(),
-                    'output': Mock(),
+                    'input_query': {'schema': {'hi': 'there'}, 'uri': ''},
+                    'input_body': None,
+                    'output': {'schema': {'hi': 'there'}, 'uri': ''},
                 }
             })
 
         assert command.render_facade() == normalize_indentation('''
-            readTask(taskId: any, params: ReadTaskQuery, body: ReadTaskBody): DataState<ReadTaskResponse> {
-                return this.tasksDomain.readTask(`/tasks/${taskId}`, { params }, body);
+            readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponse> {
+                return this.tasksDomain.readTask(taskId, params);
             }
         ''', 0)  # noqa
 
@@ -304,13 +305,13 @@ class CommandTestCase(TestCase):
                 },
                 'schemas': {
                     'input_query': None,
-                    'input_body': Mock(),
-                    'output': Mock(),
+                    'input_body': {'schema': {'hi': 'there'}, 'uri': ''},
+                    'output': {'schema': {'hi': 'there'}, 'uri': ''},
                 }
             })
 
         assert command.render_facade() == normalize_indentation('''
-            readTask(body: ReadTaskBody): Observable<ReadTaskResponse> {
-                return this.pathsDomain.readTask('/paths/', body);
+            readTask(body: X.ReadTaskBody): Observable<X.ReadTaskResponse> {
+                return this.pathsDomain.readTask(body);
             }
         ''', 0)  # noqa

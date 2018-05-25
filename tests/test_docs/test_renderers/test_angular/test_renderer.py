@@ -52,12 +52,16 @@ class AngularClientRendererTestCase(TestCase):
         ])
         render_api_ts = self.mocker.patch.object(
             self.renderer, 'render_api_ts')
+        render_api_index_ts = self.mocker.patch.object(
+            self.renderer, 'render_api_index_ts')
         render_domain = self.mocker.patch.object(
             self.renderer, 'render_domain')
 
         self.renderer.render()
 
         assert group_commands_by_domain.call_count == 1
+        assert render_api_index_ts.call_args_list == [
+            call(group_commands_by_domain.return_value)]
         assert render_api_ts.call_args_list == [
             call(group_commands_by_domain.return_value)]
         assert render_domain.call_args_list == [
@@ -373,7 +377,7 @@ class AngularClientRendererTestCase(TestCase):
                 import * as _ from 'underscore';
 
                 import { ClientService, DataState } from '../../services/client.service';
-                import * from './paths.model';
+                import * as X from './paths.models';
 
                 @Injectable()
                 export class PathsDomain {
@@ -384,6 +388,28 @@ class AngularClientRendererTestCase(TestCase):
                     command 2
 
                 }
+            ''', 0)  # noqa
+
+    #
+    # render_api_index_ts
+    #
+    def test_render_api_index_ts(self):
+
+        commands_by_domain = {
+            Domain('cards', 'Cards Management'): {},
+            Domain('recall', 'Recall Management'): {},
+            Domain('paths', 'Path Management'): {},
+        }
+        domains_path = str(self.domains_dir)
+
+        self.renderer.render_api_index_ts(commands_by_domain)
+
+        assert os.listdir(domains_path) == ['index.ts']
+        with open(os.path.join(domains_path, 'index.ts'), 'r') as f:
+            assert f.read() == normalize_indentation('''
+                export * from './cards/index';
+                export * from './paths/index';
+                export * from './recall/index';
             ''', 0)  # noqa
 
     #
@@ -416,8 +442,7 @@ class AngularClientRendererTestCase(TestCase):
 
                 import { DataState, Options } from './index';
 
-                import * from '../domains/cards/index';
-                import * from '../domains/paths/index';
+                import * as X from '../domains/index';
 
                 @Injectable()
                 export class APIService {
@@ -427,11 +452,11 @@ class AngularClientRendererTestCase(TestCase):
                     /**
                      * Cards Management domain
                      */
-                    private _cardsDomain: CardsDomain;
+                    private _cardsDomain: X.CardsDomain;
 
-                    public get cardsDomain(): CardsDomain {
+                    public get cardsDomain(): X.CardsDomain {
                         if (!this._cardsDomain) {
-                            this._cardsDomain = this.injector.get(CardsDomain);
+                            this._cardsDomain = this.injector.get(X.CardsDomain);
                         }
 
                         return this._cardsDomain;
@@ -444,11 +469,11 @@ class AngularClientRendererTestCase(TestCase):
                     /**
                      * Path Management domain
                      */
-                    private _pathsDomain: PathsDomain;
+                    private _pathsDomain: X.PathsDomain;
 
-                    public get pathsDomain(): PathsDomain {
+                    public get pathsDomain(): X.PathsDomain {
                         if (!this._pathsDomain) {
-                            this._pathsDomain = this.injector.get(PathsDomain);
+                            this._pathsDomain = this.injector.get(X.PathsDomain);
                         }
 
                         return this._pathsDomain;

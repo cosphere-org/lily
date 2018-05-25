@@ -27,19 +27,35 @@ class Command:
         # -- REQUEST / RESPONSE
         self.path = self.conf['path_conf']['path']
         self.path_parameters = self.conf['path_conf']['parameters']
+
+        # -- request query
+        request_query_schema = self.conf['schemas'].get(
+            'input_query') or {'schema': None, 'uri': None}
+
         self.request_query = Interface(
             self.name,
             Interface.TYPES.REQUEST_QUERY,
-            self.conf['schemas']['input_query'])
+            request_query_schema['schema'],
+            request_query_schema['uri'])
+
+        # -- request body
+        request_body_schema = self.conf['schemas'].get(
+            'input_body') or {'schema': None, 'uri': None}
+
         self.request_body = Interface(
             self.name,
             Interface.TYPES.REQUEST_BODY,
-            self.conf['schemas']['input_body'])
+            request_body_schema['schema'],
+            request_body_schema['uri'])
+
+        response_schema = self.conf['schemas']['output']
         self.response = Interface(
             self.name,
             Interface.TYPES.RESPONSE,
-            self.conf['schemas']['output'])
+            response_schema['schema'],
+            response_schema['uri'])
         self.signature = Signature(
+            self.method,
             self.path,
             self.path_parameters,
             self.request_query,
@@ -69,17 +85,17 @@ class Command:
         if self.method == 'get':
             return normalize_indentation('''
             {self.header}
-            public {self.camel_name}({self.signature.input}): DataState<{self.response.name}> {{
-                return this.client.getDataState<{self.response.name}>({self.signature.call_args});
+            public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
+                return this.client.getDataState<X.{self.response.name}>({self.signature.call_args});
             }}
             ''', 0).format(self=self)  # noqa
 
         else:
             return normalize_indentation('''
             {self.header}
-            public {self.camel_name}({self.signature.input}): Observable<{self.response.name}> {{
+            public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}> {{
                 return this.client
-                    .{self.method}<{self.response.name}>({self.signature.call_args})
+                    .{self.method}<X.{self.response.name}>({self.signature.call_args})
                     .pipe(filter(x => !_.isEmpty(x)));
             }}
             ''', 0).format(self=self)  # noqa
@@ -88,14 +104,14 @@ class Command:
 
         if self.method == 'get':
             return normalize_indentation('''
-                {self.camel_name}({self.signature.input}): DataState<{self.response.name}> {{
-                    return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args});
+                {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
+                    return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
                 }}
             ''', 0).format(self=self)  # noqa
 
         else:
             return normalize_indentation('''
-                {self.camel_name}({self.signature.input}): Observable<{self.response.name}> {{
-                    return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args});
+                {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}> {{
+                    return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
                 }}
             ''', 0).format(self=self)  # noqa

@@ -31,8 +31,8 @@ class EnumTestCase(TestCase):
 
         assert enum.render() == normalize_indentation('''
             export enum ReadCardsResponseAge {
-                AA: 'AA';
-                BB: 'BB';
+                AA = 'AA',
+                BB = 'BB',
             }
         ''', 0)
 
@@ -42,8 +42,8 @@ class EnumTestCase(TestCase):
 
         assert enum.render() == normalize_indentation('''
             export enum ReadCardsResponseAge {
-                AA: 'AA';
-                BB: 'BB';
+                AA = 'AA',
+                BB = 'BB',
             }
         ''', 0)
 
@@ -53,9 +53,9 @@ class EnumTestCase(TestCase):
 
         assert enum.render() == normalize_indentation('''
             export enum ReadCardsResponseAge {
-                AA: 'AA';
-                BB: 'BB';
-                XX: 'XX';
+                AA = 'AA',
+                BB = 'BB',
+                XX = 'XX',
             }
         ''', 0)
 
@@ -65,26 +65,26 @@ class InterfaceTestCase(TestCase):
     def test_name(self):
 
         assert Interface(
-            'READ_CARDS', Interface.TYPES.RESPONSE, {}
+            'READ_CARDS', Interface.TYPES.RESPONSE, {'hi': 'there'}, ''
         ).name == 'ReadCardsResponse'
 
         assert Interface(
-            'READ_CARDS', Interface.TYPES.REQUEST_QUERY, {}
+            'READ_CARDS', Interface.TYPES.REQUEST_QUERY, {'hi': 'there'}, ''
         ).name == 'ReadCardsQuery'
 
         assert Interface(
-            'READ_CARDS', Interface.TYPES.REQUEST_BODY, {}
+            'READ_CARDS', Interface.TYPES.REQUEST_BODY, {'hi': 'there'}, ''
         ).name == 'ReadCardsBody'
 
     def test_is_empty(self):
 
-        assert Interface('X', 'X', None).is_empty() is True
-        assert Interface('X', 'X', {}).is_empty() is True
-        assert Interface('X', 'X', {'a': 'b'}).is_empty() is False
+        assert Interface('X', 'X', None, '').is_empty() is True
+        assert Interface('X', 'X', {}, '').is_empty() is True
+        assert Interface('X', 'X', {'a': 'b'}, '').is_empty() is False
 
     def test_append_enum__no_duplicates(self):
 
-        interface = Interface('READ_CARDS', Interface.TYPES.RESPONSE, {})
+        interface = Interface('READ_CARDS', Interface.TYPES.RESPONSE, {}, '')
 
         e0 = interface.append_enum('age', [19, 91])
 
@@ -93,7 +93,7 @@ class InterfaceTestCase(TestCase):
 
     def test_append_enum__with_duplicates(self):
 
-        interface = Interface('READ_CARDS', Interface.TYPES.RESPONSE, {})
+        interface = Interface('READ_CARDS', Interface.TYPES.RESPONSE, {}, '')
 
         e0 = interface.append_enum('age', [19, 91])
         e1 = interface.append_enum('age', [19, 91])
@@ -103,7 +103,7 @@ class InterfaceTestCase(TestCase):
 
     def test_append_enum__same_values_different_names(self):
 
-        interface = Interface('READ_CARDS', Interface.TYPES.RESPONSE, {})
+        interface = Interface('READ_CARDS', Interface.TYPES.RESPONSE, {}, '')
 
         e0 = interface.append_enum('age', [19, 91])  # noqa
         e1 = interface.append_enum('years', [19, 91])  # noqa
@@ -112,7 +112,7 @@ class InterfaceTestCase(TestCase):
 
     def test_append_enum__same_name_different_values(self):
 
-        interface = Interface('X', Interface.TYPES.RESPONSE, {})
+        interface = Interface('X', Interface.TYPES.RESPONSE, {}, '')
 
         e0 = interface.append_enum('age', [19, 91])  # noqa
         e1 = interface.append_enum('age', [19])
@@ -130,16 +130,32 @@ class InterfaceTestCase(TestCase):
             '',
         ),
 
-        # -- case 1 - empty schema
+        # -- case 1 - {} schema
+        (
+            {},
+            normalize_indentation('''
+            /**
+             * http://here
+             */
+
+            export interface ReadCardsResponse {}
+            ''', 0),
+        ),
+
+        # -- case 2 - empty schema
         (
             {'type': 'object', 'properties': {}},
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export interface ReadCardsResponse {
             }
             ''', 0)
         ),
 
-        # -- case 2 - simple schema
+        # -- case 3 - simple schema
         (
             {
                 'type': 'object',
@@ -156,6 +172,10 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export interface ReadCardsResponse {
                 age: number;
                 name?: string;
@@ -163,7 +183,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 3 - simple array
+        # -- case 4 - simple array
         (
             {
                 'type': 'object',
@@ -182,6 +202,10 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export interface ReadCardsResponse {
                 age: number[];
                 surname?: string;
@@ -189,7 +213,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 4 - enum
+        # -- case 5 - enum
         (
             {
                 'type': 'object',
@@ -206,9 +230,13 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export enum ReadCardsResponseOccupation {
-                AA: 'AA';
-                BB: 'BB';
+                AA = 'AA',
+                BB = 'BB',
             }
 
             export interface ReadCardsResponse {
@@ -218,7 +246,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 5 - enums
+        # -- case 6 - enums
         (
             {
                 'type': 'object',
@@ -239,15 +267,19 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export enum ReadCardsResponseAge {
-                12: '12';
-                21: '21';
-                33: '33';
+                12 = '12',
+                21 = '21',
+                33 = '33',
             }
 
             export enum ReadCardsResponseOccupation {
-                AA: 'AA';
-                BB: 'BB';
+                AA = 'AA',
+                BB = 'BB',
             }
 
             export interface ReadCardsResponse {
@@ -258,7 +290,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 6 - enums array
+        # -- case 7 - enums array
         (
             {
                 'type': 'object',
@@ -278,9 +310,13 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export enum ReadCardsResponseOccupation {
-                AA: 'AA';
-                BB: 'BB';
+                AA = 'AA',
+                BB = 'BB',
             }
 
             export interface ReadCardsResponse {
@@ -290,7 +326,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 7 - 1 level deep nested
+        # -- case 8 - 1 level deep nested
         (
             {
                 'type': 'object',
@@ -314,6 +350,10 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export interface ReadCardsResponse {
                 age: number;
                 person?: {
@@ -324,7 +364,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 8 - 2 levels deep nested
+        # -- case 9 - 2 levels deep nested
         (
             {
                 'type': 'object',
@@ -357,6 +397,10 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export interface ReadCardsResponse {
                 age: number;
                 person?: {
@@ -370,7 +414,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 9 - nested array
+        # -- case 10 - nested array
         (
             {
                 'type': 'object',
@@ -397,6 +441,10 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export interface ReadCardsResponse {
                 age: number;
                 people?: {
@@ -407,7 +455,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 10 - nested with enums
+        # -- case 11 - nested with enums
         (
             {
                 'type': 'object',
@@ -430,15 +478,19 @@ class InterfaceTestCase(TestCase):
                 },
             },
             normalize_indentation('''
+            /**
+             * http://here
+             */
+
             export enum ReadCardsResponseAge {
-                A: 'A';
-                B: 'B';
+                A = 'A',
+                B = 'B',
             }
 
             export enum ReadCardsResponseCategory {
-                CAT0: 'CAT0';
-                CAT1: 'CAT1';
-                CAT2: 'CAT2';
+                CAT0 = 'CAT0',
+                CAT1 = 'CAT1',
+                CAT2 = 'CAT2',
             }
 
             export interface ReadCardsResponse {
@@ -449,8 +501,61 @@ class InterfaceTestCase(TestCase):
             }
             ''', 0)
         ),
-    ], ids=list([str(i) for i in range(11)]))
+
+        (
+            {
+                'required': ['attempt_stats', 'count'],
+                'type': 'object',
+                'properties': {
+                    'count': {'type': 'integer'},
+                    'attempt_stats': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'required': ['created_timestamp'],
+                            'properties': {
+                                'created_timestamp': {
+                                    'type': 'number'
+                                },
+                                'card_id': {
+                                    'type': 'any'
+                                },
+                                'states_path': {
+                                    'type': 'object'
+                                },
+                                'id': {
+                                    'type': 'integer'
+                                },
+                                'successful': {
+                                    'type': 'boolean'
+                                }
+                            },
+                        }
+                    }
+                },
+            },
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponse {
+                    attempt_stats: {
+                        card_id?: any;
+                        created_timestamp: number;
+                        id?: number;
+                        states_path?: Object;
+                        successful?: boolean;
+                    }[];
+                    count: number;
+                }
+
+            ''', 0)
+        ),
+
+    ], ids=list([str(i) for i in range(13)]))
 def test_render(schema, expected):
-    result = Interface('READ_CARDS', Interface.TYPES.RESPONSE, schema).render()
+    result = Interface(
+        'READ_CARDS', Interface.TYPES.RESPONSE, schema, 'http://here').render()
 
     assert result == expected
