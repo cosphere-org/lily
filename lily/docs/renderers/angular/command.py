@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+import json
+
 from .interface import Interface
 from .signature import Signature
 from .utils import to_camelcase, normalize_indentation
@@ -62,6 +64,9 @@ class Command:
             self.path_parameters,
             self.request_query,
             self.request_body)
+
+        # -- EXAMPLES
+        self.examples = self.conf.get('examples', {})
 
     @property
     def header(self):
@@ -159,3 +164,24 @@ class Command:
                     return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
                 }}
             ''', 0).format(self=self)  # noqa
+
+    def render_examples(self):
+
+        examples_blocks = []
+        for example_name in sorted(self.examples.keys()):
+            example_response = self.examples[example_name]['response']
+
+            examples_blocks.append(normalize_indentation('''
+                "{example_name}": {example_response}
+            ''', 0).format(
+                example_name=example_name,
+                example_response=json.dumps(
+                    example_response, sort_keys=True, indent=4)))
+
+        return normalize_indentation('''
+            export const {command_name}Examples = {{
+            {examples}
+            }}
+        ''', 0).format(
+            command_name=to_camelcase(self.name),
+            examples=normalize_indentation('\n\n'.join(examples_blocks), 4))

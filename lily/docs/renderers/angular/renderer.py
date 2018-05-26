@@ -90,7 +90,7 @@ class AngularClientRenderer:
 
         entrypoints = []
         for url in settings.LILY_COMMAND_ENTRYPOINTS:
-            response = requests.get(url)
+            response = requests.get(url, data={'with_examples': True})
 
             if response.status_code != 200:
                 raise event.ServerError(

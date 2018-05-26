@@ -2,54 +2,54 @@
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
             "description": "ENTRY_POINT_READ",
+            "method": "get",
             "response": {
-                "content_type": "application/json",
-                "status": 200,
                 "content": {
+                    "name": "test",
+                    "@event": "ENTRY_POINT_READ",
+                    "@type": "entrypoint",
+                    "version": "2.5.6",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "method": "PUT",
                             "source": {
+                                "end_line": 16,
                                 "start_line": 15,
                                 "@type": "source",
-                                "filepath": "/tests/__init__.py",
-                                "end_line": 16
+                                "filepath": "/tests/__init__.py"
                             },
-                            "@type": "command",
                             "access": {
+                                "@type": "access",
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "@type": "access",
-                                "is_private": false
+                                "is_private": true
                             },
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "@type": "command",
+                            "method": "GET",
                             "meta": {
-                                "description": "Doloribus enim nemo nulla tempora illum consequuntur fugit et.",
+                                "title": "Nesciunt magnam nostrum reiciendis optio fuga.",
+                                "description": "Ipsum ullam molestiae corrupti.",
                                 "domain": {
-                                    "id": "d",
                                     "name": "domain",
-                                    "@type": "domain"
+                                    "@type": "domain",
+                                    "id": "d"
                                 },
-                                "title": "Voluptatem laudantium eveniet modi temporibus ipsam.",
                                 "@type": "meta"
                             }
                         }
-                    },
-                    "@event": "ENTRY_POINT_READ",
-                    "name": "test",
-                    "@type": "entrypoint",
-                    "version": "2.5.6"
-                }
+                    }
+                },
+                "status": 200,
+                "content_type": "application/json"
             },
-            "method": "get",
             "request": {
                 "path": "/?with_schemas=False",
                 "headers": {
-                    "X-CS-USER-ID": 190,
-                    "X-CS-ACCOUNT-TYPE": "ADMIN"
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
                 }
             }
         }

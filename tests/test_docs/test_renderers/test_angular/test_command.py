@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from copy import deepcopy
+import re
 
 from django.test import TestCase
 from mock import Mock, call
@@ -32,6 +33,10 @@ CONF = {
         'output': {'schema': {'hi': 'there'}, 'uri': ''},
     }
 }
+
+
+def remove_white_chars(text):
+    return re.sub(r'\s+', '', text)
 
 
 class CommandTestCase(TestCase):
@@ -451,6 +456,48 @@ class CommandTestCase(TestCase):
                 return this.pathsDomain.readTask(body);
             }
         ''', 0)  # noqa
+
+    #
+    # render_examples
+    #
+    def test_render_examples(self):
+
+        conf = deepcopy(CONF)
+        conf['examples'] = {
+            '404 (NOT_FOUND)': {
+                'response': {
+                    'where': 'here',
+                    'error': 'not found',
+                    'status': 404,
+                },
+            },
+            '200 (YO)': {
+                'response': {
+                    'id': 45,
+                    'age': 879,
+                },
+            },
+
+        }
+
+        command = Command('BULK_READ_TASKS', conf)
+
+        assert (
+            remove_white_chars(command.render_examples()) ==
+            remove_white_chars(normalize_indentation('''
+                export const BulkReadTasksExamples = {
+                    "200 (YO)": {
+                        "age": 879,
+                        "id": 45
+                    }
+
+                    "404 (NOT_FOUND)": {
+                        "error": "not found",
+                        "status": 404,
+                        "where": "here"
+                    }
+                }
+            ''', 0)))
 
     #
     # get_bulk_read_field
