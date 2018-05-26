@@ -122,10 +122,11 @@ class InterfaceTestCase(TestCase):
 
 
 @pytest.mark.parametrize(
-    'schema, expected',
+    'schema, bulk_read_field, expected',
     [
         # -- case 0 - None schema
         (
+            None,
             None,
             '',
         ),
@@ -133,6 +134,7 @@ class InterfaceTestCase(TestCase):
         # -- case 1 - {} schema
         (
             {},
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -145,6 +147,7 @@ class InterfaceTestCase(TestCase):
         # -- case 2 - empty schema
         (
             {'type': 'object', 'properties': {}},
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -171,6 +174,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -201,6 +205,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -229,6 +234,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -266,6 +272,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -309,6 +316,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -349,6 +357,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -396,6 +405,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -440,6 +450,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -477,6 +488,7 @@ class InterfaceTestCase(TestCase):
                     },
                 },
             },
+            None,
             normalize_indentation('''
             /**
              * http://here
@@ -502,6 +514,7 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
+        # -- case 12 - mixed up primitive types
         (
             {
                 'required': ['attempt_stats', 'count'],
@@ -534,6 +547,7 @@ class InterfaceTestCase(TestCase):
                     }
                 },
             },
+            None,
             normalize_indentation('''
                 /**
                  * http://here
@@ -553,9 +567,53 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-    ], ids=list([str(i) for i in range(13)]))
-def test_render(schema, expected):
+        # -- case 13 - bulk read response
+        (
+            {
+                'type': 'object',
+                'required': ['people'],
+                'properties': {
+                    'people': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'required': ['name', 'age'],
+                            'properties': {
+                                'name': {
+                                    'type': 'string',
+                                },
+                                'age': {
+                                    'type': 'integer',
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+            'cards',
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponseEntity {
+                    age: number;
+                    name: string;
+                }
+
+                export interface ReadCardsResponse {
+                    cards: ReadCardsResponseEntity[];
+                }
+            ''', 0)
+        ),
+
+    ], ids=list([str(i) for i in range(14)]))
+def test_render(schema, bulk_read_field, expected):
     result = Interface(
-        'READ_CARDS', Interface.TYPES.RESPONSE, schema, 'http://here').render()
+        'READ_CARDS',
+        Interface.TYPES.RESPONSE,
+        schema,
+        'http://here',
+        bulk_read_field=bulk_read_field).render()
 
     assert result == expected

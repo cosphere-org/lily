@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        AngularClientRenderer().render()
+        AngularClientRenderer().render(only_build=True)
 
         self.stdout.write(
             self.style.SUCCESS('Successfully rendered Angular Client'))

@@ -1,11 +1,37 @@
 # -*- coding: utf-8 -*-
 
+from copy import deepcopy
+
 from django.test import TestCase
 from mock import Mock, call
 import pytest
 
 from lily.docs.renderers.angular.command import Command
 from lily.docs.renderers.angular.utils import normalize_indentation
+
+
+CONF = {
+    'method': 'POST',
+    'meta': {
+        'title': 'Create Path',
+        'domain': {
+            'id': 'paths',
+            'name': 'Paths Management',
+        }
+    },
+    'access': {
+        'is_private': True,
+    },
+    'path_conf': {
+        'path': '/paths/',
+        'parameters': []
+    },
+    'schemas': {
+        'input_query': None,
+        'input_body': None,
+        'output': {'schema': {'hi': 'there'}, 'uri': ''},
+    }
+}
 
 
 class CommandTestCase(TestCase):
@@ -38,6 +64,8 @@ class CommandTestCase(TestCase):
             request_body_interface,
             response_interface,
         ]
+        self.mocker.patch.object(
+            Command, 'get_bulk_read_field').return_value = None
         command = Command(
             'READ_TASK',
             {
@@ -94,7 +122,7 @@ class CommandTestCase(TestCase):
         assert interface.call_args_list == [
             call('READ_TASK', 'REQUEST_QUERY', request_query, 'Q'),
             call('READ_TASK', 'REQUEST_BODY', request_body, 'B'),
-            call('READ_TASK', 'RESPONSE', response, 'R'),
+            call('READ_TASK', 'RESPONSE', response, 'R', bulk_read_field=None),
         ]
 
     def test_header(self):
@@ -165,6 +193,63 @@ class CommandTestCase(TestCase):
              * Bulk Read Paths
              */
         ''', 0)
+
+    def test_render__get_bulk_read_field(self):
+
+        self.mocker.patch.object(
+            Command, 'get_bulk_read_field').return_value = 'people'
+        command = Command(
+            'READ_TASK',
+            {
+                'method': 'GET',
+                'meta': {
+                    'title': 'Read Task',
+                    'domain': {
+                        'id': 'tasks',
+                        'name': 'Tasks Management',
+                    }
+                },
+                'access': {
+                    'is_private': True,
+                },
+                'path_conf': {
+                    'path': '/tasks/{task_id}',
+                    'parameters': [
+                        {
+                            'name': 'task_id',
+                            'type': 'integer',
+                        },
+                    ]
+                },
+                'schemas': {
+                    'input_query': {'schema': {'hi': 'there'}, 'uri': ''},
+                    'input_body': None,
+                    'output': {
+                        'schema': {
+                            'type': 'object',
+                            'required': ['people'],
+                            'properties': {
+                                'people': {
+                                    'type': 'array',
+                                },
+                            },
+                        },
+                        'uri': '',
+                    },
+                }
+            })
+
+        assert command.render() == normalize_indentation('''
+            /**
+             * Read Task
+             */
+            public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponseEntity[]> {
+                return this.client
+                    .getDataState<X.ReadTaskResponse>(`/tasks/${taskId}`, { params })
+                    .pipe(filter(x => x.data));
+
+            }
+        ''', 0)  # noqa
 
     def test_render__get(self):
 
@@ -245,6 +330,57 @@ class CommandTestCase(TestCase):
             }
         ''', 0)  # noqa
 
+    def test_render_facade__get_bulk_read_field(self):
+
+        self.mocker.patch.object(
+            Command, 'get_bulk_read_field').return_value = 'people'
+        command = Command(
+            'READ_TASK',
+            {
+                'method': 'GET',
+                'meta': {
+                    'title': 'Read Task',
+                    'domain': {
+                        'id': 'tasks',
+                        'name': 'Tasks Management',
+                    }
+                },
+                'access': {
+                    'is_private': True,
+                },
+                'path_conf': {
+                    'path': '/tasks/{task_id}',
+                    'parameters': [
+                        {
+                            'name': 'task_id',
+                            'type': 'integer',
+                        },
+                    ]
+                },
+                'schemas': {
+                    'input_query': {'schema': {'hi': 'there'}, 'uri': ''},
+                    'input_body': None,
+                    'output': {
+                        'schema': {
+                            'type': 'object',
+                            'required': ['people'],
+                            'properties': {
+                                'people': {
+                                    'type': 'array',
+                                },
+                            },
+                        },
+                        'uri': '',
+                    },
+                }
+            })
+
+        assert command.render_facade() == normalize_indentation('''
+            readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponseEntity[]> {
+                return this.tasksDomain.readTask(taskId, params);
+            }
+        ''', 0)  # noqa
+
     def test_render_facade__get(self):
 
         command = Command(
@@ -315,3 +451,71 @@ class CommandTestCase(TestCase):
                 return this.pathsDomain.readTask(body);
             }
         ''', 0)  # noqa
+
+    #
+    # get_bulk_read_field
+    #
+    def test_get_bulk_read_field(self):
+
+        conf = deepcopy(CONF)
+        conf['schemas'] = {
+            'output': {
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'tasks': {
+                            'type': 'array',
+                        }
+                    }
+                },
+                'uri': 'hi/there',
+            },
+        }
+
+        command = Command('BULK_READ_TASKS', conf)
+
+        assert command.get_bulk_read_field() == 'tasks'
+
+    def test_get_bulk_read_field__not_bulk_read_name(self):
+
+        command = Command('READ_TASK', CONF)
+
+        assert command.get_bulk_read_field() is None
+
+    def test_get_bulk_read_field__more_than_one_field(self):
+
+        conf = deepcopy(CONF)
+        conf['schemas'] = {
+            'output': {
+                'schema': {
+                    'type': 'object',
+                    'properties': {
+                        'tasks': {
+                            'type': 'array',
+                        },
+                        'people': {
+                            'type': 'array',
+                        }
+                    }
+                },
+                'uri': 'hi/there',
+            },
+        }
+
+        command = Command('BULK_READ_TASKS', conf)
+
+        assert command.get_bulk_read_field() is None
+
+    def test_get_bulk_read_field__empty_schema(self):
+
+        conf = deepcopy(CONF)
+        conf['schemas'] = {
+            'output': {
+                'schema': {},
+                'uri': 'hi/there',
+            },
+        }
+
+        command = Command('BULK_READ_TASKS', conf)
+
+        assert command.get_bulk_read_field() is None

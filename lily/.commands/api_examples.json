@@ -1,22 +1,24 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
-            "method": "get",
-            "request": {
-                "path": "/?with_schemas=False",
-                "headers": {
-                    "X-CS-USER-ID": 190,
-                    "X-CS-ACCOUNT-TYPE": "ADMIN"
-                }
-            },
             "description": "ENTRY_POINT_READ",
             "response": {
-                "status": 200,
                 "content_type": "application/json",
+                "status": 200,
                 "content": {
-                    "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "method": "PUT",
+                            "source": {
+                                "start_line": 15,
+                                "@type": "source",
+                                "filepath": "/tests/__init__.py",
+                                "end_line": 16
+                            },
+                            "@type": "command",
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -24,32 +26,30 @@
                                 "@type": "access",
                                 "is_private": false
                             },
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "@type": "command",
-                            "method": "POST",
                             "meta": {
-                                "title": "Nihil repellat architecto dolor labore.",
-                                "@type": "meta",
+                                "description": "Doloribus enim nemo nulla tempora illum consequuntur fugit et.",
                                 "domain": {
                                     "id": "d",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "description": "Eaque alias ex mollitia maxime atque."
-                            },
-                            "source": {
-                                "start_line": 15,
-                                "filepath": "/tests/__init__.py",
-                                "end_line": 16,
-                                "@type": "source"
+                                "title": "Voluptatem laudantium eveniet modi temporibus ipsam.",
+                                "@type": "meta"
                             }
                         }
                     },
-                    "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ",
+                    "name": "test",
+                    "@type": "entrypoint",
                     "version": "2.5.6"
+                }
+            },
+            "method": "get",
+            "request": {
+                "path": "/?with_schemas=False",
+                "headers": {
+                    "X-CS-USER-ID": 190,
+                    "X-CS-ACCOUNT-TYPE": "ADMIN"
                 }
             }
         }

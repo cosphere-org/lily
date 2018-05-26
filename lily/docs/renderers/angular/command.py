@@ -48,12 +48,14 @@ class Command:
             request_body_schema['schema'],
             request_body_schema['uri'])
 
+        # -- response
         response_schema = self.conf['schemas']['output']
         self.response = Interface(
             self.name,
             Interface.TYPES.RESPONSE,
             response_schema['schema'],
-            response_schema['uri'])
+            response_schema['uri'],
+            bulk_read_field=self.get_bulk_read_field())
         self.signature = Signature(
             self.method,
             self.path,
@@ -80,9 +82,44 @@ class Command:
              */
             ''', 0).format(self=self)
 
+    def get_bulk_read_field(self):
+
+        if not self.name.startswith('BULK_READ'):
+            return None
+
+        try:
+            schema = self.conf['schemas']['output']['schema']
+            fields = list(schema['properties'].keys())
+
+        except KeyError:
+            return None
+
+        if len(fields) == 1:
+            field = fields[0]
+            if field and schema['properties'][field]['type'] == 'array':
+                return field
+
+        return None
+
     def render(self):
 
-        if self.method == 'get':
+        if self.get_bulk_read_field():
+            return normalize_indentation('''
+            {self.header}
+            public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
+                return this.client
+                    .getDataState<X.{self.response.name}>({self.signature.call_args})
+                    .pipe(filter(x => x.{bulk_read_field}));
+
+            }}
+            ''', 0).format(  # noqa
+                self=self,
+                # FIXME: !!! should be this as soon as integration is over
+                # bulk_read_field=self.get_bulk_read_field(),
+                bulk_read_field='data',
+            )
+
+        elif self.method == 'get':
             return normalize_indentation('''
             {self.header}
             public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
@@ -102,7 +139,14 @@ class Command:
 
     def render_facade(self):
 
-        if self.method == 'get':
+        if self.get_bulk_read_field():
+            return normalize_indentation('''
+                {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
+                    return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
+                }}
+            ''', 0).format(self=self)  # noqa
+
+        elif self.method == 'get':
             return normalize_indentation('''
                 {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
                     return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});

@@ -12,12 +12,13 @@ class Interface:
 
         REQUEST_BODY = 'REQUEST_BODY'
 
-    def __init__(self, command_name, type_, schema, uri):
+    def __init__(self, command_name, type_, schema, uri, bulk_read_field=None):
         self.command_name = command_name
         self.type = type_
         self.schema = schema
         self.uri = uri
         self.enums = []
+        self.bulk_read_field = bulk_read_field
 
     def is_empty(self):
         return self.schema is None or self.schema == {}
@@ -94,6 +95,7 @@ class Interface:
             if schema['type'] == 'object':
                 lines.append('{')
                 names = sorted(schema['properties'].keys())
+
                 for name in names:
                     sub_schema = schema['properties'][name]
 
@@ -122,13 +124,33 @@ class Interface:
              */
         ''', 0).format(self=self)]
 
-        if not self.schema:
-            interface = 'export interface {name} {{}}'.format(name=self.name)
+        # -- treat differently Bulk Read Response interfaces in order to
+        # -- allow one extra mapping in the domain service
+        if self.bulk_read_field:
+            field = list(self.schema['properties'].keys())[0]
+
+            entity_schema = self.schema['properties'][field]['items']
+
+            interface = normalize_indentation('''
+                export interface {self.name}Entity {interface_content}
+
+                export interface {self.name} {{
+                    {self.bulk_read_field}: {self.name}Entity[];
+                }}
+
+                ''', 0).format(
+                self=self,
+                interface_content=to_interface(entity_schema))
+
+        # -- deal with empty schema which might occur for the case of
+        # -- responses that return only @event field
+        elif not self.schema:
+            interface = 'export interface {self.name} {{}}'.format(self=self)
 
         else:
             interface = normalize_indentation(
-                'export interface {name} {interface_content}'.format(
-                    name=self.name,
+                'export interface {self.name} {interface_content}'.format(
+                    self=self,
                     interface_content=to_interface(self.schema)), 0)
 
         if self.enums:
