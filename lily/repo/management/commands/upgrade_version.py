@@ -6,6 +6,7 @@ from ...repo import Repo
 from ...version import VersionRenderer
 from ...changelog import ChangelogRenderer
 from lily.base.conf import config
+from lily.base.utils import normalize_indentation
 
 
 @click.command()
@@ -44,14 +45,14 @@ def command(upgrade_type):
 
     # -- push all changed files
     repo.add(config.path)
-    # repo.commit()
-    # repo.push()
+    repo.commit('VERSION: {}'.format(config.version))
+    repo.push()
 
-    # # -- tag
-    # repo.tag(config.version)
+    # -- tag
+    repo.tag(config.version)
 
-    click.secho('''
-- Version upgraded to: {version}
-- branch tagged
-- CHANGELOG rendered
-    ''', fg='green')
+    click.secho(normalize_indentation('''
+        - Version upgraded to: {version}
+        - branch tagged
+        - CHANGELOG rendered
+    '''.format(version=config.version), 0), fg='green')

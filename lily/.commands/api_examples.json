@@ -1,57 +1,57 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "path": "/?with_schemas=False",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
             "response": {
-                "content_type": "application/json",
                 "content": {
                     "commands": {
                         "UPDATE_HELLO": {
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "method": "PUT",
                             "access": {
-                                "is_external": false,
                                 "access_list": [
                                     "ANY"
                                 ],
                                 "@type": "access",
+                                "is_external": false,
                                 "is_private": true
                             },
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "source": {
+                                "filepath": "/tests/__init__.py",
+                                "start_line": 15,
+                                "@type": "source",
+                                "end_line": 16
+                            },
                             "meta": {
-                                "description": "Ratione placeat voluptates consequatur culpa.",
-                                "title": "Delectus fugiat aliquid porro aut illum assumenda.",
+                                "title": "Exercitationem corporis molestiae consequuntur autem.",
+                                "description": "Impedit veniam id enim natus.",
                                 "domain": {
-                                    "name": "domain",
                                     "id": "d",
-                                    "@type": "domain"
+                                    "@type": "domain",
+                                    "name": "domain"
                                 },
                                 "@type": "meta"
                             },
                             "@type": "command",
-                            "source": {
-                                "@type": "source",
-                                "end_line": 16,
-                                "filepath": "/tests/__init__.py",
-                                "start_line": 15
-                            }
+                            "method": "GET"
                         }
                     },
-                    "version": "2.5.6",
+                    "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ",
                     "name": "test",
-                    "@type": "entrypoint"
+                    "version": "2.5.6"
                 },
+                "content_type": "application/json",
                 "status": 200
             },
-            "request": {
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                },
-                "path": "/?with_schemas=False"
-            },
-            "description": "ENTRY_POINT_READ",
             "method": "get"
         }
     }
