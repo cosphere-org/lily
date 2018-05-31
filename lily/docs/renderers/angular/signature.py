@@ -12,13 +12,17 @@ class Signature:
             method,
             path,
             path_parameters,
+            authorization_required=True,
             request_query=None,
-            request_body=None):
+            request_body=None,
+            bulk_read_field=None):
         self.method = method
         self.path = path
         self.path_parameters = path_parameters
+        self.authorization_required = authorization_required
         self.request_query = request_query
         self.request_body = request_body
+        self.bulk_read_field = bulk_read_field
 
     @property
     def input(self):
@@ -59,10 +63,9 @@ class Signature:
         else:
             call_args_signature.append("'{}'".format(path))
 
-        # -- query
-        if not self.request_query.is_empty():
-            call_args_signature.append('{ params }')
-
+        #
+        # BODY
+        #
         # -- body
         if not self.request_body.is_empty():
             call_args_signature.append('body')
@@ -70,6 +73,33 @@ class Signature:
         # -- when body is missing
         elif self.method in ['put', 'post']:
             call_args_signature.append('{}')
+
+        #
+        # OPTIONS (INCLUDING QUERY PARAMS)
+        #
+        # -- query
+        options = []
+        if not self.request_query.is_empty() and not self.bulk_read_field:
+            options.append('params')
+
+        # -- query and mapping
+        elif (not self.request_query.is_empty() and
+                self.bulk_read_field and
+                self.method == 'get'):
+            options.append("params, responseMap: 'data'")
+
+        # -- mapping only
+        elif (self.request_query.is_empty() and
+                self.bulk_read_field and
+                self.method == 'get'):
+            options.append("responseMap: 'data'")
+
+        # -- authorization
+        options.append(
+            "authorizationRequired: {}".format(
+                self.authorization_required and 'true' or 'false'))
+
+        call_args_signature.append('{{ {} }}'.format(', '.join(options)))
 
         return ', '.join(call_args_signature)
 

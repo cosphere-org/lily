@@ -91,6 +91,7 @@ INSTALLED_APPS = [
     'docs',
     'base',
     'search',
+    'repo',
     'django.contrib.contenttypes',
     'django.contrib.auth',
 ]

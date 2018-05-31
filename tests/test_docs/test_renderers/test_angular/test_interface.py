@@ -4,7 +4,7 @@ from django.test import TestCase
 import pytest
 
 from lily.docs.renderers.angular.interface import Interface, Enum
-from lily.docs.renderers.angular.utils import normalize_indentation
+from lily.base.utils import normalize_indentation
 
 
 class EnumTestCase(TestCase):
@@ -602,7 +602,7 @@ class InterfaceTestCase(TestCase):
                 }
 
                 export interface ReadCardsResponse {
-                    cards: ReadCardsResponseEntity[];
+                    data: ReadCardsResponseEntity[];
                 }
             ''', 0)
         ),

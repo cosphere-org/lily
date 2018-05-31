@@ -1,57 +1,58 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
-            "description": "ENTRY_POINT_READ",
-            "method": "get",
             "response": {
+                "content_type": "application/json",
                 "content": {
-                    "name": "test",
-                    "@event": "ENTRY_POINT_READ",
-                    "@type": "entrypoint",
-                    "version": "2.5.6",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "source": {
-                                "end_line": 16,
-                                "start_line": 15,
-                                "@type": "source",
-                                "filepath": "/tests/__init__.py"
-                            },
-                            "access": {
-                                "@type": "access",
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": true
-                            },
                             "path_conf": {
                                 "path": "conf"
                             },
-                            "@type": "command",
-                            "method": "GET",
+                            "method": "PUT",
+                            "access": {
+                                "is_external": false,
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "@type": "access",
+                                "is_private": true
+                            },
                             "meta": {
-                                "title": "Nesciunt magnam nostrum reiciendis optio fuga.",
-                                "description": "Ipsum ullam molestiae corrupti.",
+                                "description": "Ratione placeat voluptates consequatur culpa.",
+                                "title": "Delectus fugiat aliquid porro aut illum assumenda.",
                                 "domain": {
                                     "name": "domain",
-                                    "@type": "domain",
-                                    "id": "d"
+                                    "id": "d",
+                                    "@type": "domain"
                                 },
                                 "@type": "meta"
+                            },
+                            "@type": "command",
+                            "source": {
+                                "@type": "source",
+                                "end_line": 16,
+                                "filepath": "/tests/__init__.py",
+                                "start_line": 15
                             }
                         }
-                    }
+                    },
+                    "version": "2.5.6",
+                    "@event": "ENTRY_POINT_READ",
+                    "name": "test",
+                    "@type": "entrypoint"
                 },
-                "status": 200,
-                "content_type": "application/json"
+                "status": 200
             },
             "request": {
-                "path": "/?with_schemas=False",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
-                }
-            }
+                },
+                "path": "/?with_schemas=False"
+            },
+            "description": "ENTRY_POINT_READ",
+            "method": "get"
         }
     }
 }

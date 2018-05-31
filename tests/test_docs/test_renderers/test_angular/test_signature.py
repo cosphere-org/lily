@@ -26,6 +26,7 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/cards',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
@@ -38,6 +39,7 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/cards/{card_id}',
             path_parameters=[{'name': 'card_id', 'type': int}],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
@@ -52,6 +54,7 @@ class SignatureTestCase(TestCase):
                 {'name': 'user_id', 'type': str},
                 {'name': 'name', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
@@ -63,6 +66,7 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/cards/',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(name='ReadCardRequestQuery'),
             request_body=MockInterface(is_empty=True))
 
@@ -77,6 +81,7 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(name='ReadCardRequestQuery'),
             request_body=MockInterface(is_empty=True))
 
@@ -89,6 +94,7 @@ class SignatureTestCase(TestCase):
             method='put',
             path='/paths/',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(name='ReadCardRequestBody'))
 
@@ -103,6 +109,7 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(name='ReadCardRequestBody'))
 
@@ -118,10 +125,11 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/cards',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
-        assert s.call_args == "'/cards'"
+        assert s.call_args == "'/cards', { authorizationRequired: true }"
 
     def test_call_args__path_parameters(self):
 
@@ -130,10 +138,12 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/cards/{card_id}',
             path_parameters=[{'name': 'card_id', 'type': int}],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
-        assert s.call_args == '`/cards/${cardId}`'
+        assert s.call_args == (
+            '`/cards/${cardId}`, { authorizationRequired: true }')
 
         # -- multiple parameters
         s = Signature(
@@ -144,11 +154,13 @@ class SignatureTestCase(TestCase):
                 {'name': 'user_id', 'type': str},
                 {'name': 'name', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
         assert s.call_args == (
-            '`/cards/${cardId}/${name}/users/${userId}`')
+            '`/cards/${cardId}/${name}/users/${userId}`, '
+            '{ authorizationRequired: true }')
 
     def test_call_args__query_params(self):
 
@@ -156,11 +168,12 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/paths/',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(name='ReadPathRequestQuery'),
             request_body=MockInterface(is_empty=True))
 
         assert s.call_args == (
-            "'/paths/', { params }")
+            "'/paths/', { params, authorizationRequired: true }")
 
     def test_call_args__path_parameters_and_query_params(self):
 
@@ -171,11 +184,13 @@ class SignatureTestCase(TestCase):
                 {'name': 'path_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(name='ReadPathRequestQuery'),
             request_body=MockInterface(is_empty=True))
 
         assert s.call_args == (
-            '`/paths/${pathId}/users/${userId}`, { params }')
+            '`/paths/${pathId}/users/${userId}`, '
+            '{ params, authorizationRequired: true }')
 
     def test_call_args__body_params(self):
 
@@ -183,10 +198,12 @@ class SignatureTestCase(TestCase):
             method='post',
             path='/cards/',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(name='ReadCardRequestBody'))
 
-        assert s.call_args == "'/cards/', body"
+        assert s.call_args == (
+            "'/cards/', body, { authorizationRequired: true }")
 
     def test_call_args__path_parameters_and_body_params(self):
 
@@ -197,10 +214,13 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(name='ReadCardRequestBody'))
 
-        assert s.call_args == '`/cards/${cardId}/users/${userId}`, body'
+        assert s.call_args == (
+            '`/cards/${cardId}/users/${userId}`, '
+            'body, { authorizationRequired: true }')
 
     def test_call_args__path_parameters_and_no_body(self):
 
@@ -211,10 +231,50 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
+            authorization_required=False,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
-        assert s.call_args == '`/cards/${cardId}/users/${userId}`, {}'
+        assert s.call_args == (
+            '`/cards/${cardId}/users/${userId}`, '
+            '{}, { authorizationRequired: false }')
+
+    def test_call_args__bulk_read_field_and_path_parameters(self):
+
+        s = Signature(
+            method='get',
+            path='/cards/{card_id}/users/{user_id}',
+            path_parameters=[
+                {'name': 'card_id', 'type': int},
+                {'name': 'user_id', 'type': str},
+            ],
+            authorization_required=True,
+            request_query=MockInterface(is_empty=True),
+            request_body=MockInterface(is_empty=True),
+            bulk_read_field='cards')
+
+        assert (
+            s.call_args ==
+            '`/cards/${cardId}/users/${userId}`, '
+            '{ responseMap: \'data\', authorizationRequired: true }')
+
+    def test_call_args__bulk_read_field_and_path_parameters_and_query_params(self):  # noqa
+
+        s = Signature(
+            method='get',
+            path='/cards/{card_id}',
+            path_parameters=[
+                {'name': 'card_id', 'type': int},
+            ],
+            authorization_required=True,
+            request_query=MockInterface(is_empty=False),
+            request_body=MockInterface(is_empty=True),
+            bulk_read_field='cards')
+
+        assert (
+            s.call_args ==
+            '`/cards/${cardId}`, '
+            '{ params, responseMap: \'data\', authorizationRequired: true }')
 
     #
     # CALL_ARGS_WITHOUT_PATH
@@ -225,6 +285,7 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/cards',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
@@ -237,6 +298,7 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/cards/{card_id}',
             path_parameters=[{'name': 'card_id', 'type': int}],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
@@ -251,6 +313,7 @@ class SignatureTestCase(TestCase):
                 {'name': 'user_id', 'type': str},
                 {'name': 'name', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(is_empty=True))
 
@@ -262,6 +325,7 @@ class SignatureTestCase(TestCase):
             method='get',
             path='/paths/',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(name='ReadPathRequestQuery'),
             request_body=MockInterface(is_empty=True))
 
@@ -276,6 +340,7 @@ class SignatureTestCase(TestCase):
                 {'name': 'path_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(name='ReadPathRequestQuery'),
             request_body=MockInterface(is_empty=True))
 
@@ -287,6 +352,7 @@ class SignatureTestCase(TestCase):
             method='post',
             path='/cards/',
             path_parameters=[],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(name='ReadCardRequestBody'))
 
@@ -301,6 +367,7 @@ class SignatureTestCase(TestCase):
                 {'name': 'card_id', 'type': int},
                 {'name': 'user_id', 'type': str},
             ],
+            authorization_required=True,
             request_query=MockInterface(is_empty=True),
             request_body=MockInterface(name='ReadCardRequestBody'))
 

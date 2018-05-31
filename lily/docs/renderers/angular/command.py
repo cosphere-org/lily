@@ -4,7 +4,8 @@ import json
 
 from .interface import Interface
 from .signature import Signature
-from .utils import to_camelcase, normalize_indentation
+from .utils import to_camelcase
+from lily.base.utils import normalize_indentation
 
 
 class Command:
@@ -25,6 +26,8 @@ class Command:
 
         # -- ACCESS
         self.is_private = self.conf['access']['is_private']
+        self.authorization_required = (
+            self.conf['access']['access_list'] is not None)
 
         # -- REQUEST / RESPONSE
         self.path = self.conf['path_conf']['path']
@@ -62,8 +65,10 @@ class Command:
             self.method,
             self.path,
             self.path_parameters,
+            self.authorization_required,
             self.request_query,
-            self.request_body)
+            self.request_body,
+            bulk_read_field=self.get_bulk_read_field())
 
         # -- EXAMPLES
         self.examples = self.conf.get('examples', {})
@@ -108,14 +113,13 @@ class Command:
 
     def render(self):
 
-        if self.get_bulk_read_field():
+        if self.get_bulk_read_field() and self.method != 'get':
             return normalize_indentation('''
             {self.header}
-            public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
+            public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
                 return this.client
-                    .getDataState<X.{self.response.name}>({self.signature.call_args})
-                    .pipe(filter(x => x.{bulk_read_field}));
-
+                    .{self.method}<X.{self.response.name}>({self.signature.call_args})
+                    .pipe(map(x => x.{bulk_read_field}));
             }}
             ''', 0).format(  # noqa
                 self=self,
@@ -123,6 +127,14 @@ class Command:
                 # bulk_read_field=self.get_bulk_read_field(),
                 bulk_read_field='data',
             )
+
+        elif self.get_bulk_read_field() and self.method == 'get':
+            return normalize_indentation('''
+            {self.header}
+            public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
+                return this.client.getDataState<X.{self.response.name}Entity[]>({self.signature.call_args});
+            }}
+            ''', 0).format(self=self)  # noqa
 
         elif self.method == 'get':
             return normalize_indentation('''
@@ -179,9 +191,13 @@ class Command:
                     example_response, sort_keys=True, indent=4)))
 
         return normalize_indentation('''
+            /**
+             * Examples for {self.name}
+             */
             export const {command_name}Examples = {{
             {examples}
             }}
         ''', 0).format(
+            self=self,
             command_name=to_camelcase(self.name),
-            examples=normalize_indentation('\n\n'.join(examples_blocks), 4))
+            examples=normalize_indentation(',\n\n'.join(examples_blocks), 4))

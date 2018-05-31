@@ -2,66 +2,18 @@
 
 import os
 import re
-import subprocess
+
+from lily.repo.repo import Repo
+from lily.repo.version import VersionRenderer
 
 
-class Repo:
-
-    def __init__(self):
-        self.cd_to_repo()
-
-    class VERSION_UPGRADE:  # noqa
-        MAJOR = 'MAJOR'
-
-        MINOR = 'MINOR'
-
-        PATCH = 'PATCH'
+class AngularRepo(Repo):
 
     base_path = os.path.join(
         os.path.dirname(__file__), 'cosphere-angular-client')
 
-    def cd_to_repo(self):
-        os.chdir(self.base_path)
-
-    #
-    # GIT
-    #
-    def push(self):
-        self.git('push origin master')
-
-    def pull(self):
-        self.git('pull origin master')
-
-    def add_all(self):
-        self.git('add .')
-        self.git('add -u .')
-
     def commit(self, version):
         self.git('commit -m "ADDED version {}"'.format(version))
-
-    def git(self, command):
-        self.execute('git {}'.format(command))
-
-    #
-    # DIR / FILES
-    #
-    def clear_dir(self, path):
-
-        path = re.sub('^/', '', path)
-        path = os.path.join(os.getcwd(), path)
-
-        for filename in os.listdir(path):
-            os.remove(os.path.join(path, filename))
-
-    def create_dir(self, path):
-        path = re.sub('^/', '', path)
-        path = os.path.join(os.getcwd(), path)
-
-        try:
-            os.mkdir(path)
-
-        except FileExistsError:
-            pass
 
     #
     # NPM
@@ -78,24 +30,8 @@ class Repo:
     #
     # UTILS
     #
-    def execute(self, command):
-
-        print('[EXECUTE]', command)
-        try:
-            captured = subprocess.check_output(
-                command,
-                stderr=subprocess.STDOUT,
-                shell=True)
-
-        except subprocess.CalledProcessError as e:
-            print('--- [ERROR] ----------')
-            print(str(e.output, encoding='utf8'))
-            raise
-
-        else:
-            print(str(captured, encoding='utf8'))
-
-    def upgrade_version(self, upgrade_type=VERSION_UPGRADE.PATCH):
+    def upgrade_version(
+            self, upgrade_type=VersionRenderer.VERSION_UPGRADE.PATCH):
 
         with open('package.json', 'r') as p:
             conf = p.read()
@@ -104,22 +40,7 @@ class Repo:
             version = version_match.groupdict()['version']
             span = version_match.span()
 
-            major, minor, patch = version.split('.')
-            major, minor, patch = int(major), int(minor), int(patch)
-
-            if upgrade_type == self.VERSION_UPGRADE.MAJOR:
-                major += 1
-                minor = 0
-                patch = 0
-
-            elif upgrade_type == self.VERSION_UPGRADE.MINOR:
-                minor += 1
-                patch = 0
-
-            elif upgrade_type == self.VERSION_UPGRADE.PATCH:
-                patch += 1
-
-            next_version = '{0}.{1}.{2}'.format(major, minor, patch)
+            next_version = VersionRenderer().render_next_version(version)
 
         with open('package.json', 'w') as p:
             conf = conf.replace(

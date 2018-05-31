@@ -44,8 +44,8 @@ class CommandsRenderer(BaseRenderer):
             }
 
             # -- EXAMPLES
-            configuration['examples'] = self.get_examples(
-                name, path_conf.pop('pattern'))
+            pattern = path_conf.pop('pattern')
+            configuration['examples'] = self.get_examples(name, pattern)
 
             # -- SCHEMAS
             schemas = {}

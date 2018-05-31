@@ -133,7 +133,7 @@ def test_create_secret__safe_secret():
         assert len(set(string.punctuation) & set(secret)) > 0
 
         # uniqueness of characters
-        assert len(set(secret)) > 32
+        assert len(set(secret)) > 30
 
     for i in range(1000):
         assert_is_secret_safe(signature.create_secret())

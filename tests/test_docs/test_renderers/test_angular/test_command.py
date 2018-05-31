@@ -8,7 +8,7 @@ from mock import Mock, call
 import pytest
 
 from lily.docs.renderers.angular.command import Command
-from lily.docs.renderers.angular.utils import normalize_indentation
+from lily.base.utils import normalize_indentation
 
 
 CONF = {
@@ -22,6 +22,7 @@ CONF = {
     },
     'access': {
         'is_private': True,
+        'access_list': ['LEARNER'],
     },
     'path_conf': {
         'path': '/paths/',
@@ -85,6 +86,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/tasks/{task_id}',
@@ -109,6 +111,7 @@ class CommandTestCase(TestCase):
         assert command.title == 'Read Task'
         assert command.description == 'Read Task Now'
         assert command.is_private is True
+        assert command.authorization_required is True
         assert command.path == '/tasks/{task_id}'
         assert command.path_parameters == [
             {'name': 'task_id', 'type': 'integer'}]
@@ -120,8 +123,10 @@ class CommandTestCase(TestCase):
             'post',
             '/tasks/{task_id}',
             [{'name': 'task_id', 'type': 'integer'}],
+            True,
             request_query_interface,
-            request_body_interface
+            request_body_interface,
+            bulk_read_field=None,
         )]
 
         assert interface.call_args_list == [
@@ -146,6 +151,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/tasks',
@@ -181,6 +187,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/tasks',
@@ -199,7 +206,64 @@ class CommandTestCase(TestCase):
              */
         ''', 0)
 
-    def test_render__get_bulk_read_field(self):
+    def test_render__get_bulk_read_field__not_get(self):
+
+        self.mocker.patch.object(
+            Command, 'get_bulk_read_field').return_value = 'people'
+        command = Command(
+            'UPDATE_TASK',
+            {
+                'method': 'PUT',
+                'meta': {
+                    'title': 'Update Task',
+                    'domain': {
+                        'id': 'tasks',
+                        'name': 'Tasks Management',
+                    }
+                },
+                'access': {
+                    'is_private': True,
+                    'access_list': ['LEARNER'],
+                },
+                'path_conf': {
+                    'path': '/tasks/{task_id}',
+                    'parameters': [
+                        {
+                            'name': 'task_id',
+                            'type': 'integer',
+                        },
+                    ]
+                },
+                'schemas': {
+                    'input_query': None,
+                    'input_body': {'schema': {'hi': 'there'}, 'uri': ''},
+                    'output': {
+                        'schema': {
+                            'type': 'object',
+                            'required': ['people'],
+                            'properties': {
+                                'people': {
+                                    'type': 'array',
+                                },
+                            },
+                        },
+                        'uri': '',
+                    },
+                }
+            })
+
+        assert command.render() == normalize_indentation('''
+            /**
+             * Update Task
+             */
+            public updateTask(taskId: any, body: X.UpdateTaskBody): Observable<X.UpdateTaskResponseEntity[]> {
+                return this.client
+                    .put<X.UpdateTaskResponse>(`/tasks/${taskId}`, body, { authorizationRequired: true })
+                    .pipe(map(x => x.data));
+            }
+        ''', 0)  # noqa
+
+    def test_render__get_bulk_read_field__get(self):
 
         self.mocker.patch.object(
             Command, 'get_bulk_read_field').return_value = 'people'
@@ -216,6 +280,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/tasks/{task_id}',
@@ -249,11 +314,9 @@ class CommandTestCase(TestCase):
              * Read Task
              */
             public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponseEntity[]> {
-                return this.client
-                    .getDataState<X.ReadTaskResponse>(`/tasks/${taskId}`, { params })
-                    .pipe(filter(x => x.data));
-
+                return this.client.getDataState<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'data', authorizationRequired: true });
             }
+
         ''', 0)  # noqa
 
     def test_render__get(self):
@@ -271,6 +334,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/tasks/{task_id}',
@@ -293,7 +357,7 @@ class CommandTestCase(TestCase):
              * Read Task
              */
             public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponse> {
-                return this.client.getDataState<X.ReadTaskResponse>(`/tasks/${taskId}`, { params });
+                return this.client.getDataState<X.ReadTaskResponse>(`/tasks/${taskId}`, { params, authorizationRequired: true });
             }
         ''', 0)  # noqa
 
@@ -312,6 +376,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/paths/',
@@ -330,7 +395,7 @@ class CommandTestCase(TestCase):
              */
             public readTask(body: X.ReadTaskBody): Observable<X.ReadTaskResponse> {
                 return this.client
-                    .post<X.ReadTaskResponse>('/paths/', body)
+                    .post<X.ReadTaskResponse>('/paths/', body, { authorizationRequired: true })
                     .pipe(filter(x => !_.isEmpty(x)));
             }
         ''', 0)  # noqa
@@ -352,6 +417,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/tasks/{task_id}',
@@ -401,6 +467,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/tasks/{task_id}',
@@ -439,6 +506,7 @@ class CommandTestCase(TestCase):
                 },
                 'access': {
                     'is_private': True,
+                    'access_list': ['LEARNER'],
                 },
                 'path_conf': {
                     'path': '/paths/',
@@ -485,11 +553,14 @@ class CommandTestCase(TestCase):
         assert (
             remove_white_chars(command.render_examples()) ==
             remove_white_chars(normalize_indentation('''
+                /**
+                 * Examples for BULK_READ_TASKS
+                 */
                 export const BulkReadTasksExamples = {
                     "200 (YO)": {
                         "age": 879,
                         "id": 45
-                    }
+                    },
 
                     "404 (NOT_FOUND)": {
                         "error": "not found",

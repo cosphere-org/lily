@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .utils import to_camelcase, normalize_indentation
+from .utils import to_camelcase
+from lily.base.utils import normalize_indentation
 
 
 class Interface:
@@ -131,11 +132,14 @@ class Interface:
 
             entity_schema = self.schema['properties'][field]['items']
 
+            # !!!!!
+            # FIXME the below line should be included after the integration
+            # {self.bulk_read_field}: {self.name}Entity[];
             interface = normalize_indentation('''
                 export interface {self.name}Entity {interface_content}
 
                 export interface {self.name} {{
-                    {self.bulk_read_field}: {self.name}Entity[];
+                    data: {self.name}Entity[];
                 }}
 
                 ''', 0).format(
