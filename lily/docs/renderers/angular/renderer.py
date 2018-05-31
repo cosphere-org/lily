@@ -63,6 +63,8 @@ class AngularClientRenderer:
             self.repo.commit(next_version)
             self.repo.push()
 
+            return next_version
+
     def group_commands_by_domain(self):
 
         commands_by_domain = {}

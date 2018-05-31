@@ -4,6 +4,7 @@ import os
 import re
 import subprocess
 
+import click
 from django.conf import settings
 
 
@@ -80,7 +81,7 @@ class Repo:
     #
     def execute(self, command):
 
-        print('[EXECUTE]', command)
+        click.secho('[EXECUTE] {}'.format(command), fg='blue')
         try:
             captured = subprocess.check_output(
                 command,
@@ -88,11 +89,11 @@ class Repo:
                 shell=True)
 
         except subprocess.CalledProcessError as e:
-            print('--- [ERROR] ----------')
+            click.secho('--- [ERROR] ----------', fg='red')
             print(str(e.output, encoding='utf8'))
             raise
 
         else:
-            print(str(captured, encoding='utf8'))
+            click.secho(str(captured, encoding='utf8'), fg='white')
 
         return str(captured, encoding='utf8')

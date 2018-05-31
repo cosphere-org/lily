@@ -1,7 +1,6 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
-            "description": "ENTRY_POINT_READ",
             "request": {
                 "path": "/?with_schemas=False",
                 "headers": {
@@ -9,50 +8,51 @@
                     "X-CS-USER-ID": 190
                 }
             },
+            "method": "get",
             "response": {
+                "status": 200,
                 "content": {
+                    "name": "test",
+                    "version": "2.5.6",
+                    "@type": "entrypoint",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "@type": "access",
-                                "is_external": false,
-                                "is_private": true
-                            },
-                            "path_conf": {
-                                "path": "conf"
-                            },
                             "source": {
-                                "filepath": "/tests/__init__.py",
                                 "start_line": 15,
+                                "filepath": "/tests/__init__.py",
                                 "@type": "source",
                                 "end_line": 16
                             },
                             "meta": {
-                                "title": "Exercitationem corporis molestiae consequuntur autem.",
-                                "description": "Impedit veniam id enim natus.",
                                 "domain": {
                                     "id": "d",
                                     "@type": "domain",
                                     "name": "domain"
                                 },
-                                "@type": "meta"
+                                "@type": "meta",
+                                "description": "Alias exercitationem reiciendis ipsa labore explicabo.",
+                                "title": "Consequuntur hic minus sunt nulla perferendis tempora sit."
                             },
                             "@type": "command",
-                            "method": "GET"
+                            "access": {
+                                "is_external": false,
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "@type": "access"
+                            },
+                            "method": "POST",
+                            "path_conf": {
+                                "path": "conf"
+                            }
                         }
                     },
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ",
-                    "name": "test",
-                    "version": "2.5.6"
+                    "@event": "ENTRY_POINT_READ"
                 },
-                "content_type": "application/json",
-                "status": 200
+                "content_type": "application/json"
             },
-            "method": "get"
+            "description": "ENTRY_POINT_READ"
         }
     }
 }

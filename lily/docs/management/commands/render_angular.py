@@ -1,16 +1,31 @@
 # -*- coding: utf-8 -*-
 
-from django.core.management.base import BaseCommand
+import djclick as click
 
 from ...renderers.angular.renderer import AngularClientRenderer
+from lily.base.utils import normalize_indentation
 
 
-class Command(BaseCommand):
-    help = 'Render Angular Client'
+@click.command()
+@click.option(
+    '--only_build',
+    default=False,
+    type=click.BOOL,
+    help='if true it only builds the client without pushing it to the remote')
+def command(only_build):
+    """
+    Render Angular Client based on the command definitions of all
+    registered services.
 
-    def handle(self, *args, **options):
+    """
+    rendered_version = AngularClientRenderer().render(only_build=only_build)
 
-        AngularClientRenderer().render(only_build=True)
+    if only_build:
+        click.secho(normalize_indentation('''
+            - Successfully rendered and built Angular Client [NO PUSHING TO REMOTE]
+        ''', 0), fg='green')  # noqa
 
-        self.stdout.write(
-            self.style.SUCCESS('Successfully rendered Angular Client'))
+    else:
+        click.secho(normalize_indentation('''
+            - Successfully rendered and pushed Angular Client version: {version}
+        '''.format(version=rendered_version), 0), fg='green')  # noqa
