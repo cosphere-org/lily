@@ -1,6 +1,49 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
+            "response": {
+                "status": 200,
+                "content_type": "application/json",
+                "content": {
+                    "name": "test",
+                    "commands": {
+                        "UPDATE_HELLO": {
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "@type": "command",
+                            "method": "GET",
+                            "source": {
+                                "@type": "source",
+                                "start_line": 15,
+                                "filepath": "/tests/__init__.py",
+                                "end_line": 16
+                            },
+                            "meta": {
+                                "domain": {
+                                    "id": "d",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta",
+                                "title": "Quidem sequi doloremque sapiente quisquam.",
+                                "description": "Debitis possimus iste tempore repudiandae."
+                            },
+                            "access": {
+                                "is_external": false,
+                                "is_private": true,
+                                "@type": "access",
+                                "access_list": [
+                                    "ANY"
+                                ]
+                            }
+                        }
+                    },
+                    "@event": "ENTRY_POINT_READ",
+                    "@type": "entrypoint",
+                    "version": "2.5.6"
+                }
+            },
             "request": {
                 "path": "/?with_schemas=False",
                 "headers": {
@@ -9,49 +52,6 @@
                 }
             },
             "method": "get",
-            "response": {
-                "status": 200,
-                "content": {
-                    "name": "test",
-                    "version": "2.5.6",
-                    "@type": "entrypoint",
-                    "commands": {
-                        "UPDATE_HELLO": {
-                            "source": {
-                                "start_line": 15,
-                                "filepath": "/tests/__init__.py",
-                                "@type": "source",
-                                "end_line": 16
-                            },
-                            "meta": {
-                                "domain": {
-                                    "id": "d",
-                                    "@type": "domain",
-                                    "name": "domain"
-                                },
-                                "@type": "meta",
-                                "description": "Alias exercitationem reiciendis ipsa labore explicabo.",
-                                "title": "Consequuntur hic minus sunt nulla perferendis tempora sit."
-                            },
-                            "@type": "command",
-                            "access": {
-                                "is_external": false,
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "@type": "access"
-                            },
-                            "method": "POST",
-                            "path_conf": {
-                                "path": "conf"
-                            }
-                        }
-                    },
-                    "@event": "ENTRY_POINT_READ"
-                },
-                "content_type": "application/json"
-            },
             "description": "ENTRY_POINT_READ"
         }
     }
