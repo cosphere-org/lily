@@ -47,7 +47,10 @@ LILY_AUTHORIZER_CLASS = getattr(
 #
 # ENTRYPOINT
 #
-LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = None
+LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = getattr(
+    settings,
+    'LILY_ENTRYPOINT_VIEWS_ACCESS_LIST',
+    None)
 
 # FIXME: !!! to be removed!!! it should be supplied by external service
 LILY_COMMAND_ENTRYPOINTS = [
@@ -59,18 +62,30 @@ LILY_COMMAND_ENTRYPOINTS = [
 #
 # ASYNC
 #
-LILY_ASYNC_LOCK_DB_HOST = 'localhost'
+LILY_ASYNC_LOCK_DB_HOST = getattr(
+    settings,
+    'LILY_ASYNC_LOCK_DB_HOST',
+    'localhost')
 
-LILY_ASYNC_LOCK_DB_PORT = 6379
+LILY_ASYNC_LOCK_DB_PORT = getattr(
+    settings,
+    'LILY_ASYNC_LOCK_DB_PORT',
+    6379)
 
-LILY_ASYNC_LOCK_DB_INDEX = 1
+LILY_ASYNC_LOCK_DB_INDEX = getattr(
+    settings,
+    'LILY_ASYNC_LOCK_DB_INDEX',
+    1)
 
 #
 # Language Detection API Key
 # To be replaced by in-house solution which doesn't have to travel over the
 # network !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 #
-DETECT_LANGUAGE_API_KEY = 'fake.key'
+DETECT_LANGUAGE_API_KEY = getattr(
+    settings,
+    'DETECT_LANGUAGE_API_KEY',
+    'fake.key')
 
 #
 # Internationalization
@@ -117,11 +132,16 @@ MIDDLEWARE = [
 ]
 
 
-ROOT_URLCONF = 'conf.urls'
+ROOT_URLCONF = getattr(
+    settings,
+    'ROOT_URLCONF',
+    'conf.urls')
 
 
-WSGI_APPLICATION = 'conf.wsgi.application'
-
+WSGI_APPLICATION = getattr(
+    settings,
+    'WSGI_APPLICATION',
+    'conf.wsgi.application')
 
 TEMPLATES = [
     {
