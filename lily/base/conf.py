@@ -4,8 +4,8 @@ import os
 
 import yaml
 
-from lily.conf import settings
-from lily.base.utils import normalize_indentation
+from django.conf import settings
+from .utils import normalize_indentation
 
 
 class Config:

@@ -18,13 +18,13 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "PUT",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Consectetur non illo molestiae beatae ut.",
-                                "description": "Ut velit sunt aliquid dolore deleniti.",
+                                "title": "Libero libero magni consequuntur placeat excepturi incidunt nulla.",
+                                "description": "Placeat esse esse libero aspernatur et voluptatibus.",
                                 "domain": {
                                     "id": "d",
                                     "name": "domain",
