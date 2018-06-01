@@ -23,7 +23,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 #
 # GENERAL
 #
-LILY_PROJECT_BASE = os.path.dirname(BASE_DIR)
+LILY_PROJECT_BASE = getattr(
+    settings,
+    'LILY_PROJECT_BASE',
+    os.path.dirname(BASE_DIR))
 
 LILY_CONFIG_FILE_PATH = os.path.join(
     LILY_PROJECT_BASE, 'lily/conf/config.yaml')
