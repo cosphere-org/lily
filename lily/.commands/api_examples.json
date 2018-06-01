@@ -23,8 +23,8 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Libero libero magni consequuntur placeat excepturi incidunt nulla.",
-                                "description": "Placeat esse esse libero aspernatur et voluptatibus.",
+                                "title": "Ullam quae sunt quod consectetur dolorum.",
+                                "description": "Pariatur nulla deleniti consequatur repudiandae ab ducimus.",
                                 "domain": {
                                     "id": "d",
                                     "name": "domain",
@@ -36,7 +36,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
