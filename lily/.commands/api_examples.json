@@ -18,13 +18,13 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "POST",
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Eos iste non iusto accusantium illum soluta cupiditate.",
-                                "description": "Error non rerum enim quam labore aut.",
+                                "title": "Quae eum aliquam illo quaerat porro voluptatum.",
+                                "description": "Voluptatibus occaecati quisquam quas non dolore voluptas.",
                                 "domain": {
                                     "id": "d",
                                     "name": "domain",

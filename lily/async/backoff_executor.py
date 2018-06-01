@@ -31,7 +31,7 @@ class BackoffExecutor:
         self.max_attempts = max_attempts
         self.unit = unit
 
-        self.loop = asyncio.get_event_loop()
+        self.loop = asyncio.new_event_loop()
 
     async def step(self, attempt_num):
 
