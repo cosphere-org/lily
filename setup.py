@@ -17,7 +17,8 @@ def get_config_field(key):
     matched = re.compile(r'{}\:\s*(?P<value>.+)'.format(key)).search(config)
 
     if matched:
-        return matched.group('value').strip()
+        line = matched.group('value').strip()
+        return line.split('#')[0].strip()
 
     else:
         raise Exception('Cound not find config {}'.format(key))
