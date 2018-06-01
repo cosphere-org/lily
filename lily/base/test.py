@@ -3,10 +3,13 @@
 import os
 import json
 from copy import deepcopy
+from unittest.mock import patch
+from contextlib import ContextDecorator
 
-from django.conf import settings
 from django.urls import get_resolver
 from django.test import Client as DjangoClient
+
+from lily.conf import settings
 
 
 class MissingConfError(Exception):
@@ -15,6 +18,28 @@ class MissingConfError(Exception):
 
 def get_examples_filepath():
     return os.path.join(settings.LILY_CACHE_DIR, 'api_examples.json')
+
+
+class override_settings(ContextDecorator):  # noqa
+
+    def __init__(self, **settings):
+        self.settings = settings
+        self.patchers = []
+
+    def __enter__(self):
+
+        self.patchers = [
+            patch.object(settings, key, value)
+            for key, value in self.settings.items()
+        ]
+        for p in self.patchers:
+            p.start()
+
+        return self
+
+    def __exit__(self, exc_type, exc, exc_tb):
+        for p in self.patchers:
+            p.stop()
 
 
 class Client(DjangoClient):

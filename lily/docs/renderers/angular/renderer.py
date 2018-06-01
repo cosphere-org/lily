@@ -3,9 +3,9 @@
 import logging
 import os
 
-from django.conf import settings
 import requests
 
+from lily.conf import settings
 from lily.base.events import EventFactory
 from lily.repo.version import VersionRenderer
 from .command import Command

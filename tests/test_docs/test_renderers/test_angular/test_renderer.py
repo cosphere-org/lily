@@ -4,16 +4,17 @@ import os
 import re
 from collections import OrderedDict
 
-from django.test import TestCase, override_settings
+from django.test import TestCase
 import pytest
 from mock import call, Mock
 import requests
 
-from lily.docs.renderers.angular.renderer import AngularClientRenderer
-from lily.docs.renderers.angular.domain import Domain
-from lily.docs.renderers.angular.repo import AngularRepo
-from lily.base.utils import normalize_indentation
 from lily.base.events import EventFactory
+from lily.base.test import override_settings
+from lily.base.utils import normalize_indentation
+from lily.docs.renderers.angular.domain import Domain
+from lily.docs.renderers.angular.renderer import AngularClientRenderer
+from lily.docs.renderers.angular.repo import AngularRepo
 
 
 def remove_white_chars(text):

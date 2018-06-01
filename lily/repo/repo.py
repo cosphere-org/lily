@@ -5,7 +5,8 @@ import re
 import subprocess
 
 import click
-from django.conf import settings
+
+from lily.conf import settings
 
 
 class Repo:

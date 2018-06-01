@@ -4,8 +4,7 @@ from importlib import import_module
 import json
 import re
 
-from django.conf import settings
-
+from lily.conf import settings
 from lily.base.test import get_examples_filepath
 from .base import BaseRenderer
 from .schema import SchemaRenderer

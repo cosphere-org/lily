@@ -4,8 +4,8 @@ import json
 import os
 
 from django.views.generic import View
-from django.conf import settings
 
+from lily.conf import settings
 from lily.base import serializers, parsers, name
 from lily.base.command import command
 from lily.base.meta import Meta, MetaSerializer, Domain

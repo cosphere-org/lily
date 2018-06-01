@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 import redis
-from django.conf import settings
 from celery.utils.log import get_task_logger
+
+from lily.conf import settings
 
 
 logger = get_task_logger(__name__)

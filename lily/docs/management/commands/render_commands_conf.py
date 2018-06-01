@@ -4,8 +4,8 @@ from importlib import import_module
 import json
 
 from django.core.management.base import BaseCommand
-from django.conf import settings
 
+from lily.conf import settings
 from ...commands_conf_renderer import CommandsConfRenderer
 
 

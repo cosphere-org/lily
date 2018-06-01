@@ -4,9 +4,9 @@ from importlib import import_module
 import json
 
 from django.core.management.base import BaseCommand
-from django.conf import settings
 import yaml
 
+from lily.conf import settings
 from ...open_api_renderer import Renderer as OpenAPIRenderer
 
 

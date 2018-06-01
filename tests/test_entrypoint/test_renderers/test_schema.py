@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from django.db import models
 import pytest
 from mock import Mock, call
 
+from lily.base.test import override_settings
 from lily.base import serializers, parsers
 from lily.entrypoint.renderers.schema import (
     Schema,

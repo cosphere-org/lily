@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.conf import settings
+import os
+
 import yaml
 
+from lily.conf import settings
 from lily.base.utils import normalize_indentation
 
 
@@ -79,4 +81,6 @@ class Config:
 
             f.write('\n{}\n'.format('\n'.join(blocks)))
 
-config = Config()
+
+if os.environ.get('DJANGO_SETTINGS_MODULE'):
+    config = Config()

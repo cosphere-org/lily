@@ -1,49 +1,8 @@
 {
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
-            "response": {
-                "status": 200,
-                "content_type": "application/json",
-                "content": {
-                    "name": "test",
-                    "commands": {
-                        "UPDATE_HELLO": {
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "@type": "command",
-                            "method": "GET",
-                            "source": {
-                                "@type": "source",
-                                "start_line": 15,
-                                "filepath": "/tests/__init__.py",
-                                "end_line": 16
-                            },
-                            "meta": {
-                                "domain": {
-                                    "id": "d",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta",
-                                "title": "Quidem sequi doloremque sapiente quisquam.",
-                                "description": "Debitis possimus iste tempore repudiandae."
-                            },
-                            "access": {
-                                "is_external": false,
-                                "is_private": true,
-                                "@type": "access",
-                                "access_list": [
-                                    "ANY"
-                                ]
-                            }
-                        }
-                    },
-                    "@event": "ENTRY_POINT_READ",
-                    "@type": "entrypoint",
-                    "version": "2.5.6"
-                }
-            },
+            "method": "get",
+            "description": "ENTRY_POINT_READ",
             "request": {
                 "path": "/?with_schemas=False",
                 "headers": {
@@ -51,8 +10,49 @@
                     "X-CS-USER-ID": 190
                 }
             },
-            "method": "get",
-            "description": "ENTRY_POINT_READ"
+            "response": {
+                "status": 200,
+                "content_type": "application/json",
+                "content": {
+                    "version": "2.5.6",
+                    "name": "test",
+                    "commands": {
+                        "UPDATE_HELLO": {
+                            "method": "PUT",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Consectetur non illo molestiae beatae ut.",
+                                "description": "Ut velit sunt aliquid dolore deleniti.",
+                                "domain": {
+                                    "id": "d",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/__init__.py",
+                                "start_line": 15,
+                                "end_line": 16,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        }
+                    },
+                    "@type": "entrypoint",
+                    "@event": "ENTRY_POINT_READ"
+                }
+            }
         }
     }
 }

@@ -2,9 +2,10 @@
 
 import os
 
-from django.conf import settings
 from yaml import load
 import detectlanguage
+
+from lily.conf import settings
 
 
 BASE_DIR = os.path.dirname(__file__)

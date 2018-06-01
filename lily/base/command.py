@@ -3,11 +3,11 @@
 import re
 import logging
 
-from django.conf import settings
 from django.db import transaction
 from django.db.utils import DatabaseError
 from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
 
+from lily.conf import settings
 from .events import EventFactory
 from . import serializers
 from .utils import import_from_string

@@ -3,8 +3,8 @@
 from importlib import import_module
 
 from django.core.management.base import BaseCommand
-from django.conf import settings
 
+from lily.conf import settings
 from ...renderers.markdown import MarkdownRenderer
 
 

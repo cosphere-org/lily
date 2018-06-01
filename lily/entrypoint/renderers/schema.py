@@ -4,8 +4,7 @@ import inspect
 import re
 import os
 
-from django.conf import settings
-
+from lily.conf import settings
 from lily.base import serializers, parsers, config
 
 

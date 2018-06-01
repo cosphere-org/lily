@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from django.test import TestCase, override_settings
+from django.test import TestCase
 import yaml
 import pytest
 
+from lily.base.test import override_settings
 from lily.base.conf import Config
 from lily.base.utils import normalize_indentation
 
