@@ -2,9 +2,68 @@
 
 from django.test import TestCase
 import pytest
-from mock import Mock, call
+from unittest.mock import Mock, call
 
 from lily.base.events import EventFactory
+
+
+class EventFactoryTestCase(TestCase):
+
+    @pytest.fixture(autouse=True)
+    def initfixtures(self, mocker):
+        self.mocker = mocker
+
+    def test_init__without_logger(self):
+
+        logger = Mock()
+        self.mocker.patch(
+            'lily.base.events.logging.getLogger').return_value = logger
+
+        event = EventFactory()
+
+        assert event.logger == logger
+        assert event.Warning.logger == logger
+        assert event.Executed.logger == logger
+        assert event.Read.logger == logger
+        assert event.Updated.logger == logger
+        assert event.Deleted.logger == logger
+        assert event.Created.logger == logger
+        assert event.BulkCreated.logger == logger
+        assert event.BulkUpdated.logger == logger
+        assert event.BulkRead.logger == logger
+        assert event.BulkDeleted.logger == logger
+
+        assert event.BrokenRequest.logger == logger
+        assert event.DoesNotExist.logger == logger
+        assert event.AuthError.logger == logger
+        assert event.AccessDenied.logger == logger
+        assert event.Conflict.logger == logger
+        assert event.ServerError.logger == logger
+
+    def test_init__with_logger(self):
+
+        logger = Mock()
+
+        event = EventFactory(logger)
+
+        assert event.logger == logger
+        assert event.Warning.logger == logger
+        assert event.Executed.logger == logger
+        assert event.Read.logger == logger
+        assert event.Updated.logger == logger
+        assert event.Deleted.logger == logger
+        assert event.Created.logger == logger
+        assert event.BulkCreated.logger == logger
+        assert event.BulkUpdated.logger == logger
+        assert event.BulkRead.logger == logger
+        assert event.BulkDeleted.logger == logger
+
+        assert event.BrokenRequest.logger == logger
+        assert event.DoesNotExist.logger == logger
+        assert event.AuthError.logger == logger
+        assert event.AccessDenied.logger == logger
+        assert event.Conflict.logger == logger
+        assert event.ServerError.logger == logger
 
 
 class ContextTestCase(TestCase):

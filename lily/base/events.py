@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import logging
 import json
 
 from django.http.request import HttpRequest
@@ -50,43 +51,46 @@ class Json500(JsonResponseBase):
 
 class EventFactory:
 
-    def __init__(self, logger):
-        self.logger = logger
+    def __init__(self, logger=None):
+        self.logger = logger or logging.getLogger()
 
         # -- warning - no http response
-        self.Warning.logger = logger
+        self.Warning.logger = self.logger
 
-        self.Executed.logger = logger
+        self.Executed.logger = self.logger
 
         # -- CRUD
-        self.Read.logger = logger
-        self.Updated.logger = logger
-        self.Deleted.logger = logger
-        self.Created.logger = logger
+        self.Read.logger = self.logger
+        self.Updated.logger = self.logger
+        self.Deleted.logger = self.logger
+        self.Created.logger = self.logger
 
         # -- BULK CRUD
-        self.BulkCreated.logger = logger
-        self.BulkUpdated.logger = logger
-        self.BulkRead.logger = logger
-        self.BulkDeleted.logger = logger
+        self.BulkCreated.logger = self.logger
+        self.BulkUpdated.logger = self.logger
+        self.BulkRead.logger = self.logger
+        self.BulkDeleted.logger = self.logger
 
         #
         # ERRORS
         #
         # -- 400
-        self.BrokenRequest.logger = logger
+        self.BrokenRequest.logger = self.logger
 
         # -- 404
-        self.DoesNotExist.logger = logger
+        self.DoesNotExist.logger = self.logger
 
         # -- 401
-        self.AuthError.logger = logger
+        self.AuthError.logger = self.logger
 
         # -- 403
-        self.AccessDenied.logger = logger
+        self.AccessDenied.logger = self.logger
+
+        # -- 409
+        self.Conflict.logger = self.logger
 
         # -- 500
-        self.ServerError.logger = logger
+        self.ServerError.logger = self.logger
 
     class Context:
 
