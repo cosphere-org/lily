@@ -4,7 +4,7 @@ import logging
 import json
 
 from django.http.request import HttpRequest
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 
 class JsonResponseBase(JsonResponse):
@@ -49,6 +49,16 @@ class Json500(JsonResponseBase):
     status_code = 500
 
 
+class HttpGenericResponse(HttpResponse):
+
+    def __init__(self, status_code, content, *args, **kwargs):
+
+        self.status_code = status_code
+        super(HttpGenericResponse, self).__init__(content, *args, **kwargs)
+
+        self._headers['content-type'] = ('content-type', 'application/json')
+
+
 class EventFactory:
 
     def __init__(self, logger=None):
@@ -70,6 +80,9 @@ class EventFactory:
         self.BulkUpdated.logger = self.logger
         self.BulkRead.logger = self.logger
         self.BulkDeleted.logger = self.logger
+
+        # -- GENERIC
+        self.Generic.logger = self.logger
 
         #
         # ERRORS
@@ -113,6 +126,39 @@ class EventFactory:
                 self.user_id == other.user_id and
                 self.email == other.email and
                 self.origin == other.origin)
+
+    class Generic(Exception):
+
+        def __init__(self, status_code, content):
+            self.status_code = status_code
+            self.content = content
+
+        def extend(self, method, path):
+            """
+            Sometimes Success Exception is raised without all needed attributes
+            since they're unknown at the instantiation time, but are know
+            afterwards.
+
+            This method enables one to load required attributes.
+
+            """
+            self.method = method
+            self.path = path
+
+            return self
+
+        def log(self):
+            # -- notify about the event
+            message = '[{method} {path}] -> {status_code}'.format(
+                method=self.method,
+                path=self.path,
+                status_code=self.status_code)
+            self.logger.info(message)
+
+            return self
+
+        def response(self):
+            return HttpGenericResponse(self.status_code, self.content)
 
     #
     # SUCCESS RESPONSES

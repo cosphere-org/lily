@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.test import TestCase
+from django.http import HttpResponse
 import pytest
 from unittest.mock import Mock, call
 
@@ -33,6 +34,8 @@ class EventFactoryTestCase(TestCase):
         assert event.BulkRead.logger == logger
         assert event.BulkDeleted.logger == logger
 
+        assert event.Generic.logger == logger
+
         assert event.BrokenRequest.logger == logger
         assert event.DoesNotExist.logger == logger
         assert event.AuthError.logger == logger
@@ -58,12 +61,52 @@ class EventFactoryTestCase(TestCase):
         assert event.BulkRead.logger == logger
         assert event.BulkDeleted.logger == logger
 
+        assert event.Generic.logger == logger
+
         assert event.BrokenRequest.logger == logger
         assert event.DoesNotExist.logger == logger
         assert event.AuthError.logger == logger
         assert event.AccessDenied.logger == logger
         assert event.Conflict.logger == logger
         assert event.ServerError.logger == logger
+
+
+class GenericExceptionTestCase(TestCase):
+
+    def test_init(self):
+
+        e = EventFactory.Generic(status_code=401, content='{"hello":"there"}')
+
+        assert e.status_code == 401
+        assert e.content == '{"hello":"there"}'
+
+    def test_extend(self):
+
+        e = EventFactory.Generic(status_code=401, content='{"hello":"there"}')
+        extended = e.extend(method='POST', path='/hi/there')
+
+        assert extended.method == 'POST'
+        assert extended.path == '/hi/there'
+        assert isinstance(extended, EventFactory.Generic)
+
+    def test_log(self):
+
+        e = EventFactory.Generic(status_code=401, content='{"hello":"there"}')
+        e.logger = Mock()
+
+        e.extend(method='POST', path='/hi/there').log()
+
+        assert e.logger.info.call_args_list == (
+            [call('[POST /hi/there] -> 401')])
+
+    def test_response(self):
+        e = EventFactory.Generic(status_code=401, content='{"hello":"there"}')
+
+        response = e.response()
+
+        assert isinstance(response, HttpResponse)
+        assert response.status_code == 401
+        assert response.content == b'{"hello":"there"}'
 
 
 class ContextTestCase(TestCase):

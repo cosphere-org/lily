@@ -96,6 +96,11 @@ def command(
                     if success_exception:
                         raise success_exception
 
+            except EventFactory.Generic as e:
+                return e.extend(
+                    method=request.method, path=request.path
+                ).log().response()
+
             except EventFactory.BaseSuccessException as e:
                 e.extend(
                     context=request,

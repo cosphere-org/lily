@@ -52,6 +52,28 @@ class FakeClient(fake_models.FakeModel):
     name = models.CharField(max_length=100)
 
 
+class GenericView(View):
+
+    @command(
+        name='GET_IT',
+        meta=Meta(
+            title='get',
+            description='get it...',
+            domain=Domain(id='get', name='get')),
+    )
+    def get(self, request):
+
+        status_code = int(request.GET['status_code'])
+
+        raise self.event.Generic(
+            status_code=status_code,
+            content=json.dumps({
+                '@event': 'FOUND_IT',
+                '@type': 'what',
+                'hi': status_code,
+            }))
+
+
 @FakeClient.fake_me
 class TestView(View):
 
@@ -272,8 +294,8 @@ class CommandTestCase(TestCase):
             'output': TestView.output,
         }
         assert source.filepath == '/tests/test_base/test_command.py'
-        assert source.start_line == 99
-        assert source.end_line == 110
+        assert source.start_line == 121
+        assert source.end_line == 132
 
     #
     # INPUT
@@ -304,7 +326,7 @@ class CommandTestCase(TestCase):
         assert request.input.user == u
 
     #
-    # Response Validation
+    # RESPONSE VALIDATION
     #
     def test_response_valid(self):
 
@@ -523,4 +545,35 @@ class CommandTestCase(TestCase):
             '@event': 'FOUND_MULTIPLE_INSTANCES_OF_USER',
             '@type': 'error',
             'user_id': u.id,
+        }
+
+    #
+    # GENERIC RESPONSE
+    #
+    def test_generic_response(self):
+
+        # -- 201
+        request = Mock(GET={'status_code': '201'})
+        view = GenericView()
+
+        response = view.get(request)
+
+        assert response.status_code == 201
+        assert to_json(response) == {
+            '@event': 'FOUND_IT',
+            '@type': 'what',
+            'hi': 201,
+        }
+
+        # -- 404
+        request = Mock(GET={'status_code': '404'})
+        view = GenericView()
+
+        response = view.get(request)
+
+        assert response.status_code == 404
+        assert to_json(response) == {
+            '@event': 'FOUND_IT',
+            '@type': 'what',
+            'hi': 404,
         }
