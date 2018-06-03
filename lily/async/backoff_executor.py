@@ -31,16 +31,14 @@ class BackoffExecutor:
         self.max_attempts = max_attempts
         self.unit = unit
 
-        self.loop = asyncio.new_event_loop()
-
-    async def step(self, attempt_num):
+    async def step(self, loop, attempt_num):
 
         futures = []
         idx = 0
         for task in self.tasks:
             if task.successful is False:
                 futures.append(
-                    self.loop.run_in_executor(
+                    loop.run_in_executor(
                         None,
                         task.callback,
                         *task.args
@@ -67,10 +65,14 @@ class BackoffExecutor:
 
     def run(self):
 
+        loop = asyncio.new_event_loop()
+
         for i in range(self.max_attempts):
 
-            done, responses = self.loop.run_until_complete(self.step(i))
+            done, responses = loop.run_until_complete(self.step(loop, i))
             if done:
+                loop.close()
                 return responses
 
+        loop.close()
         return responses

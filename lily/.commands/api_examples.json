@@ -18,13 +18,13 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Delectus similique reiciendis aspernatur nisi repellat natus quibusdam.",
-                                "description": "Error molestias neque maiores facere esse ab.",
+                                "title": "Quisquam officiis iusto quidem ex.",
+                                "description": "Explicabo pariatur nostrum odit pariatur qui at.",
                                 "domain": {
                                     "id": "d",
                                     "name": "domain",
@@ -36,7 +36,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
