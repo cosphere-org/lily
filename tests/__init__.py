@@ -10,7 +10,7 @@ faker = Faker()
 
 class EntityGenerator:
 
-    def command(self, is_private=None):
+    def command(self, is_private=None, domain_id=None):
 
         def fn():
             pass
@@ -18,13 +18,16 @@ class EntityGenerator:
         if is_private is None:
             is_private = random.choice([True, False])
 
+        if domain_id is None:
+            domain_id = faker.word()
+
         command = {
             'method': random.choice(['GET', 'POST', 'PUT', 'DELETE']),
             'path_conf': {'path': 'conf'},
             'meta': Meta(
                 title=faker.sentence(),
                 description=faker.sentence(),
-                domain=Domain(id='d', name='domain')),
+                domain=Domain(id=domain_id, name='domain')),
             'access': Access(
                 is_private=is_private,
                 access_list=['ANY']),

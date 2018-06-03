@@ -62,6 +62,8 @@ class EntryPointView(View):
 
         is_private = parsers.BooleanField(default=None)
 
+        domain_id = parsers.CharField(default=None)
+
     @command(
         name=name.Read('ENTRY_POINT'),
 
@@ -95,6 +97,8 @@ class EntryPointView(View):
 
         is_private = request.input.query['is_private']
 
+        domain_id = request.input.query['domain_id']
+
         commands = self.get_commands()
 
         if command_names:
@@ -113,7 +117,15 @@ class EntryPointView(View):
             commands = {
                 name: command
                 for name, command in commands.items()
-                if command['access']['is_private'] == is_private}
+                if command['access']['is_private'] == is_private
+            }
+
+        if domain_id:
+            commands = {
+                name: command
+                for name, command in commands.items()
+                if command['meta']['domain']['id'].lower() == domain_id.lower()
+            }
 
         raise self.event.Read(
             {

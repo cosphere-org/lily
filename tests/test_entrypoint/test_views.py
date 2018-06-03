@@ -82,7 +82,7 @@ class EntryPointViewTestCase(TestCase):
         # -- but examples are
         assert commands['UPDATE_HELLO'].get('examples') is None
 
-    def test_get__commands_query(self):
+    def test_get__filter_by_commands_query(self):
 
         renderer = self.mocker.patch('entrypoint.views.CommandsRenderer')
         c0, c1, c2 = eg.command(), eg.command(), eg.command()
@@ -168,7 +168,7 @@ class EntryPointViewTestCase(TestCase):
         assert commands['UPDATE_HELLO'].get('examples') is not None
         assert renderer.call_args_list == [call()]
 
-    def test_get__is_private(self):
+    def test_get__filter_by_is_private(self):
 
         renderer = self.mocker.patch('entrypoint.views.CommandsRenderer')
         c0 = eg.command(is_private=True)
@@ -216,6 +216,57 @@ class EntryPointViewTestCase(TestCase):
             'version': '2.5.6',
             'commands': {
                 'CREATE_HELLO': CommandSerializer(c1).data,
+            },
+        }
+
+    def test_get__filter_by_domain_id(self):
+
+        renderer = self.mocker.patch('entrypoint.views.CommandsRenderer')
+        c0 = eg.command(domain_id='cards')
+        c1 = eg.command(domain_id='paths')
+        c2 = eg.command(domain_id='paths')
+        render = Mock(return_value={
+            'UPDATE_HELLO': c0,
+            'CREATE_HELLO': c1,
+            'DELETE_HELLO': c2,
+        })
+        renderer.return_value = Mock(render=render)
+
+        # -- show CARDS domain commands
+        response = self.app.get(
+            self.uri,
+            data={'domain_id': 'cards'},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        del c0['examples']
+        assert response.json() == {
+            '@event': 'ENTRY_POINT_READ',
+            '@type': 'entrypoint',
+            'name': 'test',
+            'version': '2.5.6',
+            'commands': {
+                'UPDATE_HELLO': CommandSerializer(c0).data,
+            },
+        }
+
+        # -- show PATHS domain commands
+        response = self.app.get(
+            self.uri,
+            data={'domain_id': 'PATHS'},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        del c1['examples']
+        del c2['examples']
+        assert response.json() == {
+            '@event': 'ENTRY_POINT_READ',
+            '@type': 'entrypoint',
+            'name': 'test',
+            'version': '2.5.6',
+            'commands': {
+                'CREATE_HELLO': CommandSerializer(c1).data,
+                'DELETE_HELLO': CommandSerializer(c2).data,
             },
         }
 
