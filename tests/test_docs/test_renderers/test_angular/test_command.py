@@ -317,6 +317,9 @@ class CommandTestCase(TestCase):
                 return this.client.getDataState<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'data', authorizationRequired: true });
             }
 
+            public readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
+                return this.client.get<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'data', authorizationRequired: true });
+            }
         ''', 0)  # noqa
 
     def test_render__get(self):
@@ -358,6 +361,10 @@ class CommandTestCase(TestCase):
              */
             public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponse> {
                 return this.client.getDataState<X.ReadTaskResponse>(`/tasks/${taskId}`, { params, authorizationRequired: true });
+            }
+
+            public readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
+                return this.client.get<X.ReadTaskResponse>(`/tasks/${taskId}`, { params, authorizationRequired: true });
             }
         ''', 0)  # noqa
 
@@ -450,6 +457,10 @@ class CommandTestCase(TestCase):
             readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponseEntity[]> {
                 return this.tasksDomain.readTask(taskId, params);
             }
+
+            readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
+                return this.tasksDomain.readTask2(taskId, params);
+            }
         ''', 0)  # noqa
 
     def test_render_facade__get(self):
@@ -488,6 +499,10 @@ class CommandTestCase(TestCase):
         assert command.render_facade() == normalize_indentation('''
             readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponse> {
                 return this.tasksDomain.readTask(taskId, params);
+            }
+
+            readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
+                return this.tasksDomain.readTask2(taskId, params);
             }
         ''', 0)  # noqa
 

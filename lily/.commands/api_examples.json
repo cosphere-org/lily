@@ -18,15 +18,15 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Dolores temporibus soluta debitis eligendi a.",
-                                "description": "Eius modi magni veritatis nisi at accusamus voluptates.",
+                                "title": "Culpa nesciunt alias quos nesciunt voluptatibus.",
+                                "description": "Repellendus nihil quas accusamus laudantium.",
                                 "domain": {
-                                    "id": "quisquam",
+                                    "id": "sunt",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
