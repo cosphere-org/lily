@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.test import TestCase
+from lily.base.test import override_settings
 from django.urls import reverse
 import pytest
 from mock import Mock, call
@@ -294,3 +295,32 @@ class EntryPointViewTestCase(TestCase):
 
         assert response.status_code == 200
         assert renderer.call_count == 1
+
+    @override_settings(LILY_CACHE_TTL=19)
+    def test_get__from_cache__expired(self):
+
+        renderer = self.mocker.patch('entrypoint.views.CommandsRenderer')
+        c = eg.command()
+        render = Mock(return_value={'UPDATE_HELLO': c})
+        renderer.return_value = Mock(render=render)
+        self.mocker.patch('entrypoint.views.time').return_value = 100
+        self.mocker.patch(
+            'entrypoint.views.os.path.getmtime').return_value = 80
+
+        # -- this should save to cache
+        response = self.app.get(
+            self.uri,
+            data={'with_examples': True},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        assert renderer.call_count == 1
+
+        # -- but this should NOT hit renderer
+        response = self.app.get(
+            self.uri,
+            data={'with_examples': True},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        assert renderer.call_count == 2

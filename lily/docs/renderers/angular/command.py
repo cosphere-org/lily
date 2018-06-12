@@ -71,7 +71,7 @@ class Command:
             bulk_read_field=self.get_bulk_read_field())
 
         # -- EXAMPLES
-        self.examples = self.conf.get('examples', {})
+        self.examples = self.conf['examples']
 
     @property
     def header(self):
