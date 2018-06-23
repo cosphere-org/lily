@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+from time import time
 import os
 
 from django.views.generic import View
@@ -145,11 +146,15 @@ class EntryPointView(View):
             with open(cache_filepath, 'r') as f:
                 data = json.loads(f.read())
 
-                if data['version'] == config.version:
+                age = time() - os.path.getmtime(cache_filepath)
+                if (data['version'] == config.version and
+                        age < settings.LILY_CACHE_TTL):
                     return data['commands']
 
         except FileNotFoundError:
             pass
+
+        # FIXME: if version changed update!!!
 
         # -- if reached here there were no `commands` or they were outdated
         commands = CommandsRenderer().render()

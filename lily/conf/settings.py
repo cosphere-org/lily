@@ -33,6 +33,8 @@ LILY_CONFIG_FILE_PATH = os.path.join(
 
 LILY_CACHE_DIR = os.path.join(BASE_DIR, '.commands')
 
+LILY_CACHE_TTL = getattr(settings, 'LILY_CACHE_TTL', 10 * 60)  # 10 minutes
+
 LILY_MAX_DOMAIN_ID_LENGTH = getattr(
     settings, 'LILY_MAX_DOMAIN_ID_LENGTH', 32)
 
