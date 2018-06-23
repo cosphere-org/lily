@@ -1,7 +1,7 @@
 
 # foundations
 Django==2.0
-psycopg2==2.7.4
+psycopg2==2.7.5
 djangorestframework==3.7.7
 django-click==2.1.0
 
