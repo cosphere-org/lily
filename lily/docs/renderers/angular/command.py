@@ -71,7 +71,7 @@ class Command:
             bulk_read_field=self.get_bulk_read_field())
 
         # -- EXAMPLES
-        self.examples = self.conf.get('examples', {})
+        self.examples = self.conf['examples']
 
     @property
     def header(self):
@@ -134,6 +134,10 @@ class Command:
             public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
                 return this.client.getDataState<X.{self.response.name}Entity[]>({self.signature.call_args});
             }}
+
+            public {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
+                return this.client.get<X.{self.response.name}Entity[]>({self.signature.call_args});
+            }}
             ''', 0).format(self=self)  # noqa
 
         elif self.method == 'get':
@@ -141,6 +145,10 @@ class Command:
             {self.header}
             public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
                 return this.client.getDataState<X.{self.response.name}>({self.signature.call_args});
+            }}
+
+            public {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}> {{
+                return this.client.get<X.{self.response.name}>({self.signature.call_args});
             }}
             ''', 0).format(self=self)  # noqa
 
@@ -161,12 +169,20 @@ class Command:
                 {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
                     return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
                 }}
+
+                {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
+                    return this.{self.domain_id}Domain.{self.camel_name}2({self.signature.call_args_without_path});
+                }}
             ''', 0).format(self=self)  # noqa
 
         elif self.method == 'get':
             return normalize_indentation('''
                 {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
                     return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
+                }}
+
+                {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}> {{
+                    return this.{self.domain_id}Domain.{self.camel_name}2({self.signature.call_args_without_path});
                 }}
             ''', 0).format(self=self)  # noqa
 

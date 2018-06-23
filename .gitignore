@@ -36,6 +36,7 @@ sphinx-output
 # Default dev virtual environment
 .venv*
 .cache
+.commands
 
 # Settings overrides
 settings_local.py
