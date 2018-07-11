@@ -160,6 +160,21 @@ class EmptySerializer(Serializer):
     _type = 'empty'
 
 
+class ObjectSerializer(Serializer):
+
+    _type = 'object'
+
+    def to_internal_value(self, data):
+
+        return data
+
+    def to_representation(self, data):
+
+        data['@type'] = self._type
+
+        return data
+
+
 class CommandSerializer(Serializer):
 
     _type = 'command'

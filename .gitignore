@@ -37,8 +37,9 @@ sphinx-output
 .venv*
 .cache
 .commands
-
 # Settings overrides
+.pytest_cache
+
 settings_local.py
 
 # docs

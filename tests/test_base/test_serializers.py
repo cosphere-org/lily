@@ -744,6 +744,19 @@ class EmptySerializerTestCase(TestCase):
         assert s.data == {'@type': 'empty'}
 
 
+class ObjectSerializerTestCase(TestCase):
+
+    def test__passes_everything(self):
+
+        s = serializers.ObjectSerializer(data={'hi': 'there'})
+
+        assert s.is_valid()
+        assert s.data == {
+            '@type': 'object',
+            'hi': 'there',
+        }
+
+
 class CommandSerializerTestCase(TestCase):
 
     def test_serializes_command_correctly(self):

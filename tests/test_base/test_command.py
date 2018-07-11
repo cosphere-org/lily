@@ -5,6 +5,7 @@ import json
 from contextlib import ContextDecorator
 
 from django.test import TestCase
+from django.http import HttpResponse
 from django.db.utils import DatabaseError
 from django.contrib.auth.models import User
 from django.views.generic import View
@@ -72,6 +73,20 @@ class GenericView(View):
                 '@type': 'what',
                 'hi': status_code,
             }))
+
+
+class HttpView(View):
+
+    @command(
+        name='HTTP_IT',
+        meta=Meta(
+            title='http',
+            description='http it...',
+            domain=Domain(id='http', name='http')),
+    )
+    def get(self, request):
+
+        return HttpResponse('hello world')
 
 
 @FakeClient.fake_me
@@ -294,8 +309,8 @@ class CommandTestCase(TestCase):
             'output': TestView.output,
         }
         assert source.filepath == '/tests/test_base/test_command.py'
-        assert source.start_line == 121
-        assert source.end_line == 132
+        assert source.start_line == 136
+        assert source.end_line == 147
 
     #
     # INPUT
@@ -577,3 +592,18 @@ class CommandTestCase(TestCase):
             '@type': 'what',
             'hi': 404,
         }
+
+    #
+    # HTTP RESPONSE
+    #
+    def test_http_response(self):
+
+        # -- 404
+        request = Mock(GET={'status_code': '404'})
+        view = HttpView()
+
+        response = view.get(request)
+
+        assert response.status_code == 200
+        assert response.content == b'hello world'
+        assert response.get('Content-Type') == 'text/html; charset=utf-8'
