@@ -84,22 +84,34 @@ class Client(DjangoClient):
             command_name = command_conf['name']
             examples.setdefault(command_name, {})
 
-            response_json = response.json()
+            try:
+                response_content = response.json()
+
+            except ValueError:
+                response_content = str(response.content, encoding='utf-8')
+                event = None
+
+            else:
+                event = response_content['@event']
 
             # -- render example key name
             try:
                 extra_desc = kwargs.pop('extra_desc')
 
             except KeyError:
-                example_key = '{status} ({event})'.format(
-                    status=response.status_code,
-                    event=response_json['@event'])
+                if event:
+                    example_key = f'{response.status_code} ({event})'  # noqa
+
+                else:
+                    example_key = f'{response.status_code}'
 
             else:
-                example_key = '{status} ({event}) - {extra_desc}'.format(
-                    status=response.status_code,
-                    event=response_json['@event'],
-                    extra_desc=extra_desc)
+                if event:
+                    example_key = (
+                        f'{response.status_code} ({event}) - {extra_desc}')
+
+                else:
+                    example_key = f'{response.status_code} - {extra_desc}'
 
             # -- construct the request
             request = {}
@@ -133,12 +145,12 @@ class Client(DjangoClient):
 
             examples[command_name][example_key] = {
                 'method': http_verb,
-                'description': response_json['@event'],
+                'description': event,
                 'request': request,
                 'response': {
                     'status': response.status_code,
                     'content_type': response['Content-Type'],
-                    'content': response_json,
+                    'content': response_content,
                 },
             }
 

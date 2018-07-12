@@ -4,6 +4,7 @@ import json
 import os
 
 from django.test import TestCase
+from django.http import HttpResponse
 from django.views.generic import View
 from django.urls import re_path
 import pytest
@@ -22,6 +23,20 @@ from lily.base.test import Client
 
 
 event = EventFactory(Mock())
+
+
+class HttpView(View):
+
+    @command(
+        name='HTTP_IT',
+        meta=Meta(
+            title='http it',
+            description='http it',
+            domain=Domain(id='d', name='d')),
+        access=Access(access_list=[]),
+        input=Input(with_user=False))
+    def get(self, request):
+        return HttpResponse('http it!')
 
 
 class SampleSerializer(serializers.Serializer):
@@ -101,8 +116,10 @@ class SampleView(View):
             event='DELETED', context=request, data={'hello': 'delete'})
 
 
-urlpatterns.append(
-    re_path(r'^test/it/$', SampleView.as_view(), name='test.it'))
+urlpatterns.extend([
+    re_path(r'^test/it/$', SampleView.as_view(), name='test.it'),
+    re_path(r'^http/it/$', HttpView.as_view(), name='http.it'),
+])
 
 
 class ClientTestCase(TestCase):
@@ -177,6 +194,30 @@ class ClientTestCase(TestCase):
                             '@event': 'LISTED',
                             'hello': 'get.a',
                         },
+                    },
+
+                },
+            },
+        }
+
+    def test_http_response(self):
+        examples_file = self.prepare_example_file()
+
+        response = Client().get('/http/it/')
+
+        assert response.status_code == 200
+        assert json.loads(examples_file.read()) == {
+            'HTTP_IT': {
+                '200': {
+                    'method': 'get',
+                    'description': None,
+                    'request': {
+                        'path': '/http/it/',
+                    },
+                    'response': {
+                        'status': 200,
+                        'content_type': 'text/html; charset=utf-8',
+                        'content': 'http it!',
                     },
 
                 },
