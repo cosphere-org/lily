@@ -2,6 +2,12 @@
 
 from django.db import models
 from django.db.models.expressions import RawSQL
+from django.contrib.postgres.fields import JSONField
+from jsonschema import (
+    validate as json_validate,
+    ValidationError as JsonValidationError,
+)
+from django.core.exceptions import ValidationError
 
 
 class ImmutableModel(models.Model):
@@ -31,3 +37,20 @@ class ExtraColumn(RawSQL):
 
     def get_group_by_cols(self):
         return []
+
+
+class JSONSchemaField(JSONField):
+
+    def __init__(self, *args, **kwargs):
+        self.schema = kwargs.pop('schema', {})
+        super(JSONSchemaField, self).__init__(*args, **kwargs)
+
+    def clean(self, value, instance):
+
+        try:
+            json_validate(value, self.schema)
+
+        except JsonValidationError as e:
+            raise ValidationError(e)
+
+        return super(JSONSchemaField, self).clean(value, instance)

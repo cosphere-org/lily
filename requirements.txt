@@ -1,7 +1,7 @@
 
 # foundations
 Django==2.0
-psycopg2==2.7.5
+psycopg2-binary==2.7.5
 djangorestframework==3.7.7
 django-click==2.1.0
 
@@ -30,3 +30,6 @@ inflect==0.3.1
 
 # conf
 PyYAML==3.11
+
+# -- need by JSONSchemaField
+jsonschema==2.6.0
