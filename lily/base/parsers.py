@@ -7,7 +7,7 @@ from rest_framework import serializers as drf_serializers
 from .serializers import *  # noqa
 
 
-class ModelParser(drf_serializers.Serializer):
+class ModelParser(drf_serializers.ModelSerializer):
     pass
 
 
