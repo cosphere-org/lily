@@ -5,7 +5,10 @@ from rest_framework import serializers as drf_serializers
 # -- needed for correct namespacing so that one could access all
 # -- serializers stuff as a part of the `parsers` namespace
 from .serializers import *  # noqa
-from .serializers import ModelSerializer as ModelParser  # noqa
+
+
+class ModelParser(drf_serializers.Serializer):
+    pass
 
 
 class QueryParser(drf_serializers.Serializer):
