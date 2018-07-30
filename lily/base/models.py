@@ -57,7 +57,11 @@ class JSONSchemaValidator:
 
 class JSONSchemaField(JSONField):
     def __init__(self, *args, **kwargs):
-        schema = kwargs.pop('schema')
+        try:
+            schema = kwargs.pop('schema')
+
+        except KeyError:
+            schema = {}
 
         super(JSONSchemaField, self).__init__(*args, **kwargs)
 
