@@ -38,6 +38,10 @@ LILY_CACHE_TTL = getattr(settings, 'LILY_CACHE_TTL', 10 * 60)  # 10 minutes
 LILY_MAX_DOMAIN_ID_LENGTH = getattr(
     settings, 'LILY_MAX_DOMAIN_ID_LENGTH', 32)
 
+LILY_DOCS_MARKDOWN_SPEC_FILE = getattr(
+    settings,
+    'LILY_DOCS_MARKDOWN_SPEC_FILE',
+    os.path.join(LILY_PROJECT_BASE, 'DOCS.md'))
 #
 # AUTHORIZER
 #
