@@ -65,4 +65,4 @@ class JSONSchemaField(JSONField):
 
         super(JSONSchemaField, self).__init__(*args, **kwargs)
 
-        self.validators.append(JSONSchemaValidator(schema=schema))
+        self.validators.insert(0, JSONSchemaValidator(schema=schema))
