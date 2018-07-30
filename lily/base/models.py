@@ -39,18 +39,26 @@ class ExtraColumn(RawSQL):
         return []
 
 
-class JSONSchemaField(JSONField):
+class JSONSchemaValidator:
 
-    def __init__(self, *args, **kwargs):
-        self.schema = kwargs.pop('schema', {})
-        super(JSONSchemaField, self).__init__(*args, **kwargs)
+    def __init__(self, schema):
+        self.schema = schema
 
-    def clean(self, value, instance):
-
+    def __call__(self, value):
         try:
             json_validate(value, self.schema)
 
         except JsonValidationError as e:
-            raise ValidationError(e)
+            path = '.'.join([str(p) for p in e.path]) or '.'
+            raise ValidationError(
+                f"JSON did not validate. PATH: '{path}' REASON: {e.message}"
+            )
 
-        return super(JSONSchemaField, self).clean(value, instance)
+
+class JSONSchemaField(JSONField):
+    def __init__(self, *args, **kwargs):
+        schema = kwargs.pop('schema')
+
+        super(JSONSchemaField, self).__init__(*args, **kwargs)
+
+        self.validators.append(JSONSchemaValidator(schema=schema))

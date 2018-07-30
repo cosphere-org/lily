@@ -77,7 +77,7 @@ class JSONSchemaFieldTestCase(TestCase):
 
         except ValidationError as e:
             error = e.error_dict['answers'][0]
-            assert '[] is too short' in error.message.message
+            assert error.message == 'This field cannot be blank.'
 
         else:
             raise AssertionError('should raise error')
@@ -89,9 +89,10 @@ class JSONSchemaFieldTestCase(TestCase):
 
         except ValidationError as e:
             error = e.error_dict['answers'][0]
-            assert (
-                "{'hi': 'there'} is not of type 'array'" in
-                error.message.message)
+            assert error.message == (
+                "JSON did not validate. PATH: '.' REASON: {'hi': 'there'} "
+                "is not of type 'array'"
+            )
 
         else:
             raise AssertionError('should raise error')
@@ -106,9 +107,10 @@ class JSONSchemaFieldTestCase(TestCase):
 
         except ValidationError as e:
             error = e.error_dict['answers'][0]
-            assert (
-                "'answer' is a required property" in
-                error.message.message)
+            assert error.message == (
+                "JSON did not validate. "
+                "PATH: '1' REASON: 'answer' is a required property"
+            )
 
         else:
             raise AssertionError('should raise error')
