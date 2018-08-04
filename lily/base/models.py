@@ -28,6 +28,17 @@ class ImmutableModel(models.Model):
         abstract = True
 
 
+class ValidatingModel(models.Model):
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+
+        return super(ValidatingModel, self).save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
 class ExtraColumn(RawSQL):
 
     def __init__(self, sql, params, output_field=None):

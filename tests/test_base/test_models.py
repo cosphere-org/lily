@@ -2,11 +2,16 @@
 
 from django.test import TestCase
 from django.db import models
+from django.db.utils import DataError
 from django_fake_model import models as fake_models
 from django.core.exceptions import ValidationError
 import pytest
 
-from lily.base.models import ImmutableModel, JSONSchemaField
+from lily.base.models import (
+    ImmutableModel,
+    JSONSchemaField,
+    ValidatingModel,
+)
 
 
 class ImmutableEntity(fake_models.FakeModel, ImmutableModel):
@@ -114,3 +119,55 @@ class JSONSchemaFieldTestCase(TestCase):
 
         else:
             raise AssertionError('should raise error')
+
+
+class ValidatingEntity(fake_models.FakeModel, ValidatingModel):
+
+    name = models.CharField(max_length=10)
+
+
+@ValidatingEntity.fake_me
+class ValidatingModelTestCase(TestCase):
+
+    def test_validates_on_save(self):
+
+        try:
+            ValidatingEntity(name=11 * 'a').save()
+
+        except ValidationError as e:
+            assert e.message_dict == {
+                'name': [
+                    'Ensure this value has at most 10 characters (it has 11).',
+                ],
+            }
+
+        else:
+            raise AssertionError('should raise exception')
+
+    def test_validates_on_create(self):
+
+        try:
+            ValidatingEntity.objects.create(name=11 * 'a')
+
+        except ValidationError as e:
+            assert e.message_dict == {
+                'name': [
+                    'Ensure this value has at most 10 characters (it has 11).',
+                ],
+            }
+
+        else:
+            raise AssertionError('should raise exception')
+
+    def test_validates_on_bulk_create(self):
+
+        try:
+            ValidatingEntity.objects.bulk_create([
+                ValidatingEntity(name=11 * 'a'),
+            ])
+
+        except DataError:
+            pass
+
+        else:
+            raise AssertionError('should raise exception')
