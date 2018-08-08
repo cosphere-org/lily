@@ -25,26 +25,28 @@ class MarkdownRendererTestCase(TestCase):
     def test_render(self):
 
         self.mocker.patch.object(BaseRenderer, 'render').return_value = {
-            '/items/': {
+            'LIST_ITEMS': {
                 'path_conf': {
                     'path': '/items/',
                     'parameters': {}
                 },
-                'get': {
-                    'name': 'LIST_ITEMS',
-                    'meta': Meta(
-                        title='hi there',
-                        description='what?',
-                        domain=Domain(id='d', name='items management')),
+                'method': 'get',
+                'meta': Meta(
+                    title='hi there',
+                    description='what?',
+                    domain=Domain(id='d', name='items management')),
+            },
+            'CREATED': {
+                'path_conf': {
+                    'path': '/items/',
+                    'parameters': {}
                 },
-                'post': {
-                    'name': 'CREATED',
-                    'meta': Meta(
-                        title='hi there',
-                        description='what?',
-                        domain=Domain(id='d', name='items management')),
-                }
-            }
+                'method': 'post',
+                'meta': Meta(
+                    title='hi there',
+                    description='what?',
+                    domain=Domain(id='d', name='items management')),
+            },
         }
         self.mocker.patch.object(
             MarkdownRenderer, 'get_examples'

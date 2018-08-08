@@ -57,56 +57,50 @@ class MarkdownRenderer(BaseRenderer):
 
         examples = self.get_examples()
         document_tree = {}
+        sorted_index = sorted(
+            base_index.items(), key=lambda x: x[0])
 
-        for path, conf in base_index.items():
-            for method in ['post', 'get', 'put', 'delete']:
-                try:
-                    method_conf = conf[method]
+        for command_name, conf in sorted_index:
+            meta = MetaSerializer(conf['meta']).data
 
-                except KeyError:
-                    pass
+            domain = meta['domain']['name']
+            document_tree.setdefault(domain, [])
 
-                else:
-                    meta = MetaSerializer(method_conf['meta']).data
-                    name = method_conf['name']
+            try:
+                command_examples = examples[command_name]
 
-                    domain = meta['domain']['name']
-                    document_tree.setdefault(domain, [])
+            except KeyError:
+                logger.error(
+                    'Missing examples for {}'.format(command_name))
 
-                    try:
-                        command_examples = examples[name]
-
-                    except KeyError:
-                        logger.error('Missing examples for {}'.format(name))
-
-                    else:
-                        document_tree[domain].append({
-                            'title': '{name}: {method} {path}'.format(
-                                name=name,
-                                method=method.upper(),
-                                path=conf['path_conf']['path']),
-                            'description': clean_extra_indents(
-                                '{title} \n {description}'.format(
-                                    title=meta['title'],
-                                    description=meta['description'])),
-                            'calls': sorted([
-                                {
-                                    'title': t,
-                                    'response': {
-                                        'content': dump_or_none(
-                                            e['response']['content']),
-                                    },
-                                    'request': {
-                                        'method': method,
-                                        'path': e['request']['path'],
-                                        'content': dump_or_none(
-                                            e['request'].get('content')),
-                                        'headers': self.render_headers(e)
-                                    }
-                                }
-                                for t, e in command_examples.items()
-                            ], key=lambda x: x['title'])
-                        })
+            else:
+                document_tree[domain].append({
+                    'title': '{name}: {method} {path}'.format(
+                        name=command_name,
+                        method=conf['method'].upper(),
+                        path=conf['path_conf']['path']),
+                    'description': clean_extra_indents(
+                        '{title} \n {description}'.format(
+                            title=meta['title'],
+                            description=meta['description'])),
+                    'calls': sorted([
+                        {
+                            'title': t,
+                            'response': {
+                                'content': dump_or_none(
+                                    e['response']['content']),
+                            },
+                            'request': {
+                                'method': conf['method'],
+                                'path': e['request']['path'],
+                                'content': dump_or_none(
+                                    e['request'].get('content')),
+                                'headers': self.render_headers(e)
+                            }
+                        }
+                        for t, e in command_examples.items()
+                    ], key=lambda x: x['title'])
+                })
 
         return clean_extra_new_lines(template.render({
             'document_tree': OrderedDict(
