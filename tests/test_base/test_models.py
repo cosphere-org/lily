@@ -16,7 +16,7 @@ from lily.base.models import (
 
 class ImmutableEntity(fake_models.FakeModel, ImmutableModel):
 
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=10)
 
 
 @ImmutableEntity.fake_me
@@ -36,6 +36,21 @@ class ImmutableModelTestCase(TestCase):
         e = ImmutableEntity.objects.create(name='john')
 
         assert e.name == 'john'
+
+    def test_validates_on_save(self):
+
+        try:
+            ImmutableEntity(name=11 * 'a').save()
+
+        except ValidationError as e:
+            assert e.message_dict == {
+                'name': [
+                    'Ensure this value has at most 10 characters (it has 11).',
+                ],
+            }
+
+        else:
+            raise AssertionError('should raise exception')
 
 
 class JSONModel(fake_models.FakeModel):

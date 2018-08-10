@@ -16,6 +16,7 @@ class ImmutableModel(models.Model):
         pass
 
     def save(self, *args, **kwargs):
+        self.full_clean()
 
         if self.id is not None:
             raise ImmutableModel.ModelIsImmutableError(
