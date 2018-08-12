@@ -123,9 +123,7 @@ class Command:
             }}
             ''', 0).format(  # noqa
                 self=self,
-                # FIXME: !!! should be this as soon as integration is over
-                # bulk_read_field=self.get_bulk_read_field(),
-                bulk_read_field='data',
+                bulk_read_field=self.get_bulk_read_field(),
             )
 
         elif self.get_bulk_read_field() and self.method == 'get':

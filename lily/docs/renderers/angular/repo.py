@@ -10,7 +10,7 @@ from lily.repo.version import VersionRenderer
 class AngularRepo(Repo):
 
     base_path = os.path.join(
-        os.path.dirname(__file__), 'cosphere-angular-client')
+        os.path.dirname(__file__), 'cosphere-client')
 
     def commit(self, version):
         self.git('commit -m "ADDED version {}"'.format(version))

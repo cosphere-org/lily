@@ -25,7 +25,8 @@ class Domain:
 
     @property
     def path(self):
-        return Path('./src/domains/{}'.format(self.id))
+        return Path(
+            './projects/cosphere-client/src/domains/{}'.format(self.id))
 
     def __hash__(self):
         return hash(self.id)

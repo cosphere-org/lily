@@ -60,9 +60,7 @@ LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = getattr(
 
 # FIXME: !!! to be removed!!! it should be supplied by external service
 LILY_COMMAND_ENTRYPOINTS = [
-    'http://localhost:9000',
-    'http://localhost:10000',
-    'http://localhost:11000',
+    'http://localhost:7000',
 ]
 
 #

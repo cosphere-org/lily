@@ -132,14 +132,11 @@ class Interface:
 
             entity_schema = self.schema['properties'][field]['items']
 
-            # !!!!!
-            # FIXME the below line should be included after the integration
-            # {self.bulk_read_field}: {self.name}Entity[];
             interface = normalize_indentation('''
                 export interface {self.name}Entity {interface_content}
 
                 export interface {self.name} {{
-                    data: {self.name}Entity[];
+                    {self.bulk_read_field}: {self.name}Entity[];
                 }}
 
                 ''', 0).format(
