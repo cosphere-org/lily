@@ -78,3 +78,67 @@ class JSONSchemaField(JSONField):
         super(JSONSchemaField, self).__init__(*args, **kwargs)
 
         self.validators.insert(0, JSONSchemaValidator(schema=schema))
+
+
+#
+# Helper class for building easier to read JSON schema
+#
+def null_or(other):
+    return {
+        'oneOf': [
+            {
+                'type': 'null',
+            },
+            other,
+        ],
+    }
+
+
+def string():
+    return {
+        'type': 'string',
+    }
+
+
+def number():
+    return {
+        'type': 'number',
+    }
+
+
+def url():
+    return {
+        'type': 'string',
+        'format': 'url',
+    }
+
+
+def enum(enums):
+    return {
+        'type': 'string',
+        'enum': enums,
+    }
+
+
+def object(properties, required=None):
+    if required:
+        return {
+            'type': 'object',
+            'properties': properties,
+            'required': required,
+        }
+
+    else:
+        return {
+            'type': 'object',
+            'properties': properties,
+        }
+
+def array(items, extra=None):
+    extra = extra or {}
+
+    return {
+        'type': 'array',
+        'items': items,
+        **extra,
+    }

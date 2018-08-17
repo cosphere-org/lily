@@ -602,7 +602,7 @@ class InterfaceTestCase(TestCase):
                 }
 
                 export interface ReadCardsResponse {
-                    data: ReadCardsResponseEntity[];
+                    cards: ReadCardsResponseEntity[];
                 }
             ''', 0)
         ),

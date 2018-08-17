@@ -86,13 +86,13 @@ class Signature:
         elif (not self.request_query.is_empty() and
                 self.bulk_read_field and
                 self.method == 'get'):
-            options.append("params, responseMap: 'data'")
+            options.append(f"params, responseMap: '{self.bulk_read_field}'")
 
         # -- mapping only
         elif (self.request_query.is_empty() and
                 self.bulk_read_field and
                 self.method == 'get'):
-            options.append("responseMap: 'data'")
+            options.append(f"responseMap: '{self.bulk_read_field}'")
 
         # -- authorization
         options.append(

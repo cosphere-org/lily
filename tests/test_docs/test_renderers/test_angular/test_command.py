@@ -264,7 +264,7 @@ class CommandTestCase(TestCase):
             public updateTask(taskId: any, body: X.UpdateTaskBody): Observable<X.UpdateTaskResponseEntity[]> {
                 return this.client
                     .put<X.UpdateTaskResponse>(`/tasks/${taskId}`, body, { authorizationRequired: true })
-                    .pipe(map(x => x.data));
+                    .pipe(map(x => x.people));
             }
         ''', 0)  # noqa
 
@@ -320,11 +320,11 @@ class CommandTestCase(TestCase):
              * Read Task
              */
             public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponseEntity[]> {
-                return this.client.getDataState<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'data', authorizationRequired: true });
+                return this.client.getDataState<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'people', authorizationRequired: true });
             }
 
             public readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
-                return this.client.get<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'data', authorizationRequired: true });
+                return this.client.get<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'people', authorizationRequired: true });
             }
         ''', 0)  # noqa
 
