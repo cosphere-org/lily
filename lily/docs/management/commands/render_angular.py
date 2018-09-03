@@ -7,6 +7,14 @@ from lily.base.utils import normalize_indentation
 
 
 @click.command()
+@click.argument(
+    'client_origin',
+    type=str,
+    help='the origin of repo into which rendered client should be pushed')
+@click.argument(
+    'client_prefix',
+    type=str,
+    help='the prefix of client')
 @click.option(
     '--only_build',
     default=False,
