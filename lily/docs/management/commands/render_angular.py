@@ -12,13 +12,28 @@ from lily.base.utils import normalize_indentation
     default=False,
     type=click.BOOL,
     help='if true it only builds the client without pushing it to the remote')
-def command(only_build):
+@click.option(
+    '--include_domain',
+    '-i',
+    type=str,
+    multiple=True,
+    help='provide domains to include')
+@click.option(
+    '--exclude_domain',
+    '-e',
+    type=str,
+    multiple=True,
+    help='provide domains to exclude')
+def command(only_build, include_domain, exclude_domain):
     """
     Render Angular Client based on the command definitions of all
     registered services.
 
     """
-    rendered_version = AngularClientRenderer().render(only_build=only_build)
+    rendered_version = AngularClientRenderer().render(
+        only_build=only_build,
+        include_domains=include_domain,
+        exclude_domains=exclude_domain)
 
     if only_build:
         click.secho(normalize_indentation('''

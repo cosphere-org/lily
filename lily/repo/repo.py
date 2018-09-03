@@ -11,10 +11,10 @@ from lily.conf import settings
 
 class Repo:
 
+    base_path = settings.LILY_PROJECT_BASE
+
     def __init__(self):
         self.cd_to_repo()
-
-    base_path = settings.LILY_PROJECT_BASE
 
     def cd_to_repo(self):
         os.chdir(self.base_path)
@@ -22,14 +22,17 @@ class Repo:
     #
     # GIT
     #
+    def clone(self, destination):
+        self.git(f'clone {self.origin} {destination}')
+
     def push(self):
-        self.git('push origin {}'.format(self.current_branch))
+        self.git(f'push origin {self.current_branch}')
 
     def stash(self):
         self.git('stash')
 
     def pull(self):
-        self.git('pull origin {}'.format(self.current_branch))
+        self.git(f'pull origin {self.current_branch}')
 
     @property
     def current_branch(self):
@@ -40,7 +43,7 @@ class Repo:
         return self.git('rev-parse HEAD').strip()
 
     def tag(self, version):
-        self.git('tag {}'.format(version))
+        self.git(f'tag {version}')
         self.git('push origin --tags')
 
     def add_all(self):
@@ -48,13 +51,13 @@ class Repo:
         self.git('add -u .')
 
     def add(self, path):
-        self.git('add {}'.format(path))
+        self.git(f'add {path}')
 
     def commit(self, message):
-        self.git('commit -m "{}"'.format(message))
+        self.git(f'commit -m "{message}"')
 
     def git(self, command):
-        return self.execute('git {}'.format(command))
+        return self.execute(f'git {command}')
 
     #
     # DIR / FILES
@@ -82,7 +85,7 @@ class Repo:
     #
     def execute(self, command):
 
-        click.secho('[EXECUTE] {}'.format(command), fg='blue')
+        click.secho(f'[EXECUTE] {command}', fg='blue')
         try:
             captured = subprocess.check_output(
                 command,

@@ -33,7 +33,9 @@ class UpgradeVersionTestCase(TestCase):
             '''
                 - Successfully rendered and built Angular Client [NO PUSHING TO REMOTE]
             ''', 0)  # noqa
-        assert render.call_args_list == [call(only_build=True)]
+        assert render.call_args_list == [
+            call(exclude_domains=(), include_domains=(), only_build=True),
+        ]
 
     def test_command__default_values(self):
 
@@ -49,4 +51,29 @@ class UpgradeVersionTestCase(TestCase):
             '''
                 - Successfully rendered and pushed Angular Client version: 1.0.19
             ''', 0)  # noqa
-        assert render.call_args_list == [call(only_build=False)]
+        assert render.call_args_list == [
+            call(exclude_domains=(), include_domains=(), only_build=False),
+        ]
+
+    def test_command__include_and_exclude_domains(self):
+
+        render = self.mocker.patch.object(AngularClientRenderer, 'render')
+        render.return_value = '1.0.19'
+
+        result = self.runner.invoke(
+            command,
+            [
+                '--only_build', 'true',
+                '--include_domain', 'CARDS',
+                '--exclude_domain', 'PATHS',
+                '--exclude_domain', 'GOSSIP',
+            ])
+
+        assert result.exit_code == 0
+        assert render.call_args_list == [
+            call(
+                exclude_domains=('PATHS', 'GOSSIP'),
+                include_domains=('CARDS',),
+                only_build=True,
+            ),
+        ]
