@@ -128,20 +128,37 @@ class Interface:
         # -- treat differently Bulk Read Response interfaces in order to
         # -- allow one extra mapping in the domain service
         if self.bulk_read_field:
-            field = list(self.schema['properties'].keys())[0]
+            try:
+                field = list(self.schema['properties'].keys())[0]
+                entity_schema = self.schema['properties'][field]['items']
 
-            entity_schema = self.schema['properties'][field]['items']
+                interface = normalize_indentation('''
+                    export interface {self.name}Entity {interface_content}
 
-            interface = normalize_indentation('''
-                export interface {self.name}Entity {interface_content}
+                    export interface {self.name} {{
+                        {self.bulk_read_field}: {self.name}Entity[];
+                    }}
 
-                export interface {self.name} {{
-                    {self.bulk_read_field}: {self.name}Entity[];
-                }}
+                    ''', 0).format(
+                    self=self,
+                    interface_content=to_interface(entity_schema))
 
-                ''', 0).format(
-                self=self,
-                interface_content=to_interface(entity_schema))
+            # !!!!!!!!!!!!!!!!!!!!!!!!!!
+            # -- FIXME: this is a hack allowing one to provide very
+            # -- forgiving interface when output schema is missing, when
+            # -- for example one uses output from one service to provide
+            # -- output for itself. This behaviour will be solved in the future
+            # -- by usage of service client with exporatable serializers!
+            except KeyError:
+
+                interface = normalize_indentation('''
+                    export interface {self.name}Entity extends Object {{}};
+
+                    export interface {self.name} {{
+                        {self.bulk_read_field}: {self.name}Entity[];
+                    }}
+
+                    ''', 0).format(self=self)
 
         # -- deal with empty schema which might occur for the case of
         # -- responses that return only @event field

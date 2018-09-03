@@ -21,10 +21,12 @@ class UpgradeVersionTestCase(TestCase):
 
     def test_command__makes_the_right_calls(self):
 
-        render = self.mocker.patch.object(AngularClientRenderer, 'render')
+        renderer = self.mocker.patch(  # noqa
+            'lily.docs.management.commands.render_angular'
+            '.AngularClientRenderer')
 
         result = self.runner.invoke(
-            command, ['--only_build', 'true'])
+            command, ['origin', 'super', '--only_build', 'true'])
 
         assert result.exit_code == 0
         assert normalize_indentation(
@@ -33,7 +35,8 @@ class UpgradeVersionTestCase(TestCase):
             '''
                 - Successfully rendered and built Angular Client [NO PUSHING TO REMOTE]
             ''', 0)  # noqa
-        assert render.call_args_list == [
+        assert renderer.call_args_list == [call('origin', 'super')]
+        assert renderer.return_value.render.call_args_list == [
             call(exclude_domains=(), include_domains=(), only_build=True),
         ]
 
@@ -42,7 +45,7 @@ class UpgradeVersionTestCase(TestCase):
         render = self.mocker.patch.object(AngularClientRenderer, 'render')
         render.return_value = '1.0.19'
 
-        result = self.runner.invoke(command)
+        result = self.runner.invoke(command, ['origin', 'super'])
 
         assert result.exit_code == 0
         assert normalize_indentation(
@@ -63,6 +66,8 @@ class UpgradeVersionTestCase(TestCase):
         result = self.runner.invoke(
             command,
             [
+                'origin',
+                'super',
                 '--only_build', 'true',
                 '--include_domain', 'CARDS',
                 '--exclude_domain', 'PATHS',

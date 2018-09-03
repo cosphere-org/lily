@@ -3,6 +3,7 @@
 import os
 import re
 from collections import OrderedDict
+import tempfile
 
 from django.test import TestCase
 import pytest
@@ -14,7 +15,6 @@ from lily.base.test import override_settings
 from lily.base.utils import normalize_indentation
 from lily.docs.renderers.angular.domain import Domain
 from lily.docs.renderers.angular.renderer import AngularClientRenderer
-from lily.docs.renderers.angular.repo import AngularRepo
 
 
 def remove_white_chars(text):
@@ -28,19 +28,20 @@ class AngularClientRendererTestCase(TestCase):
         self.mocker = mocker
         self.tmpdir = tmpdir
 
-        self.base_dir = self.tmpdir.mkdir('cosphere-client')
+    def setUp(self):
+
+        self.base_dir = self.tmpdir.mkdir('client')
         self.src_dir = (
             self.base_dir
             .mkdir('projects')
-            .mkdir('cosphere-client')
+            .mkdir('client')
             .mkdir('src'))
         self.domains_dir = self.src_dir.mkdir('domains')
         self.services_dir = self.src_dir.mkdir('services')
 
-        self.mocker.patch.object(AngularRepo, 'base_path', str(self.base_dir))
-
-    def setUp(self):
-        self.renderer = AngularClientRenderer()
+        self.mocker.patch.object(
+            tempfile, 'mkdtemp').return_value = str(self.base_dir)
+        self.renderer = AngularClientRenderer('origin', 'prefix')
 
     #
     # render
@@ -49,18 +50,26 @@ class AngularClientRendererTestCase(TestCase):
 
         repo = Mock()
         self.mocker.patch.object(self.renderer, 'repo', repo)
+
+        template_repo = Mock()
+        self.mocker.patch.object(self.renderer, 'template_repo', template_repo)
+
         group_commands_by_domain = self.mocker.patch.object(
             self.renderer, 'group_commands_by_domain')
         group_commands_by_domain.return_value = OrderedDict([
             (Domain('cards', ''), {'X': 'X', 'B': 'B'}),
             (Domain('paths', ''), {'Z': 'Z', 'A': 'A'}),
         ])
+
         render_client_module_ts = self.mocker.patch.object(
             self.renderer, 'render_client_module_ts')
+
         render_api_ts = self.mocker.patch.object(
             self.renderer, 'render_api_ts')
+
         render_api_index_ts = self.mocker.patch.object(
             self.renderer, 'render_api_index_ts')
+
         render_domain = self.mocker.patch.object(
             self.renderer, 'render_domain')
 
@@ -77,8 +86,10 @@ class AngularClientRendererTestCase(TestCase):
             call(Domain('cards', ''), ['B', 'X']),
             call(Domain('paths', ''), ['A', 'Z']),
         ]
-        assert repo.stash.call_count == 1
-        assert repo.pull.call_count == 1
+
+        assert template_repo.clone.call_count == 1
+
+        assert repo.clone.call_count == 1
         assert repo.install.call_count == 1
         assert repo.upgrade_version.call_count == 1
         assert repo.build.call_count == 1
@@ -90,18 +101,26 @@ class AngularClientRendererTestCase(TestCase):
 
         repo = Mock()
         self.mocker.patch.object(self.renderer, 'repo', repo)
+
+        template_repo = Mock()
+        self.mocker.patch.object(self.renderer, 'template_repo', template_repo)
+
         group_commands_by_domain = self.mocker.patch.object(
             self.renderer, 'group_commands_by_domain')
         group_commands_by_domain.return_value = OrderedDict([
             (Domain('cards', ''), {'X': 'X', 'B': 'B'}),
             (Domain('paths', ''), {'Z': 'Z', 'A': 'A'}),
         ])
+
         render_client_module_ts = self.mocker.patch.object(
             self.renderer, 'render_client_module_ts')
+
         render_api_ts = self.mocker.patch.object(
             self.renderer, 'render_api_ts')
+
         render_api_index_ts = self.mocker.patch.object(
             self.renderer, 'render_api_index_ts')
+
         render_domain = self.mocker.patch.object(
             self.renderer, 'render_domain')
 
@@ -118,8 +137,10 @@ class AngularClientRendererTestCase(TestCase):
             call(Domain('cards', ''), ['B', 'X']),
             call(Domain('paths', ''), ['A', 'Z']),
         ]
-        assert repo.stash.call_count == 1
-        assert repo.pull.call_count == 1
+
+        assert template_repo.clone.call_count == 1
+
+        assert repo.clone.call_count == 1
         assert repo.install.call_count == 1
         assert repo.build.call_count == 1
         assert repo.upgrade_version.call_count == 0
@@ -445,6 +466,7 @@ class AngularClientRendererTestCase(TestCase):
     # render_models_ts
     #
     def test_render_models_ts(self):
+
         paths_path = str(self.domains_dir.mkdir('paths'))
         domain = Domain('paths', 'Path Management')
         commands = [
@@ -517,14 +539,13 @@ class AngularClientRendererTestCase(TestCase):
                 import { Observable } from 'rxjs';
                 import * as _ from 'underscore';
 
-                import { ClientService } from '../../services/client.service';
-                import { DataState } from '../../services/client.interface';
+                import { DataState, HttpService } from '@lily/http';
 
                 import * as X from './paths.models';
 
                 @Injectable()
                 export class PathsDomain {
-                    constructor(private client: ClientService) {}
+                    constructor(private client: HttpService) {}
 
                     command 1
 
@@ -576,17 +597,17 @@ class AngularClientRendererTestCase(TestCase):
             Domain('recall', 'Recall Management'): {},
             Domain('paths', 'Path Management'): {},
         }
-        domains_path = str(self.domains_dir)
 
         self.renderer.render_api_index_ts(commands_by_domain)
 
-        assert os.listdir(domains_path) == ['index.ts']
-        with open(os.path.join(domains_path, 'index.ts'), 'r') as f:
-            assert f.read() == normalize_indentation('''
+        assert os.listdir(self.domains_dir) == ['index.ts']
+        assert (
+            self.domains_dir.join('index.ts').read() ==
+            normalize_indentation('''
                 export * from './cards/index';
                 export * from './paths/index';
                 export * from './recall/index';
-            ''', 0)  # noqa
+            ''', 0))  # noqa
 
     #
     # render_api_ts
@@ -701,14 +722,13 @@ class AngularClientRendererTestCase(TestCase):
                 import { RecallDomain } from './domains/recall/index';
 
                 /** Services */
-                import { ClientService } from './services/client.service';
+                import { HttpService, Config } from '@lily/http';
                 import { APIService } from './services/api.service';
-                import { Config } from './services/config.interface';
 
                 @NgModule({
                     imports: [HttpClientModule],
                     providers: [
-                        ClientService,
+                        HttpService,
 
                         // Domains
                         CardsDomain,

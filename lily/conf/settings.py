@@ -51,6 +51,11 @@ LILY_AUTHORIZER_CLASS = getattr(
     'lily.base.authorizer.Authorizer')
 
 #
+# DOCS
+#
+LILY_ANGULAR_CLIENT_ORIGIN = 'git@bitbucket.org:goodai/lily-angular-client.git'
+
+#
 # ENTRYPOINT
 #
 LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = getattr(

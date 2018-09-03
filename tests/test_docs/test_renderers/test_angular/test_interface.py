@@ -607,7 +607,31 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-    ], ids=list([str(i) for i in range(14)]))
+        # -- case 14 - bulk read response
+        (
+            {
+                'type': 'object',
+                'required': ['people'],
+                'properties': {
+                    'people': {
+                        'type': 'object',
+                    },
+                },
+            },
+            'cards',
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponseEntity extends Object {};
+
+                export interface ReadCardsResponse {
+                    cards: ReadCardsResponseEntity[];
+                }
+            ''', 0)
+        ),
+    ], ids=list([str(i) for i in range(15)]))
 def test_render(schema, bulk_read_field, expected):
     result = Interface(
         'READ_CARDS',

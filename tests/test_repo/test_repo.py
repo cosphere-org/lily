@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 
-import subprocess
 import os
 
 from django.test import TestCase
 import pytest
-from mock import call
+from mock import call, Mock
 
 from lily.repo.repo import Repo
 
@@ -115,14 +114,21 @@ class RepoTestCase(TestCase):
     # UTILS
     #
     def test_execute(self):
-        check_output = self.mocker.patch.object(subprocess, 'check_output')
-        check_output.return_value = b'hello'
+        Popen = self.mocker.patch('lily.repo.repo.Popen')  # noqa
+        Popen.return_value.__enter__.return_value = Mock(stdout=['hi', 'ho'])
         r = Repo()
 
         r.execute('hello')
 
-        assert check_output.call_args_list == [
-            call('hello', shell=True, stderr=subprocess.STDOUT)]
+        assert Popen.call_args_list == [
+            call(
+                ['hello'],
+                bufsize=1,
+                stderr=-2,
+                stdout=-1,
+                universal_newlines=True,
+            ),
+        ]
 
     #
     # DIR / FILES

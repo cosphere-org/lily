@@ -8,6 +8,7 @@ import tempfile
 
 from lily.repo.repo import Repo
 from lily.repo.version import VersionRenderer
+from lily.conf import settings
 
 
 class AngularRepo(Repo):
@@ -19,8 +20,11 @@ class AngularRepo(Repo):
         self.base_path = tempfile.mkdtemp()
         self.cd_to_repo()
 
+    def clone(self):
+        super(AngularRepo, self).clone(self.base_path)
+
     def commit(self, version):
-        self.git('commit -m "ADDED version {}"'.format(version))
+        self.git(f'commit -m "ADDED version {version}"')
 
     #
     # NPM
@@ -32,7 +36,7 @@ class AngularRepo(Repo):
         self.npm('install')
 
     def npm(self, command):
-        self.execute('npm {}'.format(command))
+        self.execute(f'npm {command}')
 
     #
     # UTILS
@@ -64,21 +68,28 @@ class PathRule:
         self.is_directory = is_directory
 
     def matches(self, path):
-        if self.is_directory and not os.path.isdir(path):
-            return False
+
+        if self.is_directory:
+            match = self.pattern.search(path)
+
+            if match:
+                parent_path = path[:match.end() + 1]
+
+                return os.path.isdir(parent_path)
+
+            else:
+                return False
 
         return bool(self.pattern.search(path))
 
 
-# FIXME: test it!!!
-class TemplateRepo:
+class TemplateRepo(Repo):
 
-    # FIXME: move to settings!!!!!!
-    origin = 'git@bitbucket.org:goodai/lily-angular-client.git'
+    origin = settings.LILY_ANGULAR_CLIENT_ORIGIN
 
     IGNORE_RULES = [
-        PathRule(r'.*node_modules.*', True),
-        PathRule(r'\.git$', True),
+        PathRule(r'node_modules', True),
+        PathRule(r'\.git', True),
     ]
 
     KEEP_RULES = [
@@ -104,11 +115,32 @@ class TemplateRepo:
 
     def copy_to(self, destination, client_prefix):
 
-        shutil.copytree(
-            self.base_path,
-            destination,
-            ignore=self.ignore,
-            copy_function=partial(self.copy, client_prefix))
+        ignore = self.ignore
+        copy_function = partial(self.copy, client_prefix)
+
+        def copytree(source, destination):
+            """
+            Replacement of `shutil.copytree` with overwrites.
+
+            """
+            if os.path.isdir(source):
+
+                if not os.path.isdir(destination):
+                    os.makedirs(destination)
+
+                names = os.listdir(source)
+                ignored = ignore(source, names)
+
+                for name in names:
+                    if name not in ignored:
+                        copytree(
+                            os.path.join(source, name),
+                            os.path.join(destination, name))
+
+            else:
+                copy_function(source, destination)
+
+        copytree(self.base_path, destination)
 
     def ignore(self, source, names):
 
@@ -133,8 +165,6 @@ class TemplateRepo:
         return list(ignore_names)
 
     def copy(self, client_prefix, source, destination):
-
-        print('*** COPY ***>', client_prefix, source, destination)
 
         try:
             with open(source, 'r') as f:

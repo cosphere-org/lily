@@ -9,12 +9,10 @@ from lily.base.utils import normalize_indentation
 @click.command()
 @click.argument(
     'client_origin',
-    type=str,
-    help='the origin of repo into which rendered client should be pushed')
+    type=str)
 @click.argument(
     'client_prefix',
-    type=str,
-    help='the prefix of client')
+    type=str)
 @click.option(
     '--only_build',
     default=False,
@@ -32,13 +30,20 @@ from lily.base.utils import normalize_indentation
     type=str,
     multiple=True,
     help='provide domains to exclude')
-def command(only_build, include_domain, exclude_domain):
+def command(
+        client_origin,
+        client_prefix,
+        only_build,
+        include_domain,
+        exclude_domain):
     """
     Render Angular Client based on the command definitions of all
     registered services.
 
     """
-    rendered_version = AngularClientRenderer().render(
+    rendered_version = AngularClientRenderer(
+        client_origin, client_prefix
+    ).render(
         only_build=only_build,
         include_domains=include_domain,
         exclude_domains=exclude_domain)

@@ -2,7 +2,7 @@
 
 import os
 import re
-import subprocess
+from subprocess import Popen, PIPE, STDOUT
 
 import click
 
@@ -86,18 +86,17 @@ class Repo:
     def execute(self, command):
 
         click.secho(f'[EXECUTE] {command}', fg='blue')
-        try:
-            captured = subprocess.check_output(
-                command,
-                stderr=subprocess.STDOUT,
-                shell=True)
+        captured = ''
 
-        except subprocess.CalledProcessError as e:
-            click.secho('--- [ERROR] ----------', fg='red')
-            print(str(e.output, encoding='utf8'))
-            raise
+        with Popen(
+                command.split(),
+                stdout=PIPE,
+                stderr=STDOUT,
+                bufsize=1,
+                universal_newlines=True) as p:
 
-        else:
-            click.secho(str(captured, encoding='utf8'), fg='white')
+            for line in p.stdout:
+                captured += line
+                click.secho(line, fg='white')
 
-        return str(captured, encoding='utf8')
+        return captured

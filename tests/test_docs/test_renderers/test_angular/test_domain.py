@@ -29,4 +29,4 @@ class DomainTestCase(TestCase):
         path = Domain('cards', 'Cards Management').path
 
         assert isinstance(path, Path)
-        assert path.base_path == './projects/cosphere-client/src/domains/cards'
+        assert path.base_path == './projects/client/src/domains/cards'

@@ -45,11 +45,16 @@ upgrade_version_major:  ## upgrade version by major X.0.0
 #
 render_angular_for_web_ui:  ## render angular client to WEB UI
 	python lily/manage.py render_angular \
+		git@bitbucket.org:goodai/cosphere-client-2.git \
+		cosphere \
 		--exclude_domain BRICKS \
 		--exclude_domain GOSSIP \
+		--exclude_domain SCENER \
 		--exclude_domain QUIZZER
 
 render_angular_for_bricks_ui:  ## render angular client to BRICKS UI
 	python lily/manage.py render_angular \
+		git@bitbucket.org:goodai/cosphere-app-bricks-client.git \
+		bricks \
 		--include_domain BRICKS \
 		--include_domain GOSSIP
