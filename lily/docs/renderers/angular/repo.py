@@ -35,6 +35,9 @@ class AngularRepo(Repo):
     def install(self):
         self.npm('install')
 
+    def link(self):
+        self.npm('link @lily/http')
+
     def npm(self, command):
         self.execute(f'npm {command}')
 
