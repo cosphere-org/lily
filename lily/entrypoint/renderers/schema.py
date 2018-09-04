@@ -131,14 +131,14 @@ class SchemaRenderer:
                 if self.is_simple_field(field.child):
                     schema.add_array(
                         name=name,
-                        required=field.child.required,
+                        required=field.required,
                         value=self.simple_field_to_schema(
                             name, field.child))
 
                 else:
                     schema.add_array(
                         name=name,
-                        required=field.child.required,
+                        required=field.required,
                         value=self.serializer_to_schema(field.child))
 
             # -- all not covered cases should raise an Error

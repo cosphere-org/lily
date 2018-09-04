@@ -302,6 +302,13 @@ class SchemaRendererTestCase(TestCase):
             person = serializers.ListField(
                 child=HumanSerializer())
 
+            # -- optional list fields
+            ids = serializers.ListField(
+                child=serializers.IntegerField(), required=False)
+
+            providers = serializers.ListField(
+                child=ProviderSerializer(), required=False)
+
         assert SchemaRenderer(Serializer).render().serialize() == {
             'uri': 'http://hi.there#123',
             'schema': {
@@ -329,6 +336,24 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'array',
                         'items': {
                             'type': 'integer'
+                        },
+                    },
+                    'ids': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'integer'
+                        },
+                    },
+                    'providers': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'name': {
+                                    'type': 'string',
+                                }
+                            },
+                            'required': [],
                         },
                     },
                 },
