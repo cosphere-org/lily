@@ -63,13 +63,7 @@ LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = getattr(
     'LILY_ENTRYPOINT_VIEWS_ACCESS_LIST',
     None)
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-LILY_COMMAND_ENTRYPOINTS = [
-    'http://localhost:7000',
-]
+LILY_COMMAND_ENTRYPOINTS = []
 
 #
 # ASYNC
