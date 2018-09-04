@@ -277,7 +277,7 @@ class AngularClientRenderer:
                 import {{ Injectable, Injector }} from '@angular/core';
                 import {{ Observable }} from 'rxjs';
 
-                import {{ DataState, Options }} from './client.interface';
+                import {{ DataState, Options }} from '@lily/http';
 
                 import * as X from '../domains/index';
 
