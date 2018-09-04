@@ -143,6 +143,26 @@ class TemplateRepo(Repo):
             else:
                 copy_function(source, destination)
 
+        def rmtree(destination):
+
+            for name in os.listdir(destination):
+                remove = True
+                path = os.path.join(destination, name)
+
+                # -- ignore folders which should not be removed
+                for ignore_rule in self.IGNORE_RULES:
+                    if ignore_rule.matches(path):
+                        remove = False
+                        break
+
+                if remove:
+                    if os.path.isdir(path):
+                        shutil.rmtree(path)
+
+                    else:
+                        os.remove(path)
+
+        rmtree(destination)
         copytree(self.base_path, destination)
 
     def ignore(self, source, names):

@@ -190,6 +190,35 @@ class TemplateRepoTestCase(TestCase):
             set(os.listdir(destination_dir.join('d_1'))) ==
             set(['f_1_0.ico']))
 
+    def test_copy_to__cleans_up_before_copy(self):
+
+        source_dir = self.tmpdir.mkdir('source')
+        d = source_dir.mkdir('d')
+        f = d.join('f.md')
+        f.write('f')
+
+        destination_dir = self.tmpdir.mkdir('destination')
+
+        # -- should be kept
+        git_dir = destination_dir.mkdir('.git')
+        git_dir.join('hook').write('hook it')
+
+        # -- should be removed
+        dd = destination_dir.mkdir('dd')
+        dd.join('hi.txt').write('hello')
+        destination_dir.join('root.js').write('root it')
+
+        self.mocker.patch.object(
+            tempfile, 'mkdtemp').return_value = str(source_dir)
+
+        repo = TemplateRepo()
+
+        repo.copy_to(str(destination_dir), 'extra')
+
+        assert set(os.listdir(destination_dir)) == set(['d', '.git'])
+        assert os.listdir(destination_dir.join('d')) == ['f.md']
+        assert os.listdir(destination_dir.join('.git')) == ['hook']
+
     #
     # IGNORE
     #

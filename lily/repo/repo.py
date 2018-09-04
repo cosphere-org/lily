@@ -89,7 +89,7 @@ class Repo:
         captured = ''
 
         with Popen(
-                command.split(),
+                self.split_command(command),
                 stdout=PIPE,
                 stderr=STDOUT,
                 bufsize=1,
@@ -100,3 +100,30 @@ class Repo:
                 click.secho(line, fg='white')
 
         return captured
+
+    def split_command(self, command):
+        command_parts = []
+        part = ''
+        command = re.sub(r'\s+', ' ', command)
+        inside_string = False
+        for c in command:
+            if c in '"\'' and not inside_string:
+                inside_string = True
+
+            elif c in '"\'' and inside_string:
+                inside_string = False
+
+            if c == ' ' and not inside_string:
+                command_parts.append(part)
+                part = ''
+
+            elif c not in '"\'':
+                part += c
+
+            elif c in '"\'':
+                part += "'"
+
+        if part:
+            command_parts.append(part)
+
+        return command_parts

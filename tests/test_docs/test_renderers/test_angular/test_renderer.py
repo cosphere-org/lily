@@ -642,7 +642,7 @@ class AngularClientRendererTestCase(TestCase):
                 import { Injectable, Injector } from '@angular/core';
                 import { Observable } from 'rxjs';
 
-                import { DataState, Options } from './client.interface';
+                import { DataState, Options } from '@lily/http';
 
                 import * as X from '../domains/index';
 
@@ -714,7 +714,6 @@ class AngularClientRendererTestCase(TestCase):
                   */
 
                 import { NgModule, ModuleWithProviders } from '@angular/core';
-                import { HttpClientModule } from '@angular/common/http';
 
                 /** Domains */
                 import { CardsDomain } from './domains/cards/index';
@@ -722,14 +721,12 @@ class AngularClientRendererTestCase(TestCase):
                 import { RecallDomain } from './domains/recall/index';
 
                 /** Services */
-                import { HttpService, Config } from '@lily/http';
+                import { LilyHttpModule, Config } from '@lily/http';
                 import { APIService } from './services/api.service';
 
                 @NgModule({
-                    imports: [HttpClientModule],
+                    imports: [LilyHttpModule],
                     providers: [
-                        HttpService,
-
                         // Domains
                         CardsDomain,
                         PathsDomain,

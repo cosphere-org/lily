@@ -111,7 +111,7 @@ class RepoTestCase(TestCase):
         assert execute.call_args_list == [call('git whatever')]
 
     #
-    # UTILS
+    # GENERIC - EXECUTE
     #
     def test_execute(self):
         Popen = self.mocker.patch('lily.repo.repo.Popen')  # noqa
@@ -129,6 +129,40 @@ class RepoTestCase(TestCase):
                 universal_newlines=True,
             ),
         ]
+
+    def test_execute__splits_correctly(self):
+        Popen = self.mocker.patch('lily.repo.repo.Popen')  # noqa
+        Popen.return_value.__enter__.return_value = Mock(stdout=['hi', 'ho'])
+        r = Repo()
+
+        r.execute("hello 'no split'")
+
+        assert Popen.call_args_list == [
+            call(
+                ['hello', "'no split'"],
+                bufsize=1,
+                stderr=-2,
+                stdout=-1,
+                universal_newlines=True,
+            ),
+        ]
+
+    #
+    # GENERIC - SPLIT COMMAND
+    #
+    def test_split_command(self):
+
+        assert Repo().split_command(
+            'hi there') == ['hi', 'there']
+        assert Repo().split_command(
+            'hi   there') == ['hi', 'there']
+        assert Repo().split_command(
+            "hi   'there hello'") == ['hi', "'there hello'"]
+        assert Repo().split_command(
+            'hi   "there hello"') == ['hi', "'there hello'"]
+
+        assert Repo().split_command('git commit -m "hello world"') == [
+            'git', 'commit', '-m', "'hello world'"]
 
     #
     # DIR / FILES
