@@ -316,10 +316,35 @@ class EntryPointViewTestCase(TestCase):
         assert response.status_code == 200
         assert renderer.call_count == 1
 
-        # -- but this should NOT hit renderer
+        # -- but this should hit renderer too
         response = self.app.get(
             self.uri,
             data={'with_examples': True},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        assert renderer.call_count == 2
+
+    def test_get__cache_available_put_forced_refresh(self):
+
+        renderer = self.mocker.patch('entrypoint.views.CommandsRenderer')
+        c = eg.command()
+        render = Mock(return_value={'UPDATE_HELLO': c})
+        renderer.return_value = Mock(render=render)
+
+        # -- this should save to cache
+        response = self.app.get(
+            self.uri,
+            data={'refresh': True},
+            **self.auth_headers)
+
+        assert response.status_code == 200
+        assert renderer.call_count == 1
+
+        # -- this should hit renderer too
+        response = self.app.get(
+            self.uri,
+            data={'refresh': True},
             **self.auth_headers)
 
         assert response.status_code == 200

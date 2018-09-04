@@ -65,6 +65,8 @@ class EntryPointView(View):
 
         domain_id = parsers.CharField(default=None)
 
+        refresh = parsers.BooleanField(default=False)
+
     @command(
         name=name.Read('ENTRY_POINT'),
 
@@ -100,7 +102,9 @@ class EntryPointView(View):
 
         domain_id = request.input.query['domain_id']
 
-        commands = self.get_commands()
+        refresh = request.input.query['refresh']
+
+        commands = self.get_commands(refresh=refresh)
 
         if command_names:
             commands = {
@@ -135,26 +139,26 @@ class EntryPointView(View):
                 'commands': commands,
             })
 
-    # FIXME: !!! this could be easily moved to some generic class and
-    # I could use it as a poor's man cache just before the response
-    def get_commands(self):
+    def get_commands(self, refresh):
+
         cache_filepath = get_cache_filepath()
 
-        # -- attempt to fetch `commands` from the local cache. If successful
-        # -- check if it was rendered for the newest version of the service
-        try:
-            with open(cache_filepath, 'r') as f:
-                data = json.loads(f.read())
+        if not refresh:
 
-                age = time() - os.path.getmtime(cache_filepath)
-                if (data['version'] == config.version and
-                        age < settings.LILY_CACHE_TTL):
-                    return data['commands']
+            # -- attempt to fetch `commands` from the local cache. If
+            # -- successful check if it was rendered for the newest version
+            # -- of the service
+            try:
+                with open(cache_filepath, 'r') as f:
+                    data = json.loads(f.read())
 
-        except FileNotFoundError:
-            pass
+                    age = time() - os.path.getmtime(cache_filepath)
+                    if (data['version'] == config.version and
+                            age < settings.LILY_CACHE_TTL):
+                        return data['commands']
 
-        # FIXME: if version changed update!!!
+            except FileNotFoundError:
+                pass
 
         # -- if reached here there were no `commands` or they were outdated
         commands = CommandsRenderer().render()
