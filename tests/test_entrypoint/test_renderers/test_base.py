@@ -313,6 +313,27 @@ class BaseRendererTestCase(TestCase):
             ]
         }
 
+    def test_url_pattern_to_conf__returns_path_conf__complex_string_param(
+            self):
+
+        renderer = BaseRenderer(Mock())
+
+        assert renderer.url_pattern_to_dict([
+            '^mediaitems/',
+            '^by_process/(?P<process_id>[\\w+\\=]+)/hi/',
+        ]) == {
+            'path': '/mediaitems/by_process/{process_id}/hi/',
+            'pattern': (
+                '/mediaitems/by_process/(?P<process_id>[\\w+\\=]+)/hi/'),
+            'parameters': [
+                {
+                    'name': 'process_id',
+                    'description': '',
+                    'type': 'string',
+                }
+            ]
+        }
+
     def test_url_pattern_to_conf__returns_path_conf__many_params(self):
 
         renderer = BaseRenderer(Mock())

@@ -117,7 +117,7 @@ class BaseRenderer:
         path = pattern
         while True:
             param_pattern = re.compile(
-                r'\(\?P\<(?P<param_name>\w+)\>(?P<param_pattern>[\\dw\+]+)\)')
+                r'\(\?P\<(?P<param_name>\w+)\>(?P<param_pattern>[^/]+)\)')
 
             match = param_pattern.search(path)
             if match:
