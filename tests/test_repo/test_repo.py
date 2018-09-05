@@ -4,7 +4,7 @@ import os
 
 from django.test import TestCase
 import pytest
-from mock import call, Mock
+from mock import call
 
 from lily.repo.repo import Repo
 
@@ -114,38 +114,23 @@ class RepoTestCase(TestCase):
     # GENERIC - EXECUTE
     #
     def test_execute(self):
-        Popen = self.mocker.patch('lily.repo.repo.Popen')  # noqa
-        Popen.return_value.__enter__.return_value = Mock(stdout=['hi', 'ho'])
-        r = Repo()
 
-        r.execute('hello')
+        captured = Repo().execute('echo "hello world"')
 
-        assert Popen.call_args_list == [
-            call(
-                ['hello'],
-                bufsize=1,
-                stderr=-2,
-                stdout=-1,
-                universal_newlines=True,
-            ),
-        ]
+        assert captured == 'hello world\n'
 
-    def test_execute__splits_correctly(self):
-        Popen = self.mocker.patch('lily.repo.repo.Popen')  # noqa
-        Popen.return_value.__enter__.return_value = Mock(stdout=['hi', 'ho'])
-        r = Repo()
+    def test_execute__raises_error(self):
 
-        r.execute("hello 'no split'")
+        try:
+            Repo().execute('python -c "import sys; sys.exit(125)"')
 
-        assert Popen.call_args_list == [
-            call(
-                ['hello', "'no split'"],
-                bufsize=1,
-                stderr=-2,
-                stdout=-1,
-                universal_newlines=True,
-            ),
-        ]
+        except OSError as e:
+            assert e.args[0] == (
+                'Command: python -c "import sys; sys.exit(125)" '
+                'return exit code: 125')
+
+        else:
+            raise AssertionError('should raise error')
 
     #
     # GENERIC - SPLIT COMMAND
@@ -157,12 +142,12 @@ class RepoTestCase(TestCase):
         assert Repo().split_command(
             'hi   there') == ['hi', 'there']
         assert Repo().split_command(
-            "hi   'there hello'") == ['hi', "'there hello'"]
+            "hi   'there hello'") == ['hi', 'there hello']
         assert Repo().split_command(
-            'hi   "there hello"') == ['hi', "'there hello'"]
+            'hi   "there hello"') == ['hi', 'there hello']
 
         assert Repo().split_command('git commit -m "hello world"') == [
-            'git', 'commit', '-m', "'hello world'"]
+            'git', 'commit', '-m', 'hello world']
 
     #
     # DIR / FILES

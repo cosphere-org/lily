@@ -3,6 +3,7 @@
 import os
 import re
 from subprocess import Popen, PIPE, STDOUT
+import shlex
 
 import click
 
@@ -88,42 +89,31 @@ class Repo:
         click.secho(f'[EXECUTE] {command}', fg='blue')
         captured = ''
 
-        with Popen(
+        p = Popen(
                 self.split_command(command),
                 stdout=PIPE,
                 stderr=STDOUT,
                 bufsize=1,
-                universal_newlines=True) as p:
+                universal_newlines=True)
 
-            for line in p.stdout:
-                captured += line
-                click.secho(line, fg='white')
+        while p.poll() is not None:
+            line = p.stdout.readline()
+            captured += line
+            click.secho(line, fg='white')
+
+        # -- final read
+        line = p.stdout.read()
+        captured += line
+        click.secho(line, fg='white')
+
+        # -- fetch return code
+        p.communicate()
+        if p.returncode != 0:
+            raise OSError(
+                f'Command: {command} return exit code: {p.returncode}')
 
         return captured
 
     def split_command(self, command):
-        command_parts = []
-        part = ''
-        command = re.sub(r'\s+', ' ', command)
-        inside_string = False
-        for c in command:
-            if c in '"\'' and not inside_string:
-                inside_string = True
 
-            elif c in '"\'' and inside_string:
-                inside_string = False
-
-            if c == ' ' and not inside_string:
-                command_parts.append(part)
-                part = ''
-
-            elif c not in '"\'':
-                part += c
-
-            elif c in '"\'':
-                part += "'"
-
-        if part:
-            command_parts.append(part)
-
-        return command_parts
+        return shlex.split(command)
