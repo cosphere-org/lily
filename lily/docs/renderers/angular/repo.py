@@ -105,6 +105,7 @@ class TemplateRepo(Repo):
         PathRule(r'.*browserslist$'),
         PathRule(r'.*\.npmignore$'),
         PathRule(r'.*\.gitkeep$'),
+        PathRule(r'.*\.gitignore$'),
         PathRule(r'.*\.css$'),
         PathRule(r'.*', True),  # keep all directories not explicitly ignored
     ]
