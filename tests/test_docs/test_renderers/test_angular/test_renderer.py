@@ -713,7 +713,7 @@ class AngularClientRendererTestCase(TestCase):
                   * OVERWRITTEN
                   */
 
-                import { NgModule, ModuleWithProviders } from '@angular/core';
+                import { NgModule } from '@angular/core';
 
                 /** Domains */
                 import { CardsDomain } from './domains/cards/index';
@@ -721,11 +721,9 @@ class AngularClientRendererTestCase(TestCase):
                 import { RecallDomain } from './domains/recall/index';
 
                 /** Services */
-                import { LilyHttpModule, Config } from '@lily/http';
                 import { APIService } from './services/api.service';
 
                 @NgModule({
-                    imports: [LilyHttpModule],
                     providers: [
                         // Domains
                         CardsDomain,
@@ -736,14 +734,5 @@ class AngularClientRendererTestCase(TestCase):
                         APIService,
                     ]
                 })
-                export class ClientModule {
-                    static forRoot(config: Config): ModuleWithProviders {
-                        return {
-                            ngModule: ClientModule,
-                            providers: [
-                                { provide: 'config', useValue: config }
-                            ]
-                        };
-                    }
-                }
+                export class ClientModule {}
             ''', 0)  # noqa
