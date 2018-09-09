@@ -607,7 +607,97 @@ class InterfaceTestCase(TestCase):
             ''', 0)
         ),
 
-        # -- case 14 - bulk read response
+        # -- case 14 - bulk read simple response - integer
+        (
+            {
+                'type': 'object',
+                'required': [
+                    'card_ids'
+                ],
+                'properties': {
+                    'card_ids': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'integer'
+                        }
+                    }
+                }
+            },
+            'card_ids',
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponseEntity extends Number {}
+
+                export interface ReadCardsResponse {
+                    card_ids: ReadCardsResponseEntity[];
+                }
+            ''', 0)
+        ),
+
+        # -- case 15 - bulk read simple response - boolean
+        (
+            {
+                'type': 'object',
+                'required': [
+                    'card_ids'
+                ],
+                'properties': {
+                    'card_ids': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'boolean'
+                        }
+                    }
+                }
+            },
+            'card_ids',
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponseEntity extends Boolean {}
+
+                export interface ReadCardsResponse {
+                    card_ids: ReadCardsResponseEntity[];
+                }
+            ''', 0)
+        ),
+
+        # -- case 16 - bulk read simple response - string
+        (
+            {
+                'type': 'object',
+                'required': [
+                    'card_ids'
+                ],
+                'properties': {
+                    'card_ids': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'string'
+                        }
+                    }
+                }
+            },
+            'card_ids',
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponseEntity extends String {}
+
+                export interface ReadCardsResponse {
+                    card_ids: ReadCardsResponseEntity[];
+                }
+            ''', 0)
+        ),
+
+        # -- case 17 - bulk read response
         (
             {
                 'type': 'object',
@@ -631,7 +721,7 @@ class InterfaceTestCase(TestCase):
                 }
             ''', 0)
         ),
-    ], ids=list([str(i) for i in range(15)]))
+    ], ids=list([str(i) for i in range(18)]))
 def test_render(schema, bulk_read_field, expected):
     result = Interface(
         'READ_CARDS',

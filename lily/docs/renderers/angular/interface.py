@@ -117,6 +117,13 @@ class Interface:
 
                 lines.append(' ' * base_indent + '}')
 
+            elif schema['type'] in ['integer', 'number']:
+                lines.append('extends Number {}')
+
+            elif schema['type'] in ['string', 'boolean']:
+                lines.append(
+                    'extends {} {{}}'.format(schema['type'].capitalize()))
+
             return '\n'.join(lines)
 
         blocks = [normalize_indentation('''
