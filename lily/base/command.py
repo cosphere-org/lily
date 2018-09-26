@@ -107,17 +107,9 @@ def command(
                     event=name.render_event_name(request, e)).log()
 
                 #
-                # OUTPUT
+                # RESPONSE VALIDATION (Test Server Only)
                 #
-                if e.instance:
-                    body = output.serializer(
-                        e.instance,
-                        context={
-                            'request': request,
-                            'command_name': name.render_command_name(),
-                        }).data
-
-                else:
+                if e.data and request.META.get('SERVER_NAME') == 'testserver':
                     serializer = output.serializer(
                         data=e.data,
                         context={
@@ -125,27 +117,26 @@ def command(
                             'command_name': name.render_command_name(),
                         })
 
-                    #
-                    # RESPONSE VALIDATION (Test Server Only)
-                    #
-                    if request.META.get('SERVER_NAME') == 'testserver':
-                        if serializer.is_valid():
-                            body = serializer.data
+                    if not serializer.is_valid():
+                        e = event.BrokenRequest(
+                            'RESPONSE_DID_NOT_VALIDATE',
+                            context=request,
+                            data={'errors': serializer.errors},
+                            is_critical=True)
 
-                        else:
-                            e = event.BrokenRequest(
-                                'RESPONSE_DID_NOT_VALIDATE',
-                                context=request,
-                                data={'errors': serializer.errors},
-                                is_critical=True)
+                        return e.response_class(e.data)
 
-                            return e.response_class(e.data)
+                #
+                # OUTPUT
+                #
+                body = output.serializer(
+                    e.data or e.instance,
+                    context={
+                        'request': request,
+                        'command_name': name.render_command_name(),
+                    }).data
 
-                    else:
-                        body = serializer.initial_data
-
-                if e.event:
-                    body['@event'] = e.event
+                body['@event'] = e.event
 
                 return e.response_class(body)
 
