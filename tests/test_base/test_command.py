@@ -501,14 +501,14 @@ class CommandTestCase(TestCase):
         response = view.delete(request)
 
         assert response.status_code == 200
-        assert to_json(response) == {'@event': 'SUCCESS!'}
+        assert to_json(response) == {'@event': 'SUCCESS!', '@type': 'empty'}
         assert AtomicContext.exception is None
 
         # -- created exception
         response = view.delete(request)
 
         assert response.status_code == 201
-        assert to_json(response) == {'@event': 'CREATED!'}
+        assert to_json(response) == {'@event': 'CREATED!', '@type': 'empty'}
         assert AtomicContext.exception is None
 
     #

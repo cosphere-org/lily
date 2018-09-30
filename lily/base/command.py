@@ -124,7 +124,10 @@ def command(
                 # OUTPUT
                 #
                 body = output.serializer(
-                    e.data or e.instance,
+                    (
+                        (e.data is not None and e.data) or
+                        (e.instance is not None and e.instance)
+                    ),
                     context={
                         'request': request,
                         'command_name': name.render_command_name(),
