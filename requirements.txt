@@ -1,34 +1,41 @@
 
-# foundations
+# -- core
 Django==2.0
-psycopg2-binary==2.7.5
+
+# -- rest API framework
 djangorestframework==3.7.7
+
+# -- postgres communication
+psycopg2-binary==2.7.5
+
+# -- CLI
 django-click==2.1.0
 
-# utils
+# -- utils
 pytz==2015.7
 
-# authentication / cryptography
+# -- authentication / cryptography
 django-jwt-auth==0.0.2
 itsdangerous==0.24
 
-# async tasks
+# -- async tasks
 celery==4.0.0
 redis==2.10.5
 
-# utils
+# -- http client
 requests==2.13.0
 
-# language detection
-detectlanguage==1.2.1
+# -- language detection
+langid==1.1.6
 
-# search
-# somehow this stopped working and we were forced to use direct from
-# github installation using eggs
-trans==2.1.0  # escape accented characters
+# -- search
+# -- escape accented characters
+trans==2.1.0
+
+# -- inflection
 inflect==0.3.1
 
-# conf
+# -- configuration
 PyYAML==3.11
 
 # -- need by JSONSchemaField

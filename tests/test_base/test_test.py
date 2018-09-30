@@ -8,7 +8,6 @@ from django.http import HttpResponse
 from django.views.generic import View
 from django.urls import re_path
 import pytest
-from mock import Mock
 
 from conf.urls import urlpatterns
 
@@ -17,12 +16,8 @@ from lily.base.meta import Meta, Domain
 from lily.base.access import Access
 from lily.base.input import Input
 from lily.base.output import Output
-from lily.base.events import EventFactory
 from lily.base import serializers
 from lily.base.test import Client
-
-
-event = EventFactory(Mock())
 
 
 class HttpView(View):
@@ -58,7 +53,7 @@ class SampleView(View):
         input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def post(self, request):
-        raise event.Created(
+        raise self.event.Created(
             event='CREATED', context=request, data={'hello': 'post'})
 
     @command(
@@ -74,19 +69,19 @@ class SampleView(View):
 
         _type = request.GET.get('type')
         if _type in ['a', None]:
-            raise event.Executed(
+            raise self.event.Executed(
                 event='LISTED', context=request, data={'hello': 'get.a'})
 
         if _type == 'b':
-            raise event.Executed(
+            raise self.event.Executed(
                 event='LISTED', context=request, data={'hello': 'get.b'})
 
         if _type == 'c':
-            raise event.Executed(
+            raise self.event.Executed(
                 event='LISTED_AGAIN', context=request, data={'hello': 'get.c'})
 
         if _type == 'd':
-            raise event.DoesNotExist(
+            raise self.event.DoesNotExist(
                 event='ERROR_LISTED', context=request, data={'hello': 'get.d'})
 
     @command(
@@ -99,7 +94,7 @@ class SampleView(View):
         input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def put(self, request):
-        raise event.Executed(
+        raise self.event.Executed(
             event='UPDATED', context=request, data={'hello': 'put'})
 
     @command(
@@ -112,7 +107,7 @@ class SampleView(View):
         input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def delete(self, request):
-        raise event.Executed(
+        raise self.event.Executed(
             event='DELETED', context=request, data={'hello': 'delete'})
 
 

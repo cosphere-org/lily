@@ -2,8 +2,10 @@
 
 import json
 
+from .events import EventFactory
 
-class Input:
+
+class Input(EventFactory):
 
     class InputAttrs:
         pass
@@ -17,11 +19,6 @@ class Input:
         self.query_parser = query_parser
         self.with_user = with_user
         self.body_parser = body_parser
-
-    def set_event_factory(self, event_factory):
-        self.event = event_factory
-
-        return self
 
     def parse(self, request, command_name):
         request.input = self.InputAttrs()
@@ -46,7 +43,7 @@ class Input:
         parsed = self.query_parser(data=request.GET)
 
         if not parsed.is_valid():
-            raise self.event.BrokenRequest(
+            raise self.BrokenRequest(
                 'QUERY_DID_NOT_VALIDATE',
                 context=request,
                 data={'errors': parsed.errors})
@@ -59,7 +56,7 @@ class Input:
             data = json.loads(str(request.body, encoding='utf8'))
 
         except (TypeError, ValueError):
-            raise self.event.BrokenRequest(
+            raise self.BrokenRequest(
                 'BODY_JSON_DID_NOT_PARSE', context=request, is_critical=True)
 
         parsed = self.body_parser(
@@ -69,7 +66,7 @@ class Input:
                 'command_name': command_name,
             })
         if not parsed.is_valid():
-            raise self.event.BrokenRequest(
+            raise self.BrokenRequest(
                 'BODY_DID_NOT_VALIDATE',
                 context=request,
                 data={'errors': parsed.errors})
@@ -86,7 +83,7 @@ class Input:
             return User.objects.get(id=request.user_id)
 
         except User.DoesNotExist:
-            raise self.event.AuthError(
+            raise self.AuthError(
                 'COULD_NOT_FIND_USER',
                 context=request,
                 is_critical=True)

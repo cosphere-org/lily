@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 
 import re
 
 from django.contrib.postgres.search import SearchQuery
 
-from .detector import get_search_conf_language
+from .detector import detector
 from .latex.transformer import transform
 from .constants import HASHTAG_ESCAPE_SEQUENCE, HASHTAG_PATTERN
 
@@ -19,7 +18,7 @@ class Query(SearchQuery):
     forbidden_chars = '!"$%&\'()*+,-./:;<=>?@[\\]^_`{|}~'
 
     def __init__(self, value, output_field=None, **extra):
-        language_conf = get_search_conf_language(value)
+        language_conf = detector.detect_db_conf(value)
         value = self.parse_value(value, language_conf)
 
         super(Query, self).__init__(value, config=language_conf)

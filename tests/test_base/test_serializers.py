@@ -7,6 +7,7 @@ import pytest
 from mock import Mock, call
 
 from lily.base import serializers
+from lily.base.events import EventFactory
 
 
 class CommandLinkTestCase(TestCase):
@@ -239,7 +240,7 @@ class CommandLinkTestCase(TestCase):
 
     def test_resolve__warning_if_link_not_completed(self):
 
-        warning = self.mocker.patch.object(serializers.event, 'Warning')
+        warning = self.mocker.patch.object(EventFactory, 'Warning')
         self.mocker.patch.object(
             serializers,
             'COMMANDS_CONF',

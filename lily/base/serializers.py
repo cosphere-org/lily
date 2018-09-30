@@ -3,7 +3,6 @@
 import re
 import os
 from copy import deepcopy
-import logging
 
 from rest_framework import serializers as drf_serializers
 from rest_framework.serializers import (  # noqa
@@ -22,17 +21,12 @@ from rest_framework.serializers import (  # noqa
     ListSerializer,
     SerializerMethodField,
     URLField,
+    NullBooleanField,
     ValidationError,
     ReadOnlyField,
 )
 
 from .events import EventFactory
-
-
-logger = logging.getLogger()
-
-
-event = EventFactory(logger)
 
 
 # FIXME: this will normally be read from the static conf file available
@@ -59,7 +53,7 @@ class MissingTypeError(Exception):
     """
 
 
-class Serializer(drf_serializers.Serializer):
+class Serializer(drf_serializers.Serializer, EventFactory):
 
     def __init__(self, *args, fields_subset=None, **kwargs):
         self._fields_subset = fields_subset
@@ -192,7 +186,7 @@ class CommandSerializer(Serializer):
     result = DictField(required=False)
 
 
-class CommandLink:
+class CommandLink(EventFactory):
 
     def __init__(self, name, parameters=None, description=None):
         self.name = name
@@ -231,7 +225,7 @@ class CommandLink:
         required_parameters = set([p['name'] for p in parameters_conf])
 
         if not required_parameters.issubset(set(resolved_parameters.keys())):
-            event.Warning(
+            self.Warning(
                 event='MISSING_COMMAND_LINK_PARAMS_DETECTED',
                 context=request,
                 data={'from': request.command_name, 'to': self.name},

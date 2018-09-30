@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import logging
 from django.test import TestCase
 from django.contrib.auth.models import User
 from mock import Mock
@@ -10,12 +9,6 @@ from lily.base import parsers
 from lily.base.events import EventFactory
 from lily.base.input import Input
 from .test_parsers import RequestGet
-
-
-logger = logging.getLogger()
-
-
-event = EventFactory(logger)
 
 
 class InputTestCase(TestCase):
@@ -56,7 +49,6 @@ class InputTestCase(TestCase):
             prices = parsers.ListField(child=parsers.IntegerField())
 
         input = Input(query_parser=QueryParser)
-        input.event = event
 
         request = Mock(
             GET=RequestGet(title=['hi there'], prices=[67, 89, 11]),
@@ -72,7 +64,6 @@ class InputTestCase(TestCase):
             prices = parsers.ListField(child=parsers.IntegerField())
 
         input = Input(query_parser=QueryParser)
-        input.event = event
 
         request = Mock(
             GET=RequestGet(),
@@ -95,7 +86,6 @@ class InputTestCase(TestCase):
             prices = parsers.ListField(child=parsers.IntegerField())
 
         input = Input(query_parser=QueryParser)
-        input.event = event
 
         request = Mock(
             GET=RequestGet(title=['hi there'], prices=['what']),
@@ -128,7 +118,6 @@ class InputTestCase(TestCase):
             amount = parsers.IntegerField(max_value=19)
 
         input = Input(body_parser=BodyParser)
-        input.event = event
 
         return input
 
@@ -155,7 +144,7 @@ class InputTestCase(TestCase):
         try:
             input.parse_body(request, command_name='MAKE_IT')
 
-        except input.event.BrokenRequest as error:
+        except EventFactory.BrokenRequest as error:
             assert error.event == 'BODY_JSON_DID_NOT_PARSE'
             assert error.data == {
                 '@type': 'error',
@@ -180,7 +169,7 @@ class InputTestCase(TestCase):
         try:
             input.parse_body(request, command_name='MAKE_IT')
 
-        except input.event.BrokenRequest as error:
+        except EventFactory.BrokenRequest as error:
             assert error.event == 'BODY_DID_NOT_VALIDATE'
             assert error.data == {
                 '@type': 'error',
@@ -207,7 +196,7 @@ class InputTestCase(TestCase):
         try:
             input.parse_body(request, command_name='MAKE_IT')
 
-        except input.event.BrokenRequest as error:
+        except EventFactory.BrokenRequest as error:
             assert error.event == 'BODY_DID_NOT_VALIDATE'
             assert error.data == {
                 '@type': 'error',
@@ -247,7 +236,7 @@ class InputTestCase(TestCase):
         try:
             input.get_user(request)
 
-        except input.event.AuthError as error:
+        except EventFactory.AuthError as error:
             assert error.event == 'COULD_NOT_FIND_USER'
             assert error.data == {
                 '@type': 'error',

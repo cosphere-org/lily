@@ -1,64 +1,150 @@
-# -*- coding: utf-8 -*-
 
-from mock import call
+from unittest import TestCase
 
-from search.detector import get_search_conf_language
+import pytest
 
-
-def test_get_search_conf_language__returns_simple_detect_result(mocker):
-    simple_detect_mock = mocker.patch(
-        'search.detector.detector.detectlanguage.simple_detect')
-    simple_detect_mock.side_effect = ['es', 'en', 'eo']
-
-    # 1st call with spanish
-    result = get_search_conf_language('hola Xavier!')
-
-    assert result == 'spanish'
-
-    # 2nd call with english
-    result = get_search_conf_language('hello J!')
-
-    assert result == 'english'
-
-    # 3rd call with Esperanto
-    result = get_search_conf_language('Saluton PJ!')
-
-    assert result == 'simple'
-
-    # make sure that calls where correctly invoked
-    assert (
-        simple_detect_mock.call_args_list ==
-        [call('hola Xavier!'), call('hello J!'), call('Saluton PJ!')])
+from lily.search.detector import LanguageDetector
+from lily.base.events import EventFactory
 
 
-def test_get_search_conf_language__returned_abbreviation_is_unknown(mocker):
-    simple_detect_mock = mocker.patch(
-        'search.detector.detector.detectlanguage.simple_detect')
-    simple_detect_mock.return_value = 'ff'
+class LanguageDetectorTestCase(TestCase):
 
-    # 1st call with spanish
-    result = get_search_conf_language('whatever')
+    @pytest.fixture(autouse=True)
+    def initfixtures(self, mocker):
+        self.mocker = mocker
 
-    assert result == 'simple'
-    assert simple_detect_mock.call_count == 1
+    def setUp(self):
+        self.detector = LanguageDetector()
 
+    #
+    # DETECT_LANGUAGE
+    #
+    def test_detect_language(self):
 
-def test_get_search_conf_language__external_module_raises_index_error(mocker):
-    simple_detect_mock = mocker.patch(
-        'search.detector.detector.detectlanguage.simple_detect')
-    simple_detect_mock.side_effect = IndexError
+        self.mocker.patch.object(
+            self.detector.identifier, 'rank'
+        ).return_value = [
+            ('en', 0.9),
+            ('de', 0.4),
+        ]
 
-    result = get_search_conf_language('hello you!')
+        assert self.detector.detect('hello world') == [
+            {'abbr': 'en', 'name': 'English'},
+            {'abbr': 'de', 'name': 'German'},
+        ]
 
-    assert result == 'simple'
-    assert simple_detect_mock.call_count == 1
+    def test_detect_language__limit_by_probability(self):
 
+        self.mocker.patch.object(
+            self.detector.identifier, 'rank'
+        ).return_value = [
+            ('en', 0.9),
+            ('fr', 0.6),
+            ('de', 0.55),
+            ('es', 0.1),
+        ]
+        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_PROB', 0.5)
+        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 5)
 
-def test_get_search_conf_language__min_detection_length(mocker):
-    simple_detect_mock = mocker.patch(
-        'search.detector.detector.detectlanguage.simple_detect')
+        assert self.detector.detect('hello world') == [
+            {'abbr': 'en', 'name': 'English'},
+            {'abbr': 'fr', 'name': 'French'},
+            {'abbr': 'de', 'name': 'German'},
+        ]
 
-    result = get_search_conf_language('wat!')
+    def test_detect_language__no_results__too_low_prob(self):
 
-    assert result == 'simple'
-    assert simple_detect_mock.call_count == 0
+        self.mocker.patch.object(
+            self.detector.identifier, 'rank'
+        ).return_value = [
+            ('en', 0.3),
+            ('fr', 0.2),
+        ]
+        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_PROB', 0.4)
+        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 2)
+
+        try:
+            self.detector.detect('hi world')
+
+        except EventFactory.BrokenRequest as e:
+            assert e.data == {
+                '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
+                '@type': 'error',
+                'text': 'hi world',
+                'user_id': None,
+            }
+
+        else:
+            raise AssertionError('should raise exception')
+
+    def test_detect_language__limit_by_length(self):
+
+        self.mocker.patch.object(
+            self.detector.identifier, 'rank'
+        ).return_value = [
+            ('en', 0.9),
+            ('fr', 0.6),
+            ('de', 0.55),
+            ('es', 0.1),
+        ]
+        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_PROB', 0.0)
+        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 2)
+
+        assert self.detector.detect('hello world') == [
+            {'abbr': 'en', 'name': 'English'},
+            {'abbr': 'fr', 'name': 'French'},
+        ]
+
+    def test_detect_language__no_results(self):
+
+        self.mocker.patch.object(
+            self.detector.identifier, 'rank'
+        ).return_value = []
+
+        try:
+            self.detector.detect('hello world')
+
+        except EventFactory.BrokenRequest as e:
+            assert e.data == {
+                '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
+                '@type': 'error',
+                'text': 'hello world',
+                'user_id': None,
+            }
+
+        else:
+            raise AssertionError('should raise exception')
+
+    #
+    # DETECT_DB_CONF
+    #
+    def test_detect_db_conf__returns_simple_detect_result(mocker):
+
+        # 1st call with portuguese
+        conf = LanguageDetector().detect_db_conf(
+            'Cómo estás, cuál es tu nombre')
+
+        assert conf == 'spanish'
+
+        # 2nd call with english
+        conf = LanguageDetector().detect_db_conf(
+            'hello man how are you doing')
+
+        assert conf == 'english'
+
+        # 3rd call with Esperanto
+        conf = LanguageDetector().detect_db_conf('Saluton PJ!')
+
+        assert conf == 'simple'
+
+    def test_detect_db_conf__external_module_raises_index_error(mocker):
+
+        conf = LanguageDetector().detect_db_conf('ftdyftdy')
+
+        assert conf == 'simple'
+
+    def test_detect_db_conf__min_detection_length(mocker):
+
+        conf = LanguageDetector().detect_db_conf('wat!')
+
+        assert conf == 'simple'

@@ -1,14 +1,14 @@
-# -*- coding: utf-8 -*-
+
+from lily.base.events import EventFactory
 
 
-class Authorizer:
+class Authorizer(EventFactory):
     """
     Minimal Authorizer Class.
 
     """
 
-    def __init__(self, event, access_list):
-        self.event = event
+    def __init__(self, access_list):
         self.access_list = access_list
 
     def authorize(self, request):
@@ -17,4 +17,4 @@ class Authorizer:
             request.account_type = request.META['HTTP_X_CS_ACCOUNT_TYPE']
 
         except KeyError:
-            raise self.event.AccessDenied('ACCESS_DENIED', context=request)
+            raise self.AccessDenied('ACCESS_DENIED', context=request)

@@ -1,7 +1,5 @@
-# -*- coding: utf-8 -*-
 
 import re
-import logging
 
 from django.db import transaction
 from django.db.utils import DatabaseError
@@ -18,10 +16,7 @@ from .output import Output
 from .name import ConstantName
 
 
-logger = logging.getLogger()
-
-
-event = EventFactory(logger)
+event = EventFactory()
 
 
 def command(
@@ -42,7 +37,6 @@ def command(
 
         def inner(self, request, *args, **kwargs):
 
-            # -- set event factory instance accessible to all view handlers
             self.event = event
 
             # -- add current command_name for easier reference
@@ -55,14 +49,14 @@ def command(
                 if access.access_list:
                     authorizer = import_from_string(
                         settings.LILY_AUTHORIZER_CLASS
-                    )(event, access.access_list)
+                    )(access.access_list)
                     authorizer.authorize(request)
 
                 #
                 # INPUT
                 #
                 if input:
-                    input.set_event_factory(event).parse(
+                    input.parse(
                         request, command_name=name.render_command_name())
 
                 #

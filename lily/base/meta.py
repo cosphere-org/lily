@@ -11,15 +11,12 @@ from .events import EventFactory
 logger = logging.getLogger()
 
 
-event = EventFactory(logger)
-
-
-class Domain:
+class Domain(EventFactory):
 
     def __init__(self, id, name):
         if (len(id) > settings.LILY_MAX_DOMAIN_ID_LENGTH or
                 re.search(r'\s+', id)):
-            raise event.BrokenRequest(
+            raise self.BrokenRequest(
                 'BROKEN_ARGS_DETECTED',
                 data={
                     'errors': {

@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-import logging
 
 from django.test import TestCase
 from django.http import HttpResponse
@@ -8,68 +5,6 @@ import pytest
 from unittest.mock import Mock, call
 
 from lily.base.events import EventFactory
-
-
-class EventFactoryTestCase(TestCase):
-
-    @pytest.fixture(autouse=True)
-    def initfixtures(self, mocker):
-        self.mocker = mocker
-
-    def test_init__without_logger(self):
-
-        def assert_logger(logger):
-            assert isinstance(logger, logging.Logger) is True
-
-        event = EventFactory()
-
-        assert_logger(event.logger)
-        assert_logger(event.Warning.logger)
-        assert_logger(event.Executed.logger)
-        assert_logger(event.Read.logger)
-        assert_logger(event.Updated.logger)
-        assert_logger(event.Deleted.logger)
-        assert_logger(event.Created.logger)
-        assert_logger(event.BulkCreated.logger)
-        assert_logger(event.BulkUpdated.logger)
-        assert_logger(event.BulkRead.logger)
-        assert_logger(event.BulkDeleted.logger)
-
-        assert_logger(event.Generic.logger)
-
-        assert_logger(event.BrokenRequest.logger)
-        assert_logger(event.DoesNotExist.logger)
-        assert_logger(event.AuthError.logger)
-        assert_logger(event.AccessDenied.logger)
-        assert_logger(event.Conflict.logger)
-        assert_logger(event.ServerError.logger)
-
-    def test_init__with_logger(self):
-
-        logger = Mock()
-
-        event = EventFactory(logger)
-
-        assert event.logger == logger
-        assert event.Warning.logger == logger
-        assert event.Executed.logger == logger
-        assert event.Read.logger == logger
-        assert event.Updated.logger == logger
-        assert event.Deleted.logger == logger
-        assert event.Created.logger == logger
-        assert event.BulkCreated.logger == logger
-        assert event.BulkUpdated.logger == logger
-        assert event.BulkRead.logger == logger
-        assert event.BulkDeleted.logger == logger
-
-        assert event.Generic.logger == logger
-
-        assert event.BrokenRequest.logger == logger
-        assert event.DoesNotExist.logger == logger
-        assert event.AuthError.logger == logger
-        assert event.AccessDenied.logger == logger
-        assert event.Conflict.logger == logger
-        assert event.ServerError.logger == logger
 
 
 class GenericExceptionTestCase(TestCase):
@@ -159,10 +94,9 @@ class BaseSuccessExceptionTestCase(TestCase):
 
         dumps = self.mocker.patch('lily.base.events.json.dumps')
         dumps.return_value = '{XX}'
-        logger = Mock()
-        EventFactory.BaseSuccessException.logger = logger
         e = EventFactory.BaseSuccessException(
             context=Mock(user_id=12), event='HELLO')
+        logger = self.mocker.patch.object(e, 'logger')
 
         e.log()
 
@@ -175,9 +109,9 @@ class BaseSuccessExceptionTestCase(TestCase):
         dumps = self.mocker.patch('lily.base.events.json.dumps')
         dumps.return_value = '{XX}'
         logger = Mock()
-        EventFactory.BaseSuccessException.logger = logger
         e = EventFactory.BaseSuccessException(
             context=EventFactory.Context(), event='HELLO')
+        logger = self.mocker.patch.object(e, 'logger')
 
         e.log()
 

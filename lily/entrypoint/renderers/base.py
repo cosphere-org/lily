@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 from copy import copy, deepcopy
-import logging
 import re
 
 from django.urls import URLResolver, URLPattern
@@ -9,13 +8,7 @@ from django.urls import URLResolver, URLPattern
 from lily.base.events import EventFactory
 
 
-logger = logging.getLogger()
-
-
-event = EventFactory(logger)
-
-
-class BaseRenderer:
+class BaseRenderer(EventFactory):
 
     def __init__(self, urlpatterns):
         self.urlpatterns = urlpatterns
@@ -41,7 +34,7 @@ class BaseRenderer:
                         command_name = fn.command_conf['name']
 
                     except AttributeError:
-                        raise event.BrokenRequest(
+                        raise self.BrokenRequest(
                             'NOT_LILY_COMPATIBLE_VIEW_DETECTED',
                             data={
                                 'name': views_index[path]['name'],
@@ -165,6 +158,6 @@ class BaseRenderer:
             if view_path_count > 1]
 
         if duplicates:
-            raise event.ServerError(
+            raise self.ServerError(
                 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED',
                 data={'duplicates': duplicates})

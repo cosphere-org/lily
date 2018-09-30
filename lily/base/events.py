@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
 
 import logging
 import json
 
-from django.http.request import HttpRequest
 from django.http import JsonResponse, HttpResponse
 
 
@@ -61,49 +59,8 @@ class HttpGenericResponse(HttpResponse):
 
 class EventFactory:
 
-    def __init__(self, logger=None):
-        self.logger = logger or logging.getLogger()
-
-        # -- warning - no http response
-        self.Warning.logger = self.logger
-
-        self.Executed.logger = self.logger
-
-        # -- CRUD
-        self.Read.logger = self.logger
-        self.Updated.logger = self.logger
-        self.Deleted.logger = self.logger
-        self.Created.logger = self.logger
-
-        # -- BULK CRUD
-        self.BulkCreated.logger = self.logger
-        self.BulkUpdated.logger = self.logger
-        self.BulkRead.logger = self.logger
-        self.BulkDeleted.logger = self.logger
-
-        # -- GENERIC
-        self.Generic.logger = self.logger
-
-        #
-        # ERRORS
-        #
-        # -- 400
-        self.BrokenRequest.logger = self.logger
-
-        # -- 404
-        self.DoesNotExist.logger = self.logger
-
-        # -- 401
-        self.AuthError.logger = self.logger
-
-        # -- 403
-        self.AccessDenied.logger = self.logger
-
-        # -- 409
-        self.Conflict.logger = self.logger
-
-        # -- 500
-        self.ServerError.logger = self.logger
+    def __init__(self):
+        self.logger = logging.getLogger()
 
     class Context:
 
@@ -132,6 +89,7 @@ class EventFactory:
         def __init__(self, status_code, content):
             self.status_code = status_code
             self.content = content
+            self.logger = logging.getLogger()
 
         def extend(self, method, path):
             """
@@ -178,6 +136,7 @@ class EventFactory:
             self.event = event
             self.instance = instance
             self.data = data or {}
+            self.logger = logging.getLogger()
 
         def extend(self, event=None, context=None):
             """
@@ -277,6 +236,7 @@ class EventFactory:
                 '@type': 'error',
                 '@event': event,
             })
+            self.logger = logging.getLogger()
 
             origin = getattr(context, 'origin', None)
             if origin:
@@ -292,13 +252,13 @@ class EventFactory:
             message = '{event}: {data}'.format(
                 event=event, data=json.dumps(data))
             if is_critical:
-                if isinstance(context, HttpRequest):
+                if hasattr(context, 'data'):
                     self.logger.error(
-                        message, exc_info=True, extra={'request': context})
+                        message, exc_info=True, extra={'data': context.data})
 
                 else:
                     self.logger.error(
-                        message, exc_info=True, extra={'data': context.data})
+                        message, exc_info=True, extra={'request': context})
 
             else:
                 self.logger.error(message)

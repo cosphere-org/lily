@@ -1,0 +1,368 @@
+- abbr: aa
+  name: Afar
+- abbr: ab
+  name: Abkhazian
+- abbr: af
+  name: Afrikaans
+- abbr: ak
+  name: Akan
+- abbr: sq
+  name: Albanian
+- abbr: am
+  name: Amharic
+- abbr: ar
+  name: Arabic
+- abbr: an
+  name: Aragonese
+- abbr: hy
+  name: Armenian
+- abbr: as
+  name: Assamese
+- abbr: av
+  name: Avaric
+- abbr: ae
+  name: Avestan
+- abbr: ay
+  name: Aymara
+- abbr: az
+  name: Azerbaijani
+- abbr: ba
+  name: Bashkir
+- abbr: bm
+  name: Bambara
+- abbr: eu
+  name: Basque
+- abbr: be
+  name: Belarusian
+- abbr: bn
+  name: Bengali
+- abbr: bh
+  name: Bihari languages
+- abbr: bi
+  name: Bislama
+- abbr: bs
+  name: Bosnian
+- abbr: br
+  name: Breton
+- abbr: bg
+  name: Bulgarian
+- abbr: my
+  name: Burmese
+- abbr: ca
+  name: Catalan; Valencian
+- abbr: ch
+  name: Chamorro
+- abbr: ce
+  name: Chechen
+- abbr: zh
+  name: Chinese
+- abbr: cu
+  name: Church Slavic; Old Slavonic; Church Slavonic; Old Bulgarian; Old Church Slavonic
+- abbr: cv
+  name: Chuvash
+- abbr: kw
+  name: Cornish
+- abbr: co
+  name: Corsican
+- abbr: cr
+  name: Cree
+- abbr: cs
+  name: Czech
+- abbr: da
+  name: Danish
+- abbr: dv
+  name: Divehi; Dhivehi; Maldivian
+- abbr: nl
+  name: Dutch; Flemish
+- abbr: dz
+  name: Dzongkha
+- abbr: en
+  name: English
+- abbr: eo
+  name: Esperanto
+- abbr: et
+  name: Estonian
+- abbr: ee
+  name: Ewe
+- abbr: fo
+  name: Faroese
+- abbr: fj
+  name: Fijian
+- abbr: fi
+  name: Finnish
+- abbr: fr
+  name: French
+- abbr: fy
+  name: Western Frisian
+- abbr: ff
+  name: Fulah
+- abbr: ka
+  name: Georgian
+- abbr: de
+  name: German
+- abbr: gd
+  name: Gaelic; Scottish Gaelic
+- abbr: ga
+  name: Irish
+- abbr: gl
+  name: Galician
+- abbr: gv
+  name: Manx
+- abbr: el
+  name: Greek, Modern (1453-)
+- abbr: gn
+  name: Guarani
+- abbr: gu
+  name: Gujarati
+- abbr: ht
+  name: Haitian; Haitian Creole
+- abbr: ha
+  name: Hausa
+- abbr: he
+  name: Hebrew
+- abbr: hz
+  name: Herero
+- abbr: hi
+  name: Hindi
+- abbr: ho
+  name: Hiri Motu
+- abbr: hr
+  name: Croatian
+- abbr: hu
+  name: Hungarian
+- abbr: ig
+  name: Igbo
+- abbr: is
+  name: Icelandic
+- abbr: io
+  name: Ido
+- abbr: ii
+  name: Sichuan Yi; Nuosu
+- abbr: iu
+  name: Inuktitut
+- abbr: ie
+  name: Interlingue; Occidental
+- abbr: ia
+  name: Interlingua (International Auxiliary Language Association)
+- abbr: id
+  name: Indonesian
+- abbr: ik
+  name: Inupiaq
+- abbr: it
+  name: Italian
+- abbr: jv
+  name: Javanese
+- abbr: ja
+  name: Japanese
+- abbr: kl
+  name: Kalaallisut; Greenlandic
+- abbr: kn
+  name: Kannada
+- abbr: ks
+  name: Kashmiri
+- abbr: kr
+  name: Kanuri
+- abbr: kk
+  name: Kazakh
+- abbr: km
+  name: Central Khmer
+- abbr: ki
+  name: Kikuyu; Gikuyu
+- abbr: rw
+  name: Kinyarwanda
+- abbr: ky
+  name: Kirghiz; Kyrgyz
+- abbr: kv
+  name: Komi
+- abbr: kg
+  name: Kongo
+- abbr: ko
+  name: Korean
+- abbr: kj
+  name: Kuanyama; Kwanyama
+- abbr: ku
+  name: Kurdish
+- abbr: lo
+  name: Lao
+- abbr: la
+  name: Latin
+- abbr: lv
+  name: Latvian
+- abbr: li
+  name: Limburgan; Limburger; Limburgish
+- abbr: ln
+  name: Lingala
+- abbr: lt
+  name: Lithuanian
+- abbr: lb
+  name: Luxembourgish; Letzeburgesch
+- abbr: lu
+  name: Luba-Katanga
+- abbr: lg
+  name: Ganda
+- abbr: mk
+  name: Macedonian
+- abbr: mh
+  name: Marshallese
+- abbr: ml
+  name: Malayalam
+- abbr: mi
+  name: Maori
+- abbr: mr
+  name: Marathi
+- abbr: ms
+  name: Malay
+- abbr: mg
+  name: Malagasy
+- abbr: mt
+  name: Maltese
+- abbr: mn
+  name: Mongolian
+- abbr: na
+  name: Nauru
+- abbr: nv
+  name: Navajo; Navaho
+- abbr: nr
+  name: Ndebele, South; South Ndebele
+- abbr: nd
+  name: Ndebele, North; North Ndebele
+- abbr: ng
+  name: Ndonga
+- abbr: ne
+  name: Nepali
+- abbr: nn
+  name: Norwegian Nynorsk; Nynorsk, Norwegian
+- abbr: nb
+  name: Bokmål, Norwegian; Norwegian Bokmål
+- abbr: 'no'
+  name: Norwegian
+- abbr: ny
+  name: Chichewa; Chewa; Nyanja
+- abbr: oc
+  name: Occitan (post 1500); Provençal
+- abbr: oj
+  name: Ojibwa
+- abbr: or
+  name: Oriya
+- abbr: om
+  name: Oromo
+- abbr: os
+  name: Ossetian; Ossetic
+- abbr: pa
+  name: Panjabi; Punjabi
+- abbr: fa
+  name: Persian
+- abbr: pi
+  name: Pali
+- abbr: pl
+  name: Polish
+- abbr: pt
+  name: Portuguese
+- abbr: ps
+  name: Pushto; Pashto
+- abbr: qu
+  name: Quechua
+- abbr: rm
+  name: Romansh
+- abbr: ro
+  name: Romanian; Moldavian; Moldovan
+- abbr: rn
+  name: Rundi
+- abbr: ru
+  name: Russian
+- abbr: sg
+  name: Sango
+- abbr: sa
+  name: Sanskrit
+- abbr: si
+  name: Sinhala; Sinhalese
+- abbr: sk
+  name: Slovak
+- abbr: sl
+  name: Slovenian
+- abbr: se
+  name: Northern Sami
+- abbr: sm
+  name: Samoan
+- abbr: sn
+  name: Shona
+- abbr: sd
+  name: Sindhi
+- abbr: so
+  name: Somali
+- abbr: st
+  name: Sotho, Southern
+- abbr: es
+  name: Spanish; Castilian
+- abbr: sc
+  name: Sardinian
+- abbr: sr
+  name: Serbian
+- abbr: ss
+  name: Swati
+- abbr: su
+  name: Sundanese
+- abbr: sw
+  name: Swahili
+- abbr: sv
+  name: Swedish
+- abbr: ty
+  name: Tahitian
+- abbr: ta
+  name: Tamil
+- abbr: tt
+  name: Tatar
+- abbr: te
+  name: Telugu
+- abbr: tg
+  name: Tajik
+- abbr: tl
+  name: Tagalog
+- abbr: th
+  name: Thai
+- abbr: bo
+  name: Tibetan
+- abbr: ti
+  name: Tigrinya
+- abbr: to
+  name: Tonga (Tonga Islands)
+- abbr: tn
+  name: Tswana
+- abbr: ts
+  name: Tsonga
+- abbr: tk
+  name: Turkmen
+- abbr: tr
+  name: Turkish
+- abbr: tw
+  name: Twi
+- abbr: ug
+  name: Uighur; Uyghur
+- abbr: uk
+  name: Ukrainian
+- abbr: ur
+  name: Urdu
+- abbr: uz
+  name: Uzbek
+- abbr: ve
+  name: Venda
+- abbr: vi
+  name: Vietnamese
+- abbr: vo
+  name: Volapük
+- abbr: cy
+  name: Welsh
+- abbr: wa
+  name: Walloon
+- abbr: wo
+  name: Wolof
+- abbr: xh
+  name: Xhosa
+- abbr: yi
+  name: Yiddish
+- abbr: yo
+  name: Yoruba
+- abbr: za
+  name: Zhuang; Chuang
+- abbr: zu
+  name: Zulu

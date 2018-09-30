@@ -1,6 +1,4 @@
-# -*- coding: utf-8 -*-
 
-import logging
 import json
 from contextlib import ContextDecorator
 
@@ -23,10 +21,7 @@ from lily.base import serializers, parsers
 from lily.base.events import EventFactory
 
 
-logger = logging.getLogger()
-
-
-event = EventFactory(logger)
+event = EventFactory()
 
 
 def to_json(response, content_field='content'):
@@ -309,8 +304,8 @@ class CommandTestCase(TestCase):
             'output': TestView.output,
         }
         assert source.filepath == '/tests/test_base/test_command.py'
-        assert source.start_line == 136
-        assert source.end_line == 147
+        assert source.start_line == 131
+        assert source.end_line == 142
 
     #
     # INPUT

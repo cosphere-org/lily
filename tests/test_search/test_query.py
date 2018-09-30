@@ -81,7 +81,7 @@ def test_query__get_transformed_value__with_latex(
         value, language_conf, expected, mocker):
 
     mocker.patch(
-        'search.query.get_search_conf_language'
+        'search.query.detector.detect_db_conf'
     ).return_value = language_conf
 
     q = search.Query('')
@@ -91,7 +91,7 @@ def test_query__get_transformed_value__with_latex(
 
 def test_query__to_sql__with_config(mocker):
     mocker.patch(
-        'search.query.get_search_conf_language'
+        'search.query.detector.detect_db_conf'
     ).return_value = 'simple'
 
     q = search.Query('hi there')
@@ -106,7 +106,7 @@ def test_query__to_sql__with_config(mocker):
 
 def test_query__auto_detects_language(mocker):
     mocker.patch(
-        'search.query.get_search_conf_language'
+        'search.query.detector.detect_db_conf'
     ).return_value = 'polish'
     parse_value_mock = mocker.patch.object(
         search.Query, 'parse_value')

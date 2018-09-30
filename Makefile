@@ -36,6 +36,8 @@ upgrade_version_major:  ## upgrade version by major X.0.0
 	source env.sh && python lily/manage.py upgrade_version MAJOR
 
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# FIXME: this should be moved to the API GATEWAY
 render_angular_for_web_ui:  ## render angular client to WEB UI
 	source env.sh && \
 	python lily/manage.py render_angular \
@@ -46,6 +48,8 @@ render_angular_for_web_ui:  ## render angular client to WEB UI
 		--exclude_domain SCENER \
 		--exclude_domain QUIZZER
 
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# FIXME: this should be moved to the API GATEWAY
 render_angular_for_bricks_ui:  ## render angular client to BRICKS UI
 	source env.sh && \
 	python lily/manage.py render_angular \

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import logging
 import os
 import string
 
@@ -9,10 +8,7 @@ from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadData
 from .events import EventFactory
 
 
-logger = logging.getLogger()
-
-
-event = EventFactory(logger)
+event = EventFactory()
 
 
 def sign_payload(email, payload, secret, salt):
