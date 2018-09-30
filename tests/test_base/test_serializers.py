@@ -738,9 +738,8 @@ class EmptySerializerTestCase(TestCase):
 
     def test__passes_nothing(self):
 
-        s = serializers.EmptySerializer(data={'hi': 'there'})
+        s = serializers.EmptySerializer({'hi': 'there'})
 
-        assert s.is_valid()
         assert s.data == {'@type': 'empty'}
 
 
@@ -748,9 +747,8 @@ class ObjectSerializerTestCase(TestCase):
 
     def test__passes_everything(self):
 
-        s = serializers.ObjectSerializer(data={'hi': 'there'})
+        s = serializers.ObjectSerializer({'hi': 'there'})
 
-        assert s.is_valid()
         assert s.data == {
             '@type': 'object',
             'hi': 'there',
