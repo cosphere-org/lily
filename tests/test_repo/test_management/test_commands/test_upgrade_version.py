@@ -68,7 +68,8 @@ class UpgradeVersionTestCase(TestCase):
             last_commit_hash='111111',
             path='/hello/world')
         self.mocker.patch(
-            'lily.repo.management.commands.upgrade_version.config', config)
+            'lily.repo.management.commands.upgrade_version.Config',
+        ).return_value = config
 
         result = self.runner.invoke(
             command, [VersionRenderer.VERSION_UPGRADE.MAJOR])

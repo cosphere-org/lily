@@ -36,8 +36,8 @@ class EntryPointViewTestCase(TestCase):
                     setattr(self, k, v)
 
         self.mocker.patch(
-            'entrypoint.views.config',
-            Config(version='2.5.6', name='test'))
+            'entrypoint.views.Config'
+        ).return_value = Config(version='2.5.6', name='test')
 
         self.cache_filepath = str(self.tmpdir.join('.cache.json'))
         self.mocker.patch(

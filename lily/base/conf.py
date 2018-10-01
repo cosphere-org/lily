@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-import os
 
 import yaml
 
@@ -80,7 +77,3 @@ class Config:
                 ''', 0).format(description=self.config['description']))
 
             f.write('\n{}\n'.format('\n'.join(blocks)))
-
-
-if os.environ.get('DJANGO_SETTINGS_MODULE'):
-    config = Config()

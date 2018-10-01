@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import json
 from time import time
@@ -15,7 +14,7 @@ from lily.base.access import Access, AccessSerializer
 from lily.base.input import Input
 from lily.base.output import Output
 from .renderers.commands import CommandsRenderer
-from lily.base import config
+from lily.base.conf import Config
 
 
 def get_cache_filepath():
@@ -104,7 +103,9 @@ class EntryPointView(View):
 
         refresh = request.input.query['refresh']
 
-        commands = self.get_commands(refresh=refresh)
+        config = Config()
+
+        commands = self.get_commands(refresh=refresh, config=config)
 
         if command_names:
             commands = {
@@ -139,7 +140,7 @@ class EntryPointView(View):
                 'commands': commands,
             })
 
-    def get_commands(self, refresh):
+    def get_commands(self, refresh, config):
 
         cache_filepath = get_cache_filepath()
 

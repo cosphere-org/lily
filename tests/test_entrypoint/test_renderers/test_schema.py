@@ -552,8 +552,9 @@ class SchemaRendererTestCase(TestCase):
     def test_get_repository_uri(self):
 
         self.mocker.patch(
-            'lily.entrypoint.renderers.schema.config',
-            Mock(repository='http://repo', last_commit_hash='1234'))
+            'lily.entrypoint.renderers.schema.Config'
+        ).return_value = Mock(
+            repository='http://repo', last_commit_hash='1234')
 
         schema = SchemaRenderer(HumanSerializer).render()
         schema.meta = {

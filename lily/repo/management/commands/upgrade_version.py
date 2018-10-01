@@ -5,7 +5,7 @@ import djclick as click
 from ...repo import Repo
 from ...version import VersionRenderer
 from ...changelog import ChangelogRenderer
-from lily.base.conf import config
+from lily.base.conf import Config
 from lily.base.utils import normalize_indentation
 
 
@@ -29,6 +29,7 @@ def command(upgrade_type):
       previous commit messages [TO BE ADDED]
 
     """
+    config = Config()
     repo = Repo()
     changelog = ChangelogRenderer()
     version = VersionRenderer()

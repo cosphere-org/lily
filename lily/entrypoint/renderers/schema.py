@@ -5,7 +5,8 @@ import re
 import os
 
 from lily.conf import settings
-from lily.base import serializers, parsers, config
+from lily.base import serializers, parsers
+from lily.base.conf import Config
 
 
 class MissingReturnStatementError(Exception):
@@ -435,6 +436,7 @@ class Schema:
         TODO: Make it to work for github too.
 
         """
+        config = Config()
 
         return os.path.join(
             config.repository,
