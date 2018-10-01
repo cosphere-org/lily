@@ -84,6 +84,18 @@ class Serializer(drf_serializers.Serializer, EventFactory):
                 for f in self._fields_subset
             }
 
+        # -- when dealing with DICT
+        elif isinstance(instance, dict):
+            transformed = deepcopy(instance)
+            for field_name, value in instance.items():
+                if field_name.startswith('@'):
+                    new_field_name = re.sub(r'^@', 'at__', field_name)
+                    transformed[new_field_name] = value
+                    del transformed[field_name]
+
+            body = super(Serializer, self).to_representation(transformed)
+
+        # -- when dealing normal instance
         else:
             body = super(Serializer, self).to_representation(instance)
 

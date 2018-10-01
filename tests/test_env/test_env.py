@@ -2,8 +2,8 @@
 import os
 from unittest import TestCase
 
+from django.core.exceptions import ValidationError
 from lily.env import env
-from lily.base.events import EventFactory
 
 
 class EnvParserTestCase(TestCase):
@@ -68,7 +68,7 @@ class EnvParserTestCase(TestCase):
 
             secret_key = env.CharField(required=False, allow_null=True)
 
-            is_important = env.NullBooleanField(required=False)
+            is_important = env.BooleanField(required=False, allow_null=True)
 
             aws_url = env.URLField(required=False, allow_null=True)
 
@@ -102,19 +102,8 @@ class EnvParserTestCase(TestCase):
         try:
             MyEnvParser().parse()
 
-        except EventFactory.BrokenRequest as e:
-            assert e.data == {
-                '@event': 'ENV_DID_NOT_VALIDATE',
-                '@type': 'error',
-                'user_id': None,
-                'errors': {
-                    'secret_key': [
-                        'Ensure this field has no more than 12 characters.'],
-                    'is_important': ['"whatever" is not a valid boolean.'],
-                    'aws_url': ['Enter a valid URL.'],
-                    'number_of_workers': ['A valid integer is required.']
-                },
-            }
+        except ValidationError as e:
+            assert e.args[0] == 'Enter a valid URL.'
 
         else:
             raise AssertionError('should raise exception')
