@@ -27,12 +27,6 @@ ALL_LANGUAGES = load_from_data(
 
 class LanguageDetector(EventFactory):
 
-    DETECT_THRESHOLD_PROB = 0.3
-    """
-    Consider only those languages that have rank probability higher that 0.3
-
-    """
-
     DETECT_THRESHOLD_LEN = 3
     """
     Consider maximum 3 detected languages.
@@ -44,6 +38,12 @@ class LanguageDetector(EventFactory):
     Minimum length of text which will trigger the language detection mechanism.
     Every text with length below this threshold automatically is treated as
     following ``simple`` configuration.
+
+    """
+
+    DETECT_THRESHOLD_PROB = 0.01
+    """
+    Consider only those languages that have rank probability higher that 0.3
 
     """
 
@@ -69,13 +69,15 @@ class LanguageDetector(EventFactory):
             for l in ALL_LANGUAGES
             if l['abbr'] in self.language_abbrs]
 
+        self.languages_index = {l['abbr']: l for l in self.languages}
+
     def detect(self, text):
 
-        language_abbrs = set([
+        language_abbrs = [
             lang
             for lang, prob in self.identifier.rank(text)
             if prob > self.DETECT_THRESHOLD_PROB
-        ][:self.DETECT_THRESHOLD_LEN])
+        ][:self.DETECT_THRESHOLD_LEN]
 
         if not language_abbrs:
             raise self.BrokenRequest(
@@ -84,9 +86,9 @@ class LanguageDetector(EventFactory):
                 is_critical=True)
 
         return [
-            l
-            for l in self.languages
-            if l['abbr'] in language_abbrs]
+            self.languages_index[abbr]
+            for abbr in language_abbrs
+            if abbr in self.languages_index]
 
     def detect_db_conf(self, text):
 

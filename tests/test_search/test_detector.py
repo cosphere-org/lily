@@ -40,10 +40,8 @@ class LanguageDetectorTestCase(TestCase):
         ).return_value = [
             ('en', 0.9),
             ('fr', 0.6),
-            ('de', 0.55),
-            ('es', 0.1),
+            ('de', 0.55)
         ]
-        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_PROB', 0.5)
         self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 5)
 
         assert self.detector.detect('hello world') == [
@@ -52,16 +50,11 @@ class LanguageDetectorTestCase(TestCase):
             {'abbr': 'de', 'name': 'German'},
         ]
 
-    def test_detect_language__no_results__too_low_prob(self):
+    def test_detect_language__no_machted(self):
 
         self.mocker.patch.object(
             self.detector.identifier, 'rank'
-        ).return_value = [
-            ('en', 0.3),
-            ('fr', 0.2),
-        ]
-        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_PROB', 0.4)
-        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 2)
+        ).return_value = []
 
         try:
             self.detector.detect('hi world')
@@ -87,7 +80,6 @@ class LanguageDetectorTestCase(TestCase):
             ('de', 0.55),
             ('es', 0.1),
         ]
-        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_PROB', 0.0)
         self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 2)
 
         assert self.detector.detect('hello world') == [
@@ -118,7 +110,13 @@ class LanguageDetectorTestCase(TestCase):
     #
     # DETECT_DB_CONF
     #
-    def test_detect_db_conf__returns_simple_detect_result(mocker):
+    def test_detect_db_conf__returns_simple_cases(self):
+
+        conf = LanguageDetector().detect_db_conf('orange')
+
+        assert conf == 'english'
+
+    def test_detect_db_conf__returns_detect_results(self):
 
         # 1st call with portuguese
         conf = LanguageDetector().detect_db_conf(
@@ -133,17 +131,11 @@ class LanguageDetectorTestCase(TestCase):
         assert conf == 'english'
 
         # 3rd call with Esperanto
-        conf = LanguageDetector().detect_db_conf('Saluton PJ!')
+        conf = LanguageDetector().detect_db_conf('hallo wie gehts')
 
-        assert conf == 'simple'
+        assert conf == 'german'
 
-    def test_detect_db_conf__external_module_raises_index_error(mocker):
-
-        conf = LanguageDetector().detect_db_conf('ftdyftdy')
-
-        assert conf == 'simple'
-
-    def test_detect_db_conf__min_detection_length(mocker):
+    def test_detect_db_conf__min_detection_length(self):
 
         conf = LanguageDetector().detect_db_conf('wat!')
 
