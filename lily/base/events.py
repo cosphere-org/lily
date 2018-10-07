@@ -261,7 +261,10 @@ class EventFactory:
                         message, exc_info=True, extra={'request': context})
 
             else:
-                self.logger.error(message)
+                # -- this will not trigger the sentry notification
+                # -- since sentry logger is ignoring log with level below
+                # -- ERROR
+                self.logger.info(message)
 
     class BrokenRequest(BaseErrorException):
         response_class = Json400

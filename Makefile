@@ -38,6 +38,9 @@ upgrade_version_major:  ## upgrade version by major X.0.0
 
 # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # FIXME: this should be moved to the API GATEWAY
+# FIXME: this guys should connect not with services running but with the
+# repositories and display the dates at which certain entrypoints where
+# uploaded!!!
 render_angular_for_web_ui:  ## render angular client to WEB UI
 	source env.sh && \
 	python lily/manage.py render_angular \
