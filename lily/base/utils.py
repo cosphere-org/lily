@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 
 import importlib
 import re
+from time import time
 
 
 def import_from_string(path):
@@ -51,3 +51,19 @@ def normalize_indentation(text, min_indent=4):
     # -- add `min_indent`
     lines = [min_indent * ' ' + line for line in lines]
     return '\n'.join(lines)
+
+
+class Timer:
+
+    def __init__(self):
+        self.start = time()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        pass
+
+    @property
+    def elapsed(self):
+        return time() - self.start
