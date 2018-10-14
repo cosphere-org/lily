@@ -120,15 +120,6 @@ class BaseSuccessExceptionTestCase(TestCase):
             call({'user_id': 'anonymous', '@event': 'HELLO'})]
 
 
-class BaseErrorExceptionTestCase(TestCase):
-
-    def test_create_empty__defaults(self):
-        pass
-
-    def test_context_attributes_added(self):
-        pass
-
-
 @pytest.mark.parametrize(
     'exception, expected_status_code', [
 

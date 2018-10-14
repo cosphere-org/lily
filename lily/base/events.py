@@ -221,6 +221,8 @@ class EventFactory:
     #
     class BaseErrorException(Exception):
 
+        is_critical = None
+
         def __init__(
                 self,
                 event,
@@ -251,7 +253,7 @@ class EventFactory:
             # -- notify about the event
             message = '{event}: {data}'.format(
                 event=event, data=json.dumps(data))
-            if is_critical:
+            if is_critical or self.is_critical:
                 if hasattr(context, 'data'):
                     self.logger.error(
                         message, exc_info=True, extra={'data': context.data})
@@ -281,8 +283,12 @@ class EventFactory:
     class Conflict(BaseErrorException):
         response_class = Json409
 
+        is_critical = True
+
     class ServerError(BaseErrorException):
         response_class = Json500
+
+        is_critical = True
 
     class Warning(BaseErrorException):
         """
