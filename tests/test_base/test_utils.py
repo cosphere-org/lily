@@ -111,9 +111,28 @@ class TimerTestCase(TestCase):
     #
     # ELASED
     #
-    def test_elased(self):
+    def test_elapsed(self):
 
-        self.mocker.patch('lily.base.utils.time').side_effect = [134, 145]
+        M = 60  # noqa
+        H = 3600  # noqa
+
+        self.mocker.patch('lily.base.utils.time').side_effect = [
+            # -- 1st
+            134,
+            134 + 11.012,
+            # -- 2nd
+            146,
+            146 + (3 * M + 17.189000),
+            # -- 3rd
+            189,
+            189 + (2 * H + 7 * M + 17),
+        ]
 
         with Timer() as t:
-            assert t.elapsed == 11
+            assert t.elapsed == '00:00:11.012'
+
+        with Timer() as t:
+            assert t.elapsed == '00:03:17.189'
+
+        with Timer() as t:
+            assert t.elapsed == '02:07:17.000'

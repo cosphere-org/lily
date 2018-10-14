@@ -66,4 +66,25 @@ class Timer:
 
     @property
     def elapsed(self):
-        return time() - self.start
+        total_seconds = time() - self.start
+
+        # -- hours
+        hours = int(total_seconds // 3600)
+        total_seconds = total_seconds - 3600 * hours
+
+        # -- minutes
+        minutes = int(total_seconds // 60)
+        total_seconds = total_seconds - 60 * minutes
+
+        # -- seconds
+        seconds = int(total_seconds)
+        total_seconds = total_seconds - int(total_seconds)
+
+        # -- miliseconds
+        miliseconds = int(round(1000 * total_seconds, 3))
+
+        return '{hours}:{minutes}:{seconds}.{miliseconds}'.format(
+            hours=str(hours).rjust(2, '0'),
+            minutes=str(minutes).rjust(2, '0'),
+            seconds=str(seconds).rjust(2, '0'),
+            miliseconds=str(miliseconds).rjust(3, '0'))
