@@ -44,6 +44,7 @@ class CommandSerializer(serializers.Serializer):
 class EntryPointView(View):
 
     class EntryPointSerializer(serializers.Serializer):
+
         _type = 'entrypoint'
 
         version = serializers.CharField()

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import os
 
@@ -32,7 +31,7 @@ LILY_CONFIG_FILE_PATH = os.path.join(
     LILY_PROJECT_BASE, 'lily/conf/config.yaml')
 
 LILY_CACHE_DIR = getattr(
-    settings, 'LILY_CACHE_DIR', os.path.join(BASE_DIR, '.commands'))
+    settings, 'LILY_CACHE_DIR', os.path.join(LILY_PROJECT_BASE, '.lily'))
 
 LILY_CACHE_TTL = getattr(settings, 'LILY_CACHE_TTL', 10 * 60)  # 10 minutes
 

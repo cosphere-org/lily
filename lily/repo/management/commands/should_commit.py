@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 # TO BE ADDED
 # Command which informs the user if he did add too much code as for one commit

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 import redis
 from celery.utils.log import get_task_logger

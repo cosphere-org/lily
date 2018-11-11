@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from .utils import to_camelcase
 from lily.base.utils import normalize_indentation

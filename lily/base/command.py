@@ -10,6 +10,7 @@ from .events import EventFactory
 from . import serializers
 from .utils import import_from_string
 from .access import Access
+from .context import Context
 from .source import Source
 from .input import Input
 from .output import Output
@@ -39,8 +40,9 @@ def command(
 
             self.event = event
 
-            # -- add current command_name for easier reference
-            request.command_name = name.render_command_name()
+            request._lily_context = Context(
+                command_name=name.render_command_name(),
+                request=request)
 
             try:
                 #
@@ -57,7 +59,8 @@ def command(
                 #
                 if input:
                     input.parse(
-                        request, command_name=name.render_command_name())
+                        request,
+                        command_name=request._lily_context.command_name)
 
                 #
                 # IS_ATOMIC
@@ -108,7 +111,7 @@ def command(
                         data=e.data,
                         context={
                             'request': request,
-                            'command_name': name.render_command_name(),
+                            'command_name': request._lily_context.command_name,
                         })
 
                     if not serializer.is_valid():
@@ -130,7 +133,7 @@ def command(
                     ),
                     context={
                         'request': request,
-                        'command_name': name.render_command_name(),
+                        'command_name': request._lily_context.command_name,
                     }).data
 
                 body['@event'] = e.event

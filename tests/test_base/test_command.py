@@ -279,7 +279,7 @@ class CommandTestCase(TestCase):
     #
     # CONF
     #
-    def test_conf__command_name_attached_to_the_request(self):
+    def test_conf__context_attached_to_the_request(self):
 
         u = User.objects.create_user(username='jacky')
         request = Request()
@@ -289,7 +289,8 @@ class CommandTestCase(TestCase):
 
         view.post(request, 15)
 
-        assert request.command_name == 'MAKE_IT'
+        assert request._lily_context.command_name == 'MAKE_IT'
+        assert request._lily_context.correlation_id is not None
 
     def test_conf__is_saved_on_function(self):
 
@@ -563,7 +564,7 @@ class CommandTestCase(TestCase):
     def test_generic_response(self):
 
         # -- 201
-        request = Mock(GET={'status_code': '201'})
+        request = Mock(GET={'status_code': '201'}, META={})
         view = GenericView()
 
         response = view.get(request)
@@ -576,7 +577,7 @@ class CommandTestCase(TestCase):
         }
 
         # -- 404
-        request = Mock(GET={'status_code': '404'})
+        request = Mock(GET={'status_code': '404'}, META={})
         view = GenericView()
 
         response = view.get(request)
@@ -594,7 +595,7 @@ class CommandTestCase(TestCase):
     def test_http_response(self):
 
         # -- 404
-        request = Mock(GET={'status_code': '404'})
+        request = Mock(GET={'status_code': '404'}, META={})
         view = HttpView()
 
         response = view.get(request)

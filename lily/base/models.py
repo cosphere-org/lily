@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from django.db import models
 from django.db.models.expressions import RawSQL
@@ -91,6 +90,12 @@ def null_or(other):
             },
             other,
         ],
+    }
+
+
+def one_of(*options):
+    return {
+        'oneOf': options,
     }
 
 
