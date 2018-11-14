@@ -93,7 +93,7 @@ def null_or(other):
     }
 
 
-def one_of(*options):
+def one_of(options):
     return {
         'oneOf': options,
     }
