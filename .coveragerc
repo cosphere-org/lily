@@ -1,0 +1,8 @@
+[run]
+branch = True
+omit =
+    *manage.py
+    *wsgi.py
+
+[html]
+directory = coverage_html_report

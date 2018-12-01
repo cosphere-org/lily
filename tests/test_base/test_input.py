@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -41,7 +40,7 @@ class InputTestCase(TestCase):
         assert get_user.call_count == 1
 
     #
-    # parse_query
+    # PARSE_QUERY
     #
     def test_parse_query__all_ok(self):
         class QueryParser(parsers.QueryParser):
@@ -57,6 +56,32 @@ class InputTestCase(TestCase):
         data = input.parse_query(request)
 
         assert data == {'title': 'hi there', 'prices': [67, 89, 11]}
+
+    def test_parse_query__multiple_parsers(self):
+        class AParser(parsers.QueryParser):
+            title = parsers.CharField()
+            prices = parsers.ListField(child=parsers.IntegerField())
+
+        class BParser(parsers.QueryParser):
+            title = parsers.CharField()
+            quantity = parsers.IntegerField()
+
+        input = Input(query_parser=[AParser, BParser])
+
+        request = Mock(
+            GET=RequestGet(
+                title=['hi there'],
+                prices=[67, 89, 11],
+                quantity=[190]),
+            user_id=902)
+
+        data = input.parse_query(request)
+
+        assert data == {
+            'title': 'hi there',
+            'prices': [67, 89, 11],
+            'quantity': 190,
+        }
 
     def test_parse_query__all_missing(self):
         class QueryParser(parsers.QueryParser):
@@ -110,7 +135,7 @@ class InputTestCase(TestCase):
             raise AssertionError
 
     #
-    # parse_query
+    # PARSE_BODY
     #
     def _prepare_body_parser(self):
         class BodyParser(parsers.BodyParser):

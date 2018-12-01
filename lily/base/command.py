@@ -190,13 +190,17 @@ def command(
         # -- the below specs are available shortly after the code compilation
         # -- and therefore can be made available on runtime
         inner.command_conf = {
-            'name': name.render_command_name(),
-            'method': fn.__name__,
+            # -- command input
             'meta': meta,
-            'source': Source(fn),
             'access': access,
             'input': input,
             'output': output,
+            'is_atomic': is_atomic,
+            'fn': fn,
+            # -- derived values
+            'name': name.render_command_name(),
+            'method': fn.__name__,
+            'source': Source(fn),
         }
 
         return inner

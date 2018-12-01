@@ -39,7 +39,18 @@ class Input(EventFactory):
 
     def parse_query(self, request):
 
-        parsed = self.query_parser(data=request.GET)
+        if isinstance(self.query_parser, (list, tuple)):
+            data = {}
+            for parser in self.query_parser:
+                data.update(self._use_parser(request, parser))
+
+        else:
+            data = self._use_parser(request, self.query_parser)
+
+        return data
+
+    def _use_parser(self, request, parser):
+        parsed = parser(data=request.GET)
 
         if not parsed.is_valid():
             raise self.BrokenRequest(

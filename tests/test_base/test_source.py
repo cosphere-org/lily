@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 
 from django.test import TestCase
 
@@ -17,8 +16,8 @@ class SourceTestCase(TestCase):
         source = Source(fn)
 
         assert source.filepath == '/tests/test_base/test_source.py'
-        assert source.start_line == 12
-        assert source.end_line == 15
+        assert source.start_line == 11
+        assert source.end_line == 14
 
 
 class SourceSerializerTestCase(TestCase):
@@ -34,6 +33,6 @@ class SourceSerializerTestCase(TestCase):
         assert SourceSerializer(source).data == {
             '@type': 'source',
             'filepath': '/tests/test_base/test_source.py',
-            'start_line': 28,
-            'end_line': 30,
+            'start_line': 27,
+            'end_line': 29,
         }

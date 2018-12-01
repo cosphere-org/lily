@@ -18,15 +18,15 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Nam eos maxime molestias excepturi.",
-                                "description": "Unde doloribus eum provident necessitatibus aspernatur natus.",
+                                "title": "Praesentium minus velit inventore beatae esse saepe.",
+                                "description": "Tempora inventore quas rerum quia.",
                                 "domain": {
-                                    "id": "velit",
+                                    "id": "deserunt",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -36,14 +36,14 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },
                             "source": {
                                 "filepath": "/tests/__init__.py",
-                                "start_line": 15,
-                                "end_line": 16,
+                                "start_line": 14,
+                                "end_line": 15,
                                 "@type": "source"
                             },
                             "@type": "command"

@@ -303,7 +303,10 @@ class CommandTestCase(TestCase):
                 access_list=['PREMIUM', 'SUPER_PREMIUM']),
             'input': TestView.input,
             'output': TestView.output,
+            'is_atomic': False,
+            'fn': TestView.post.command_conf['fn'],
         }
+
         assert source.filepath == '/tests/test_base/test_command.py'
         assert source.start_line == 131
         assert source.end_line == 142

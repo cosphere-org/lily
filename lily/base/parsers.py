@@ -6,10 +6,6 @@ from rest_framework import serializers as drf_serializers
 from .serializers import *  # noqa
 
 
-class ModelParser(drf_serializers.ModelSerializer):
-    pass
-
-
 class QueryParser(drf_serializers.Serializer):
 
     def __init__(self, *args, **kwargs):
@@ -40,8 +36,17 @@ class PageQueryParser(QueryParser):
 
     offset = IntegerField(default=0)
 
-    limit = IntegerField(default=50)
+    limit = IntegerField(default=100)
+
+
+class FullTextSearchQueryParser(QueryParser):
+
+    query = CharField(default=None)
 
 
 class BodyParser(drf_serializers.Serializer):
+    pass
+
+
+class ModelParser(drf_serializers.ModelSerializer):
     pass
