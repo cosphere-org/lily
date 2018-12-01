@@ -6,14 +6,10 @@ from datetime import datetime
 from django.http import HttpResponse
 from django.views.generic import View as DjangoGenericView
 from django.conf import settings
-from lily import (
-    command,
-    Input,
-    Meta,
-    name,
-    parsers,
-    Domain,
-)
+from .input import Input
+from .meta import Meta, Domain
+from .command import command
+from . import name, parsers
 
 
 class command_override:  # noqa
