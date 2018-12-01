@@ -14,7 +14,7 @@ class RequestGet(dict):
         return super(RequestGet, self).__getitem__(name)[0]
 
 
-class QueryParserTestCases(TestCase):
+class QueryParserTestCase(TestCase):
 
     def test_init__boolean_field(self):
         class QueryParser(parsers.QueryParser):
@@ -97,3 +97,48 @@ class QueryParserTestCases(TestCase):
 
         # -- no error is raised
         QueryParser()
+
+
+class PageQueryParserTestCase(TestCase):
+
+    def test_parse(self):
+
+        parser = parsers.PageQueryParser(
+            data={'offset': '11', 'limit': 456})
+
+        assert parser.is_valid() is True
+        assert parser.data == {'offset': 11, 'limit': 456}
+
+    def test_parse__defaults(self):
+
+        parser = parsers.PageQueryParser(data={})
+
+        assert parser.is_valid() is True
+        assert parser.data == {'offset': 0, 'limit': 100}
+
+    def test_parse__invalid(self):
+
+        parser = parsers.PageQueryParser(data={'offset': 'HEY', 'limit': 'X'})
+
+        assert parser.is_valid() is False
+        assert parser.errors == {
+            'limit': ['A valid integer is required.'],
+            'offset': ['A valid integer is required.'],
+        }
+
+
+class FullTextSearchQueryParserTestCase(TestCase):
+
+    def test_parse(self):
+
+        parser = parsers.FullTextSearchQueryParser(data={'query': 'hello'})
+
+        assert parser.is_valid() is True
+        assert parser.data == {'query': 'hello'}
+
+    def test_parse__defaults(self):
+
+        parser = parsers.FullTextSearchQueryParser(data={})
+
+        assert parser.is_valid() is True
+        assert parser.data == {'query': None}
