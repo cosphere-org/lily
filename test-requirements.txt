@@ -1,6 +1,4 @@
 
-
-
 # -- testing framework
 pytest==3.6.1
 
