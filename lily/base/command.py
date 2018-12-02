@@ -3,7 +3,11 @@ import re
 
 from django.db import transaction
 from django.db.utils import DatabaseError
-from django.core.exceptions import ObjectDoesNotExist, MultipleObjectsReturned
+from django.core.exceptions import (
+    ObjectDoesNotExist,
+    MultipleObjectsReturned,
+    ValidationError,
+)
 
 from lily.conf import settings
 from .events import EventFactory
@@ -146,6 +150,13 @@ def command(
             #
             # GENERIC ERRORS HANDLING
             #
+            except ValidationError as e:
+                e = event.BrokenRequest(
+                    'BODY_JSON_DID_NOT_PARSE',
+                    context=request,
+                    data={'errors': e.message_dict})
+                return e.response_class(e.data)
+
             except ObjectDoesNotExist as e:
                 # -- Rather Hacky way of fetching the name of model
                 # -- which raised the DoesNotExist error

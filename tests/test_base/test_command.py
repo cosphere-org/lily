@@ -4,6 +4,7 @@ from contextlib import ContextDecorator
 
 from django.test import TestCase
 from django.http import HttpResponse
+from django.core.exceptions import ValidationError
 from django.db.utils import DatabaseError
 from django.contrib.auth.models import User
 from django.views.generic import View
@@ -308,8 +309,8 @@ class CommandTestCase(TestCase):
         }
 
         assert source.filepath == '/tests/test_base/test_command.py'
-        assert source.start_line == 131
-        assert source.end_line == 142
+        assert source.start_line == 132
+        assert source.end_line == 143
 
     #
     # INPUT
@@ -516,8 +517,30 @@ class CommandTestCase(TestCase):
         assert AtomicContext.exception is None
 
     #
-    # GENERIC DOES NOT EXIST ERROR
+    # GENERIC ERRORS
     #
+    def test_validation_error(self):
+
+        u = User.objects.create_user(username='jacky')
+        request = Mock(
+            user_id=u.id,
+            email=None,
+            origin=None,
+            META=get_auth_headers(u.id))
+        view = TestView()
+        self.mocker.patch.object(view, 'some_stuff').side_effect = (
+            ValidationError({'field': ['is broken']}))
+
+        response = view.delete(request)
+
+        assert response.status_code == 400
+        assert to_json(response) == {
+            '@event': 'BODY_JSON_DID_NOT_PARSE',
+            '@type': 'error',
+            'user_id': u.id,
+            'errors': {'field': ['is broken']},
+        }
+
     def test_does_not_exist(self):
 
         u = User.objects.create_user(username='jacky')
