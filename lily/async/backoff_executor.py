@@ -2,13 +2,7 @@
 import asyncio
 
 
-class AsyncTask:
-
-    def __init__(self, callback, args):
-        self.callback = callback
-        self.args = args
-        self.successful = False
-        self.response = None
+from .task import AsyncTask
 
 
 class BackoffExecutor:
@@ -19,7 +13,7 @@ class BackoffExecutor:
 
     def __init__(
             self,
-            tasks,
+            tasks: [AsyncTask],
             max_attempts=BACKOFF_MAX_ATTEMPTS,
             unit=BACKOFF_UNIT):
 
