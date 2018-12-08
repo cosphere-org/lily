@@ -5,4 +5,4 @@ class AsyncTask:
         self.callback = callback
         self.args = args
         self.successful = False
-        self.response = None
+        self.result = None

@@ -7,7 +7,7 @@ import pytest
 import requests
 from requests.exceptions import ConnectionError, Timeout
 
-from lily.async.backoff_executor import AsyncTask, BackoffExecutor
+from lily.async import AsyncTask, BackoffExecutor
 
 
 class Client:
@@ -31,21 +31,6 @@ class Response:
 
 async def async_sleep(*args):
     pass
-
-
-class AsyncTaskTestCase(TestCase):
-
-    def test_init(self):
-
-        def fn():
-            pass
-
-        task = AsyncTask(callback=fn, args=[9, 1])
-
-        assert task.callback == fn
-        assert task.args == [9, 1]
-        assert task.successful is False
-        assert task.response is None
 
 
 class BackoffExecutorTestCase(TestCase):

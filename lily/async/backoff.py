@@ -44,17 +44,17 @@ class BackoffExecutor:
             # -- sleep
             await asyncio.sleep(self.unit ** attempt_num - 1)
 
-            requests = asyncio.gather(*futures, return_exceptions=True)
-            for i, response in enumerate(await requests):
+            future_results = asyncio.gather(*futures, return_exceptions=True)
+            for i, result in enumerate(await future_results):
                 task = self.tasks_by_future[i]
-                if not isinstance(response, Exception):
+                if not isinstance(result, Exception):
                     task.successful = True
 
-                task.response = response
+                task.result = result
 
         return (
             all([task.successful for task in self.tasks]),
-            [task.response for task in self.tasks])
+            [task.result for task in self.tasks])
 
     def run(self):
 

@@ -20,10 +20,10 @@ class ParallelExecutor:
                 loop.run_in_executor(pool, task.callback, *task.args)
                 for task in self.tasks]
 
-        responses = asyncio.gather(*futures, return_exceptions=True)
-        for i, response in enumerate(await responses):
-            self.tasks[i].response = response
-            self.tasks[i].successful = not isinstance(response, Exception)
+        future_results = asyncio.gather(*futures, return_exceptions=True)
+        for i, result in enumerate(await future_results):
+            self.tasks[i].result = result
+            self.tasks[i].successful = not isinstance(result, Exception)
 
         return self.tasks
 

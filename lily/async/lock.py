@@ -8,7 +8,7 @@ from lily.conf import settings
 logger = get_task_logger(__name__)
 
 
-class Lock(object):
+class Lock:
 
     db = redis.Redis(
         host=settings.LILY_ASYNC_LOCK_DB_HOST,

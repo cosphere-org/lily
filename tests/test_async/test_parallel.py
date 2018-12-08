@@ -2,8 +2,7 @@
 from unittest import TestCase
 from time import time, sleep
 
-from lily.async.task import AsyncTask
-from lily.async.parallel import ParallelExecutor
+from lily.async import AsyncTask, ParallelExecutor
 
 
 class ParallelExecutorTestCase(TestCase):
@@ -18,7 +17,7 @@ class ParallelExecutorTestCase(TestCase):
 
         ParallelExecutor(tasks=[t]).execute()
 
-        assert t.response == 16
+        assert t.result == 16
         assert t.successful is True
 
     def test_execute__many_tasks__all_successful(self):
@@ -37,13 +36,13 @@ class ParallelExecutorTestCase(TestCase):
         end = time() - start
 
         assert end < 1
-        assert t_0.response == 16
+        assert t_0.result == 16
         assert t_0.successful is True
-        assert t_1.response == 36
+        assert t_1.result == 36
         assert t_1.successful is True
-        assert t_2.response == 64
+        assert t_2.result == 64
         assert t_2.successful is True
-        assert t_3.response == 81
+        assert t_3.result == 81
         assert t_3.successful is True
 
     def test_execute__many_tasks__one_failed(self):
@@ -64,11 +63,11 @@ class ParallelExecutorTestCase(TestCase):
         end = time() - start
 
         assert end < 1
-        assert t_0.response == 16
+        assert t_0.result == 16
         assert t_0.successful is True
-        assert t_1.response == 36
+        assert t_1.result == 36
         assert t_1.successful is True
-        assert isinstance(t_2.response, Exception)
+        assert isinstance(t_2.result, Exception)
         assert t_2.successful is False
 
     def test_execute__many_tasks__all_failed(self):
@@ -85,9 +84,9 @@ class ParallelExecutorTestCase(TestCase):
         end = time() - start
 
         assert end < 1
-        assert isinstance(t_0.response, Exception)
+        assert isinstance(t_0.result, Exception)
         assert t_0.successful is False
-        assert isinstance(t_1.response, Exception)
+        assert isinstance(t_1.result, Exception)
         assert t_1.successful is False
-        assert isinstance(t_2.response, Exception)
+        assert isinstance(t_2.result, Exception)
         assert t_2.successful is False
