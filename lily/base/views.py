@@ -36,18 +36,21 @@ class View(DjangoGenericView):
     @classmethod
     def overwrite(cls, get=None, post=None, put=None, delete=None):
 
+        class cls_copy(cls):  # noqa
+            pass
+
         for method_name, verb in [
                 ('get', get),
                 ('post', post),
                 ('put', put),
                 ('delete', delete)]:
 
-            method = getattr(cls, method_name, None)
+            method = getattr(cls_copy, method_name, None)
             if method and verb:
                 conf = method.command_conf
 
                 setattr(
-                    cls,
+                    cls_copy,
                     method_name,
                     command(
                         name=verb.name,
@@ -60,7 +63,7 @@ class View(DjangoGenericView):
                             conf['is_atomic']),
                     )(conf['fn']))
 
-        return cls
+        return cls_copy
 
 
 class S3UploadSignView(View):

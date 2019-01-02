@@ -66,7 +66,10 @@ class InputTestCase(TestCase):
             title = parsers.CharField()
             quantity = parsers.IntegerField()
 
-        input = Input(query_parser=[AParser, BParser])
+        class CParser(AParser, BParser):
+            pass
+
+        input = Input(query_parser=CParser)
 
         request = Mock(
             GET=RequestGet(
