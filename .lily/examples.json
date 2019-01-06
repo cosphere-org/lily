@@ -18,15 +18,15 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "POST",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Culpa aperiam quo neque.",
-                                "description": "Ipsam culpa quia nihil consequuntur.",
+                                "title": "Aliquam quam culpa fugit praesentium nulla dicta consequatur facilis.",
+                                "description": "Sapiente illo eveniet accusamus vero assumenda quos.",
                                 "domain": {
-                                    "id": "porro",
+                                    "id": "debitis",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -36,7 +36,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },

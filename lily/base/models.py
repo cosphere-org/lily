@@ -111,6 +111,12 @@ def number():
     }
 
 
+def boolean():
+    return {
+        'type': 'boolean',
+    }
+
+
 def url():
     return {
         'type': 'string',
