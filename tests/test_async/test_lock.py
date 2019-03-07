@@ -21,7 +21,7 @@ class LockTestCase(TestCase):
         assert lock.acquire(1234) is True
         assert lock_db.get.call_args_list == [call('some-lock-id')]
         assert lock_db.set.call_args_list == [
-            call('some-lock-id', True, 1234)]
+            call('some-lock-id', 'true', 1234)]
 
     def test_acquire__already_locked(self):
 

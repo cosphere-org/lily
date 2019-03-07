@@ -25,7 +25,7 @@ class Lock:
             return False
 
         else:
-            self.db.set(self.lock_id, True, expire)
+            self.db.set(self.lock_id, 'true', expire)
             logger.debug('Lock: {} created'.format(self.lock_id))
             return True
 

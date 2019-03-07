@@ -18,15 +18,15 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Esse earum corrupti ea voluptatum.",
-                                "description": "In inventore itaque sint harum et laboriosam illum nam.",
+                                "title": "Soluta officia nobis at aut laudantium porro officia.",
+                                "description": "Praesentium inventore beatae commodi qui alias beatae animi.",
                                 "domain": {
-                                    "id": "molestiae",
+                                    "id": "odit",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
