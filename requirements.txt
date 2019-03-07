@@ -23,7 +23,7 @@ celery==4.0.0
 redis==2.10.5
 
 # -- http client
-requests==2.13.0
+requests>=2.13.0
 
 # -- language detection
 langid==1.1.6

@@ -1,7 +1,7 @@
 
 import re
 import os
-from copy import deepcopy
+from copy import copy, deepcopy
 
 from rest_framework import serializers as drf_serializers
 from rest_framework.serializers import (  # noqa
@@ -85,7 +85,7 @@ class Serializer(drf_serializers.Serializer, EventFactory):
 
         # -- when dealing with DICT
         elif isinstance(instance, dict):
-            transformed = deepcopy(instance)
+            transformed = copy(instance)
             for field_name, value in instance.items():
                 if field_name.startswith('@'):
                     new_field_name = re.sub(r'^@', 'at__', field_name)
@@ -99,7 +99,7 @@ class Serializer(drf_serializers.Serializer, EventFactory):
             body = super(Serializer, self).to_representation(instance)
 
         # -- transform `at__` to `@`
-        original = deepcopy(body)
+        original = copy(body)
         for field_name, value in original.items():
             if field_name.startswith('at__'):
                 new_field_name = re.sub(r'^at__', '@', field_name)
