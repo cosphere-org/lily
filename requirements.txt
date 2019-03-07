@@ -20,7 +20,7 @@ itsdangerous==0.24
 
 # -- async tasks
 celery==4.0.0
-redis==2.10.5
+redis==3.2.0
 
 # -- http client
 requests>=2.13.0
