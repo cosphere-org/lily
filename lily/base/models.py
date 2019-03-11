@@ -153,3 +153,10 @@ def array(items, extra=None):
         'items': items,
         **extra,
     }
+
+
+def schema(_schema):
+    return {
+        '$schema': 'http://json-schema.org/draft-05/schema#',
+        **_schema,
+    }

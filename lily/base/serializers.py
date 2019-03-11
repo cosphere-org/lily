@@ -20,6 +20,7 @@ from rest_framework.serializers import (  # noqa
     ListSerializer,
     SerializerMethodField,
     URLField,
+    UUIDField,
     NullBooleanField,
     ValidationError,
     ReadOnlyField,
