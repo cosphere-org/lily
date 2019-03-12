@@ -93,7 +93,7 @@ def null_or(other):
     }
 
 
-def one_of(options):
+def one_of(*options):
     return {
         'oneOf': options,
     }
@@ -124,14 +124,14 @@ def url():
     }
 
 
-def enum(enums):
+def enum(*enums):
     return {
         'type': 'string',
         'enum': enums,
     }
 
 
-def object(properties, required=None):
+def object(required=None, **properties):
     if required:
         return {
             'type': 'object',
