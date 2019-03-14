@@ -220,6 +220,7 @@ class SchemaRenderer:
                 serializers.JSONField,
                 serializers.URLField,
                 serializers.ReadOnlyField,
+                serializers.UUIDField,
             ))
 
     def simple_field_to_schema(self, name, field):
@@ -262,6 +263,11 @@ class SchemaRenderer:
             return {
                 'type': 'string',
                 'format': 'date-time',
+            }
+
+        elif is_field(serializers.UUIDField):
+            return {
+                'type': 'string',
             }
 
         elif is_field(serializers.CharField):

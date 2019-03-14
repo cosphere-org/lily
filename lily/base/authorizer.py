@@ -13,8 +13,10 @@ class Authorizer(EventFactory):
 
     def authorize(self, request):
         try:
-            request.user_id = request.META['HTTP_X_CS_USER_ID']
-            request.account_type = request.META['HTTP_X_CS_ACCOUNT_TYPE']
+            return {
+                'user_id': request.META['HTTP_X_CS_USER_ID'],
+                'account_type': request.META['HTTP_X_CS_ACCOUNT_TYPE'],
+            }
 
         except KeyError:
             raise self.AccessDenied('ACCESS_DENIED', context=request)

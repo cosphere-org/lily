@@ -12,21 +12,13 @@ class Input(EventFactory):
     def __init__(
             self,
             query_parser=None,
-            body_parser=None,
-            header_parser=None,
-            with_user=False):
+            body_parser=None):
+
         self.query_parser = query_parser
-        self.with_user = with_user
         self.body_parser = body_parser
 
     def parse(self, request, command_name):
         request.input = self.InputAttrs()
-
-        # -- append user - check is such a user exists, otherwise no
-        # -- further steps should be evaluated since that would give
-        # -- unknown user access to validation rules
-        if self.with_user:
-            request.input.user = self.get_user(request)
 
         # -- query parsing
         if self.query_parser:
@@ -39,10 +31,7 @@ class Input(EventFactory):
 
     def parse_query(self, request):
 
-        return self._use_parser(request, self.query_parser)
-
-    def _use_parser(self, request, parser):
-        parsed = parser(data=request.GET)
+        parsed = self.query_parser(data=request.GET)
 
         if not parsed.is_valid():
             raise self.BrokenRequest(
@@ -75,17 +64,3 @@ class Input(EventFactory):
 
         else:
             return parsed.data, data
-
-    def get_user(self, request):
-        # -- this will only be called in services which are directly
-        # -- having access to the User model
-        from django.contrib.auth.models import User
-
-        try:
-            return User.objects.get(id=request.user_id)
-
-        except User.DoesNotExist:
-            raise self.AuthError(
-                'COULD_NOT_FIND_USER',
-                context=request,
-                is_critical=True)

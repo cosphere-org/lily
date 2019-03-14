@@ -94,6 +94,7 @@ class MySignViewTestCase(TestCase):
             '@event': 'QUERY_DID_NOT_VALIDATE',
             '@type': 'error',
             'errors': {'to_sign': ['This field is required.']},
+            'account_type': 'PREMIUM',
             'user_id': self.user_id,
         }
 
@@ -108,7 +109,10 @@ class MySignViewTestCase(TestCase):
             '@event': 'QUERY_DID_NOT_VALIDATE',
             '@type': 'error',
             'errors': {'datetime': ['This field is required.']},
-            'user_id': self.user_id,
+            '@access': {
+                'account_type': 'PREMIUM',
+                'user_id': self.user_id,
+            },
         }
 
     def test_get_400__broken_datetime(self):

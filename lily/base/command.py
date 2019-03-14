@@ -56,7 +56,7 @@ def command(
                     authorizer = import_from_string(
                         settings.LILY_AUTHORIZER_CLASS
                     )(access.access_list)
-                    authorizer.authorize(request)
+                    request.access = authorizer.authorize(request)
 
                 #
                 # INPUT
