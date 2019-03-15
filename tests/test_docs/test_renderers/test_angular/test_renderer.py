@@ -336,7 +336,6 @@ class AngularClientRendererTestCase(TestCase):
                 '@type': 'error',
                 'command_name': 'CREATE_CARD',
                 'domain_id': 'recall',
-                'user_id': None,
             }
 
         else:
@@ -409,7 +408,6 @@ class AngularClientRendererTestCase(TestCase):
                 '@event': 'BROKEN_SERVICE_DETECTED',
                 '@type': 'error',
                 'service': 'http://localhost:9000',
-                'user_id': None,
             }
 
         else:

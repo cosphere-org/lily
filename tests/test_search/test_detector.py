@@ -64,7 +64,6 @@ class LanguageDetectorTestCase(TestCase):
                 '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
                 '@type': 'error',
                 'text': 'hi world',
-                'user_id': None,
             }
 
         else:
@@ -101,7 +100,6 @@ class LanguageDetectorTestCase(TestCase):
                 '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
                 '@type': 'error',
                 'text': 'hello world',
-                'user_id': None,
             }
 
         else:

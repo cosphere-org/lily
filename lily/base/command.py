@@ -1,6 +1,7 @@
 
 import re
 
+from django.views.generic import View as DjangoGenericView
 from django.db import transaction
 from django.db.utils import DatabaseError
 from django.core.exceptions import (
@@ -22,6 +23,60 @@ from .name import ConstantName
 
 
 event = EventFactory()
+
+
+class command_override:  # noqa
+
+    def __init__(
+            self,
+            name,
+            meta=None,
+            access=None,
+            input=None,
+            output=None,
+            is_atomic=None):
+
+        self.name = name
+        self.meta = meta
+        self.access = access
+        self.input = input
+        self.output = output
+        self.is_atomic = is_atomic
+
+
+class HTTPCommands(DjangoGenericView):
+
+    @classmethod
+    def overwrite(cls, get=None, post=None, put=None, delete=None):
+
+        class cls_copy(cls):  # noqa
+            pass
+
+        for method_name, verb in [
+                ('get', get),
+                ('post', post),
+                ('put', put),
+                ('delete', delete)]:
+
+            method = getattr(cls_copy, method_name, None)
+            if method and verb:
+                conf = method.command_conf
+
+                setattr(
+                    cls_copy,
+                    method_name,
+                    command(
+                        name=verb.name,
+                        meta=verb.meta or conf['meta'],
+                        access=verb.access or conf['access'],
+                        input=verb.input or conf['input'],
+                        output=verb.output or conf['output'],
+                        is_atomic=(
+                            verb.is_atomic is not None and verb.is_atomic or
+                            conf['is_atomic']),
+                    )(conf['fn']))
+
+        return cls_copy
 
 
 def command(
@@ -56,7 +111,8 @@ def command(
                     authorizer = import_from_string(
                         settings.LILY_AUTHORIZER_CLASS
                     )(access.access_list)
-                    authorizer.authorize(request)
+                    request.access = authorizer.authorize(request)
+                    request.log_access = authorizer.log(request.access)
 
                 #
                 # INPUT

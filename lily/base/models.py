@@ -95,7 +95,13 @@ def null_or(other):
 
 def one_of(*options):
     return {
-        'oneOf': options,
+        'oneOf': list(options),
+    }
+
+
+def null():
+    return {
+        'type': 'null',
     }
 
 
@@ -127,7 +133,7 @@ def url():
 def enum(*enums):
     return {
         'type': 'string',
-        'enum': enums,
+        'enum': list(enums),
     }
 
 
@@ -152,11 +158,4 @@ def array(items, extra=None):
         'type': 'array',
         'items': items,
         **extra,
-    }
-
-
-def schema(_schema):
-    return {
-        '$schema': 'http://json-schema.org/draft-05/schema#',
-        **_schema,
     }

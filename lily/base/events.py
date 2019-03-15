@@ -64,25 +64,14 @@ class EventFactory:
 
     class Context:
 
-        def __init__(self, user_id=None, email=None, origin=None, **kwargs):
-            self.user_id = user_id
-            self.email = email
-            self.origin = origin
-
-            self.data = {
-                'user_id': self.user_id,
-                'origin': self.origin,
-            }
-            self.data.update(kwargs)
+        def __init__(self, **kwargs):
+            self.data = kwargs
 
         def is_empty(self):
-            return not (self.user_id or self.email or self.origin)
+            return not self.data
 
         def __eq__(self, other):
-            return (
-                self.user_id == other.user_id and
-                self.email == other.email and
-                self.origin == other.origin)
+            return self.data == other.data
 
     class Generic(Exception):
 
@@ -160,15 +149,18 @@ class EventFactory:
 
         def log(self):
 
-            user_id = getattr(self.context, 'user_id', None)
+            log_access = getattr(self.context, 'log_access', {})
+            data = {
+                '@event': self.event,
+            }
+            if log_access:
+                data['@access'] = log_access
 
             # -- notify about the event
             message = '{event}: {log_data}'.format(
                 event=self.event,
-                log_data=json.dumps({
-                    'user_id': user_id or 'anonymous',
-                    '@event': self.event,
-                }))
+                log_data=json.dumps(data))
+
             self.logger.info(message)
 
     class Executed(BaseSuccessException):
@@ -234,19 +226,17 @@ class EventFactory:
             self.event = event
             self.data = data or {}
             self.data.update({
-                'user_id': getattr(context, 'user_id', 'anonymous'),
                 '@type': 'error',
                 '@event': event,
             })
+
+            log_access = getattr(context, 'log_access', {})
+            if log_access:
+                self.data.update({
+                    '@access': log_access,
+                })
+
             self.logger = logging.getLogger()
-
-            origin = getattr(context, 'origin', None)
-            if origin:
-                self.data['@origin'] = origin
-
-            email = getattr(context, 'email', None)
-            if email:
-                self.data['@email'] = email
 
             self.is_critical = is_critical
 

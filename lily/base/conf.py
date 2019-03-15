@@ -12,7 +12,7 @@ class Config:
 
     def __init__(self):
         with open(settings.LILY_CONFIG_FILE_PATH) as f:
-            self.config = yaml.load(f.read())
+            self.config = yaml.load(f.read(), Loader=yaml.FullLoader)
 
     @property
     def path(self):

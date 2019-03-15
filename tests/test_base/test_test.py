@@ -13,7 +13,6 @@ from conf.urls import urlpatterns
 from lily.base.command import command
 from lily.base.meta import Meta, Domain
 from lily.base.access import Access
-from lily.base.input import Input
 from lily.base.output import Output
 from lily.base import serializers
 from lily.base.test import Client
@@ -27,8 +26,7 @@ class HttpView(View):
             title='http it',
             description='http it',
             domain=Domain(id='d', name='d')),
-        access=Access(access_list=[]),
-        input=Input(with_user=False))
+        access=Access(access_list=[]))
     def get(self, request):
         return HttpResponse('http it!')
 
@@ -49,7 +47,6 @@ class SampleView(View):
             description='post it',
             domain=Domain(id='d', name='d')),
         access=Access(access_list=[]),
-        input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def post(self, request):
         raise self.event.Created(
@@ -62,7 +59,6 @@ class SampleView(View):
             description='get it',
             domain=Domain(id='d', name='d')),
         access=Access(access_list=[]),
-        input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def get(self, request):
 
@@ -90,7 +86,6 @@ class SampleView(View):
             description='put it',
             domain=Domain(id='d', name='d')),
         access=Access(access_list=[]),
-        input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def put(self, request):
         raise self.event.Executed(
@@ -103,7 +98,6 @@ class SampleView(View):
             description='delete it',
             domain=Domain(id='d', name='d')),
         access=Access(access_list=[]),
-        input=Input(with_user=False),
         output=Output(serializer=SampleSerializer))
     def delete(self, request):
         raise self.event.Executed(
@@ -301,7 +295,6 @@ class ClientTestCase(TestCase):
                             '@type': 'error',
                             '@event': 'ERROR_LISTED',
                             'hello': 'get.d',
-                            'user_id': 'anonymous',
                         },
                     },
                 },
@@ -396,7 +389,6 @@ class ClientTestCase(TestCase):
                             '@type': 'error',
                             '@event': 'ERROR_LISTED',
                             'hello': 'get.d',
-                            'user_id': 'anonymous',
                         },
                     }
                 },

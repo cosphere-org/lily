@@ -191,7 +191,7 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'boolean',
                     },
                 },
-                'required': ['name', 'is_underaged'],
+                'required': ['name', 'is_ready', 'is_underaged'],
             },
         }
 
@@ -471,7 +471,7 @@ class SchemaRendererTestCase(TestCase):
                 'properties': {
                     'host': {
                         'type': 'object',
-                        'required': ['name', 'is_underaged'],
+                        'required': ['name', 'is_ready', 'is_underaged'],
                         'properties': {
                             'name': {
                                 'type': 'string',
