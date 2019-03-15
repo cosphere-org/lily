@@ -295,7 +295,6 @@ class ClientTestCase(TestCase):
                             '@type': 'error',
                             '@event': 'ERROR_LISTED',
                             'hello': 'get.d',
-                            'user_id': 'anonymous',
                         },
                     },
                 },
@@ -390,7 +389,6 @@ class ClientTestCase(TestCase):
                             '@type': 'error',
                             '@event': 'ERROR_LISTED',
                             'hello': 'get.d',
-                            'user_id': 'anonymous',
                         },
                     }
                 },

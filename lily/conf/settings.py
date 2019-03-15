@@ -48,7 +48,7 @@ LILY_DOCS_MARKDOWN_SPEC_FILE = getattr(
 LILY_AUTHORIZER_CLASS = getattr(
     settings,
     'LILY_AUTHORIZER_CLASS',
-    'lily.base.authorizer.Authorizer')
+    'lily.base.authorizer.BaseAuthorizer')
 
 #
 # DOCS

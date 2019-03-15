@@ -7,13 +7,12 @@ from django.http import HttpResponse
 from django.core.exceptions import ValidationError
 from django.db.utils import DatabaseError
 from django.contrib.auth.models import User
-from django.views.generic import View
 from django_fake_model import models as fake_models
 from django.db import models, transaction
 from mock import Mock
 import pytest
 
-from lily.base.command import command
+from lily.base.command import command, HTTPCommands
 from lily.base.access import Access
 from lily.base.meta import Meta, Domain
 from lily.base.input import Input
@@ -49,7 +48,7 @@ class FakeClient(fake_models.FakeModel):
     name = models.CharField(max_length=100)
 
 
-class GenericView(View):
+class GenericCommands(HTTPCommands):
 
     @command(
         name='GET_IT',
@@ -71,7 +70,7 @@ class GenericView(View):
             }))
 
 
-class HttpView(View):
+class HttpCommands(HTTPCommands):
 
     @command(
         name='HTTP_IT',
@@ -86,7 +85,7 @@ class HttpView(View):
 
 
 @FakeClient.fake_me
-class TestView(View):
+class TestCommands(HTTPCommands):
 
     class BodyParser(parsers.BodyParser):
 
@@ -225,9 +224,9 @@ class CommandTestCase(TestCase):
                 },
             })
 
-        view = TestView()
+        c = TestCommands()
 
-        response = view.post(request, 11)
+        response = c.post(request, 11)
 
         assert response.status_code == 200
         assert to_json(response) == {
@@ -253,15 +252,14 @@ class CommandTestCase(TestCase):
         request = Request()
         request.body = dump_to_bytes({"name": "John", "age": 81})
         request.META = {}
-        view = TestView()
+        c = TestCommands()
 
-        response = view.post(request, 12)
+        response = c.post(request, 12)
 
         assert response.status_code == 403
         assert to_json(response) == {
             '@type': 'error',
             '@event': 'ACCESS_DENIED',
-            'user_id': 'anonymous',
         }
 
     def test_no_authorization(self):
@@ -269,9 +267,9 @@ class CommandTestCase(TestCase):
         request = Request()
         request.body = dump_to_bytes({"name": "John", "age": 81})
         request.META = {}
-        view = TestView()
+        c = TestCommands()
 
-        response = view.get(request)
+        response = c.get(request)
 
         assert response.status_code == 200
 
@@ -284,31 +282,31 @@ class CommandTestCase(TestCase):
         request = Request()
         request.body = dump_to_bytes({"name": "John", "age": 81})
         request.META = get_auth_headers(u.id, 'SUPER_PREMIUM')
-        view = TestView()
+        c = TestCommands()
 
-        view.post(request, 15)
+        c.post(request, 15)
 
         assert request._lily_context.command_name == 'MAKE_IT'
         assert request._lily_context.correlation_id is not None
 
     def test_conf__is_saved_on_function(self):
 
-        source = TestView.post.command_conf.pop('source')
-        assert TestView.post.command_conf == {
+        source = TestCommands.post.command_conf.pop('source')
+        assert TestCommands.post.command_conf == {
             'name': 'MAKE_IT',
             'method': 'post',
-            'meta': TestView.meta,
+            'meta': TestCommands.meta,
             'access': Access(
                 access_list=['PREMIUM', 'SUPER_PREMIUM']),
-            'input': TestView.input,
-            'output': TestView.output,
+            'input': TestCommands.input,
+            'output': TestCommands.output,
             'is_atomic': False,
-            'fn': TestView.post.command_conf['fn'],
+            'fn': TestCommands.post.command_conf['fn'],
         }
 
         assert source.filepath == '/tests/test_base/test_command.py'
-        assert source.start_line == 131
-        assert source.end_line == 142
+        assert source.start_line == 130
+        assert source.end_line == 141
 
     #
     # INPUT
@@ -319,9 +317,9 @@ class CommandTestCase(TestCase):
         request = Mock(
             body=dump_to_bytes({'name': 'John', 'age': 81}),
             META=get_auth_headers(u.id))
-        view = TestView()
+        c = TestCommands()
 
-        response = view.post(request, 19)
+        response = c.post(request, 19)
 
         assert request.input.body == {'name': 'John', 'age': 81}
         assert response.status_code == 200
@@ -336,11 +334,13 @@ class CommandTestCase(TestCase):
         meta['SERVER_NAME'] = 'testserver'
         request = Mock(
             body=dump_to_bytes({'amount': 81}),
-            user_id=u.id,
+            log_access={
+                'user_id': u.id,
+            },
             META=meta)
-        view = TestView()
+        c = TestCommands()
 
-        response = view.put(request)
+        response = c.put(request)
 
         assert response.status_code == 200
         assert to_json(response) == {
@@ -356,17 +356,19 @@ class CommandTestCase(TestCase):
         meta['SERVER_NAME'] = 'testserver'
         request = Mock(
             body=dump_to_bytes({'not_amount': 81}),
-            user_id=u.id,
-            email=None,
-            origin=None,
+            log_access={
+                'user_id': u.id,
+            },
             META=meta)
-        view = TestView()
+        c = TestCommands()
 
-        response = view.put(request)
+        response = c.put(request)
 
         assert response.status_code == 400
         assert to_json(response) == {
-            'user_id': u.id,
+            '@access': {
+                'user_id': u.id,
+            },
             '@type': 'error',
             '@event': 'RESPONSE_DID_NOT_VALIDATE',
             'errors': {'amount': ['This field is required.']},
@@ -394,12 +396,12 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            user_id=u.id,
-            email=None,
-            origin=None,
+            log_access={
+                'user_id': u.id,
+            },
             META=get_auth_headers(u.id))
-        view = TestView()
-        self.mocker.patch.object(view, 'some_stuff').side_effect = [
+        c = TestCommands()
+        self.mocker.patch.object(c, 'some_stuff').side_effect = [
             # -- database error
             DatabaseError,
 
@@ -414,37 +416,40 @@ class CommandTestCase(TestCase):
         ]
 
         # -- db error
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 500
         assert to_json(response) == {
             '@event': 'DATABASE_ERROR_OCCURRED',
             '@type': 'error',
-            'user_id': u.id,
+            '@access': {
+                'user_id': u.id,
+            },
+
         }
         assert isinstance(AtomicContext.exception, DatabaseError)
 
         # -- generic error
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 500
         assert to_json(response) == {
             '@event': 'GENERIC_ERROR_OCCURRED',
             '@type': 'error',
             'errors': ['hi there'],
-            'user_id': u.id,
+            '@access': {
+                'user_id': u.id,
+            },
         }
         assert isinstance(AtomicContext.exception, Exception)
 
         # -- not a success exception
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 400
         assert to_json(response) == {
             '@event': 'ERROR!',
             '@type': 'error',
-            '@origin': 'SERVICE',
-            'user_id': u.id,
         }
         assert isinstance(AtomicContext.exception, event.BrokenRequest)
 
@@ -471,8 +476,8 @@ class CommandTestCase(TestCase):
             email=None,
             origin=None,
             META=get_auth_headers(u.id))
-        view = TestView()
-        self.mocker.patch.object(view, 'some_stuff').side_effect = [
+        c = TestCommands()
+        self.mocker.patch.object(c, 'some_stuff').side_effect = [
 
             # -- lily success exception
             event.Executed(
@@ -489,14 +494,14 @@ class CommandTestCase(TestCase):
         ]
 
         # -- success exception
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 200
         assert to_json(response) == {'@event': 'SUCCESS!', '@type': 'empty'}
         assert AtomicContext.exception is None
 
         # -- created exception
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 201
         assert to_json(response) == {'@event': 'CREATED!', '@type': 'empty'}
@@ -509,21 +514,23 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            user_id=u.id,
-            email=None,
-            origin=None,
+            log_access={
+                'user_id': u.id,
+            },
             META=get_auth_headers(u.id))
-        view = TestView()
-        self.mocker.patch.object(view, 'some_stuff').side_effect = (
+        c = TestCommands()
+        self.mocker.patch.object(c, 'some_stuff').side_effect = (
             ValidationError({'field': ['is broken']}))
 
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 400
         assert to_json(response) == {
             '@event': 'BODY_JSON_DID_NOT_PARSE',
             '@type': 'error',
-            'user_id': u.id,
+            '@access': {
+                'user_id': u.id,
+            },
             'errors': {'field': ['is broken']},
         }
 
@@ -531,21 +538,23 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            user_id=u.id,
-            email=None,
-            origin=None,
+            log_access={
+                'user_id': u.id,
+            },
             META=get_auth_headers(u.id))
-        view = TestView()
-        self.mocker.patch.object(view, 'some_stuff').side_effect = (
+        c = TestCommands()
+        self.mocker.patch.object(c, 'some_stuff').side_effect = (
             lambda: User.objects.get(id=4930))
 
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 404
         assert to_json(response) == {
             '@event': 'COULD_NOT_FIND_USER',
             '@type': 'error',
-            'user_id': u.id,
+            '@access': {
+                'user_id': u.id,
+            },
         }
 
     def test_multiple_objects_returned(self):
@@ -553,21 +562,23 @@ class CommandTestCase(TestCase):
         u = User.objects.create_user(username='jacky')
         u = User.objects.create_user(username='jacks')
         request = Mock(
-            user_id=u.id,
-            email=None,
-            origin=None,
+            log_access={
+                'user_id': u.id,
+            },
             META=get_auth_headers(u.id))
-        view = TestView()
-        self.mocker.patch.object(view, 'some_stuff').side_effect = (
+        c = TestCommands()
+        self.mocker.patch.object(c, 'some_stuff').side_effect = (
             lambda: User.objects.get(username__contains='jack'))
 
-        response = view.delete(request)
+        response = c.delete(request)
 
         assert response.status_code == 500
         assert to_json(response) == {
             '@event': 'FOUND_MULTIPLE_INSTANCES_OF_USER',
             '@type': 'error',
-            'user_id': u.id,
+            '@access': {
+                'user_id': u.id,
+            },
         }
 
     #
@@ -577,9 +588,9 @@ class CommandTestCase(TestCase):
 
         # -- 201
         request = Mock(GET={'status_code': '201'}, META={})
-        view = GenericView()
+        c = GenericCommands()
 
-        response = view.get(request)
+        response = c.get(request)
 
         assert response.status_code == 201
         assert to_json(response) == {
@@ -590,9 +601,9 @@ class CommandTestCase(TestCase):
 
         # -- 404
         request = Mock(GET={'status_code': '404'}, META={})
-        view = GenericView()
+        c = GenericCommands()
 
-        response = view.get(request)
+        response = c.get(request)
 
         assert response.status_code == 404
         assert to_json(response) == {
@@ -608,9 +619,9 @@ class CommandTestCase(TestCase):
 
         # -- 404
         request = Mock(GET={'status_code': '404'}, META={})
-        view = HttpView()
+        c = HttpCommands()
 
-        response = view.get(request)
+        response = c.get(request)
 
         assert response.status_code == 200
         assert response.content == b'hello world'

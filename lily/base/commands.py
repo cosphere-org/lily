@@ -4,69 +4,16 @@ import hmac
 from datetime import datetime
 
 from django.http import HttpResponse
-from django.views.generic import View as DjangoGenericView
 from django.conf import settings
 from .input import Input
 from .meta import Meta, Domain
-from .command import command
+from .command import command, HTTPCommands
 from . import name, parsers
 
 
-class command_override:  # noqa
-
-    def __init__(
-            self,
-            name,
-            meta=None,
-            access=None,
-            input=None,
-            output=None,
-            is_atomic=None):
-
-        self.name = name
-        self.meta = meta
-        self.access = access
-        self.input = input
-        self.output = output
-        self.is_atomic = is_atomic
-
-
-class View(DjangoGenericView):
-
-    @classmethod
-    def overwrite(cls, get=None, post=None, put=None, delete=None):
-
-        class cls_copy(cls):  # noqa
-            pass
-
-        for method_name, verb in [
-                ('get', get),
-                ('post', post),
-                ('put', put),
-                ('delete', delete)]:
-
-            method = getattr(cls_copy, method_name, None)
-            if method and verb:
-                conf = method.command_conf
-
-                setattr(
-                    cls_copy,
-                    method_name,
-                    command(
-                        name=verb.name,
-                        meta=verb.meta or conf['meta'],
-                        access=verb.access or conf['access'],
-                        input=verb.input or conf['input'],
-                        output=verb.output or conf['output'],
-                        is_atomic=(
-                            verb.is_atomic is not None and verb.is_atomic or
-                            conf['is_atomic']),
-                    )(conf['fn']))
-
-        return cls_copy
-
-
-class S3UploadSignView(View):
+# FIXME: to be removed!!!!!
+# it's not needed any more!!!! --> to cosphere specific
+class S3UploadSignCommands(HTTPCommands):
 
     class QueryParser(parsers.QueryParser):
 

@@ -64,24 +64,14 @@ class EventFactory:
 
     class Context:
 
-        # FIXME: maybe think about introducing some extra fields
-        # naming into the request overwrite in order to enrich it for
-        # errors!!!! --> those fields are added during the authorization
-        # phase --> request.authorizer.origin!!!!
-        def __init__(self, origin=None, **kwargs):
-            self.origin = origin
-
-            self.data = {
-                'origin': self.origin,
-            }
-            self.data.update(kwargs)
+        def __init__(self, **kwargs):
+            self.data = kwargs
 
         def is_empty(self):
-            return not self.origin
+            return not self.data
 
         def __eq__(self, other):
-            return (
-                self.origin == other.origin)
+            return self.data == other.data
 
     class Generic(Exception):
 
@@ -159,15 +149,18 @@ class EventFactory:
 
         def log(self):
 
-            access = getattr(self.context, 'access', {})
+            log_access = getattr(self.context, 'log_access', {})
+            data = {
+                '@event': self.event,
+            }
+            if log_access:
+                data['@access'] = log_access
 
             # -- notify about the event
             message = '{event}: {log_data}'.format(
                 event=self.event,
-                log_data=json.dumps({
-                    '@event': self.event,
-                    '@access': access,
-                }))
+                log_data=json.dumps(data))
+
             self.logger.info(message)
 
     class Executed(BaseSuccessException):
@@ -235,13 +228,15 @@ class EventFactory:
             self.data.update({
                 '@type': 'error',
                 '@event': event,
-                '@access': getattr(context, 'access', {}),
             })
-            self.logger = logging.getLogger()
 
-            origin = getattr(context, 'origin', None)
-            if origin:
-                self.data['@origin'] = origin
+            log_access = getattr(context, 'log_access', {})
+            if log_access:
+                self.data.update({
+                    '@access': log_access,
+                })
+
+            self.logger = logging.getLogger()
 
             self.is_critical = is_critical
 

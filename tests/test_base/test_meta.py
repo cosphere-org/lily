@@ -78,7 +78,6 @@ class DomainTestCase(TestCase):
             assert e.data == {
                 '@event': 'BROKEN_ARGS_DETECTED',
                 '@type': 'error',
-                'user_id': None,
                 'errors': {
                     'id': [
                         'should be shorter than 32 characters and do '

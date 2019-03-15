@@ -144,7 +144,6 @@ class BaseRendererTestCase(TestCase):
                 '@event': 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED',
                 '@type': 'error',
                 'duplicates': ['HiView'],
-                'user_id': None,
             }
 
         else:

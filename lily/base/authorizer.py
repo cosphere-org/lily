@@ -2,7 +2,7 @@
 from lily.base.events import EventFactory
 
 
-class Authorizer(EventFactory):
+class BaseAuthorizer(EventFactory):
     """
     Minimal Authorizer Class.
 
@@ -20,3 +20,6 @@ class Authorizer(EventFactory):
 
         except KeyError:
             raise self.AccessDenied('ACCESS_DENIED', context=request)
+
+    def log(self, authorize_data):
+        return authorize_data

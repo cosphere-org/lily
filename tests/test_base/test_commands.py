@@ -6,7 +6,8 @@ from django.urls import re_path, reverse
 import pytest
 from conf.urls import urlpatterns
 
-from lily.base.views import S3UploadSignView, command_override
+from lily.base.commands import S3UploadSignCommands
+from lily.base.command import command_override
 from lily import (
     Meta,
     name,
@@ -15,7 +16,7 @@ from lily import (
 )
 
 
-MySignView = S3UploadSignView.overwrite(
+MySignCommands = S3UploadSignCommands.overwrite(
     get=command_override(
         name=name.Execute('SIGN', 'PROCESS'),
         meta=Meta(
@@ -28,12 +29,12 @@ MySignView = S3UploadSignView.overwrite(
 
 
 urlpatterns.extend([
-    re_path(r'^sign/$', MySignView.as_view(), name='test.sign'),
+    re_path(r'^sign/$', MySignCommands.as_view(), name='test.sign'),
 
 ])
 
 
-class MySignViewTestCase(TestCase):
+class MySignCommandsTestCase(TestCase):
 
     uri = reverse('test.sign')
 
@@ -52,12 +53,12 @@ class MySignViewTestCase(TestCase):
     @override_settings(AWS_S3_ACCESS_KEY="access.key", AWS_S3_REGION="central")
     def test_get_200(self):
 
-        sign_mock = self.mocker.patch.object(MySignView, 'sign')
+        sign_mock = self.mocker.patch.object(MySignCommands, 'sign')
         sign_mock.side_effect = [
             'signature 1', 'signature 2', 'signature 3', 'signature 4',
         ]
         get_signature_mock = self.mocker.patch.object(
-            MySignView, 'get_signature')
+            MySignCommands, 'get_signature')
         get_signature_mock.return_value = "af52522c5afb83b5348ed06b5fbd0c"
 
         response = self.app.get(
@@ -94,8 +95,10 @@ class MySignViewTestCase(TestCase):
             '@event': 'QUERY_DID_NOT_VALIDATE',
             '@type': 'error',
             'errors': {'to_sign': ['This field is required.']},
-            'account_type': 'PREMIUM',
-            'user_id': self.user_id,
+            '@access': {
+                'account_type': 'PREMIUM',
+                'user_id': self.user_id,
+            }
         }
 
         # -- missing datetime
@@ -134,5 +137,8 @@ class MySignViewTestCase(TestCase):
                     'invalid datetime format accepted is YYYYMMDDThhmmssZ'
                 )]
             },
-            'user_id': self.user_id,
+            '@access': {
+                'account_type': 'PREMIUM',
+                'user_id': self.user_id,
+            },
         }

@@ -51,9 +51,9 @@ class ContextTestCase(TestCase):
 
         c = EventFactory.Context(user_id=12, email='a@p.a', origin='here')
 
-        assert c.user_id == 12
-        assert c.email == 'a@p.a'
-        assert c.origin == 'here'
+        assert c.data['user_id'] == 12
+        assert c.data['email'] == 'a@p.a'
+        assert c.data['origin'] == 'here'
 
     def test_is_empty(self):
 
@@ -95,14 +95,14 @@ class BaseSuccessExceptionTestCase(TestCase):
         dumps = self.mocker.patch('lily.base.events.json.dumps')
         dumps.return_value = '{XX}'
         e = EventFactory.BaseSuccessException(
-            context=Mock(user_id=12), event='HELLO')
+            context=Mock(log_access={'user_id': 12}), event='HELLO')
         logger = self.mocker.patch.object(e, 'logger')
 
         e.log()
 
         assert logger.info.call_args_list == [call('HELLO: {XX}')]
         assert dumps.call_args_list == [
-            call({'user_id': 12, '@event': 'HELLO'})]
+            call({'@access': {'user_id': 12}, '@event': 'HELLO'})]
 
     def test_log__no_user_id_in_context(self):
 
@@ -116,8 +116,7 @@ class BaseSuccessExceptionTestCase(TestCase):
         e.log()
 
         assert logger.info.call_args_list == [call('HELLO: {XX}')]
-        assert dumps.call_args_list == [
-            call({'user_id': 'anonymous', '@event': 'HELLO'})]
+        assert dumps.call_args_list == [call({'@event': 'HELLO'})]
 
 
 @pytest.mark.parametrize(
