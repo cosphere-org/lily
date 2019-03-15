@@ -1,7 +1,7 @@
 
 import os
 
-from yaml import load
+import yaml
 from langid.langid import LanguageIdentifier, model
 
 from lily.base.events import EventFactory
@@ -14,7 +14,7 @@ def load_from_data(filename):
         'data',
         filename)
 
-    return load(open(filepath, 'r'))
+    return yaml.load(open(filepath, 'r'), Loader=yaml.FullLoader)
 
 
 LANGUAGE_TO_CONFIGURATION = load_from_data(

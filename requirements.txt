@@ -36,7 +36,7 @@ trans==2.1.0
 inflect==0.3.1
 
 # -- configuration
-PyYAML==3.11
+PyYAML==5.1
 
 # -- need by JSONSchemaField
 jsonschema==2.6.0
