@@ -9,13 +9,13 @@ from tests.test_search import LATEX_CASES
 
 
 def _normalize(x):
-    x = re.sub('\s+', ' ', x)
+    x = re.sub(r'\s+', ' ', x)
     return x.strip()
 
 
 def _normalize_desc(x):
-    x = re.sub('\s+', '_', x)
-    return re.sub('\W+', '', x)
+    x = re.sub(r'\s+', '_', x)
+    return re.sub(r'\W+', '', x)
 
 
 def _select_cases(cases):

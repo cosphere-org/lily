@@ -3,10 +3,7 @@ from lily.base.events import EventFactory
 
 
 class BaseAuthorizer(EventFactory):
-    """
-    Minimal Authorizer Class.
-
-    """
+    """Minimal Authorizer Class."""
 
     def __init__(self, access_list):
         self.access_list = access_list

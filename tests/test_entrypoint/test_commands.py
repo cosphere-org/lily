@@ -8,10 +8,10 @@ from mock import Mock, call
 
 from lily.base.test import Client
 from lily.entrypoint.commands import CommandSerializer
-from tests import EntityGenerator
+from tests.factory import EntityFactory
 
 
-eg = EntityGenerator()
+ef = EntityFactory()
 
 
 class EntryPointCommandsTestCase(TestCase):
@@ -42,7 +42,7 @@ class EntryPointCommandsTestCase(TestCase):
     def test_get(self):
 
         renderer = self.mocker.patch('entrypoint.commands.CommandsRenderer')
-        c = eg.command()
+        c = ef.command()
         render = Mock(return_value={'UPDATE_HELLO': c})
         renderer.return_value = Mock(render=render)
 
@@ -63,7 +63,7 @@ class EntryPointCommandsTestCase(TestCase):
     def test_get__default_query_params_values(self):
 
         renderer = self.mocker.patch('entrypoint.commands.CommandsRenderer')
-        c = eg.command()
+        c = ef.command()
         render = Mock(return_value={'UPDATE_HELLO': c})
         renderer.return_value = Mock(render=render)
 
@@ -81,7 +81,7 @@ class EntryPointCommandsTestCase(TestCase):
     def test_get__filter_by_commands_query(self):
 
         renderer = self.mocker.patch('entrypoint.commands.CommandsRenderer')
-        c0, c1, c2 = eg.command(), eg.command(), eg.command()
+        c0, c1, c2 = ef.command(), ef.command(), ef.command()
         render = Mock(return_value={
             'UPDATE_HELLO': c0,
             'READ_PAYMENTS': c1,
@@ -134,7 +134,7 @@ class EntryPointCommandsTestCase(TestCase):
     def test_get__with_schemas__false(self):
 
         renderer = self.mocker.patch('entrypoint.commands.CommandsRenderer')
-        c = eg.command()
+        c = ef.command()
         render = Mock(return_value={'UPDATE_HELLO': c})
         renderer.return_value = Mock(render=render)
 
@@ -150,7 +150,7 @@ class EntryPointCommandsTestCase(TestCase):
     def test_get__with_examples__true(self):
 
         renderer = self.mocker.patch('entrypoint.commands.CommandsRenderer')
-        c = eg.command()
+        c = ef.command()
         render = Mock(return_value={'UPDATE_HELLO': c})
         renderer.return_value = Mock(render=render)
 
@@ -167,9 +167,9 @@ class EntryPointCommandsTestCase(TestCase):
     def test_get__filter_by_is_private(self):
 
         renderer = self.mocker.patch('entrypoint.commands.CommandsRenderer')
-        c0 = eg.command(is_private=True)
-        c1 = eg.command(is_private=False)
-        c2 = eg.command(is_private=True)
+        c0 = ef.command(is_private=True)
+        c1 = ef.command(is_private=False)
+        c2 = ef.command(is_private=True)
         render = Mock(return_value={
             'UPDATE_HELLO': deepcopy(c0),
             'CREATE_HELLO': deepcopy(c1),
@@ -218,9 +218,9 @@ class EntryPointCommandsTestCase(TestCase):
     def test_get__filter_by_domain_id(self):
 
         renderer = self.mocker.patch('entrypoint.commands.CommandsRenderer')
-        c0 = eg.command(domain_id='cards')
-        c1 = eg.command(domain_id='paths')
-        c2 = eg.command(domain_id='paths')
+        c0 = ef.command(domain_id='cards')
+        c1 = ef.command(domain_id='paths')
+        c2 = ef.command(domain_id='paths')
         render = Mock(return_value={
             'UPDATE_HELLO': deepcopy(c0),
             'CREATE_HELLO': deepcopy(c1),

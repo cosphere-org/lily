@@ -16,7 +16,7 @@ class QueryParser(drf_serializers.Serializer):
             data = {}
             for field_name, field_class in self.fields.items():
 
-                if not isinstance(field_class, ListField):
+                if not isinstance(field_class, ListField):  # noqa
                     try:
                         data[field_name] = raw_data[field_name]
 
@@ -34,14 +34,14 @@ class QueryParser(drf_serializers.Serializer):
 
 class PageQueryParser(QueryParser):
 
-    offset = IntegerField(default=0)
+    offset = IntegerField(default=0)  # noqa
 
-    limit = IntegerField(default=100)
+    limit = IntegerField(default=100)  # noqa
 
 
 class FullTextSearchQueryParser(QueryParser):
 
-    query = CharField(default=None)
+    query = CharField(default=None)  # noqa
 
 
 class BodyParser(drf_serializers.Serializer):

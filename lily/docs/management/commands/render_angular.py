@@ -35,11 +35,8 @@ def command(
         only_build,
         include_domain,
         exclude_domain):
-    """
-    Render Angular Client based on the command definitions of all
-    registered services.
+    """Render Angular Client based on the declared commands."""
 
-    """
     rendered_version = AngularClientRenderer(
         client_origin, client_prefix
     ).render(

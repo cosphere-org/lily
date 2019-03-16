@@ -9,7 +9,7 @@ from django.urls import get_resolver
 from django.test import Client as DjangoClient
 
 from lily.conf import settings
-from lily.base.conf import Config
+from lily.base.config import Config
 
 
 class MissingConfError(Exception):

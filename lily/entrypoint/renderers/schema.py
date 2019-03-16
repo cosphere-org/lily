@@ -4,12 +4,13 @@ import re
 import os
 
 from lily.base import serializers, parsers
-from lily.base.conf import Config
+from lily.base.config import Config
 from lily.base.models import JSONSchemaValidator
 
 
 class MissingReturnStatementError(Exception):
-    """
+    """Raise when return value is not declared.
+
     When Method used for calculating dynamical serialization field is
     missing the return annotation.
 
@@ -17,7 +18,8 @@ class MissingReturnStatementError(Exception):
 
 
 class MissingMethodForFieldError(Exception):
-    """
+    """Raise when method does not exist.
+
     When Method used for calculating dynamical serialization field is
     missing.
 
@@ -25,7 +27,8 @@ class MissingMethodForFieldError(Exception):
 
 
 class MissingSchemaMappingError(Exception):
-    """
+    """Raise when schema mapping is missing.
+
     When mapping between any type of a field in the Serializer and schema
     is missing.
 
@@ -225,7 +228,8 @@ class SchemaRenderer:
 
     def simple_field_to_schema(self, name, field):
 
-        is_field = lambda _types: isinstance(field, _types)
+        def is_field(_types):
+            return isinstance(field, _types)
 
         if is_field((serializers.BooleanField,)):
             return {
@@ -444,16 +448,20 @@ class Schema:
         }
 
     def get_repository_uri(self):
-        """ Bitbucket specific repository uri generator.
-
-        TODO: Make it to work for github too.
-
-        """
         config = Config()
 
-        return os.path.join(
-            config.repository,
-            'src',
-            config.last_commit_hash,
-            re.sub(r'^/', '', self.meta['path']),
-            '#lines-{}'.format(self.meta['first_line']))
+        if 'bitbucket' in config.repository:
+            return os.path.join(
+                config.repository,
+                'src',
+                config.last_commit_hash,
+                re.sub(r'^/', '', self.meta['path']),
+                '#lines-{}'.format(self.meta['first_line']))
+
+        elif 'github':
+            return os.path.join(
+                config.repository,
+                'blob',
+                config.last_commit_hash,
+                re.sub(r'^/', '', self.meta['path']),
+                '#L{}'.format(self.meta['first_line']))

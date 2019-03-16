@@ -122,10 +122,8 @@ class TemplateRepo(Repo):
         copy_function = partial(self.copy, client_prefix)
 
         def copytree(source, destination):
-            """
-            Replacement of `shutil.copytree` with overwrites.
+            """Replace `shutil.copytree` with overwrites."""
 
-            """
             if os.path.isdir(source):
 
                 if not os.path.isdir(destination):

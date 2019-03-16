@@ -611,7 +611,7 @@ class AngularClientRendererTestCase(TestCase):
     #
     def test_render_api_ts(self):
 
-        command = lambda x: Mock(render_facade=Mock(return_value=x))
+        command = lambda x: Mock(render_facade=Mock(return_value=x))  # noqa
         commands_by_domain = {
             Domain('cards', 'Cards Management'): {
                 'READ_CARDS': command('    <READ_CARDS>'),

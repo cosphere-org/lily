@@ -81,7 +81,8 @@ class EventFactory:
             self.logger = logging.getLogger()
 
         def extend(self, method, path):
-            """
+            """Extend with extra attributes.
+
             Sometimes Success Exception is raised without all needed attributes
             since they're unknown at the instantiation time, but are know
             afterwards.
@@ -128,7 +129,8 @@ class EventFactory:
             self.logger = logging.getLogger()
 
         def extend(self, event=None, context=None):
-            """
+            """Extend with extra attributes.
+
             Sometimes Success Exception is raised without all needed attributes
             since they're unknown at the instantiation time, but are know
             afterwards.
@@ -281,7 +283,8 @@ class EventFactory:
         is_critical = True
 
     class Warning(BaseErrorException):
-        """
+        """Log only Extra Exception.
+
         Is should serve only the logging purposes and therefore should never
         be used for the direct response creation.
 

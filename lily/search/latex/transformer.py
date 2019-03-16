@@ -12,7 +12,7 @@ from looping too much over highly nested formulas.
 
 """
 
-ARG_PATTERN = lambda n, o = False: r"""
+__PATTERN = r"""
     \s*(?P<%s>
     [0-9A-Za-z]|                           # single number or character
     \\[0-9A-Za-z]+((\s*\{.*\}\s*){1,2})?|  # any latex keyword or expression
@@ -22,7 +22,9 @@ ARG_PATTERN = lambda n, o = False: r"""
                                            # { } braces
                                            # or already replaced string
     )%s\s*
-""" % (n, (o and '?') or '')
+"""
+
+ARG_PATTERN = lambda n, o = False: __PATTERN % (n, (o and '?') or '')  # noqa
 """
 Pattern of allowed values which can be found as argument of subscripts
 operator ``_`` or superscript operator ``^``.
@@ -656,7 +658,8 @@ TRANSFORMATIONS = decorate_transformations_repl([
 
 
 def transform(text, language):
-    """
+    """Transform provided text.
+
     Transform provided text by injecting after each occurrence of LaTeX
     syntax its human readable representation in a language of the text.
 
@@ -675,7 +678,8 @@ def transform(text, language):
 
 
 def _transform_formula(formula, language):
-    """
+    """Transform single LaTeX formula.
+
     Transform single LaTeX formula by iteratively replacing all occurrences
     of handled patterns and replacing them with human readable phrases.
 

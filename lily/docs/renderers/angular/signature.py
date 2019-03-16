@@ -51,7 +51,7 @@ class Signature:
 
         # -- path parameters
         path = re.sub(
-            '\{(?P<parameter>[\w\_]+)\}',
+            r'\{(?P<parameter>[\w\_]+)\}',
             lambda x: '${{{}}}'.format(
                 to_camelcase(x.groupdict()['parameter'], first_lower=True)),
             self.path)

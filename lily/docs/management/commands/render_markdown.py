@@ -1,29 +1,24 @@
 
+import djclick as click
+
 from importlib import import_module
 import os
 
-from django.core.management.base import BaseCommand
-
 from lily.conf import settings
-from lily.base.conf import Config
-from ...renderers.markdown import MarkdownRenderer
+from lily.base.config import Config
+from ...renderers.markdown.renderer import MarkdownRenderer
 
 
-class Command(BaseCommand):
-    help = 'Render Markdown Specification for all registered Commands'
+@click.command()
+def command():
+    """Render Markdown Specification for all registered Commands."""
 
-    def save_to_file(self, content):
+    urlpatterns = import_module(settings.ROOT_URLCONF).urlpatterns
 
-        with open(os.path.join(Config.get_lily_path(), 'API.md'), 'w') as f:
-            f.write(content)
+    with open(os.path.join(Config.get_lily_path(), 'API.md'), 'w') as f:
+        f.write(MarkdownRenderer(urlpatterns).render())
 
-    def handle(self, *args, **options):
-
-        urlpatterns = import_module(settings.ROOT_URLCONF).urlpatterns
-
-        self.save_to_file(MarkdownRenderer(urlpatterns).render())
-
-        self.stdout.write(
-            self.style.SUCCESS(
-                'Successfully rendered Markdown Specification for all '
-                'registered Commands'))
+    click.secho(
+        'Successfully rendered Markdown Specification for all '
+        'registered Commands',
+        fg='green')

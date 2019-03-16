@@ -9,7 +9,8 @@ from .constants import HASHTAG_ESCAPE_SEQUENCE, HASHTAG_PATTERN
 
 
 class Query(SearchQuery):
-    """
+    """Query object.
+
     Query object with auto-language detection feature and latex syntax
     parser.
 
@@ -45,7 +46,7 @@ class Query(SearchQuery):
             tokens = []
 
         else:
-            tokens = re.split('\s+', tokens_only_text.strip())
+            tokens = re.split(r'\s+', tokens_only_text.strip())
 
         if hashtags and tokens:
             return '{hashtags} & ({tokens})'.format(

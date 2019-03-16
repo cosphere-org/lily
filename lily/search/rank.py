@@ -3,8 +3,7 @@ from django.contrib.postgres.search import SearchRank
 
 
 class Rank(SearchRank):
-    """
-    Rank for the calculation of simple frequency match with 2 normalizations:
+    """Rank for the calculation of frequency match with 2 normalizations.
 
     - type 16 normalization - divides the rank by 1 + the logarithm of the
       number of unique words in document
@@ -21,9 +20,7 @@ class Rank(SearchRank):
 
 
 class RankCD(SearchRank):
-    """
-    Rank for the calculation of harmonic mean distances between matched
-    tokens.
+    """Rank for the calculation of harmonic mean distances between tokens.
 
     It uses Cover Density Rank function and type 4 normalization - divides
     the rank by the mean harmonic distance between extents

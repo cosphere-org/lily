@@ -150,6 +150,7 @@ def object(required=None, **properties):
             'properties': properties,
         }
 
+
 def array(items, extra=None):
     extra = extra or {}
 

@@ -1,7 +1,7 @@
 
 import inspect
 
-from lily.base.conf import Config
+from lily.base.config import Config
 from . import serializers
 
 

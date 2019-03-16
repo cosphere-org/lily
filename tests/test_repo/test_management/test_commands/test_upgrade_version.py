@@ -5,10 +5,9 @@ import pytest
 from mock import call
 
 from lily.base.utils import normalize_indentation
-from lily.base.conf import Config
+from lily.base.config import Config
 from lily.repo.management.commands.upgrade_version import command
 from lily.repo.version import VersionRenderer
-from lily.repo.changelog import ChangelogRenderer
 from lily.repo.repo import Repo
 
 
@@ -64,9 +63,6 @@ class UpgradeVersionTestCase(TestCase):
             VersionRenderer, 'render_next_version')
         render_next_version.return_value = '1.2.13'
 
-        changelog_render = self.mocker.patch.object(
-            ChangelogRenderer, 'render')
-
         config = ConfigMock(
             version='1.2.12',
             last_commit_hash='111111',
@@ -92,7 +88,6 @@ class UpgradeVersionTestCase(TestCase):
         assert config.last_commit_hash == '222222'
 
         assert render_next_version.call_args_list == [call('1.2.12', 'MAJOR')]
-        assert changelog_render.call_args_list == [call()]
 
         assert repo_add.call_args_list == [call('/hello/world')]
         assert repo_tag.call_args_list == [call('1.2.13')]

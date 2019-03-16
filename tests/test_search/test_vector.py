@@ -100,7 +100,7 @@ def test_stored_vector__to_sql(mocker):
     # case 12 - latex transformation - poi
     (
         'polish',
-        'rowiązanie to $$ \sqrt{a ^ 2} $$',
+        'rowiązanie to $$ \\sqrt{a ^ 2} $$',
         "'rowiązanie':1 'rowiazanie':1 'ten':2 'to':2 'sqrt':3 'funkcja':4 "
         "'pierwiastek':5 'pierwiastka':5 'kwadratowy':6 'z':7 'a':8 'do':9 "
         "'kwadrat':10",

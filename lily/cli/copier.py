@@ -4,8 +4,7 @@ import re
 
 import click
 
-from lily.base.conf import Config
-from lily import __version__
+from lily.base.config import Config
 
 
 class Copier:
@@ -19,7 +18,6 @@ class Copier:
     def copy(self, src_dir):
 
         self.create_empty_config(src_dir)
-
         self.copy_makefile(src_dir)
 
     def create_empty_config(self, src_dir):
@@ -29,17 +27,12 @@ class Copier:
 
     def copy_makefile(self, src_dir):
 
-        current_version = __version__
+        config = Config()
 
-        BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # noqa
-
-        # lily_path =
-        # if not os.path.exists(lily_path):
-        #     os.mkdir(lily_path)
-        with open(os.path.join(BASE_DIR, 'lily.makefile'), 'r') as makefile:
+        with open(self.base_makefile_path, 'r') as makefile:
             content = makefile.read()
             content = re.sub(r'{%\s*SRC_DIR\s*%}', src_dir, content)
-            content = re.sub(r'{%\s*VERSION\s*%}', current_version, content)
+            content = re.sub(r'{%\s*VERSION\s*%}', config.version, content)
 
         if not os.path.exists(os.path.join(self.root_dir, '.lily')):
             os.mkdir(os.path.join(self.root_dir, '.lily'))
@@ -54,3 +47,10 @@ class Copier:
             'copied lily makefile to {makefile_path}'.format(
                 makefile_path=makefile_path),
             fg='blue')
+
+    @property
+    def base_makefile_path(self):
+
+        return os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            'base.makefile')

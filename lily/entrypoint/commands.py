@@ -3,33 +3,13 @@ from lily.conf import settings
 from lily.base import serializers, parsers, name
 from lily.base.command import command
 from lily.base.commands import HTTPCommands
-from lily.base.meta import Meta, MetaSerializer, Domain
-from lily.base.source import SourceSerializer
-from lily.base.access import Access, AccessSerializer
+from lily.base.meta import Meta, Domain
+from lily.base.access import Access
 from lily.base.input import Input
 from lily.base.output import Output
+from lily.base.config import Config
 from .renderers.commands import CommandsRenderer
-from lily.base.conf import Config
-
-
-class CommandSerializer(serializers.Serializer):
-
-    _type = 'command'
-
-    method = serializers.ChoiceField(
-        choices=('POST', 'GET', 'PUT', 'DELETE'))
-
-    path_conf = serializers.JSONField()
-
-    meta = MetaSerializer()
-
-    access = AccessSerializer()
-
-    source = SourceSerializer()
-
-    schemas = serializers.JSONField(required=False)
-
-    examples = serializers.JSONField(required=False)
+from .serializers import CommandSerializer
 
 
 class EntryPointCommands(HTTPCommands):
