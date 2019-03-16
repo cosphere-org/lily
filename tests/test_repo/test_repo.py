@@ -6,6 +6,7 @@ import pytest
 from mock import call
 
 from lily.repo.repo import Repo
+from lily.base.conf import Config
 
 
 class RepoTestCase(TestCase):
@@ -14,6 +15,10 @@ class RepoTestCase(TestCase):
     def initfixture(self, mocker, tmpdir):
         self.mocker = mocker
         self.tmpdir = tmpdir
+
+        self.base_dir = self.tmpdir.mkdir('base')
+        self.mocker.patch.object(
+            Config, 'get_project_path').return_value = str(self.base_dir)
 
     #
     # GIT
@@ -152,11 +157,10 @@ class RepoTestCase(TestCase):
     # DIR / FILES
     #
     def test_clear_dir(self):
-        base_dir = self.tmpdir.mkdir('base')
-        hi_dir = base_dir.mkdir('hi')
+
+        hi_dir = self.base_dir.mkdir('hi')
         hi_dir.join('hello.txt').write('hi')
         hi_dir.join('bye.md').write('bye')
-        Repo.base_path = str(base_dir)
 
         r = Repo()
 
@@ -167,20 +171,17 @@ class RepoTestCase(TestCase):
         assert os.listdir(str(hi_dir)) == []
 
     def test_create_dir(self):
-        hi_dir = self.tmpdir.mkdir('hi')
-        Repo.base_path = str(hi_dir)
 
-        r = Repo()
+        Repo().create_dir('hello')
 
-        r.create_dir('hello')
-
-        assert os.path.exists(os.path.join(str(hi_dir), 'hello')) is True
+        assert os.path.exists(
+            os.path.join(str(self.base_dir), 'hello')) is True
 
     def test_create_dir__twice(self):
-        hi_dir = self.tmpdir.mkdir('hi')
-        Repo.base_path = str(hi_dir)
 
         r = Repo()
 
         r.create_dir('hello')
+
+        # -- this will return not error
         r.create_dir('hello')

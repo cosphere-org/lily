@@ -31,8 +31,8 @@ def normalize_indentation(text, min_indent=4):
     """
 
     # -- trim beginning and ending
-    text = re.sub('^\s*\n', '', text)
-    text = re.sub('\n\s*$', '', text)
+    text = re.sub(r'^\s*\n', '', text)
+    text = re.sub(r'\n\s*$', '', text)
 
     # -- remove minimal indentation
     lines = text.split('\n')

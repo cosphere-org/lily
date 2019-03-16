@@ -5,6 +5,7 @@ import pytest
 from mock import call
 
 from lily.base.utils import normalize_indentation
+from lily.base.conf import Config
 from lily.repo.management.commands.upgrade_version import command
 from lily.repo.version import VersionRenderer
 from lily.repo.changelog import ChangelogRenderer
@@ -42,8 +43,12 @@ class ConfigMock:
 class UpgradeVersionTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
-    def initfixtures(self, mocker):
+    def initfixtures(self, mocker, tmpdir):
         self.mocker = mocker
+
+        self.base_dir = tmpdir.mkdir('base')
+        self.mocker.patch.object(
+            Config, 'get_project_path').return_value = str(self.base_dir)
 
     def setUp(self):
         self.runner = CliRunner()

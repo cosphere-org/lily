@@ -6,14 +6,13 @@ import shlex
 
 import click
 
-from lily.conf import settings
+from lily.base.conf import Config
 
 
 class Repo:
 
-    base_path = settings.LILY_PROJECT_BASE
-
     def __init__(self):
+        self.base_path = Config.get_project_path()
         self.cd_to_repo()
 
     def cd_to_repo(self):

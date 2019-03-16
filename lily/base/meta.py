@@ -2,7 +2,6 @@
 import logging
 import re
 
-from lily.conf import settings
 from . import serializers
 from .events import EventFactory
 
@@ -13,16 +12,13 @@ logger = logging.getLogger()
 class Domain(EventFactory):
 
     def __init__(self, id, name):
-        if (len(id) > settings.LILY_MAX_DOMAIN_ID_LENGTH or
-                re.search(r'\s+', id)):
+        if re.search(r'\s+', id):
             raise self.BrokenRequest(
                 'BROKEN_ARGS_DETECTED',
                 data={
                     'errors': {
                         'id': [
-                            'should be shorter than {} characters and do '
-                            'not contain white characters.'.format(
-                                settings.LILY_MAX_DOMAIN_ID_LENGTH),
+                            'should not contain white characters.',
                         ]
                     }
                 })

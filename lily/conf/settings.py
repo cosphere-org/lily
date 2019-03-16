@@ -19,54 +19,28 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # LILY SPECIFIC SETTINGS
 #
 
-#
-# GENERAL
-#
-LILY_PROJECT_BASE = getattr(
-    settings,
-    'LILY_PROJECT_BASE',
-    os.path.dirname(BASE_DIR))
-
-LILY_CONFIG_FILE_PATH = os.path.join(
-    LILY_PROJECT_BASE, 'lily/conf/config.yaml')
-
-LILY_CACHE_DIR = getattr(
-    settings, 'LILY_CACHE_DIR', os.path.join(LILY_PROJECT_BASE, '.lily'))
-
-LILY_CACHE_TTL = getattr(settings, 'LILY_CACHE_TTL', 10 * 60)  # 10 minutes
-
-LILY_MAX_DOMAIN_ID_LENGTH = getattr(
-    settings, 'LILY_MAX_DOMAIN_ID_LENGTH', 32)
-
-LILY_DOCS_MARKDOWN_SPEC_FILE = getattr(
-    settings,
-    'LILY_DOCS_MARKDOWN_SPEC_FILE',
-    os.path.join(LILY_PROJECT_BASE, 'DOCS.md'))
-#
-# AUTHORIZER
-#
 LILY_AUTHORIZER_CLASS = getattr(
     settings,
     'LILY_AUTHORIZER_CLASS',
     'lily.base.authorizer.BaseAuthorizer')
 
-#
-# DOCS
-#
-LILY_ANGULAR_CLIENT_ORIGIN = 'git@bitbucket.org:goodai/lily-angular-client.git'
-
-#
-# ENTRYPOINT
-#
-LILY_ENTRYPOINT_VIEWS_ACCESS_LIST = getattr(
+LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST = getattr(
     settings,
-    'LILY_ENTRYPOINT_VIEWS_ACCESS_LIST',
+    'LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST',
     None)
 
 # LILY_COMMAND_ENTRYPOINTS = []
+# -- this should be note needed --> rather it should be build based on
+# -- the entrypoint!!!!!!!
 LILY_COMMAND_ENTRYPOINTS = [
     'http://localhost:7000',
 ]
+
+# FIXME: !!!! should be moved to github!
+LILY_ANGULAR_CLIENT_ORIGIN = (
+    'git@bitbucket.org:goodai/lily-angular-client.git')
+# git@bitbucket.org:goodai/lily-angular-client-base.git
+
 
 #
 # ASYNC

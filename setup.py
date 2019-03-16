@@ -1,35 +1,50 @@
 #!/usr/bin/env python
 
-import re
+import json
 import os.path
 from setuptools import setup, find_packages
 
 
-config = open('./lily/conf/config.yaml').read()
+BASE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-requirements_path = os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), 'requirements.txt')
+#
+# REQUIREMENTS
+#
+def parse_requirements(requirements):
+
+    return [
+        r.strip()
+        for r in requirements
+        if (
+            not r.strip().startswith('#') and
+            not r.strip().startswith('-e') and
+            r.strip())
+    ]
 
 
-def get_config_field(key):
-    matched = re.compile(r'{}\:\s*(?P<value>.+)'.format(key)).search(config)
+with open(os.path.join(BASE_DIR, 'requirements.txt')) as f:
+    requirements = parse_requirements(f.readlines())
 
-    if matched:
-        line = matched.group('value').strip()
-        return line.split('#')[0].strip()
 
-    else:
-        raise Exception('Cound not find config {}'.format(key))
+#
+# CONFIG
+#
+with open(os.path.join(BASE_DIR, '.lily', 'config.json')) as f:
+    config = json.loads(f.read())
 
 
 setup(
-    name=get_config_field('name'),
-    description=get_config_field('description'),
-    version=get_config_field('version'),
-    author=get_config_field('author'),
+    name=config['name'],
+    description='Lily MicroService Framework for Humans',
+    repository=config['repository'],
+    version=config['version'],
+    author='CoSphere Team',
     packages=find_packages(),
-    install_requires=open(requirements_path).readlines(),
+    install_requires=requirements,
     package_data={'': ['requirements.txt']},
-    include_package_data=True,
-)
+    entry_points='''
+        [console_scripts]
+        lily=lily.cli.cli:cli
+    ''',
+    include_package_data=True)

@@ -1,14 +1,14 @@
 
 from django.conf.urls import url
 
-from . import views
+from . import commands
 
 
 urlpatterns = [
 
     url(
         r'^$',
-        views.EntryPointView.as_view(),
+        commands.EntryPointCommands.as_view(),
         name='entrypoint'),
 
 ]

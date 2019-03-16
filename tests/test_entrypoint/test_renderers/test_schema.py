@@ -4,8 +4,9 @@ from django.db import models
 import pytest
 from mock import Mock, call
 
-from lily.base.test import override_settings
 from lily.base import serializers, parsers
+from lily.base.conf import Config
+from lily.base.models import JSONSchemaField, array, string
 from lily.entrypoint.renderers.schema import (
     Schema,
     ArrayValue,
@@ -21,6 +22,8 @@ class Human(models.Model):
     age = models.IntegerField(null=True, blank=True)
 
     is_ready = models.BooleanField()
+
+    pets = JSONSchemaField(schema=array(string()))
 
     class Meta:
         app_label = 'base'
@@ -49,7 +52,7 @@ class HumanModelSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Human
-        fields = ('name', 'age', 'is_ready', 'is_underaged')
+        fields = ('name', 'age', 'is_ready', 'is_underaged', 'pets')
 
     def get_is_underaged(self, instance) -> bool:
         return instance.age > 18
@@ -190,8 +193,14 @@ class SchemaRendererTestCase(TestCase):
                     'is_ready': {
                         'type': 'boolean',
                     },
+                    'pets': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'string',
+                        },
+                    },
                 },
-                'required': ['name', 'is_ready', 'is_underaged'],
+                'required': ['name', 'is_ready', 'is_underaged', 'pets'],
             },
         }
 
@@ -471,7 +480,12 @@ class SchemaRendererTestCase(TestCase):
                 'properties': {
                     'host': {
                         'type': 'object',
-                        'required': ['name', 'is_ready', 'is_underaged'],
+                        'required': [
+                            'name',
+                            'is_ready',
+                            'is_underaged',
+                            'pets',
+                        ],
                         'properties': {
                             'name': {
                                 'type': 'string',
@@ -488,6 +502,12 @@ class SchemaRendererTestCase(TestCase):
                             'is_ready': {
                                 'type': 'boolean',
                             },
+                            'pets': {
+                                'type': 'array',
+                                'items': {
+                                    'type': 'string',
+                                },
+                            }
                         },
                     },
                     'food': {
@@ -550,10 +570,18 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_get_repository_uri(self):
 
+        class MockConfig:
+
+            repository = 'http://repo'
+
+            last_commit_hash = '1234'
+
+            @classmethod
+            def get_project_path(cls):
+                return '/home/projects/lily'
+
         self.mocker.patch(
-            'lily.entrypoint.renderers.schema.Config'
-        ).return_value = Mock(
-            repository='http://repo', last_commit_hash='1234')
+            'lily.entrypoint.renderers.schema.Config', MockConfig)
 
         schema = SchemaRenderer(HumanSerializer).render()
         schema.meta = {
@@ -568,9 +596,10 @@ class SchemaRendererTestCase(TestCase):
     #
     # get_meta
     #
-    @override_settings(LILY_PROJECT_BASE='/home/projects/lily')
     def test_get_meta(self):
 
+        self.mocker.patch.object(
+            Config, 'get_project_path').return_value = '/home/projects/lily'
         getfile = Mock(return_value='/home/projects/lily/a/views.py')
         getsourcelines = Mock(return_value=[None, 11])
         self.mocker.patch(
@@ -758,7 +787,10 @@ def get_schema(raw_schema):
             }
         ),
     ])
-def test_serialize(raw_schema, expected):
+def test_serialize(raw_schema, expected, mocker):
+
+    mocker.patch.object(
+        Schema, 'get_repository_uri').return_value = 'uri'
 
     schema = SchemaRenderer(HumanSerializer).render()
     schema.schema = raw_schema

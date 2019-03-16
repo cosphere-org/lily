@@ -23,10 +23,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Illum accusamus ipsam porro voluptatum.",
-                                "description": "Tempore harum qui sapiente distinctio vel.",
+                                "title": "Qui exercitationem voluptatem facere.",
+                                "description": "Debitis voluptatem iure aliquam alias.",
                                 "domain": {
-                                    "id": "odit",
+                                    "id": "labore",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -36,7 +36,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -51,6 +51,28 @@
                     },
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
+                }
+            }
+        },
+        "500 (GENERIC_ERROR_OCCURRED)": {
+            "method": "get",
+            "description": "GENERIC_ERROR_OCCURRED",
+            "request": {
+                "path": "/?is_private=False",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "response": {
+                "status": 500,
+                "content_type": "application/json",
+                "content": {
+                    "errors": [
+                        "'examples'"
+                    ],
+                    "@type": "error",
+                    "@event": "GENERIC_ERROR_OCCURRED"
                 }
             }
         }

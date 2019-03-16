@@ -9,7 +9,7 @@ from lily.docs.management.commands.render_angular import command
 from lily.docs.renderers.angular.renderer import AngularClientRenderer
 
 
-class UpgradeVersionTestCase(TestCase):
+class RenderAngularTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
     def initfixtures(self, mocker):

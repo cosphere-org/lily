@@ -3,9 +3,9 @@ import inspect
 import re
 import os
 
-from lily.conf import settings
 from lily.base import serializers, parsers
 from lily.base.conf import Config
+from lily.base.models import JSONSchemaValidator
 
 
 class MissingReturnStatementError(Exception):
@@ -73,7 +73,7 @@ class SchemaRenderer:
 
     def get_meta(self, serializer):
         path = inspect.getfile(serializer)
-        path = path.replace(settings.LILY_PROJECT_BASE, '')
+        path = path.replace(Config.get_project_path(), '')
 
         return {
             'first_line': inspect.getsourcelines(serializer)[1],
@@ -323,10 +323,19 @@ class SchemaRenderer:
                 'enum': sorted(field.choices.keys()),
             }
 
-        elif is_field((
-            serializers.DictField,
-            serializers.JSONField,
-        )):
+        elif is_field(serializers.DictField):
+            return {
+                'type': 'object',
+            }
+
+        elif is_field(serializers.JSONField):
+
+            # -- search for the 1st JSONSchemaValidator validator
+            # -- the should be always at most one.
+            for validator in field.validators:
+                if isinstance(validator, JSONSchemaValidator):
+                    return validator.schema
+
             return {
                 'type': 'object',
             }
@@ -431,7 +440,6 @@ class Schema:
 
         return {
             'uri': self.get_repository_uri(),
-            # 'name': self.serialize_name(),
             'schema': schema,
         }
 

@@ -1,4 +1,7 @@
 
+# -- lily assistant
+-e git+https://github.com/cosphere-org/lily-assistant.git#egg=lily-assistant
+
 # -- core
 Django==2.1.7
 

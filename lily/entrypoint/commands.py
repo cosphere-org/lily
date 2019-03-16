@@ -1,13 +1,8 @@
 
-import json
-from time import time
-import os
-
-from django.views.generic import View
-
 from lily.conf import settings
 from lily.base import serializers, parsers, name
 from lily.base.command import command
+from lily.base.commands import HTTPCommands
 from lily.base.meta import Meta, MetaSerializer, Domain
 from lily.base.source import SourceSerializer
 from lily.base.access import Access, AccessSerializer
@@ -15,10 +10,6 @@ from lily.base.input import Input
 from lily.base.output import Output
 from .renderers.commands import CommandsRenderer
 from lily.base.conf import Config
-
-
-def get_cache_filepath():
-    return os.path.join(settings.LILY_CACHE_DIR, 'entrypoint.json')
 
 
 class CommandSerializer(serializers.Serializer):
@@ -41,7 +32,7 @@ class CommandSerializer(serializers.Serializer):
     examples = serializers.JSONField(required=False)
 
 
-class EntryPointView(View):
+class EntryPointCommands(HTTPCommands):
 
     class EntryPointSerializer(serializers.Serializer):
 
@@ -65,8 +56,6 @@ class EntryPointView(View):
 
         domain_id = parsers.CharField(default=None)
 
-        refresh = parsers.BooleanField(default=False)
-
     @command(
         name=name.Read('ENTRY_POINT'),
 
@@ -84,7 +73,7 @@ class EntryPointView(View):
 
         access=Access(
             is_private=True,
-            access_list=settings.LILY_ENTRYPOINT_VIEWS_ACCESS_LIST),
+            access_list=settings.LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST),
 
         input=Input(query_parser=QueryParser),
 
@@ -102,11 +91,9 @@ class EntryPointView(View):
 
         domain_id = request.input.query['domain_id']
 
-        refresh = request.input.query['refresh']
-
         config = Config()
 
-        commands = self.get_commands(refresh=refresh, config=config)
+        commands = self.get_commands(config=config)
 
         if command_names:
             commands = {
@@ -141,39 +128,11 @@ class EntryPointView(View):
                 'commands': commands,
             })
 
-    def get_commands(self, refresh, config):
-
-        cache_filepath = get_cache_filepath()
-
-        if not refresh:
-
-            # -- attempt to fetch `commands` from the local cache. If
-            # -- successful check if it was rendered for the newest version
-            # -- of the service
-            try:
-                with open(cache_filepath, 'r') as f:
-                    data = json.loads(f.read())
-
-                    age = time() - os.path.getmtime(cache_filepath)
-                    if (data['version'] == config.version and
-                            age < settings.LILY_CACHE_TTL):
-                        return data['commands']
-
-            except FileNotFoundError:
-                pass
+    def get_commands(self, config):
 
         # -- if reached here there were no `commands` or they were outdated
         commands = CommandsRenderer().render()
-        commands = {
+        return {
             name: CommandSerializer(conf).data
             for name, conf in commands.items()
         }
-
-        # -- save in the cache for the future reference
-        with open(cache_filepath, 'w') as f:
-            f.write(json.dumps({
-                'version': config.version,
-                'commands': commands,
-            }))
-
-        return commands

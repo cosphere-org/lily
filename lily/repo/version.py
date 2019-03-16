@@ -3,6 +3,7 @@
 class VersionRenderer:
 
     class VERSION_UPGRADE:  # noqa
+
         MAJOR = 'MAJOR'
 
         MINOR = 'MINOR'

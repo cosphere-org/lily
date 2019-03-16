@@ -80,8 +80,7 @@ class DomainTestCase(TestCase):
                 '@type': 'error',
                 'errors': {
                     'id': [
-                        'should be shorter than 32 characters and do '
-                        'not contain white characters.',
+                        'should not contain white characters.',
                     ]
                 }
             }

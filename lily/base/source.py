@@ -1,7 +1,7 @@
 
 import inspect
 
-from lily.conf import settings
+from lily.base.conf import Config
 from . import serializers
 
 
@@ -10,7 +10,7 @@ class Source:
     def __init__(self, fn):
         code, firstline = inspect.getsourcelines(fn)
         self.filepath = inspect.getfile(fn).replace(
-            settings.LILY_PROJECT_BASE, '')
+            Config.get_project_path(), '')
         self.start_line = firstline
         self.end_line = firstline + len(code) - 1
 

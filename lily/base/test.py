@@ -9,6 +9,7 @@ from django.urls import get_resolver
 from django.test import Client as DjangoClient
 
 from lily.conf import settings
+from lily.base.conf import Config
 
 
 class MissingConfError(Exception):
@@ -16,7 +17,7 @@ class MissingConfError(Exception):
 
 
 def get_examples_filepath():
-    return os.path.join(settings.LILY_CACHE_DIR, 'examples.json')
+    return os.path.join(Config.get_lily_path(), 'examples.json')
 
 
 class override_settings(ContextDecorator):  # noqa
