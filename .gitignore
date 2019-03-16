@@ -26,6 +26,7 @@ pip-log.txt
 .research
 nosetests.xml
 coverage.xml
+coverage_html
 cover
 pep8.txt
 sphinx-output

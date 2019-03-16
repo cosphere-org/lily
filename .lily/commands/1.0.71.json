@@ -29,7 +29,7 @@
         },
         "schemas": {
             "output": {
-                "uri": "https://github.com/cosphere-org/lily/src/.../lily/entrypoint/commands.py/#lines-17",
+                "uri": "https://github.com/cosphere-org/lily/blob/.../lily/entrypoint/commands.py/#L17",
                 "schema": {
                     "type": "object",
                     "required": [
@@ -51,7 +51,7 @@
                 }
             },
             "input_query": {
-                "uri": "https://github.com/cosphere-org/lily/src/.../lily/entrypoint/commands.py/#lines-27",
+                "uri": "https://github.com/cosphere-org/lily/blob/.../lily/entrypoint/commands.py/#L27",
                 "schema": {
                     "type": "object",
                     "required": [],
