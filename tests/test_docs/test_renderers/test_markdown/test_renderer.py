@@ -6,12 +6,12 @@ from mock import Mock
 import pytest
 
 from lily.base.meta import Meta, Domain
-from lily.docs.renderers.markdown import MarkdownRenderer
+from lily.docs.renderers.markdown.renderer import MarkdownRenderer
 from lily.entrypoint.renderers.base import BaseRenderer
 
 
 def remove_white_chars(x):
-    return re.sub('\s+', '', x)
+    return re.sub(r'\s+', '', x)
 
 
 class MarkdownRendererTestCase(TestCase):

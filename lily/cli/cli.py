@@ -27,13 +27,15 @@ if not os.environ.get('LANG'):  # pragma: no cover
 @click.group()
 def cli():
     """Expose multiple commands allowing one to work with lily_assistant."""
+
     pass
 
 
 @click.command()
 @click.argument('src_dir')
 def init(src_dir):
-    """
+    """Init `lily` with some preliminary files copying and creation.
+
     Init `Lily`. During this operation the following will take place:
     - `.lily/lily.makefile` will be copied to the root project directory.
 

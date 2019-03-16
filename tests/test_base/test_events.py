@@ -148,4 +148,5 @@ class BaseSuccessExceptionTestCase(TestCase):
         (EventFactory.ServerError, 500),
     ])
 def test_response_classes(exception, expected_status_code):
-        assert exception.response_class.status_code == expected_status_code
+
+    assert exception.response_class.status_code == expected_status_code

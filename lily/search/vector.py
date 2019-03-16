@@ -87,7 +87,8 @@ class CombinedVector(VectorCombinable, CombinedExpression):
 
 
 class StoredVector(SearchVector, VectorCombinable):
-    """
+    """Represent stored text-search vector.
+
     Used for wrapping either stored ``tsvector`` column or the aggregate of
     such columns.
 
@@ -103,7 +104,8 @@ class StoredVector(SearchVector, VectorCombinable):
 
 
 class OnTheFlyVector(SearchVector, VectorCombinable):
-    """
+    """Represent on-the-fly calculated text-search vector.
+
     Used for parsing supplied column in on the fly fashion to ``tsvector``
     and optionally to combine itself with other tsvectors (either on the fly
     ones or stored ones).

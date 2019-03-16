@@ -5,7 +5,7 @@ import pytest
 from mock import Mock, call
 
 from lily.base import serializers, parsers
-from lily.base.conf import Config
+from lily.base.config import Config
 from lily.base.models import JSONSchemaField, array, string
 from lily.entrypoint.renderers.schema import (
     Schema,
@@ -568,11 +568,11 @@ class SchemaRendererTestCase(TestCase):
     #
     # test_get_repository_uri
     #
-    def test_get_repository_uri(self):
+    def test_get_repository_uri__bitbucket(self):
 
         class MockConfig:
 
-            repository = 'http://repo'
+            repository = 'http://bitbucket.com'
 
             last_commit_hash = '1234'
 
@@ -591,7 +591,32 @@ class SchemaRendererTestCase(TestCase):
 
         assert (
             schema.get_repository_uri() ==
-            'http://repo/src/1234/some/path/#lines-11')
+            'http://bitbucket.com/src/1234/some/path/#lines-11')
+
+    def test_get_repository_uri__github(self):
+
+        class MockConfig:
+
+            repository = 'http://github.com/what'
+
+            last_commit_hash = '1234'
+
+            @classmethod
+            def get_project_path(cls):
+                return '/home/projects/lily'
+
+        self.mocker.patch(
+            'lily.entrypoint.renderers.schema.Config', MockConfig)
+
+        schema = SchemaRenderer(HumanSerializer).render()
+        schema.meta = {
+            'path': '/some/path',
+            'first_line': 11,
+        }
+
+        assert (
+            schema.get_repository_uri() ==
+            'http://github.com/what/blob/1234/some/path/#L11')
 
     #
     # get_meta

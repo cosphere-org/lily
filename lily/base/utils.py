@@ -5,8 +5,7 @@ from time import time
 
 
 def import_from_string(path):
-    """
-    Attempt to import a class from a string representation.
+    """Attempt to import a class from a string representation.
 
     From: django rest_framework
 
@@ -24,9 +23,9 @@ def import_from_string(path):
 
 
 def normalize_indentation(text, min_indent=4):
-    """
-    Normalizes text so that it's indented by the amount specified
-    by `min_indent`.
+    """Normalize text so that it's indented by specific amount.
+
+    The minimal indent would be `min_indent`.
 
     """
 

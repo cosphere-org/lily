@@ -15,7 +15,7 @@ from lily.base.test import get_examples_filepath
 BASE_DIR = os.path.dirname(__file__)
 
 
-BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './markdown_base.md')
+BASE_TEMPLATE_PATH = os.path.join(BASE_DIR, './base.md')
 
 
 engine = engines['django']
@@ -38,11 +38,6 @@ def dump_or_none(x):
 
 
 class MarkdownRenderer(BaseRenderer):
-    """
-    DEPRECATED: this renderer is not longer supported and soon will
-    become obsolete and will be removed from the lily base modules.
-
-    """
 
     def __init__(self, urlpatterns):
         self.urlpatterns = urlpatterns

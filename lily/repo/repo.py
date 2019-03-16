@@ -6,7 +6,7 @@ import shlex
 
 import click
 
-from lily.base.conf import Config
+from lily.base.config import Config
 
 
 class Repo:
@@ -88,11 +88,11 @@ class Repo:
         captured = ''
 
         p = Popen(
-                self.split_command(command),
-                stdout=PIPE,
-                stderr=STDOUT,
-                bufsize=1,
-                universal_newlines=True)
+            self.split_command(command),
+            stdout=PIPE,
+            stderr=STDOUT,
+            bufsize=1,
+            universal_newlines=True)
 
         while p.poll() is not None:
             line = p.stdout.readline()

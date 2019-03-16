@@ -3,8 +3,7 @@ import djclick as click
 
 from ...repo import Repo
 from ...version import VersionRenderer
-from ...changelog import ChangelogRenderer
-from lily.base.conf import Config
+from lily.base.config import Config
 from lily.base.utils import normalize_indentation
 
 
@@ -15,7 +14,8 @@ from lily.base.utils import normalize_indentation
     VersionRenderer.VERSION_UPGRADE.PATCH,
 ]))
 def command(upgrade_type):
-    """
+    """Upgrade version of the repo in a complete sense.
+
     Upgrade version of the repo and perform the following extra activities:
 
     - tag branch with the version of repo
@@ -30,7 +30,6 @@ def command(upgrade_type):
     """
     config = Config()
     repo = Repo()
-    changelog = ChangelogRenderer()
     version = VersionRenderer()
 
     # -- version
@@ -39,9 +38,6 @@ def command(upgrade_type):
 
     # -- last_commit_hash
     config.last_commit_hash = repo.current_commit_hash
-
-    # -- changelog
-    changelog.render()
 
     # -- push all changed files
     repo.add(config.path)

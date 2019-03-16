@@ -1,6 +1,4 @@
 
-import os
-
 from django.conf import settings
 
 
@@ -13,8 +11,6 @@ DEBUG = True
 ALLOWED_HOSTS = ["*"]
 
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 #
 # LILY SPECIFIC SETTINGS
 #
@@ -24,10 +20,12 @@ LILY_AUTHORIZER_CLASS = getattr(
     'LILY_AUTHORIZER_CLASS',
     'lily.base.authorizer.BaseAuthorizer')
 
+
 LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST = getattr(
     settings,
     'LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST',
     None)
+
 
 # LILY_COMMAND_ENTRYPOINTS = []
 # -- this should be note needed --> rather it should be build based on
@@ -61,16 +59,6 @@ LILY_ASYNC_LOCK_DB_INDEX = getattr(
     1)
 
 #
-# Language Detection API Key
-# To be replaced by in-house solution which doesn't have to travel over the
-# network !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-#
-DETECT_LANGUAGE_API_KEY = getattr(
-    settings,
-    'DETECT_LANGUAGE_API_KEY',
-    'fake.key')
-
-#
 # Internationalization
 #
 LANGUAGE_CODE = 'en-us'
@@ -92,6 +80,7 @@ INSTALLED_APPS = [
     'docs',
     'base',
     'search',
+    'entrypoint',
     'repo',
     'django.contrib.contenttypes',
     'django.contrib.auth',
@@ -125,6 +114,7 @@ WSGI_APPLICATION = getattr(
     settings,
     'WSGI_APPLICATION',
     'conf.wsgi.application')
+
 
 TEMPLATES = [
     {

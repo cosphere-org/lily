@@ -29,24 +29,15 @@ from rest_framework.serializers import (  # noqa
 from .events import EventFactory
 
 
-# FIXME: this will normally be read from the static conf file available
-# somewhere -> maybe each service can upload newest conf file on
-# deployment to S3???
-# -- this can be read from the ENV variables!!!
-# FIXME: add the file from which the conf will be fetched
-
 BASE_DIR = os.path.dirname(__file__)
 
-
-# FIXME: !!!!!!!!!!1 figure out a way of fetching this on service start-up
-# COMMANDS_CONF = json.loads(
-#     open(os.path.join(BASE_DIR, '../docs/commands_conf.json')).read())
 
 COMMANDS_CONF = {}
 
 
 class MissingTypeError(Exception):
-    """
+    """Could not find `_type` attribute.
+
     When Serializer is missing the semantic `_type` denoting a type which
     Entity a given Serializer represents.
 

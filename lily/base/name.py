@@ -69,7 +69,7 @@ END_HUSHERS = set([
 
 
 def to_plural(noun):
-    """ Forgiving plural form transformer
+    """Forgiving plural form transformer.
 
     If the `noun` is already in the plural form no transformation will be
     applied.
@@ -168,8 +168,8 @@ class BaseVerb:
 
     def transform(self, name):
         name = name.upper()
-        name = re.sub('\s+', '_', name)
-        name = re.sub('\_{2,}', '_', name)
+        name = re.sub(r'\s+', '_', name)
+        name = re.sub(r'\_{2,}', '_', name)
 
         return name
 
@@ -218,15 +218,15 @@ class Conjunction:
 
             effect = None
 
-            def __init__(other, *args, **kwargs):
+            def __init__(other, *args, **kwargs):  # noqa
                 self.cause = cause_cls(*args, **kwargs)
 
-            def render_command_name(other):
+            def render_command_name(other):  # noqa
                 return '{effect}_AFTER_{cause}'.format(
                     effect=self.effect.render_command_name(),
                     cause=self.cause.render_command_name())
 
-            def render_event_name(other, request, e):
+            def render_event_name(other, request, e):  # noqa
                 return '{effect}_AFTER_{cause}'.format(
                     effect=self.effect.render_event_name(request, e),
                     cause=self.cause.render_event_name())

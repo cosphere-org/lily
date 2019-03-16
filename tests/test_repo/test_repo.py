@@ -6,7 +6,7 @@ import pytest
 from mock import call
 
 from lily.repo.repo import Repo
-from lily.base.conf import Config
+from lily.base.config import Config
 
 
 class RepoTestCase(TestCase):

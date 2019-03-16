@@ -28,22 +28,22 @@ class CommandLinkTestCase(TestCase):
 
     def test_arguments_are_optional(self):
 
-        l = serializers.CommandLink(name='MAKE_IT')
+        link = serializers.CommandLink(name='MAKE_IT')
 
-        assert l.name == 'MAKE_IT'
-        assert l.parameters == {}
-        assert l.description is None
+        assert link.name == 'MAKE_IT'
+        assert link.parameters == {}
+        assert link.description is None
 
     def test_arguments_are_saved(self):
 
-        l = serializers.CommandLink(
+        link = serializers.CommandLink(
             name='MAKE_IT',
             parameters={'hi': 'there'},
             description='just make it!')
 
-        assert l.name == 'MAKE_IT'
-        assert l.parameters == {'hi': 'there'}
-        assert l.description == 'just make it!'
+        assert link.name == 'MAKE_IT'
+        assert link.parameters == {'hi': 'there'}
+        assert link.description == 'just make it!'
 
     #
     # resolve_parameters

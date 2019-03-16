@@ -43,7 +43,7 @@ class Config:
 
         return cls()
 
-    def save(self):
+    def _save(self):
         with open(self.get_config_path(), 'w') as f:
             f.write(
                 json.dumps(
@@ -78,7 +78,7 @@ class Config:
     @src_dir.setter
     def src_dir(self, value):
         self.config['src_dir'] = value
-        self.save()
+        self._save()
 
     @property
     def src_path(self):
@@ -95,7 +95,7 @@ class Config:
     @version.setter
     def version(self, value):
         self.config['version'] = value
-        self.save()
+        self._save()
 
     #
     # LAST_COMMIT_HASH
@@ -107,4 +107,4 @@ class Config:
     @last_commit_hash.setter
     def last_commit_hash(self, value):
         self.config['last_commit_hash'] = value
-        self.save()
+        self._save()

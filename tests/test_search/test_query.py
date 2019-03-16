@@ -19,7 +19,7 @@ import search
     # case 3 - all punctuation characters are removed and used as split pivotal
     # points
     (
-        'hi <>.all||&how&^%%are$@\' you !"|\/ doing',
+        'hi <>.all||&how&^%%are$@\' you !"|\\/ doing',
         'hi | all | how | are | you | doing'
     ),
 
