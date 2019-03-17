@@ -23,19 +23,19 @@ shell:  ## run django shell (ipython)
 # MIGRATIONS
 #
 .PHONY: migrations_create
-migrations_create:
+migrations_create:  ## auto-create migrations for all installed apps
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py makemigrations
 
 
 .PHONY: migrations_bulk_read
-migrations_bulk_read:
+migrations_bulk_read:  ## real all migrations
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py listmigrations
 
 
 .PHONY: migrations_apply
-migrations_apply:
+migrations_apply:  ## apply all not yet applied migrations
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py migrate
 
@@ -44,12 +44,12 @@ migrations_apply:
 # COMMANDS & DOCS
 #
 .PHONY: docs_render_markdown
-docs_render_markdown:
+docs_render_markdown:  ## render Markdown representation of commands
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py render_markdown
 
 .PHONY: docs_render_commands
-docs_render_commands:
+docs_render_commands:  ## render JSON representation of commands
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py render_commands
 
