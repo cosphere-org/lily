@@ -59,9 +59,9 @@ docs_render_commands: test_all  ## render JSON representation of commands
 #
 start_gunicorn:  ## start service locally
 	source env.sh && \
+	export PYTHONPATH="${PYTHONPATH}:${PWD}/{% SRC_DIR %}" && \
 	python {% SRC_DIR %}/manage.py migrate && \
-	cd {% SRC_DIR %} && \
-	gunicorn conf.wsgi \
+	gunicorn {% SRC_DIR %}.wsgi \
 		--worker-class gevent \
 		-w 1 \
 		--log-level=debug \
