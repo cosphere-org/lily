@@ -1,5 +1,7 @@
 
 import os
+import textwrap
+
 import click
 
 from .copier import Copier
@@ -45,6 +47,15 @@ def init(src_dir):
     :param src_dir: name of your source directory
 
     """
+
+    # -- check that init for lily_assistant was executed too
+    if not os.path.exists(os.path.join(os.getcwd(), '.lily', 'config.json')):
+        raise click.ClickException(textwrap.dedent('''
+            Please install `lily_assistant` and run
+            `lily_assistant init <src_dir>` before running
+            `lily init <src_dir>`
+        '''))
+
     Copier().copy(src_dir)
 
     logger.info('''

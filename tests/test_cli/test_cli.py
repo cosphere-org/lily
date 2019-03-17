@@ -1,4 +1,5 @@
 
+import os
 from unittest import TestCase
 from unittest.mock import call
 import textwrap
@@ -8,6 +9,7 @@ import pytest
 
 from lily.cli.cli import cli
 from lily.cli.copier import Copier
+from tests import remove_white_chars
 
 
 class CliTestCase(TestCase):
@@ -37,3 +39,19 @@ class CliTestCase(TestCase):
             include .lily/lily.makefile
         ''').strip()
         assert copy.call_args_list == [call('src_dir')]
+
+    def test_init__config_does_not_exist(self):
+
+        os.chdir(str(self.tmpdir))
+
+        copy = self.mocker.patch.object(Copier, 'copy')
+
+        result = self.runner.invoke(cli, ['init', 'src_dir'])
+        assert result.exit_code == 1
+        assert remove_white_chars(result.output) == remove_white_chars('''
+            Error:
+            Please install `lily_assistant` and run
+            `lily_assistant init <src_dir>` before running
+            `lily init <src_dir>`
+        ''')
+        assert copy.call_count == 0

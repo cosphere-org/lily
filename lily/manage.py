@@ -1,10 +1,10 @@
 #!/usr/bin/env python
-import os
-import sys
+import os  # pragma: no cover
+import sys  # pragma: no cover
 
-sys.path.append('.')
+sys.path.append('.')  # pragma: no cover
 
-if __name__ == "__main__":
+if __name__ == "__main__":  # pragma: no cover
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conf.settings")
 
     try:

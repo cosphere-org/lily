@@ -4,6 +4,7 @@ import string
 
 from mock import call
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
+import pytest
 
 from lily.base import signature
 from lily.base.events import EventFactory
@@ -64,15 +65,11 @@ def test_verify_payload__different_secrets_for_encoding_and_decoding():
     code = signature.sign_payload(
         'why@gmail.com', 'NO!', 'secret123', 'salt')
 
-    try:
+    with pytest.raises(EventFactory.BrokenRequest) as e:
         assert signature.verify_payload(
             code, 'my_secret', 'salt', 'hi@there', 120)
 
-    except EventFactory.BrokenRequest as e:
-        assert e.event == 'PAYLOAD_VERIFIED_AS_BROKEN'
-
-    else:
-        raise AssertionError
+    assert e.value.event == 'PAYLOAD_VERIFIED_AS_BROKEN'
 
 
 def test_verify_payload__email_mismatch(mocker):
@@ -80,15 +77,11 @@ def test_verify_payload__email_mismatch(mocker):
     code = signature.sign_payload(
         'why@gmail.com', 'NO!', 'secret123', 'salt')
 
-    try:
+    with pytest.raises(EventFactory.BrokenRequest) as e:
         signature.verify_payload(
             code, 'secret123', 'salt', 'hello@there', 120)
 
-    except EventFactory.BrokenRequest as e:
-        assert e.event == 'PAYLOAD_VERIFIED_AS_BROKEN_MISMATCHING_EMAILS'
-
-    else:
-        raise AssertionError
+    assert e.value.event == 'PAYLOAD_VERIFIED_AS_BROKEN_MISMATCHING_EMAILS'
 
 
 def test_verify_payload__recognizes_expired_token(mocker):
@@ -100,15 +93,11 @@ def test_verify_payload__recognizes_expired_token(mocker):
         'error occured',
         date_signed=datetime(2013, 1, 15, 6, 48))
 
-    try:
+    with pytest.raises(EventFactory.BrokenRequest) as e:
         signature.verify_payload(
             'what.ever', 'personal_secret', 'salt', 'test@whats.com', 24)
 
-    except EventFactory.BrokenRequest as e:
-        assert e.event == 'PAYLOAD_VERIFIED_AS_EXPIRED'
-
-    else:
-        raise AssertionError
+    assert e.value.event == 'PAYLOAD_VERIFIED_AS_EXPIRED'
 
 
 #

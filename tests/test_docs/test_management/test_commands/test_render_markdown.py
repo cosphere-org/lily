@@ -3,7 +3,8 @@ from click.testing import CliRunner
 from django.test import TestCase
 import pytest
 
-from lily.base.config import Config
+from lily_assistant.config import Config
+
 from lily.docs.management.commands.render_markdown import command
 from lily.docs.renderers.markdown.renderer import MarkdownRenderer
 

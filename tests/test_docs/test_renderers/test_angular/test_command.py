@@ -1,6 +1,5 @@
 
 from copy import deepcopy
-import re
 
 from django.test import TestCase
 from mock import Mock, call
@@ -8,6 +7,7 @@ import pytest
 
 from lily.docs.renderers.angular.command import Command
 from lily.base.utils import normalize_indentation
+from tests import remove_white_chars
 
 
 CONF = {
@@ -34,10 +34,6 @@ CONF = {
     },
     'examples': {},
 }
-
-
-def remove_white_chars(text):
-    return re.sub(r'\s+', '', text)
 
 
 class CommandTestCase(TestCase):

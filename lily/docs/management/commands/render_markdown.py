@@ -3,9 +3,9 @@ import djclick as click
 
 from importlib import import_module
 import os
+from lily_assistant.config import Config
 
 from lily.conf import settings
-from lily.base.config import Config
 from ...renderers.markdown.renderer import MarkdownRenderer
 
 

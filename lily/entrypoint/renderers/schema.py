@@ -3,8 +3,9 @@ import inspect
 import re
 import os
 
+from lily_assistant.config import Config
+
 from lily.base import serializers, parsers
-from lily.base.config import Config
 from lily.base.models import JSONSchemaValidator
 
 

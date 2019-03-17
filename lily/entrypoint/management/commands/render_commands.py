@@ -3,8 +3,8 @@ import json
 import os
 
 import djclick as click
+from lily_assistant.config import Config
 
-from lily.base.config import Config
 from ...renderers.commands import CommandsRenderer
 from ...serializers import CommandSerializer
 

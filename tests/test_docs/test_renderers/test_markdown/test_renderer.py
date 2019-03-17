@@ -1,6 +1,4 @@
 
-import re
-
 from django.test import TestCase
 from mock import Mock
 import pytest
@@ -8,10 +6,7 @@ import pytest
 from lily.base.meta import Meta, Domain
 from lily.docs.renderers.markdown.renderer import MarkdownRenderer
 from lily.entrypoint.renderers.base import BaseRenderer
-
-
-def remove_white_chars(x):
-    return re.sub(r'\s+', '', x)
+from tests import remove_white_chars
 
 
 class MarkdownRendererTestCase(TestCase):

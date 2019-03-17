@@ -7,9 +7,9 @@ from contextlib import ContextDecorator
 
 from django.urls import get_resolver
 from django.test import Client as DjangoClient
+from lily_assistant.config import Config
 
 from lily.conf import settings
-from lily.base.config import Config
 
 
 class MissingConfError(Exception):

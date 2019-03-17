@@ -30,47 +30,11 @@ class CopierTestCase(TestCase):
     #
     def test_copy__makes_the_right_calls(self):
 
-        create_empty_config = self.mocker.patch.object(
-            Copier, 'create_empty_config')
         copy_makefile = self.mocker.patch.object(Copier, 'copy_makefile')
 
         Copier().copy('gigly')
 
-        assert create_empty_config.call_args_list == [call('gigly')]
         assert copy_makefile.call_args_list == [call('gigly')]
-
-    #
-    # CREATE_EMPTY_CONFIG
-    #
-    def test_create_empty_config__does_not_exist(self):
-
-        config_json = self.project_dir.join('.lily').join('config.json')
-
-        assert json.loads(config_json.read()) == {
-            'version': '0.0.11'
-        }
-
-        Copier().create_empty_config('gigly')
-
-        assert json.loads(config_json.read()) == {
-            'version': '0.0.11'
-        }
-
-    def test_create_empty_config__exists(self):
-
-        config_json = self.project_dir.join('.lily').join('config.json')
-
-        os.remove(str(config_json))
-
-        Copier().create_empty_config('gigly')
-
-        assert json.loads(config_json.read()) == {
-            'last_commit_hash': '... THIS WILL BE FILLED AUTOMATICALLY ...',
-            'name': '... PUT HERE NAME OF YOUR PROJECT ...',
-            'repository': '... PUT HERE URL OF REPOSITORY ...',
-            'src_dir': 'gigly',
-            'version': '... PUT HERE INITIAL VERSION ...',
-        }
 
     #
     # COPY_MAKEFILE

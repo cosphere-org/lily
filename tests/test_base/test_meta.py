@@ -70,23 +70,19 @@ class DomainTestCase(TestCase):
 
     def test_invalid_id(self):
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             Domain(id='cards manager', name='...')
 
-        except EventFactory.BrokenRequest as e:
-            assert e.event == 'BROKEN_ARGS_DETECTED'
-            assert e.data == {
-                '@event': 'BROKEN_ARGS_DETECTED',
-                '@type': 'error',
-                'errors': {
-                    'id': [
-                        'should not contain white characters.',
-                    ]
-                }
+        assert e.value.event == 'BROKEN_ARGS_DETECTED'
+        assert e.value.data == {
+            '@event': 'BROKEN_ARGS_DETECTED',
+            '@type': 'error',
+            'errors': {
+                'id': [
+                    'should not contain white characters.',
+                ]
             }
-
-        else:
-            raise AssertionError('should raise exception')
+        }
 
 
 class DomainSerializerTestCase(TestCase):

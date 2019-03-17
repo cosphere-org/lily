@@ -6,14 +6,14 @@ import textwrap
 from django.test import TestCase, override_settings
 import pytest
 from mock import call
+from lily_assistant.repo.repo import Repo
+from lily_assistant.repo.version import VersionRenderer
 
 from lily.docs.renderers.angular.repo import (
     AngularRepo,
     TemplateRepo,
     PathRule,
 )
-from lily.repo.repo import Repo
-from lily.repo.version import VersionRenderer
 
 
 class AngularRepoTestCase(TestCase):

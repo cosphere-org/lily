@@ -5,8 +5,9 @@ import re
 from functools import partial
 import tempfile
 
-from lily.repo.repo import Repo
-from lily.repo.version import VersionRenderer
+from lily_assistant.repo.repo import Repo
+from lily_assistant.repo.version import VersionRenderer
+
 from lily.conf import settings
 
 

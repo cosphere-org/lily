@@ -37,14 +37,14 @@ with open(os.path.join(BASE_DIR, '.lily', 'config.json')) as f:
 setup(
     name=config['name'],
     description='Lily MicroService Framework for Humans',
-    repository=config['repository'],
+    url=config['repository'],
     version=config['version'],
     author='CoSphere Team',
     packages=find_packages(),
     install_requires=requirements,
     package_data={'': ['requirements.txt']},
+    include_package_data=True,
     entry_points='''
         [console_scripts]
         lily=lily.cli.cli:cli
-    ''',
-    include_package_data=True)
+    ''')
