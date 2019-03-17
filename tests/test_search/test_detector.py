@@ -56,18 +56,14 @@ class LanguageDetectorTestCase(TestCase):
             self.detector.identifier, 'rank'
         ).return_value = []
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             self.detector.detect('hi world')
 
-        except EventFactory.BrokenRequest as e:
-            assert e.data == {
-                '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
-                '@type': 'error',
-                'text': 'hi world',
-            }
-
-        else:
-            raise AssertionError('should raise exception')
+        assert e.value.data == {
+            '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
+            '@type': 'error',
+            'text': 'hi world',
+        }
 
     def test_detect_language__limit_by_length(self):
 
@@ -92,18 +88,14 @@ class LanguageDetectorTestCase(TestCase):
             self.detector.identifier, 'rank'
         ).return_value = []
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             self.detector.detect('hello world')
 
-        except EventFactory.BrokenRequest as e:
-            assert e.data == {
-                '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
-                '@type': 'error',
-                'text': 'hello world',
-            }
-
-        else:
-            raise AssertionError('should raise exception')
+        assert e.value.data == {
+            '@event': 'UNSUPPORTED_LANGUAGE_DETECTED',
+            '@type': 'error',
+            'text': 'hello world',
+        }
 
     #
     # DETECT_DB_CONF

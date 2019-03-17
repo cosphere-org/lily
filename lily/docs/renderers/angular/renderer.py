@@ -2,10 +2,10 @@
 import os
 
 import requests
+from lily_assistant.repo.version import VersionRenderer
 
 from lily.conf import settings
 from lily.base.events import EventFactory
-from lily.repo.version import VersionRenderer
 from .command import Command
 from lily.base.utils import normalize_indentation
 from .repo import AngularRepo

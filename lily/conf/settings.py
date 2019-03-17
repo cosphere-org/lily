@@ -81,7 +81,6 @@ INSTALLED_APPS = [
     'base',
     'search',
     'entrypoint',
-    'repo',
     'django.contrib.contenttypes',
     'django.contrib.auth',
 ]

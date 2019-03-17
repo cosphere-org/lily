@@ -1,4 +1,6 @@
 
+from lily_assistant.config import Config
+
 from lily.conf import settings
 from lily.base import serializers, parsers, name
 from lily.base.command import command
@@ -7,7 +9,6 @@ from lily.base.meta import Meta, Domain
 from lily.base.access import Access
 from lily.base.input import Input
 from lily.base.output import Output
-from lily.base.config import Config
 from .renderers.commands import CommandsRenderer
 from .serializers import CommandSerializer
 

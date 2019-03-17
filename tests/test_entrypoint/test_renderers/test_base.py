@@ -135,19 +135,15 @@ class BaseRendererTestCase(TestCase):
             re_path(r'^hello/there$', hi_view, name='hello.there'),
         ])
 
-        try:
+        with pytest.raises(EventFactory.ServerError) as e:
             renderer.render()
 
-        except EventFactory.ServerError as e:
-            assert e.event == 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED'
-            assert e.data == {
-                '@event': 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED',
-                '@type': 'error',
-                'duplicates': ['HiView'],
-            }
-
-        else:
-            raise AssertionError('should raise error')
+        assert e.value.event == 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED'
+        assert e.value.data == {
+            '@event': 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED',
+            '@type': 'error',
+            'duplicates': ['HiView'],
+        }
 
     def test_crawl_views__deep_url_patterns(self):
 

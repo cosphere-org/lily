@@ -1,6 +1,5 @@
 
 import os
-import re
 from collections import OrderedDict
 import tempfile
 
@@ -14,10 +13,7 @@ from lily.base.test import override_settings
 from lily.base.utils import normalize_indentation
 from lily.docs.renderers.angular.domain import Domain
 from lily.docs.renderers.angular.renderer import AngularClientRenderer
-
-
-def remove_white_chars(text):
-    return re.sub(r'\s+', '', text)
+from tests import remove_white_chars
 
 
 class AngularClientRendererTestCase(TestCase):
@@ -327,19 +323,15 @@ class AngularClientRendererTestCase(TestCase):
             },
         ]
 
-        try:
+        with pytest.raises(EventFactory.ServerError) as e:
             self.renderer.group_commands_by_domain()
 
-        except EventFactory.ServerError as e:
-            assert e.data == {
-                '@event': 'DUPLICATE_PUBLIC_DOMAIN_COMMAND_DETECTED',
-                '@type': 'error',
-                'command_name': 'CREATE_CARD',
-                'domain_id': 'recall',
-            }
-
-        else:
-            raise AssertionError('should raise error')
+        assert e.value.data == {
+            '@event': 'DUPLICATE_PUBLIC_DOMAIN_COMMAND_DETECTED',
+            '@type': 'error',
+            'command_name': 'CREATE_CARD',
+            'domain_id': 'recall',
+        }
 
     #
     # collect_entrypoints
@@ -400,18 +392,14 @@ class AngularClientRendererTestCase(TestCase):
                 json=Mock(return_value={})),
         ]
 
-        try:
+        with pytest.raises(EventFactory.ServerError) as e:
             self.renderer.collect_entrypoints()
 
-        except EventFactory.ServerError as e:
-            assert e.data == {
-                '@event': 'BROKEN_SERVICE_DETECTED',
-                '@type': 'error',
-                'service': 'http://localhost:9000',
-            }
-
-        else:
-            raise AssertionError('should raise error')
+        assert e.value.data == {
+            '@event': 'BROKEN_SERVICE_DETECTED',
+            '@type': 'error',
+            'service': 'http://localhost:9000',
+        }
 
     #
     # render_domain

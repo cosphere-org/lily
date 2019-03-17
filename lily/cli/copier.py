@@ -3,27 +3,17 @@ import os
 import re
 
 import click
-
-from lily.base.config import Config
+from lily_assistant.config import Config
 
 
 class Copier:
-
-    class NotProjectRootException(Exception):
-        pass
 
     def __init__(self):
         self.root_dir = os.getcwd()
 
     def copy(self, src_dir):
 
-        self.create_empty_config(src_dir)
         self.copy_makefile(src_dir)
-
-    def create_empty_config(self, src_dir):
-
-        if not Config.exists():
-            Config.create_empty(src_dir)
 
     def copy_makefile(self, src_dir):
 

@@ -38,18 +38,14 @@ class ImmutableModelTestCase(TestCase):
 
     def test_validates_on_save(self):
 
-        try:
+        with pytest.raises(ValidationError) as e:
             ImmutableEntity(name=11 * 'a').save()
 
-        except ValidationError as e:
-            assert e.message_dict == {
-                'name': [
-                    'Ensure this value has at most 10 characters (it has 11).',
-                ],
-            }
-
-        else:
-            raise AssertionError('should raise exception')
+        assert e.value.message_dict == {
+            'name': [
+                'Ensure this value has at most 10 characters (it has 11).',
+            ],
+        }
 
 
 class JSONModel(fake_models.FakeModel):
@@ -91,48 +87,36 @@ class JSONSchemaFieldTestCase(TestCase):
 
     def test_invalid_model__empty_array(self):
 
-        try:
+        with pytest.raises(ValidationError) as e:
             JSONModel(answers=[]).clean_fields()
 
-        except ValidationError as e:
-            error = e.error_dict['answers'][0]
-            assert error.message == 'This field cannot be blank.'
-
-        else:
-            raise AssertionError('should raise error')
+        error = e.value.error_dict['answers'][0]
+        assert error.message == 'This field cannot be blank.'
 
     def test_invalid_model__not_array(self):
 
-        try:
+        with pytest.raises(ValidationError) as e:
             JSONModel(answers={'hi': 'there'}).clean_fields()
 
-        except ValidationError as e:
-            error = e.error_dict['answers'][0]
-            assert error.message == (
-                "JSON did not validate. PATH: '.' REASON: {'hi': 'there'} "
-                "is not of type 'array'"
-            )
-
-        else:
-            raise AssertionError('should raise error')
+        error = e.value.error_dict['answers'][0]
+        assert error.message == (
+            "JSON did not validate. PATH: '.' REASON: {'hi': 'there'} "
+            "is not of type 'array'"
+        )
 
     def test_invalid_model__invalid_items__wrong_fields(self):
 
-        try:
+        with pytest.raises(ValidationError) as e:
             JSONModel(answers=[
                 {'answer': 'hi', 'correct': True},
                 {'NOT_answer': 'hi', 'WHAT_correct': True},
             ]).clean_fields()
 
-        except ValidationError as e:
-            error = e.error_dict['answers'][0]
-            assert error.message == (
-                "JSON did not validate. "
-                "PATH: '1' REASON: 'answer' is a required property"
-            )
-
-        else:
-            raise AssertionError('should raise error')
+        error = e.value.error_dict['answers'][0]
+        assert error.message == (
+            "JSON did not validate. "
+            "PATH: '1' REASON: 'answer' is a required property"
+        )
 
 
 class ValidatingEntity(fake_models.FakeModel, ValidatingModel):
@@ -145,43 +129,29 @@ class ValidatingModelTestCase(TestCase):
 
     def test_validates_on_save(self):
 
-        try:
+        with pytest.raises(ValidationError) as e:
             ValidatingEntity(name=11 * 'a').save()
 
-        except ValidationError as e:
-            assert e.message_dict == {
-                'name': [
-                    'Ensure this value has at most 10 characters (it has 11).',
-                ],
-            }
-
-        else:
-            raise AssertionError('should raise exception')
+        assert e.value.message_dict == {
+            'name': [
+                'Ensure this value has at most 10 characters (it has 11).',
+            ],
+        }
 
     def test_validates_on_create(self):
 
-        try:
+        with pytest.raises(ValidationError) as e:
             ValidatingEntity.objects.create(name=11 * 'a')
 
-        except ValidationError as e:
-            assert e.message_dict == {
-                'name': [
-                    'Ensure this value has at most 10 characters (it has 11).',
-                ],
-            }
-
-        else:
-            raise AssertionError('should raise exception')
+        assert e.value.message_dict == {
+            'name': [
+                'Ensure this value has at most 10 characters (it has 11).',
+            ],
+        }
 
     def test_validates_on_bulk_create(self):
 
-        try:
+        with pytest.raises(DataError):
             ValidatingEntity.objects.bulk_create([
                 ValidatingEntity(name=11 * 'a'),
             ])
-
-        except DataError:
-            pass
-
-        else:
-            raise AssertionError('should raise exception')

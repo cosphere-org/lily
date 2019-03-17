@@ -98,14 +98,10 @@ class InputTestCase(TestCase):
                 'user_id': 902,
             })
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             input.parse_query(request)
 
-        except EventFactory.BrokenRequest as e:
-            assert e.event == 'QUERY_DID_NOT_VALIDATE'
-
-        else:
-            raise AssertionError
+        assert e.value.event == 'QUERY_DID_NOT_VALIDATE'
 
     def test_parse_query__event__query_did_not_validate(self):
 
@@ -123,23 +119,19 @@ class InputTestCase(TestCase):
                 'user_id': 902,
             })
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             input.parse_query(request)
 
-        except EventFactory.BrokenRequest as e:
-            assert e.data == {
-                '@type': 'error',
-                '@event': 'QUERY_DID_NOT_VALIDATE',
-                '@access': {
-                    'user_id': 902,
-                },
-                'errors': {
-                    'prices': ['A valid integer is required.'],
-                },
-            }
-
-        else:
-            raise AssertionError
+        assert e.value.data == {
+            '@type': 'error',
+            '@event': 'QUERY_DID_NOT_VALIDATE',
+            '@access': {
+                'user_id': 902,
+            },
+            'errors': {
+                'prices': ['A valid integer is required.'],
+            },
+        }
 
     #
     # PARSE_BODY
@@ -174,22 +166,18 @@ class InputTestCase(TestCase):
                 'user_id': 902,
             })
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             input.parse_body(request, command_name='MAKE_IT')
 
-        except EventFactory.BrokenRequest as error:
-            assert error.event == 'BODY_JSON_DID_NOT_PARSE'
-            assert error.data == {
-                '@type': 'error',
-                '@event': 'BODY_JSON_DID_NOT_PARSE',
-                '@access': {
-                    'user_id': 902,
-                },
-            }
-            assert error.is_critical
-
-        else:
-            raise AssertionError('didn\'t raise error!')
+        assert e.value.event == 'BODY_JSON_DID_NOT_PARSE'
+        assert e.value.data == {
+            '@type': 'error',
+            '@event': 'BODY_JSON_DID_NOT_PARSE',
+            '@access': {
+                'user_id': 902,
+            },
+        }
+        assert e.value.is_critical
 
     def test_parse_body__invalid_payload(self):
         input = self._prepare_body_parser()
@@ -202,27 +190,23 @@ class InputTestCase(TestCase):
             },
             origin=None)
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             input.parse_body(request, command_name='MAKE_IT')
 
-        except EventFactory.BrokenRequest as error:
-            assert error.event == 'BODY_DID_NOT_VALIDATE'
-            assert error.data == {
-                '@type': 'error',
-                '@event': 'BODY_DID_NOT_VALIDATE',
-                '@access': {
-                    'user_id': 902,
-                },
-                'errors': {
-                    'amount': [
-                        'Ensure this value is less than or equal to 19.'
-                    ]
-                }
+        assert e.value.event == 'BODY_DID_NOT_VALIDATE'
+        assert e.value.data == {
+            '@type': 'error',
+            '@event': 'BODY_DID_NOT_VALIDATE',
+            '@access': {
+                'user_id': 902,
+            },
+            'errors': {
+                'amount': [
+                    'Ensure this value is less than or equal to 19.'
+                ]
             }
-            assert not error.is_critical
-
-        else:
-            raise AssertionError('didn\'t raise error!')
+        }
+        assert not e.value.is_critical
 
         # -- amount is title
         request = Mock(
@@ -232,22 +216,18 @@ class InputTestCase(TestCase):
                 'user_id': 902,
             })
 
-        try:
+        with pytest.raises(EventFactory.BrokenRequest) as e:
             input.parse_body(request, command_name='MAKE_IT')
 
-        except EventFactory.BrokenRequest as error:
-            assert error.event == 'BODY_DID_NOT_VALIDATE'
-            assert error.data == {
-                '@type': 'error',
-                '@event': 'BODY_DID_NOT_VALIDATE',
-                '@access': {
-                    'user_id': 902,
-                },
-                'errors': {
-                    'title': ['This field is required.']
-                }
+        assert e.value.event == 'BODY_DID_NOT_VALIDATE'
+        assert e.value.data == {
+            '@type': 'error',
+            '@event': 'BODY_DID_NOT_VALIDATE',
+            '@access': {
+                'user_id': 902,
+            },
+            'errors': {
+                'title': ['This field is required.']
             }
-            assert not error.is_critical
-
-        else:
-            raise AssertionError('didn\'t raise error!')
+        }
+        assert not e.value.is_critical

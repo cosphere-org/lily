@@ -3,9 +3,9 @@ from django.test import TestCase
 from django.db import models
 import pytest
 from mock import Mock, call
+from lily_assistant.config import Config
 
 from lily.base import serializers, parsers
-from lily.base.config import Config
 from lily.base.models import JSONSchemaField, array, string
 from lily.entrypoint.renderers.schema import (
     Schema,
