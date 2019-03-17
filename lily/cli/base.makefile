@@ -61,7 +61,7 @@ start_gunicorn:  ## start service locally
 	source env.sh && \
 	export PYTHONPATH="${PYTHONPATH}:${PWD}/{% SRC_DIR %}" && \
 	python {% SRC_DIR %}/manage.py migrate && \
-	gunicorn {% SRC_DIR %}.wsgi \
+	gunicorn conf.wsgi \
 		--worker-class gevent \
 		-w 1 \
 		--log-level=debug \
@@ -71,7 +71,6 @@ start_gunicorn:  ## start service locally
 start_dev_server:  ## start development server (for quick checks) locally
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py runserver 127.0.0.1:$(port)
-
 
 #
 # OVERWRITE SETUP / TEARDOWN
