@@ -57,7 +57,7 @@ docs_render_commands: test_all  ## render JSON representation of commands
 #
 # START
 #
-start_gunicorn:  ## start service locally
+start_gunicorn: migrations_apply  ## start service locally
 	source env.sh && \
 	export PYTHONPATH="${PYTHONPATH}:${PWD}/{% SRC_DIR %}" && \
 	python {% SRC_DIR %}/manage.py migrate && \
@@ -68,7 +68,7 @@ start_gunicorn:  ## start service locally
 		-t 60 \
 		-b 127.0.0.1:$(port)
 
-start_dev_server:  ## start development server (for quick checks) locally
+start_dev_server: migrations_apply  ## start development server (for quick checks) locally
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py runserver 127.0.0.1:$(port)
 
