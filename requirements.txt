@@ -5,6 +5,9 @@
 # -- core
 Django==2.1.7
 
+# -- enhance with bulk_update capability
+django-bulk-update==2.2.0
+
 # -- rest API framework
 djangorestframework==3.7.7
 
@@ -18,8 +21,8 @@ django-click==2.1.0
 pytz==2015.7
 
 # -- authentication / cryptography
-django-jwt-auth==0.0.2
-itsdangerous==0.24
+django-jwt-auth==0.0.2  # FIXME: do I still use it???
+itsdangerous==0.24  # FIXME: do I still use it???
 
 # -- async tasks
 celery==4.0.0
@@ -43,3 +46,7 @@ PyYAML==5.1
 
 # -- need by JSONSchemaField
 jsonschema==2.6.0
+
+# -- needed for deployment
+gunicorn==19.6.0
+gevent==1.2.1

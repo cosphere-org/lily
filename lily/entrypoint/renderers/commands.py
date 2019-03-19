@@ -1,7 +1,9 @@
 
 from importlib import import_module
 import json
+import os
 import re
+import sys
 
 from lily.conf import settings
 from lily.base.test import get_examples_filepath
@@ -16,6 +18,11 @@ class CommandsRenderer(BaseRenderer):
         self.examples = self.get_all_examples()
 
     def get_urlpatterns(self):
+
+        # -- make sure that the main directory is also visible during
+        # -- the search of all url patterns
+        sys.path.insert(0, os.getcwd())
+
         return import_module(settings.ROOT_URLCONF).urlpatterns
 
     def render(self):

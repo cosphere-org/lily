@@ -245,6 +245,9 @@ class EventFactory:
             # -- notify about the event
             message = '{event}: {data}'.format(
                 event=event, data=json.dumps(data))
+
+            # FIXME: !!!! make it log in the lazy way so that enriching with
+            # the context could take place!!!
             if is_critical or self.is_critical:
                 if hasattr(context, 'data'):
                     self.logger.error(
@@ -259,6 +262,13 @@ class EventFactory:
                 # -- since sentry logger is ignoring log with level below
                 # -- ERROR
                 self.logger.info(message)
+
+        def update_with_context(self, context):
+            log_access = getattr(context, 'log_access', {})
+            if log_access:
+                self.data.update({
+                    '@access': log_access,
+                })
 
     class BrokenRequest(BaseErrorException):
         response_class = Json400
