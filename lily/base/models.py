@@ -104,16 +104,53 @@ def null():
     }
 
 
-def string():
-    return {
+def string(
+        pattern=None,
+        minLength=None,
+        maxLength=None):
+    schema = {
         'type': 'string',
     }
 
+    if pattern is not None:
+        schema['pattern'] = pattern
 
-def number():
-    return {
+    if minLength is not None:
+        schema['minLength'] = minLength
+
+    if maxLength is not None:
+        schema['maxLength'] = maxLength
+
+    return schema
+
+
+def number(
+        multipleOf=None,
+        minimum=None,
+        exclusiveMinimum=None,
+        maximum=None,
+        exclusiveMaximum=None):
+
+    schema = {
         'type': 'number',
     }
+
+    if multipleOf is not None:
+        schema['multipleOf'] = multipleOf
+
+    if minimum is not None:
+        schema['minimum'] = minimum
+
+    if exclusiveMinimum is not None:
+        schema['exclusiveMinimum'] = exclusiveMinimum
+
+    if maximum is not None:
+        schema['maximum'] = maximum
+
+    if exclusiveMaximum is not None:
+        schema['exclusiveMaximum'] = exclusiveMaximum
+
+    return schema
 
 
 def boolean():
@@ -136,19 +173,23 @@ def enum(*enums):
     }
 
 
-def object(required=None, **properties):
-    if required:
-        return {
-            'type': 'object',
-            'properties': properties,
-            'required': required,
-        }
+def object(dependencies=None, required=None, **properties):
+    schema = {
+        'type': 'object',
+        'properties': properties,
+    }
 
-    else:
-        return {
-            'type': 'object',
-            'properties': properties,
-        }
+    if required:
+        schema['required'] = required
+
+    if dependencies:
+        schema['dependencies'] = dependencies
+
+    return schema
+
+
+def dependencies(*deps):
+    return deps
 
 
 def array(items, extra=None):

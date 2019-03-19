@@ -25,6 +25,42 @@ It is assumed that each `lily` project was setup together with the [`lily-assist
 
 `Lily` enable very simple and semantic creation of commands using various transport mechanism (HTTP, Websockets, Async) in a one unified way.
 
+Each HTTP command is build around the same skeleton:
+
+```python
+from lily import (
+    command,
+    Meta,
+    name,
+    Input,
+    Output,
+    serializers,
+    Access,
+    HTTPCommands,
+)
+
+class SampleCommands(HTTPCommands):
+    @command(
+        name=<NAME>,
+
+        meta=Meta(
+            title=<META_TITLE>,
+            description=<META_DESCRIPTION>,
+            domain=<META_DOMAIN>),
+
+        access=Access(access_list=<ACCESS_LIST>),
+
+        input=Input(body_parser=<BODY_PARSER>),
+
+        output=Output(serializer=<SERIALIZER>),
+    )
+    def <HTTP_VERB>(self, request):
+
+        raise self.event.<EXPECTED_EVENT>({'some': 'thing'})
+```
+
+
+
 The simplest are HTTP commands that can be defined in the following way:
 
 ```python
