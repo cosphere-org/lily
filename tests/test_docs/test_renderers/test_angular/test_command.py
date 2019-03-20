@@ -314,11 +314,7 @@ class CommandTestCase(TestCase):
             /**
              * Read Task
              */
-            public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponseEntity[]> {
-                return this.client.getDataState<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'people', authorizationRequired: true });
-            }
-
-            public readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
+            public readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
                 return this.client.get<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'people', authorizationRequired: true });
             }
         ''', 0)  # noqa
@@ -361,11 +357,7 @@ class CommandTestCase(TestCase):
             /**
              * Read Task
              */
-            public readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponse> {
-                return this.client.getDataState<X.ReadTaskResponse>(`/tasks/${taskId}`, { params, authorizationRequired: true });
-            }
-
-            public readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
+            public readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
                 return this.client.get<X.ReadTaskResponse>(`/tasks/${taskId}`, { params, authorizationRequired: true });
             }
         ''', 0)  # noqa
@@ -458,12 +450,8 @@ class CommandTestCase(TestCase):
             })
 
         assert command.render_facade() == normalize_indentation('''
-            readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponseEntity[]> {
+            readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
                 return this.tasksDomain.readTask(taskId, params);
-            }
-
-            readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
-                return this.tasksDomain.readTask2(taskId, params);
             }
         ''', 0)  # noqa
 
@@ -502,12 +490,8 @@ class CommandTestCase(TestCase):
             })
 
         assert command.render_facade() == normalize_indentation('''
-            readTask(taskId: any, params: X.ReadTaskQuery): DataState<X.ReadTaskResponse> {
+            readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
                 return this.tasksDomain.readTask(taskId, params);
-            }
-
-            readTask2(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
-                return this.tasksDomain.readTask2(taskId, params);
             }
         ''', 0)  # noqa
 
@@ -590,6 +574,36 @@ class CommandTestCase(TestCase):
                     }
                 }
             ''', 0)))
+
+    #
+    # render_access
+    #
+    def test_render_access(self):
+
+        conf = deepcopy(CONF)
+        conf['access'] = {
+            'access_list': [
+                'LEARNER',
+                'MENTOR',
+            ],
+            'is_private': False,
+        }
+
+        command = Command('BULK_READ_TASKS', conf)
+
+        assert command.render_access() == 'BulkReadTasks: ["LEARNER","MENTOR"]'
+
+    def test_render_access__no_access(self):
+
+        conf = deepcopy(CONF)
+        conf['access'] = {
+            'access_list': [],
+            'is_private': False,
+        }
+
+        command = Command('BULK_READ_TASKS', conf)
+
+        assert command.render_access() == 'BulkReadTasks: null'
 
     #
     # get_bulk_read_field

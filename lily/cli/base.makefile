@@ -77,5 +77,10 @@ start_dev_server: migrations_apply  ## start development server (for quick check
 #
 # OVERWRITE SETUP / TEARDOWN
 #
+.PHONY: run_commands_assertions
+run_commands_assertions:  ## run all commands assertions
+	lily assert_query_parser_fields_are_optional
+
+
 .PHONY: test_teardown
-test_teardown: docs_render_commands docs_render_markdown
+test_teardown: docs_render_commands docs_render_markdown run_commands_assertions

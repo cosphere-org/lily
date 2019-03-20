@@ -6,6 +6,7 @@ import click
 
 from .copier import Copier
 from .logger import Logger
+from .assertions import assert_query_parser_fields_are_optional
 
 
 logger = Logger()
@@ -67,3 +68,5 @@ def init(src_dir):
 
 
 cli.add_command(init)
+
+cli.add_command(assert_query_parser_fields_are_optional)
