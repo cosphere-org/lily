@@ -1,8 +1,9 @@
 
+from unittest.mock import call
+
 from django.test import TestCase
 from click.testing import CliRunner
 import pytest
-from mock import call
 
 from lily.base.utils import normalize_indentation
 from lily.docs.management.commands.render_angular import command

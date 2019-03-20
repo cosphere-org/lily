@@ -47,7 +47,7 @@ class CliTestCase(TestCase):
 
         result = self.runner.invoke(
             cli,
-            ['assert_query_parser_fields_are_optional'])
+            ['assert-query-parser-fields-are-optional'])
 
         assert result.exit_code == 0
         assert result.output.strip() == ''
@@ -76,7 +76,7 @@ class CliTestCase(TestCase):
 
         result = self.runner.invoke(
             cli,
-            ['assert_query_parser_fields_are_optional'])
+            ['assert-query-parser-fields-are-optional'])
 
         assert result.exit_code == 1
         assert result.output.strip() == (

@@ -79,7 +79,7 @@ start_dev_server: migrations_apply  ## start development server (for quick check
 #
 .PHONY: run_commands_assertions
 run_commands_assertions:  ## run all commands assertions
-	lily assert_query_parser_fields_are_optional
+	lily assert-query-parser-fields-are-optional
 
 
 .PHONY: test_teardown

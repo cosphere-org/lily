@@ -17,6 +17,8 @@ psycopg2-binary==2.7.5
 # -- CLI
 django-click==2.1.0
 
+Click==7.0
+
 # -- utils
 pytz==2015.7
 

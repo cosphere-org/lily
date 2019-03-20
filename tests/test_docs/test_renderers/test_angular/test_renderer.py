@@ -2,10 +2,10 @@
 import os
 from collections import OrderedDict
 import tempfile
+from unittest.mock import call, Mock
 
 from django.test import TestCase
 import pytest
-from mock import call, Mock
 import requests
 
 from lily.base.events import EventFactory

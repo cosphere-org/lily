@@ -1,8 +1,9 @@
 
+from unittest.mock import Mock, call
+
 from django.test import TestCase
 from django.db import models
 import pytest
-from mock import Mock, call
 from lily_assistant.config import Config
 
 from lily.base import serializers, parsers

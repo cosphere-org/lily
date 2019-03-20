@@ -1,8 +1,8 @@
 
 from copy import deepcopy
+from unittest.mock import Mock, call
 
 from django.test import TestCase
-from mock import Mock, call
 import pytest
 
 from lily.docs.renderers.angular.command import Command

@@ -1,7 +1,8 @@
 
+from unittest.mock import Mock, call
+
 from django.test import TestCase
 import pytest
-from mock import Mock, call
 
 from async.lock import Lock
 

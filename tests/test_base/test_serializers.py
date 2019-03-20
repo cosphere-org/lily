@@ -1,9 +1,9 @@
 
+from unittest.mock import Mock, call
+
 from django.test import TestCase
 from django.db import models
-
 import pytest
-from mock import Mock, call
 
 from lily.base import serializers
 from lily.base.events import EventFactory
