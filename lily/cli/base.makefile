@@ -12,6 +12,8 @@ help:  ## show this help.
 
 SHELL := /bin/bash
 
+LILY_SERVICE_PORT := $(shell source env.sh && echo $${LILY_SERVICE_PORT})
+
 #
 # UTILS
 #
@@ -66,14 +68,19 @@ start_gunicorn: migrations_apply  ## start service locally
 		-w 1 \
 		--log-level=debug \
 		-t 60 \
-		-b 127.0.0.1:$(port)
+		-b 127.0.0.1:${LILY_SERVICE_PORT}
 
 start_dev_server: migrations_apply  ## start development server (for quick checks) locally
 	source env.sh && \
-	python {% SRC_DIR %}/manage.py runserver 127.0.0.1:$(port)
+	python {% SRC_DIR %}/manage.py runserver 127.0.0.1:${LILY_SERVICE_PORT}
 
 #
 # OVERWRITE SETUP / TEARDOWN
 #
+.PHONY: run_commands_assertions
+run_commands_assertions:  ## run all commands assertions
+	lily assert-query-parser-fields-are-optional
+
+
 .PHONY: test_teardown
-test_teardown: docs_render_commands docs_render_markdown
+test_teardown: docs_render_commands docs_render_markdown run_commands_assertions

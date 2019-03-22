@@ -1,6 +1,7 @@
 
 import json
 from contextlib import ContextDecorator
+from unittest.mock import Mock
 
 from django.test import TestCase
 from django.http import HttpResponse
@@ -9,7 +10,6 @@ from django.db.utils import DatabaseError
 from django.contrib.auth.models import User
 from django_fake_model import models as fake_models
 from django.db import models, transaction
-from mock import Mock
 import pytest
 
 from lily.base.command import command, HTTPCommands
@@ -450,6 +450,7 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'ERROR!',
             '@type': 'error',
+            '@access': {'user_id': 1},
         }
         assert isinstance(AtomicContext.exception, event.BrokenRequest)
 

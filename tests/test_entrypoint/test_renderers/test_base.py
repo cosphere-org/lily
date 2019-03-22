@@ -1,7 +1,7 @@
 
 from unittest import TestCase
+from unittest.mock import Mock
 
-from mock import Mock
 from django.urls import re_path, include
 from django.views.generic import View
 import pytest

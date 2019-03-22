@@ -1,5 +1,5 @@
 
-from mock import Mock, call
+from unittest.mock import Mock, call
 
 import search
 

@@ -1,6 +1,7 @@
 
+from unittest.mock import Mock
+
 from django.test import TestCase
-from mock import Mock
 import pytest
 
 from lily.base.output import Output

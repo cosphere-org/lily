@@ -2,10 +2,10 @@
 import os
 import tempfile
 import textwrap
+from unittest.mock import call
 
 from django.test import TestCase, override_settings
 import pytest
-from mock import call
 from lily_assistant.repo.repo import Repo
 from lily_assistant.repo.version import VersionRenderer
 

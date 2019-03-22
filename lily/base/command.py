@@ -201,6 +201,8 @@ def command(
                 return e.response_class(body)
 
             except EventFactory.BaseErrorException as e:
+                e.update_with_context(context=request)
+
                 return e.response_class(e.data)
 
             #

@@ -1,11 +1,10 @@
 
 import json
+from collections import OrderedDict
+from unittest.mock import Mock
 
 from django.test import TestCase
-from collections import OrderedDict
-
 import pytest
-from mock import Mock
 
 from lily.entrypoint.renderers.commands import CommandsRenderer
 from lily.entrypoint.renderers.base import BaseRenderer

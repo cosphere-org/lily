@@ -1,7 +1,8 @@
 
+from unittest.mock import Mock
+
 from django.test import TestCase
 from django.contrib.auth.models import User
-from mock import Mock
 import pytest
 
 from lily.base import parsers

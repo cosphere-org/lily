@@ -1,8 +1,8 @@
 
 from datetime import datetime
 import string
+from unittest.mock import call
 
-from mock import call
 from itsdangerous import SignatureExpired, URLSafeTimedSerializer
 import pytest
 

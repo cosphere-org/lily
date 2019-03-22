@@ -106,8 +106,8 @@ def null():
 
 def string(
         pattern=None,
-        minLength=None,
-        maxLength=None):
+        minLength=None,  # noqa
+        maxLength=None):  # noqa
     schema = {
         'type': 'string',
     }
@@ -125,11 +125,11 @@ def string(
 
 
 def number(
-        multipleOf=None,
+        multipleOf=None,  # noqa
         minimum=None,
-        exclusiveMinimum=None,
+        exclusiveMinimum=None,  # noqa
         maximum=None,
-        exclusiveMaximum=None):
+        exclusiveMaximum=None):  # noqa
 
     schema = {
         'type': 'number',
@@ -188,7 +188,7 @@ def object(dependencies=None, required=None, **properties):
     return schema
 
 
-def dependencies(*deps):
+def dependencies(**deps):
     return deps
 
 

@@ -1,10 +1,10 @@
 
 from copy import deepcopy
+from unittest.mock import Mock, call
 
 from django.test import TestCase
 from django.urls import reverse
 import pytest
-from mock import Mock, call
 
 from lily.base.test import Client
 from lily.entrypoint.commands import CommandSerializer

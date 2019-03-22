@@ -27,6 +27,7 @@ class Command:
         self.is_private = self.conf['access']['is_private']
         self.authorization_required = (
             self.conf['access']['access_list'] is not None)
+        self.access_list = self.conf['access']['access_list']
 
         # -- REQUEST / RESPONSE
         self.path = self.conf['path_conf']['path']
@@ -128,11 +129,7 @@ class Command:
         elif self.get_bulk_read_field() and self.method == 'get':
             return normalize_indentation('''
             {self.header}
-            public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
-                return this.client.getDataState<X.{self.response.name}Entity[]>({self.signature.call_args});
-            }}
-
-            public {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
+            public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
                 return this.client.get<X.{self.response.name}Entity[]>({self.signature.call_args});
             }}
             ''', 0).format(self=self)  # noqa
@@ -140,11 +137,7 @@ class Command:
         elif self.method == 'get':
             return normalize_indentation('''
             {self.header}
-            public {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
-                return this.client.getDataState<X.{self.response.name}>({self.signature.call_args});
-            }}
-
-            public {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}> {{
+            public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}> {{
                 return this.client.get<X.{self.response.name}>({self.signature.call_args});
             }}
             ''', 0).format(self=self)  # noqa
@@ -163,23 +156,15 @@ class Command:
 
         if self.get_bulk_read_field():
             return normalize_indentation('''
-                {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}Entity[]> {{
+                {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
                     return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
-                }}
-
-                {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
-                    return this.{self.domain_id}Domain.{self.camel_name}2({self.signature.call_args_without_path});
                 }}
             ''', 0).format(self=self)  # noqa
 
         elif self.method == 'get':
             return normalize_indentation('''
-                {self.camel_name}({self.signature.input}): DataState<X.{self.response.name}> {{
+                {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}> {{
                     return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
-                }}
-
-                {self.camel_name}2({self.signature.input}): Observable<X.{self.response.name}> {{
-                    return this.{self.domain_id}Domain.{self.camel_name}2({self.signature.call_args_without_path});
                 }}
             ''', 0).format(self=self)  # noqa
 
@@ -214,3 +199,15 @@ class Command:
             self=self,
             command_name=to_camelcase(self.name),
             examples=normalize_indentation(',\n\n'.join(examples_blocks), 4))
+
+    def render_access(self):
+
+        command_name = to_camelcase(self.name)
+        if self.access_list:
+
+            access_list = '[{}]'.format(
+                ','.join([f'"{a}"' for a in self.access_list]))
+
+            return f'{command_name}: {access_list}'
+
+        return f'{command_name}: null'
