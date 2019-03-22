@@ -342,7 +342,7 @@ class SchemaRenderer:
                     return validator.schema
 
             return {
-                'type': 'object',
+                'type': 'any',
             }
 
     def native_type_to_schema(self, _type):
