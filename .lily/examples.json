@@ -1,78 +1,30 @@
 {
-    "READ_ENTRY_POINT": {
-        "200 (ENTRY_POINT_READ)": {
+    "SIGN_PROCESS": {
+        "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
-            "description": "ENTRY_POINT_READ",
+            "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/?with_schemas=False",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
                 }
             },
             "response": {
-                "status": 200,
+                "status": 400,
                 "content_type": "application/json",
                 "content": {
-                    "version": "2.5.6",
-                    "name": "test",
-                    "commands": {
-                        "UPDATE_HELLO": {
-                            "method": "PUT",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Qui exercitationem voluptatem facere.",
-                                "description": "Debitis voluptatem iure aliquam alias.",
-                                "domain": {
-                                    "id": "labore",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": true,
-                                "is_external": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/__init__.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "@type": "command"
-                        }
+                    "errors": {
+                        "datetime": [
+                            "This field is required."
+                        ]
                     },
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ"
-                }
-            }
-        },
-        "500 (GENERIC_ERROR_OCCURRED)": {
-            "method": "get",
-            "description": "GENERIC_ERROR_OCCURRED",
-            "request": {
-                "path": "/?is_private=False",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "response": {
-                "status": 500,
-                "content_type": "application/json",
-                "content": {
-                    "errors": [
-                        "'examples'"
-                    ],
                     "@type": "error",
-                    "@event": "GENERIC_ERROR_OCCURRED"
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@access": {
+                        "user_id": 56,
+                        "account_type": "PREMIUM"
+                    }
                 }
             }
         }
