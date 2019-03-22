@@ -284,7 +284,7 @@ class SchemaRendererTestCase(TestCase):
                         'format': 'uri',
                     },
                     'json': {
-                        'type': 'object',
+                        'type': 'any',
                     },
                     'date_of_birth': {
                         'type': 'string',

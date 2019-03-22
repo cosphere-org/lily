@@ -14,7 +14,6 @@ ALLOWED_HOSTS = ["*"]
 #
 # LILY SPECIFIC SETTINGS
 #
-
 LILY_AUTHORIZER_CLASS = getattr(
     settings,
     'LILY_AUTHORIZER_CLASS',
@@ -33,6 +32,11 @@ LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST = getattr(
 LILY_COMMAND_ENTRYPOINTS = [
     'http://localhost:7000',
 ]
+
+LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS = getattr(
+    settings,
+    'LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS',
+    None)
 
 # FIXME: !!!! should be moved to github!
 LILY_ANGULAR_CLIENT_ORIGIN = (
@@ -81,6 +85,7 @@ INSTALLED_APPS = [
     'base',
     'search',
     'entrypoint',
+    'assertion',
     'django.contrib.contenttypes',
     'django.contrib.auth',
 ]
