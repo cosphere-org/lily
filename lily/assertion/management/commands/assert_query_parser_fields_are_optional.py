@@ -5,7 +5,6 @@ import json
 from lily_assistant.config import Config
 from lily.conf import settings
 from django.core.management import CommandError
-
 import djclick as click
 
 
