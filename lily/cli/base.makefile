@@ -77,10 +77,20 @@ start_dev_server: migrations_apply  ## start development server (for quick check
 #
 # OVERWRITE SETUP / TEARDOWN
 #
+.PHONY: clear_examples
+clear_examples:  ## clear all existing examples
+	source env.sh && \
+	python {% SRC_DIR %}/manage.py clear_examples
+
+
 .PHONY: run_commands_assertions
 run_commands_assertions:  ## run all commands assertions
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py assert_query_parser_fields_are_optional
+
+
+.PHONY: test_setup
+test_setup: clear_examples
 
 
 .PHONY: test_teardown

@@ -1,11 +1,12 @@
 
 from unittest.mock import call
 
-from django.test import TestCase, Client, override_settings
+from django.test import TestCase, override_settings
 from django.urls import re_path, reverse
 import pytest
 from conf.urls import urlpatterns
 
+from lily.base.test import Client
 from lily.base.commands import S3UploadSignCommands
 from lily.base.command import command_override
 from lily import (
