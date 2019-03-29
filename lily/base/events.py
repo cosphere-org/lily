@@ -120,12 +120,14 @@ class EventFactory:
                 instance=None,
                 data=None,
                 event=None,
+                output_context=None,
                 context=None):
 
             self.context = context or EventFactory.Context()
             self.event = event
             self.instance = instance
             self.data = data or {}
+            self.output_context = output_context or {}
             self.logger = logging.getLogger()
 
         def extend(self, event=None, context=None):

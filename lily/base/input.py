@@ -17,6 +17,11 @@ class Input(EventFactory):
         self.query_parser = query_parser
         self.body_parser = body_parser
 
+    def __eq__(self, other):
+        return (
+            self.query_parser == other.query_parser and
+            self.body_parser == other.body_parser)
+
     def parse(self, request, command_name):
         request.input = self.InputAttrs()
 

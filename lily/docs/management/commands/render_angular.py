@@ -15,6 +15,7 @@ from lily.base.utils import normalize_indentation
 @click.option(
     '--only_build',
     default=False,
+    is_flag=True,
     type=click.BOOL,
     help='if true it only builds the client without pushing it to the remote')
 @click.option(

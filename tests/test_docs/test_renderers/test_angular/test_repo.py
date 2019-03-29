@@ -10,10 +10,30 @@ from lily_assistant.repo.repo import Repo
 from lily_assistant.repo.version import VersionRenderer
 
 from lily.docs.renderers.angular.repo import (
+    AngularHTTPRepo,
     AngularRepo,
     TemplateRepo,
     PathRule,
 )
+
+
+class AngularHTTPRepoTestCase(TestCase):
+
+    @pytest.fixture(autouse=True)
+    def initfixture(self, mocker, tmpdir):
+        self.mocker = mocker
+        self.tmpdir = tmpdir
+
+    #
+    # LINK
+    #
+    def test_link(self):
+        npm = self.mocker.patch.object(AngularHTTPRepo, 'npm')
+        r = AngularHTTPRepo()
+
+        r.link()
+
+        assert npm.call_args_list == [call('link')]
 
 
 class AngularRepoTestCase(TestCase):
@@ -74,6 +94,7 @@ class AngularRepoTestCase(TestCase):
             tempfile, 'mkdtemp').return_value = str(temp_dir)
 
         r = AngularRepo('origin')
+        r.cd_to_repo()
 
         assert r.upgrade_version(
             VersionRenderer.VERSION_UPGRADE.MINOR) == '0.1.19'

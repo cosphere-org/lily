@@ -94,16 +94,13 @@ class TestCommands(HTTPCommands):
         age = parsers.IntegerField()
 
     class ClientSerializer(serializers.ModelSerializer):
+
         _type = 'client'
 
-        _command_links = [
-            serializers.CommandLink(
-                name='MAKE_IT_BETTER',
-                parameters={'card_id': '$response.body#/card_id'},
-                description='...'),
-        ]
-
         card_id = serializers.SerializerMethodField()
+
+        def get_commands(self, instance):
+            return [(TestCommands.put, True)]
 
         class Meta:
             model = FakeClient
@@ -117,21 +114,14 @@ class TestCommands(HTTPCommands):
 
         amount = serializers.IntegerField()
 
-    meta = Meta(
-        title='hi there',
-        description='it is made for all',
-        domain=Domain(id='test', name='test management'))
-
-    input = Input(
-        body_parser=BodyParser)
-
-    output = Output(serializer=ClientSerializer)
-
     @command(
         name='MAKE_IT',
-        meta=meta,
-        input=input,
-        output=output,
+        meta=Meta(
+            title='hi there',
+            description='it is made for all',
+            domain=Domain(id='test', name='test management')),
+        input=Input(body_parser=BodyParser),
+        output=Output(serializer=ClientSerializer),
         access=Access(
             access_list=['PREMIUM', 'SUPER_PREMIUM'])
     )
@@ -146,7 +136,7 @@ class TestCommands(HTTPCommands):
             title='get',
             description='get it...',
             domain=Domain(id='get', name='get')),
-        output=output)
+        output=Output(serializer=ClientSerializer))
     def get(self, request):
         raise self.event.Executed(
             event='GET_IT',
@@ -232,14 +222,12 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@type': 'client',
             '@event': 'MADE_IT',
-            # FIXME: !!! somehow this fails???
-            # '@commands': {
-            #     'MAKE_IT_BETTER': {
-            #         'name': 'MAKE_IT_BETTER',
-            #         'method': 'post',
-            #         'uri': 'http://192.11.2.1:9000/payment_cards/190/sth/',
-            #     },
-            # },
+            '@commands': {
+                'BREAK': {
+                    'is_active': True,
+                    'reason': 'REASON.ACCESS.BREAK',
+                },
+            },
             'name': 'Jake',
             'card_id': 190,
         }
@@ -295,18 +283,21 @@ class CommandTestCase(TestCase):
         assert TestCommands.post.command_conf == {
             'name': 'MAKE_IT',
             'method': 'post',
-            'meta': TestCommands.meta,
+            'meta': Meta(
+                title='hi there',
+                description='it is made for all',
+                domain=Domain(id='test', name='test management')),
             'access': Access(
                 access_list=['PREMIUM', 'SUPER_PREMIUM']),
-            'input': TestCommands.input,
-            'output': TestCommands.output,
+            'input': Input(body_parser=TestCommands.BodyParser),
+            'output': Output(serializer=TestCommands.ClientSerializer),
             'is_atomic': False,
             'fn': TestCommands.post.command_conf['fn'],
         }
 
         assert source.filepath == '/tests/test_base/test_command.py'
-        assert source.start_line == 130
-        assert source.end_line == 141
+        assert source.start_line == 117
+        assert source.end_line == 131
 
     #
     # INPUT
