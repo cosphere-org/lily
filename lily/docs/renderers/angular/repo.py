@@ -85,7 +85,6 @@ class PathRule:
         return bool(self.pattern.search(path))
 
 
-# FIXME: test it!!!!!
 class AngularHTTPRepo(AngularRepo):
 
     origin = settings.LILY_ANGULAR_HTTP_ORIGIN
@@ -123,7 +122,6 @@ class TemplateRepo(Repo):
 
     def __init__(self):
         self.base_path = tempfile.mkdtemp()
-        # self.cd_to_repo()
 
     def clone(self):
         super(TemplateRepo, self).clone(self.base_path)
