@@ -170,6 +170,7 @@ def command(
                     serializer = output.serializer(
                         data=e.data,
                         context={
+                            **e.output_context,
                             'request': request,
                             'command_name': request._lily_context.command_name,
                         })
@@ -192,6 +193,7 @@ def command(
                         (e.instance is not None and e.instance)
                     ),
                     context={
+                        **e.output_context,
                         'request': request,
                         'command_name': request._lily_context.command_name,
                     }).data

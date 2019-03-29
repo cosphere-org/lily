@@ -8,9 +8,9 @@ from lily.conf import settings
 from lily.base.events import EventFactory
 from .command import Command
 from lily.base.utils import normalize_indentation
-from .repo import AngularRepo
-from .repo import TemplateRepo
+from .repo import AngularRepo, AngularHTTPRepo, TemplateRepo
 from .domain import Domain
+from .utils import to_camelcase
 
 
 class AngularClientRenderer(EventFactory):
@@ -26,6 +26,8 @@ class AngularClientRenderer(EventFactory):
         # -- source repo
         self.template_repo = TemplateRepo()
 
+        self.http_repo = AngularHTTPRepo()
+
         # -- target repo
         self.repo = AngularRepo(client_origin)
         self.client_prefix = client_prefix
@@ -39,6 +41,13 @@ class AngularClientRenderer(EventFactory):
             include_domains=None,
             exclude_domains=None):
 
+        # -- HTTP client
+        self.http_repo.cd_to_repo()
+        self.http_repo.clone()
+        self.http_repo.install()
+        self.http_repo.build()
+        self.http_repo.link()
+
         # -- pull newest changes to the template
         self.template_repo.clone()
 
@@ -47,6 +56,7 @@ class AngularClientRenderer(EventFactory):
         self.repo.clone()
 
         self.template_repo.copy_to(self.repo.base_path, self.client_prefix)
+        self.repo.cd_to_repo()
         self.repo.install()
         self.repo.link()
 
@@ -203,7 +213,7 @@ class AngularClientRenderer(EventFactory):
                 import {{ Observable }} from 'rxjs';
                 import * as _ from 'underscore';
 
-                import {{ DataState, HttpService }} from '@lily/http';
+                import {{ HttpService }} from '@lily/http';
 
                 import * as X from './{domain.id}.models';
 
@@ -258,10 +268,12 @@ class AngularClientRenderer(EventFactory):
         blocks = [command.render_access() for command in commands]
         blocks = '\n'.join([f'  {b},' for b in blocks])
         path = domain.path.join('{}.access.ts'.format(domain.id))
+
+        domain_id = to_camelcase(domain.id)
         with open(path, 'w') as f:
             f.write(
                 f'{header}\n\n'
-                'export let access = {\n'
+                f'export const {domain_id}Access = {{\n'
                 f'{blocks}\n'
                 '}')
 
@@ -293,7 +305,7 @@ class AngularClientRenderer(EventFactory):
                 import {{ Injectable, Injector }} from '@angular/core';
                 import {{ Observable }} from 'rxjs';
 
-                import {{ DataState, Options }} from '@lily/http';
+                import {{ Options }} from '@lily/http';
 
                 import * as X from '../domains/index';
 

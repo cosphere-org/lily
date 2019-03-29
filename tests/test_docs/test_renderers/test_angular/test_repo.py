@@ -74,6 +74,7 @@ class AngularRepoTestCase(TestCase):
             tempfile, 'mkdtemp').return_value = str(temp_dir)
 
         r = AngularRepo('origin')
+        r.cd_to_repo()
 
         assert r.upgrade_version(
             VersionRenderer.VERSION_UPGRADE.MINOR) == '0.1.19'

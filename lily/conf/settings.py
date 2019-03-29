@@ -43,6 +43,9 @@ LILY_ANGULAR_CLIENT_ORIGIN = (
     'git@bitbucket.org:goodai/lily-angular-client.git')
 # git@bitbucket.org:goodai/lily-angular-client-base.git
 
+# FIXME: !!!! should be moved to github!
+LILY_ANGULAR_HTTP_ORIGIN = (
+    'git@bitbucket.org:goodai/lily-angular-http.git')
 
 #
 # ASYNC

@@ -26,7 +26,7 @@ class RenderAngularTestCase(TestCase):
             '.AngularClientRenderer')
 
         result = self.runner.invoke(
-            command, ['origin', 'super', '--only_build', 'true'])
+            command, ['origin', 'super', '--only_build'])
 
         assert result.exit_code == 0
         assert normalize_indentation(
@@ -55,7 +55,7 @@ class RenderAngularTestCase(TestCase):
                 - Successfully rendered and pushed Angular Client version: 1.0.19
             ''', 0)  # noqa
         assert render.call_args_list == [
-            call(exclude_domains=(), include_domains=(), only_build=False),
+            call(exclude_domains=(), include_domains=(), only_build=None),
         ]
 
     def test_command__include_and_exclude_domains(self):
@@ -68,7 +68,7 @@ class RenderAngularTestCase(TestCase):
             [
                 'origin',
                 'super',
-                '--only_build', 'true',
+                '--only_build',
                 '--include_domain', 'CARDS',
                 '--exclude_domain', 'PATHS',
                 '--exclude_domain', 'GOSSIP',
