@@ -35,6 +35,17 @@ class EnumTestCase(TestCase):
             }
         ''', 0)
 
+    def test_render__numerical(self):
+
+        enum = Enum('age', [0, 1], 'ReadCardsResponse')
+
+        assert enum.render() == normalize_indentation('''
+            export enum ReadCardsResponseAge {
+                VALUE_0 = 0,
+                VALUE_1 = 1,
+            }
+        ''', 0)
+
     def test_render__removes_duplicates(self):
 
         enum = Enum('age', ['AA', 'BB', 'AA'], 'ReadCardsResponse')

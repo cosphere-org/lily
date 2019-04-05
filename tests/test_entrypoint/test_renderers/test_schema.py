@@ -47,6 +47,8 @@ class HumanSerializer(serializers.Serializer):
 
     age = serializers.IntegerField(min_value=18)
 
+    place = serializers.ChoiceField(choices=[0, 1, 2])
+
 
 class HumanModelSerializer(serializers.ModelSerializer):
     is_underaged = serializers.SerializerMethodField()
@@ -149,7 +151,7 @@ class SchemaRendererTestCase(TestCase):
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
-                'required': ['age'],
+                'required': ['age', 'place'],
                 'properties': {
                     'age': {
                         'type': 'integer',
@@ -158,6 +160,10 @@ class SchemaRendererTestCase(TestCase):
                     'name': {
                         'maxLength': 123,
                         'type': 'string',
+                    },
+                    'place': {
+                        'enum': [0, 1, 2],
+                        'type': 'integer',
                     },
                 },
             },
@@ -327,7 +333,7 @@ class SchemaRendererTestCase(TestCase):
                     'person': {
                         'type': 'array',
                         'items': {
-                            'required': ['age'],
+                            'required': ['age', 'place'],
                             'type': 'object',
                             'properties': {
                                 'name': {
@@ -337,6 +343,10 @@ class SchemaRendererTestCase(TestCase):
                                 'age': {
                                     'type': 'integer',
                                     'minimum': 18
+                                },
+                                'place': {
+                                    'enum': [0, 1, 2],
+                                    'type': 'integer',
                                 },
                             },
                         },
@@ -433,7 +443,7 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'array',
                         'items': {
                             'type': 'object',
-                            'required': ['age'],
+                            'required': ['age', 'place'],
                             'properties': {
                                 'name': {
                                     'type': 'string',
@@ -443,12 +453,16 @@ class SchemaRendererTestCase(TestCase):
                                     'type': 'integer',
                                     'minimum': 18,
                                 },
+                                'place': {
+                                    'enum': [0, 1, 2],
+                                    'type': 'integer',
+                                },
                             },
                         },
                     },
                     'owner': {
                         'type': 'object',
-                        'required': ['age'],
+                        'required': ['age', 'place'],
                         'properties': {
                             'name': {
                                 'type': 'string',
@@ -457,6 +471,10 @@ class SchemaRendererTestCase(TestCase):
                             'age': {
                                 'type': 'integer',
                                 'minimum': 18,
+                            },
+                            'place': {
+                                'enum': [0, 1, 2],
+                                'type': 'integer',
                             },
                         },
                     },
@@ -533,7 +551,7 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'array',
                         'items': {
                             'type': 'object',
-                            'required': ['age'],
+                            'required': ['age', 'place'],
                             'properties': {
                                 'name': {
                                     'type': 'string',
@@ -542,6 +560,10 @@ class SchemaRendererTestCase(TestCase):
                                 'age': {
                                     'type': 'integer',
                                     'minimum': 18,
+                                },
+                                'place': {
+                                    'enum': [0, 1, 2],
+                                    'type': 'integer',
                                 },
                             },
                         },

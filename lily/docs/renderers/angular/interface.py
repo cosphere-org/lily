@@ -210,7 +210,17 @@ class Enum:
             index=(self.index is not None and self.index) or '')
 
     def render(self):
+
+        values = self.values
+        value_pairs = []
+        for v in sorted(values):
+            if isinstance(v ,int):
+                value_pairs.append((f'VALUE_{v}', v))
+
+            else:
+                value_pairs.append((v, f"'{v}'"))
+
         return 'export enum {name} {{\n{fields}\n}}'.format(
             name=self.name,
-            fields='\n'.join(
-                ["    {v} = '{v}',".format(v=v) for v in sorted(self.values)]))
+            fields='\n'.join([
+                f"    {k} = {v}," for k, v in value_pairs]))

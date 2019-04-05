@@ -320,12 +320,19 @@ class SchemaRenderer:
             return field_schema
 
         elif is_field(serializers.ChoiceField):
-            # FIXME: how to solve problems of enums!!!!
-            # !!!!!!!!! enums should be solved when fetched by the
-            # client generator!!!!
+            choices = list(field.choices.keys())
+            choice_type = type(choices[0])
+            has_same_type = all([isinstance(c, choice_type) for c in choices])
+
+            if has_same_type and isinstance(choices[0], int):
+                schema_type = 'integer'
+
+            else:
+                schema_type = 'string'
+
             return {
-                'type': 'string',
-                'enum': sorted(field.choices.keys()),
+                'type': schema_type,
+                'enum': sorted(choices),
             }
 
         elif is_field(serializers.DictField):
