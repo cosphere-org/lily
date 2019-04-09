@@ -49,7 +49,7 @@ class Input(EventFactory):
 
     def parse_body(self, request, command_name):
         try:
-            data = json.loads(str(request.body, encoding='utf8'))
+            data = json.loads(str(request.body, encoding='utf8') or '{}')
 
         except (TypeError, ValueError):
             raise self.BrokenRequest(

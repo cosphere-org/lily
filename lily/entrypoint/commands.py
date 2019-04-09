@@ -74,7 +74,7 @@ class EntryPointCommands(HTTPCommands):
 
         config = Config()
 
-        commands = self.get_commands(config=config)
+        commands = self.get_commands()
 
         if command_names:
             commands = {
@@ -109,7 +109,7 @@ class EntryPointCommands(HTTPCommands):
                 'commands': commands,
             })
 
-    def get_commands(self, config):
+    def get_commands(self):
 
         # -- if reached here there were no `commands` or they were outdated
         commands = CommandsRenderer().render()
