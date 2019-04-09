@@ -214,7 +214,7 @@ class Enum:
         values = self.values
         value_pairs = []
         for v in sorted(values):
-            if isinstance(v ,int):
+            if isinstance(v, int):
                 value_pairs.append((f'VALUE_{v}', v))
 
             else:
