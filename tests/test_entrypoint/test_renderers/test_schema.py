@@ -50,6 +50,28 @@ class HumanSerializer(serializers.Serializer):
     place = serializers.ChoiceField(choices=[0, 1, 2])
 
 
+class CycleJSONSerializer(serializers.Serializer):
+
+    local_id = serializers.IntegerField(allow_null=True)
+
+    stage_id = serializers.IntegerField(allow_null=True)
+
+    entity = serializers.JSONField()
+
+
+class CyclesJSONSerializer(serializers.Serializer):
+
+    card_cycle = serializers.SerializerMethodField()
+
+    path_cycle = serializers.SerializerMethodField()
+
+    def get_card_cycle(self, instance) -> [CycleJSONSerializer]:
+        return []
+
+    def get_path_cycle(self, instance) -> [CycleJSONSerializer]:
+        return []
+
+
 class HumanModelSerializer(serializers.ModelSerializer):
     is_underaged = serializers.SerializerMethodField()
 
@@ -166,6 +188,65 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'integer',
                     },
                 },
+            },
+        }
+
+    def test_cycle_json_serializer(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(CycleJSONSerializer).render().serialize() == {
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'local_id': {'type': 'integer'},
+                    'stage_id': {'type': 'integer'},
+                    'entity': {'type': 'any'},
+                },
+                'required': ['local_id', 'stage_id', 'entity'],
+            },
+        }
+
+    def test_cycles_json_serializer(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(CyclesJSONSerializer).render().serialize() == {
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'card_cycle': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'entity': {'type': 'any'},
+                                'local_id': {'type': 'integer'},
+                                'stage_id': {'type': 'integer'},
+                            },
+                            'required': ['local_id', 'stage_id', 'entity'],
+                        },
+                    },
+                    'path_cycle': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'entity': {'type': 'any'},
+                                'local_id': {'type': 'integer'},
+                                'stage_id': {'type': 'integer'},
+                            },
+                            'required': ['local_id', 'stage_id', 'entity'],
+                        },
+                    },
+                },
+                'required': ['card_cycle', 'path_cycle'],
             },
         }
 

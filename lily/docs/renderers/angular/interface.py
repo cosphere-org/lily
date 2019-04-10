@@ -63,31 +63,37 @@ class Interface:
             return ''
 
         def optional(name, schema):
-            return name not in schema['required'] and '?' or ''
+            return name not in schema.get('required', []) and '?' or ''
 
         def to_type(name, schema, indent):
-            if schema['type'] in ['integer', 'number']:
+            _type = schema.get('type')
+            if _type in ['integer', 'number']:
                 return 'number'
 
-            elif schema['type'] == 'string' and schema.get('enum'):
+            elif _type == 'string' and schema.get('enum'):
                 enum = self.append_enum(name, schema['enum'])
                 return enum.name
 
-            elif schema['type'] == 'boolean':
+            elif _type == 'null':
+                return 'null'
+
+            elif _type == 'boolean':
                 return 'boolean'
 
-            elif schema['type'] == 'string':
+            elif _type == 'string':
                 return 'string'
 
-            elif schema['type'] == 'any':
+            elif _type == 'any':
                 return 'any'
 
-            elif schema['type'] == 'object':
+            elif _type == 'object':
                 if 'properties' in schema:
                     return to_interface(
                         schema, indent=indent + 4, base_indent=indent)
                 else:
-                    return 'Object'
+                    return 'any'
+
+            return 'any'
 
         def to_interface(schema, indent=4, base_indent=0):
 
@@ -99,7 +105,14 @@ class Interface:
                 for name in names:
                     sub_schema = schema['properties'][name]
 
-                    if sub_schema['type'] == 'array':
+                    if sub_schema.get('oneOf'):
+                        values = []
+                        for alt_schema in sub_schema.get('oneOf'):
+                            values.append(to_type(name, alt_schema, indent))
+
+                        value = ' | '.join(values)
+
+                    elif sub_schema.get('type') == 'array':
                         value = to_type(name, sub_schema['items'], indent)
                         value += '[]'
 
