@@ -568,7 +568,7 @@ class InterfaceTestCase(TestCase):
                         card_id?: any;
                         created_timestamp: number;
                         id?: number;
-                        states_path?: Object;
+                        states_path?: any;
                         successful?: boolean;
                     }[];
                     count: number;
@@ -731,7 +731,203 @@ class InterfaceTestCase(TestCase):
                 }
             ''', 0)
         ),
-    ], ids=list([str(i) for i in range(18)]))
+
+        # -- case 18 - one of - null or string
+        (
+            {
+                'type': 'object',
+                'properties': {
+                    'name': {
+                        'oneOf': [
+                            {'type': 'null'},
+                            {'type': 'string'},
+                        ],
+                    },
+                },
+            },
+            None,
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponse {
+                    name?: null | string;
+                }
+            ''', 0)
+        ),
+
+        # -- case 19 - one of - null or object
+        (
+            {
+                'type': 'object',
+                'required': ['background'],
+                'properties': {
+                    'background': {
+                        'oneOf': [
+                            {'type': 'null'},
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'audio_uri': {
+                                        'type': 'string',
+                                    },
+                                    'audio_stop': {
+                                        'type': 'number',
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            None,
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponse {
+                    background: null | {
+                        audio_stop?: number;
+                        audio_uri?: string;
+                    };
+                }
+            ''', 0)
+        ),
+
+        # -- case 20 - one of - null or object or string or other object
+        (
+            {
+                'type': 'object',
+                'required': ['background'],
+                'properties': {
+                    'background': {
+                        'oneOf': [
+                            {'type': 'null'},
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'audio_uri': {
+                                        'type': 'string',
+                                    },
+                                    'audio_stop': {
+                                        'type': 'number',
+                                    },
+                                },
+                            },
+                            {'type': 'string'},
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'text': {
+                                        'type': 'string',
+                                    },
+                                    'age': {
+                                        'type': 'number',
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            None,
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponse {
+                    background: null | {
+                        audio_stop?: number;
+                        audio_uri?: string;
+                    } | string | {
+                        age?: number;
+                        text?: string;
+                    };
+                }
+            ''', 0)
+        ),
+
+        # -- case 21 - one of - null or complex object
+        (
+            {
+                'type': 'object',
+                'required': ['background'],
+                'properties': {
+                    'background': {
+                        'oneOf': [
+                            {'type': 'null'},
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'audio_uri': {
+                                        'oneOf': [
+                                            {'type': 'null'},
+                                            {
+                                                'type': 'string',
+                                                'format': 'url',
+                                            },
+                                        ],
+                                    },
+                                    'audio_text': {
+                                        'oneOf': [
+                                            {'type': 'null'},
+                                            {'type': 'string'},
+                                        ],
+                                    },
+                                    'audio_language': {
+                                        'oneOf': [
+                                            {'type': 'null'},
+                                            {
+                                                'type': 'string',
+                                                'enum': [
+                                                    'fr',
+                                                    'nb',
+                                                    'is',
+                                                    'en',
+                                                ],
+                                            },
+                                        ],
+                                    },
+                                    'audio_stop': {
+                                        'oneOf': [
+                                            {'type': 'null'},
+                                            {'type': 'number'},
+                                        ],
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                },
+            },
+            None,
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export enum ReadCardsResponseAudioLanguage {
+                    en = 'en',
+                    fr = 'fr',
+                    is = 'is',
+                    nb = 'nb',
+                }
+
+                export interface ReadCardsResponse {
+                    background: null | {
+                        audio_language?: null | ReadCardsResponseAudioLanguage;
+                        audio_stop?: null | number;
+                        audio_text?: null | string;
+                        audio_uri?: null | string;
+                    };
+                }
+
+            ''', 0)
+        ),
+    ], ids=list([str(i) for i in range(22)]))
 def test_render(schema, bulk_read_field, expected):
     result = Interface(
         'READ_CARDS',
