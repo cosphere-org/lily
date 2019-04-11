@@ -109,11 +109,10 @@ class State {
         this.qs.setSelectedDomain(selectedDomain);
         this.state = {
             ...this.state,
-            selectedCommands: this.state.selectedCommands.filter(c => {
-                return c.meta.domain.name == selectedDomain;
-            }),
             selectedDomain: selectedDomain,
         };
+
+        this.state.selectedCommands = this.refreshSelectedCommands();
 
         return this.state;
     }
@@ -123,16 +122,43 @@ class State {
         this.state = {
             ...this.state,
             selectedAccessRole: selectedAccessRole,
-            selectedCommands: this.state.selectedCommands.filter(c => {
-                return c.access.access_list.indexOf(selectedAccessRole) >= 0;
-            }),
         };
+        this.state.selectedCommands = this.refreshSelectedCommands();
 
         return this.state;
     }
 
     updateWithQuery(query) {
         this.qs.setQuery(query);
+        this.state = {
+            ...this.state,
+            query: query,
+        };
+        this.state.selectedCommands = this.refreshSelectedCommands();
+
+        return this.state;
+    }
+
+    refreshSelectedCommands() {
+        let commands = this.state.allCommands;
+
+        // -- selected domain filter
+        if (this.state.selectedDomain) {
+            commands = commands.filter(c => {
+                return c.meta.domain.name == this.state.selectedDomain;
+            });
+        }
+
+        // -- selected access role
+        if (this.state.selectedAccessRole) {
+            commands = commands.filter(c => {
+                return c.access.access_list.indexOf(
+                    this.state.selectedAccessRole) >= 0;
+            });
+
+        }
+
+        // -- query
         let getTextRepresentation = (command) => {
             return `
                 ${command.name}
@@ -140,18 +166,17 @@ class State {
                 ${command.method}
                 ${command.path_conf.path}
                 ${command.meta.description}
-            `;
+            `.toLowerCase();
         }
 
-        this.state = {
-            ...this.state,
-            selectedCommands: this.state.selectedCommands.filter(c => {
-                return getTextRepresentation(c).indexOf(query) >= 0;
-            }),
-            query: query,
-        };
+        if (this.state.query) {
+            commands = commands.filter(c => {
+                return getTextRepresentation(c).indexOf(
+                    this.state.query.toLowerCase()) >= 0;
+            });
 
-        return this.state;
+        }
+
+        return commands;
     }
-
 }

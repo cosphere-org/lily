@@ -1,0 +1,84 @@
+{
+    "READ_ENTRY_POINT": {
+        "method": "get",
+        "path_conf": {
+            "path": "/",
+            "parameters": []
+        },
+        "meta": {
+            "title": "Read Entry Point",
+            "description": "Serve Service Entry Point data: - current version of the service - list of all available commands together with their configurations - examples collected for a given service.",
+            "domain": {
+                "id": "docs",
+                "name": "Docs Management",
+                "@type": "domain"
+            },
+            "@type": "meta"
+        },
+        "access": {
+            "access_list": null,
+            "is_private": true,
+            "is_external": false,
+            "@type": "access"
+        },
+        "source": {
+            "filepath": "/lily/entrypoint/commands.py",
+            "start_line": 40,
+            "end_line": 110,
+            "@type": "source"
+        },
+        "schemas": {
+            "output": {
+                "uri": "https://github.com/cosphere-org/lily/blob/12493ae395570eed3cb4ed5829602981f5af3ba1/lily/entrypoint/commands.py/#L18",
+                "schema": {
+                    "type": "object",
+                    "required": [
+                        "version",
+                        "name",
+                        "commands"
+                    ],
+                    "properties": {
+                        "version": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "commands": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "input_query": {
+                "uri": "https://github.com/cosphere-org/lily/blob/12493ae395570eed3cb4ed5829602981f5af3ba1/lily/entrypoint/commands.py/#L28",
+                "schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                        "commands": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "with_schemas": {
+                            "type": "boolean"
+                        },
+                        "with_examples": {
+                            "type": "boolean"
+                        },
+                        "is_private": {
+                            "type": "boolean"
+                        },
+                        "domain_id": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "examples": {},
+        "@type": "command"
+    }
+}

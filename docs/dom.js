@@ -140,6 +140,9 @@ class DOMRenderer {
      */
     renderDomains(commandsByDomain) {
 
+        // -- reset
+        this.$domains.empty();
+
         Object.keys(commandsByDomain).sort().forEach((domainName, idx) => {
 
             let commands = commandsByDomain[domainName];
