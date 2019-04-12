@@ -323,6 +323,9 @@ class DOMRenderer {
      */
     renderCommand($parent, domainName, idx, command) {
 
+        // -- deep copy examples
+        let examples = JSON.parse(JSON.stringify(command.examples));
+
         $parent.append(this.commandTemplate.render({
             elementIdPrefix: `${this.getDomainId(domainName)}__${idx}__`,
             name: command.name,
@@ -346,7 +349,7 @@ class DOMRenderer {
                 command.schemas.input_body ?
                 JSON.stringify(command.schemas.input_body.schema, null, 2) :
                 null),
-            examples: command.examples.map((e, i) => {
+            examples: examples.map((e, i) => {
                 e.elementIdPrefix = (
                     `${this.getDomainId(domainName)}__${idx}__${i}__`);
 

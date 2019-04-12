@@ -45,11 +45,6 @@ migrations_apply:  ## apply all not yet applied migrations
 #
 # COMMANDS & DOCS
 #
-.PHONY: docs_render_markdown
-docs_render_markdown: test_all  ## render Markdown representation of commands
-	source env.sh && \
-	python lily/manage.py render_markdown
-
 .PHONY: docs_render_commands
 docs_render_commands: test_all  ## render JSON representation of commands
 	source env.sh && \
@@ -94,4 +89,4 @@ test_setup: clear_examples
 
 
 .PHONY: test_teardown
-test_teardown: docs_render_commands docs_render_markdown run_commands_assertions
+test_teardown: docs_render_commands run_commands_assertions
