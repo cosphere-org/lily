@@ -4,7 +4,7 @@ class QueryParams {
         this.params = {
             entrypointUri: null,
             query: null,
-            selectedDomain: null,
+            selectedElement: null,
             selectedAccessRole: null,
         };
     }
@@ -20,8 +20,8 @@ class QueryParams {
             this.params.query = parsed.query;
         }
 
-        if (parsed.selectedDomain) {
-            this.params.selectedDomain = parsed.selectedDomain;
+        if (parsed.selectedElement) {
+            this.params.selectedElement = parsed.selectedElement;
         }
 
         if (parsed.selectedAccessRole) {
@@ -41,8 +41,8 @@ class QueryParams {
         this.set();
     }
 
-    setSelectedDomain(selectedDomain) {
-        this.params.selectedDomain = selectedDomain;
+    setSelectedElement(selectedElement) {
+        this.params.selectedElement = selectedElement;
         this.set();
     }
 

@@ -10,7 +10,7 @@ class State {
         this.state = {
             entrypointUri: null,
             query: null,
-            selectedDomain: null,
+            selectedElement: null,
             selectedAccessRole: null,
             selectedCommands: [],
             allCommands: [],
@@ -26,9 +26,8 @@ class State {
             if (params.entrypointUri !== null) {
                 this.updateWithEntrypointURI(params.entrypointUri).then(() => {
 
-                    if (params.selectedDomain !== null) {
-                        this.updateWithSelectedDomain(params.selectedDomain);
-
+                    if (params.selectedElement !== null) {
+                        this.updateWithSelectedElement(params.selectedElement);
                     }
 
                     if (params.selectedAccessRole !== null) {
@@ -45,8 +44,8 @@ class State {
                 });
 
             } else {
-                if (params.selectedDomain !== null) {
-                    this.updateWithSelectedDomain(params.selectedDomain);
+                if (params.selectedElement !== null) {
+                    this.updateWithSelectedElement(params.selectedElement);
 
                 }
 
@@ -81,11 +80,25 @@ class State {
                     let conf = commands[name];
                     let domainName = conf.meta.domain.name;
                     let domainId = conf.meta.domain.id;
-
-                    selectedCommands.push({
+                    let command = {
                         name: name,
                         ...conf,
-                    });
+                    };
+
+                    if (conf.hasOwnProperty('examples')) {
+                        command.examples = Object.keys(conf.examples).map(key => {
+                            return {
+                                name: key,
+                                ...conf.examples[key],
+                            };
+                        });
+
+                    } else {
+                        command.examples = [];
+
+                    }
+
+                    selectedCommands.push(command);
 
                     if (!domains.hasOwnProperty(domainName)) {
                         domains[domainName] = domainId;
@@ -105,14 +118,12 @@ class State {
         });
     }
 
-    updateWithSelectedDomain(selectedDomain) {
-        this.qs.setSelectedDomain(selectedDomain);
+    updateWithSelectedElement(selectedElement) {
+        this.qs.setSelectedElement(selectedElement);
         this.state = {
             ...this.state,
-            selectedDomain: selectedDomain,
+            selectedElement: selectedElement,
         };
-
-        this.state.selectedCommands = this.refreshSelectedCommands();
 
         return this.state;
     }
@@ -141,13 +152,6 @@ class State {
 
     refreshSelectedCommands() {
         let commands = this.state.allCommands;
-
-        // -- selected domain filter
-        if (this.state.selectedDomain) {
-            commands = commands.filter(c => {
-                return c.meta.domain.name == this.state.selectedDomain;
-            });
-        }
 
         // -- selected access role
         if (this.state.selectedAccessRole) {

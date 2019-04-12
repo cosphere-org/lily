@@ -27,11 +27,14 @@
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.15.6/styles/default.min.css">
 
-
     <!-- MATERIALIZE -->
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <link
+        href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
 
     <script
         src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js">
@@ -60,19 +63,8 @@
     </script>
 </head>
 <body>
+
     <div class="container">
-
-        <!--
-            HEADER
-        -->
-        <div
-            class="row">
-            <div
-                class="input-field col s12 center">
-                <h1>Lily Commands Viewer</h1>
-            </div>
-
-        </div>
 
         <!--
             API ENTRYPOINT URL
@@ -83,7 +75,6 @@
                 class="input-field col offset-s2 s6">
                 <input
                     id="lily-entrypoint-uri"
-                    value="https://api.cosphere.org/?with_examples=true"
                     type="text"
                     class="validate">
                 <label

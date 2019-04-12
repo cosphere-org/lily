@@ -1,6 +1,24 @@
 
+pre {
+    margin: 0;
+}
+
+.container {
+    margin-top: 50px;
+}
+
 .collapsible-header {
-    padding: 30px;
+    padding: 20px;
+}
+
+.jumpable {
+    color: black;
+}
+
+.jumpable:hover {
+    cursor: pointer;
+    color: #8e8e8e;
+    transition: 500ms;
 }
 
 .lily-command-name {
@@ -14,5 +32,5 @@
 }
 
 .lily-command-path {
-
+    color: green;
 }
