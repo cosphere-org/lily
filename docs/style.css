@@ -1,0 +1,36 @@
+
+pre {
+    margin: 0;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+.collapsible-header {
+    padding: 20px;
+}
+
+.jumpable {
+    color: black;
+}
+
+.jumpable:hover {
+    cursor: pointer;
+    color: #8e8e8e;
+    transition: 500ms;
+}
+
+.lily-command-name {
+    font-weight: bold;
+    margin-right: 20px;
+}
+
+.lily-command-method {
+    text-transform: uppercase;
+    margin-right: 20px;
+}
+
+.lily-command-path {
+    color: green;
+}
