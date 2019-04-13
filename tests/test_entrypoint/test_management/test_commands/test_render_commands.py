@@ -25,7 +25,7 @@ class RenderCommandsTestCase(TestCase):
     def setUp(self):
         self.runner = CliRunner()
 
-    def test_command__makes_the_right_calls(self):
+    def test_command__no_next_version__makes_the_right_calls(self):
 
         class ConfigMock:
 
@@ -36,6 +36,10 @@ class RenderCommandsTestCase(TestCase):
             @property
             def version(self):
                 return '8.9.1'
+
+            @property
+            def next_version(self):
+                return None
 
         self.mocker.patch(
             'lily.entrypoint.management.commands.render_commands.Config',
@@ -56,6 +60,49 @@ class RenderCommandsTestCase(TestCase):
 
         assert result.exit_code == 0
         commands_json = self.lily_dir.join('commands').join('8.9.1.json')
+        assert (
+            result.output.strip() ==
+            f'Commands rendered for to file {str(commands_json)}')
+        assert json.loads(commands_json.read()) == {
+            'BULK_READ_CLIENTS': CommandSerializer(c0).data,
+            'DELETE_PRODUCT': CommandSerializer(c1).data,
+        }
+
+    def test_command__next_version__makes_the_right_calls(self):
+
+        class ConfigMock:
+
+            @classmethod
+            def get_lily_path(cls):
+                return str(self.lily_dir)
+
+            @property
+            def version(self):
+                return '8.9.1'
+
+            @property
+            def next_version(self):
+                return '8.9.2'
+
+        self.mocker.patch(
+            'lily.entrypoint.management.commands.render_commands.Config',
+            ConfigMock)
+
+        c0 = ef.command(domain_id='clients')
+        c1 = ef.command(domain_id='products')
+
+        self.mocker.patch.object(
+            CommandsRenderer,
+            'render'
+        ).return_value = {
+            'BULK_READ_CLIENTS': c0,
+            'DELETE_PRODUCT': c1,
+        }
+
+        result = self.runner.invoke(command)
+
+        assert result.exit_code == 0
+        commands_json = self.lily_dir.join('commands').join('8.9.2.json')
         assert (
             result.output.strip() ==
             f'Commands rendered for to file {str(commands_json)}')
