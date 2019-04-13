@@ -135,29 +135,13 @@ lily_assistant_push_upgraded_version:
 	lily_assistant push-upgraded-version
 
 .PHONE: upgrade_version_patch
-upgrade_version_patch:  ## upgrade version by patch 0.0.X
-	upgrade_version_setup
-	lily_assistant_upgrade_version_patch
-	upgrade_version_post_upgrade
-	lily_assistant_push_upgraded_version
-	upgrade_version_teardown
+upgrade_version_patch: upgrade_version_setup lily_assistant_upgrade_version_patch upgrade_version_post_upgrade lily_assistant_push_upgraded_version upgrade_version_teardown  ## upgrade version by patch 0.0.X
 
 .PHONE: upgrade_version_minor
-upgrade_version_minor:  ## upgrade version by minor 0.X.0
-	upgrade_version_setup
-	lily_assistant_upgrade_version_minor
-	upgrade_version_post_upgrade
-	lily_assistant_push_upgraded_version
-	upgrade_version_teardown
+upgrade_version_minor: upgrade_version_setup lily_assistant_upgrade_version_minor upgrade_version_post_upgrade lily_assistant_push_upgraded_version upgrade_version_teardown  ## upgrade version by minor 0.X.0
 
 .PHONE: upgrade_version_major
-upgrade_version_major:  ## upgrade version by major X.0.0
-	upgrade_version_setup
-	lily_assistant_upgrade_version_major
-	upgrade_version_post_upgrade
-	lily_assistant_push_upgraded_version
-	upgrade_version_teardown
-
+upgrade_version_major: upgrade_version_setup lily_assistant_upgrade_version_major upgrade_version_post_upgrade lily_assistant_push_upgraded_version upgrade_version_teardown  ## upgrade version by major X.0.0
 
 #
 # INSTALL
