@@ -94,4 +94,8 @@ test_setup: clear_examples
 
 
 .PHONY: test_teardown
-test_teardown: docs_render_commands docs_render_markdown run_commands_assertions
+test_teardown: run_commands_assertions
+
+
+.PHONY: upgrade_version_post_upgrade
+upgrade_version_post_upgrade: docs_render_commands docs_render_markdown
