@@ -37,7 +37,7 @@ class Interface:
 
         if not new_enum:
             new_enum = Enum(
-                field_name, values, self.name, index > 0 and index or None)
+                field_name, values, index > 0 and index or None)
             self.enums.append(new_enum)
 
         return new_enum
@@ -191,34 +191,31 @@ class Interface:
                     interface_content=to_interface(self.schema)), 0)
 
         if self.enums:
-            blocks.extend([enum.render() for enum in self.enums])
-            blocks.append(interface)
+            sorted_enum_names = sorted([e.name for e in self.enums])
+            blocks.append(normalize_indentation('''
+                import {{ {enums} }} from '../../shared/enums';
+            ''', 0).format(enums=', '.join(sorted_enum_names)))
 
-        else:
-            blocks.append(interface)
+        blocks.append(interface)
 
         return '\n\n'.join(blocks)
 
 
 class Enum:
 
-    def __init__(self, field_name, values, interface_name, index=None):
+    def __init__(self, field_name, values, index=None):
         self.field_name = field_name
-        self.interface_name = interface_name
         self.values = set(values)
         self.index = index
 
     def __eq__(self, other):
         return (
             self.field_name.lower() == other.field_name.lower() and
-            self.interface_name.lower() == other.interface_name.lower() and
-            self.values == other.values and
-            self.index == other.index)
+            self.values == other.values)
 
     @property
     def name(self):
-        return '{interface_name}{field_name}{index}'.format(
-            interface_name=self.interface_name,
+        return '{field_name}{index}'.format(
             field_name=to_camelcase(self.field_name),
             index=(self.index is not None and self.index) or '')
 

@@ -46,12 +46,12 @@ migrations_apply:  ## apply all not yet applied migrations
 # COMMANDS & DOCS
 #
 .PHONY: docs_render_markdown
-docs_render_markdown: test_all  ## render Markdown representation of commands
+docs_render_markdown:  ## render Markdown representation of commands
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py render_markdown
 
 .PHONY: docs_render_commands
-docs_render_commands: test_all  ## render JSON representation of commands
+docs_render_commands:  ## render JSON representation of commands
 	source env.sh && \
 	python {% SRC_DIR %}/manage.py render_commands
 
@@ -93,5 +93,9 @@ run_commands_assertions:  ## run all commands assertions
 test_setup: clear_examples
 
 
-.PHONY: test_teardown
-test_teardown: docs_render_commands docs_render_markdown run_commands_assertions
+.PHONY: upgrade_version_post_upgrade
+upgrade_version_post_upgrade: docs_render_commands docs_render_markdown
+
+
+.PHONY: upgrade_version_teardown
+upgrade_version_teardown: run_commands_assertions

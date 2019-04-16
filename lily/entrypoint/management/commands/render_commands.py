@@ -24,7 +24,8 @@ def command():
     if not os.path.exists(commands_dir_path):
         os.mkdir(commands_dir_path)
 
-    commands_path = os.path.join(commands_dir_path, f'{config.version}.json')
+    version = config.next_version or config.version
+    commands_path = os.path.join(commands_dir_path, f'{version}.json')
     with open(commands_path, 'w') as f:
         commands = CommandsRenderer().render()
         f.write(

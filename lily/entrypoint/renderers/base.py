@@ -39,6 +39,23 @@ class BaseRenderer(EventFactory):
                                 'name': views_index[path]['name'],
                             })
 
+                    if command_name in commands_index:
+                        existing = commands_index[command_name]
+
+                        raise self.BrokenRequest(
+                            'DUPLICATED_COMMAND_DETECTED',
+                            data={
+                                'command_name': command_name,
+                                'existing_command': {
+                                    'path': existing['path_conf']['path'],
+                                    'method': existing['method'].upper(),
+                                },
+                                'duplicate_command': {
+                                    'path': path,
+                                    'method': method.upper(),
+                                },
+                            })
+
                     commands_index[command_name] = {
                         'method': method.upper(),
                         'path_conf': deepcopy(views_index[path]['path_conf']),

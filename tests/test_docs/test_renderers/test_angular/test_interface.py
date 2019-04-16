@@ -12,24 +12,20 @@ class EnumTestCase(TestCase):
     # NAME
     #
     def test_name(self):
-        assert Enum(
-            'age', [], 'ReadCardsResponse'
-        ).name == 'ReadCardsResponseAge'
+        assert Enum('age', []).name == 'Age'
 
     def test_name__with_index(self):
-        assert Enum(
-            'age', [], 'BulkDeletePathsResponse', 2
-        ).name == 'BulkDeletePathsResponseAge2'
+        assert Enum('age', [], 2).name == 'Age2'
 
     #
     # RENDER
     #
     def test_render(self):
 
-        enum = Enum('age', ['AA', 'BB'], 'ReadCardsResponse')
+        enum = Enum('age', ['AA', 'BB'])
 
         assert enum.render() == normalize_indentation('''
-            export enum ReadCardsResponseAge {
+            export enum Age {
                 AA = 'AA',
                 BB = 'BB',
             }
@@ -37,10 +33,10 @@ class EnumTestCase(TestCase):
 
     def test_render__numerical(self):
 
-        enum = Enum('age', [0, 1], 'ReadCardsResponse')
+        enum = Enum('position', [0, 1], 11)
 
         assert enum.render() == normalize_indentation('''
-            export enum ReadCardsResponseAge {
+            export enum Position11 {
                 VALUE_0 = 0,
                 VALUE_1 = 1,
             }
@@ -48,10 +44,10 @@ class EnumTestCase(TestCase):
 
     def test_render__removes_duplicates(self):
 
-        enum = Enum('age', ['AA', 'BB', 'AA'], 'ReadCardsResponse')
+        enum = Enum('class', ['AA', 'BB', 'AA'])
 
         assert enum.render() == normalize_indentation('''
-            export enum ReadCardsResponseAge {
+            export enum Class {
                 AA = 'AA',
                 BB = 'BB',
             }
@@ -59,15 +55,45 @@ class EnumTestCase(TestCase):
 
     def test_render__sorts_values(self):
 
-        enum = Enum('age', ['XX', 'AA', 'BB'], 'ReadCardsResponse')
+        enum = Enum('category', ['XX', 'AA', 'BB'])
 
         assert enum.render() == normalize_indentation('''
-            export enum ReadCardsResponseAge {
+            export enum Category {
                 AA = 'AA',
                 BB = 'BB',
                 XX = 'XX',
             }
         ''', 0)
+
+    #
+    # EQUAL_FIELD_AND_VALUES
+    #
+    def test__eq__(self):
+
+        # -- identical
+        assert (
+            Enum('category', ['XX', 'AA', 'BB']) ==
+            Enum('category', ['XX', 'AA', 'BB']))
+
+        # -- the same, but with some duplicates and different order
+        assert (
+            Enum('category', ['XX', 'AA', 'BB']) ==
+            Enum('category', ['XX', 'BB', 'AA', 'BB']))
+
+        # -- different name
+        assert (
+            Enum('categories', ['XX', 'AA']) !=
+            Enum('category', ['XX', 'AA']))
+
+        # -- different values
+        assert (
+            Enum('category', ['XX', 'AA']) !=
+            Enum('category', ['XX', 'YY']))
+
+        # -- different index
+        assert (
+            Enum('category', ['XX', 'AA'], 10) ==
+            Enum('category', ['XX', 'AA'], 99))
 
 
 class InterfaceTestCase(TestCase):
@@ -99,7 +125,7 @@ class InterfaceTestCase(TestCase):
         e0 = interface.append_enum('age', [19, 91])
 
         assert len(interface.enums) == 1
-        assert e0 == Enum('age', [19, 91], interface.name, None)
+        assert e0 == Enum('age', [19, 91], None)
 
     def test_append_enum__with_duplicates(self):
 
@@ -128,7 +154,7 @@ class InterfaceTestCase(TestCase):
         e1 = interface.append_enum('age', [19])
 
         assert len(interface.enums) == 2
-        assert e1 == Enum('age', [19], interface.name, 1)
+        assert e1 == Enum('age', [19], 1)
 
 
 @pytest.mark.parametrize(
@@ -250,13 +276,10 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            export enum ReadCardsResponseOccupation {
-                AA = 'AA',
-                BB = 'BB',
-            }
+            import { Occupation } from '../../shared/enums';
 
             export interface ReadCardsResponse {
-                occupation: ReadCardsResponseOccupation;
+                occupation: Occupation;
                 surname?: string;
             }
             ''', 0)
@@ -288,20 +311,11 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            export enum ReadCardsResponseAge {
-                12 = '12',
-                21 = '21',
-                33 = '33',
-            }
-
-            export enum ReadCardsResponseOccupation {
-                AA = 'AA',
-                BB = 'BB',
-            }
+            import { Age, Occupation } from '../../shared/enums';
 
             export interface ReadCardsResponse {
-                age?: ReadCardsResponseAge;
-                occupation: ReadCardsResponseOccupation;
+                age?: Age;
+                occupation: Occupation;
                 surname?: string;
             }
             ''', 0)
@@ -332,13 +346,10 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            export enum ReadCardsResponseOccupation {
-                AA = 'AA',
-                BB = 'BB',
-            }
+            import { Occupation } from '../../shared/enums';
 
             export interface ReadCardsResponse {
-                occupation: ReadCardsResponseOccupation[];
+                occupation: Occupation[];
                 surname?: string;
             }
             ''', 0)
@@ -504,21 +515,12 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            export enum ReadCardsResponseAge {
-                A = 'A',
-                B = 'B',
-            }
-
-            export enum ReadCardsResponseCategory {
-                CAT0 = 'CAT0',
-                CAT1 = 'CAT1',
-                CAT2 = 'CAT2',
-            }
+            import { Age, Category } from '../../shared/enums';
 
             export interface ReadCardsResponse {
-                age: ReadCardsResponseAge;
+                age: Age;
                 people?: {
-                    category: ReadCardsResponseCategory;
+                    category: Category;
                 };
             }
             ''', 0)
@@ -909,16 +911,11 @@ class InterfaceTestCase(TestCase):
                  * http://here
                  */
 
-                export enum ReadCardsResponseAudioLanguage {
-                    en = 'en',
-                    fr = 'fr',
-                    is = 'is',
-                    nb = 'nb',
-                }
+                import { AudioLanguage } from '../../shared/enums';
 
                 export interface ReadCardsResponse {
                     background: null | {
-                        audio_language?: null | ReadCardsResponseAudioLanguage;
+                        audio_language?: null | AudioLanguage;
                         audio_stop?: null | number;
                         audio_text?: null | string;
                         audio_uri?: null | string;

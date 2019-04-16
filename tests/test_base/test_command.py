@@ -441,7 +441,9 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'ERROR!',
             '@type': 'error',
-            '@access': {'user_id': 1},
+            '@access': {
+                'user_id': u.id,
+            },
         }
         assert isinstance(AtomicContext.exception, event.BrokenRequest)
 

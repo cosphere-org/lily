@@ -23,7 +23,11 @@ class CopierTestCase(TestCase):
         self.project_dir.mkdir('.lily').join('config.json').write(json.dumps({
             'version': '0.0.11'
         }))
+        self.current_cwd = os.getcwd()
         os.chdir(str(self.project_dir))
+
+    def tearDown(self):
+        os.chdir(self.current_cwd)
 
     #
     # COPY
