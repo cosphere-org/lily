@@ -1,10 +1,29 @@
 
+import os
+
 from django.test import TestCase
+import pytest
 
 from lily.base.source import Source, SourceSerializer
 
 
 class SourceTestCase(TestCase):
+
+    @pytest.fixture(autouse=True)
+    def initifixtures(self, mocker):
+        self.mocker = mocker
+
+    def setUp(self):
+        class ConfigMock:
+
+            @classmethod
+            def get_project_path(cls):
+                return os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    '..',
+                    '..')
+
+        self.mocker.patch('base.source.Config', ConfigMock)
 
     def test_constructor(self):
 
@@ -16,8 +35,8 @@ class SourceTestCase(TestCase):
         source = Source(fn)
 
         assert source.filepath == '/tests/test_base/test_source.py'
-        assert source.start_line == 11
-        assert source.end_line == 14
+        assert source.start_line == 30
+        assert source.end_line == 33
 
 
 class SourceSerializerTestCase(TestCase):
@@ -33,6 +52,6 @@ class SourceSerializerTestCase(TestCase):
         assert SourceSerializer(source).data == {
             '@type': 'source',
             'filepath': '/tests/test_base/test_source.py',
-            'start_line': 27,
-            'end_line': 29,
+            'start_line': 46,
+            'end_line': 48,
         }

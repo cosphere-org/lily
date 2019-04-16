@@ -1,4 +1,7 @@
 
+import os
+import json
+
 from lily_assistant.config import Config
 
 from lily.conf import settings
@@ -9,7 +12,6 @@ from lily.base.meta import Meta, Domain
 from lily.base.access import Access
 from lily.base.input import Input
 from lily.base.output import Output
-from .renderers.commands import CommandsRenderer
 from .serializers import CommandSerializer
 
 
@@ -17,9 +19,19 @@ class EntryPointCommands(HTTPCommands):
 
     class EntryPointSerializer(serializers.Serializer):
 
+        class VersionInfoSerializer(serializers.Serializer):
+
+            _type = 'version_info'
+
+            deployed = serializers.CharField()
+
+            displayed = serializers.CharField()
+
+            available = serializers.ListField(child=serializers.CharField())
+
         _type = 'entrypoint'
 
-        version = serializers.CharField()
+        version_info = VersionInfoSerializer()
 
         name = serializers.CharField()
 
@@ -31,11 +43,11 @@ class EntryPointCommands(HTTPCommands):
 
         with_schemas = parsers.BooleanField(default=True)
 
-        with_examples = parsers.BooleanField(default=False)
-
         is_private = parsers.BooleanField(default=None)
 
         domain_id = parsers.CharField(default=None)
+
+        version = parsers.CharField(default=None)
 
     @command(
         name=name.Read('ENTRY_POINT'),
@@ -44,7 +56,7 @@ class EntryPointCommands(HTTPCommands):
             title='Read Entry Point',
             description='''
                 Serve Service Entry Point data:
-                - current version of the service
+                - current or chosen version of the service
                 - list of all available commands together with their
                   configurations
                 - examples collected for a given service.
@@ -64,29 +76,20 @@ class EntryPointCommands(HTTPCommands):
 
         command_names = request.input.query['commands']
 
-        with_schemas = request.input.query['with_schemas']
-
-        with_examples = request.input.query['with_examples']
-
         is_private = request.input.query['is_private']
 
         domain_id = request.input.query['domain_id']
 
+        version = request.input.query['version']
+
         config = Config()
 
-        commands = self.get_commands()
+        commands = self.get_commands(version)
 
         if command_names:
             commands = {
                 command_name: commands[command_name]
                 for command_name in command_names}
-
-        for c in commands.values():
-            if not with_schemas:
-                del c['schemas']
-
-            if not with_examples:
-                del c['examples']
 
         if is_private is not None:
             commands = {
@@ -105,15 +108,32 @@ class EntryPointCommands(HTTPCommands):
         raise self.event.Read(
             {
                 'name': config.name,
-                'version': config.version,
+                'version_info': {
+                    'deployed': config.version,
+                    'displayed': version or config.version,
+                    'available': self.get_available_versions(),
+                },
                 'commands': commands,
             })
 
-    def get_commands(self):
+    def get_available_versions(self):
 
-        # -- if reached here there were no `commands` or they were outdated
-        commands = CommandsRenderer().render()
-        return {
-            name: CommandSerializer(conf).data
-            for name, conf in commands.items()
-        }
+        commands_dir_path = os.path.join(Config.get_lily_path(), 'commands')
+
+        return sorted(
+            [
+                commands_file.replace('.json', '')
+                for commands_file in os.listdir(commands_dir_path)
+            ],
+            key=lambda x: [int(e) for e in x.split('.')],
+            reverse=True)
+
+    def get_commands(self, version=None):
+
+        config = Config()
+        version = version or config.version
+        commands_dir_path = os.path.join(Config.get_lily_path(), 'commands')
+
+        commands_path = os.path.join(commands_dir_path, f'{version}.json')
+        with open(commands_path, 'r') as f:
+            return json.loads(f.read())

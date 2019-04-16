@@ -13,7 +13,7 @@ from .schema import SchemaRenderer
 
 class CommandsRenderer(BaseRenderer):
 
-    def __init__(self, ):
+    def __init__(self):
         self.urlpatterns = self.get_urlpatterns()
         self.examples = self.get_all_examples()
 
@@ -71,10 +71,15 @@ class CommandsRenderer(BaseRenderer):
         return rendered
 
     def get_all_examples(self):
-        with open(get_examples_filepath()) as f:
-            return json.loads(f.read())
+        try:
+            with open(get_examples_filepath()) as f:
+                return json.loads(f.read())
+
+        except FileNotFoundError:
+            return {}
 
     def get_examples(self, command_name, path_pattern):
+
         try:
             examples = self.examples[command_name]
 

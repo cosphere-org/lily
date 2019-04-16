@@ -43,6 +43,12 @@ class AngularRepoTestCase(TestCase):
         self.mocker = mocker
         self.tmpdir = tmpdir
 
+    def setUp(self):
+        self.current_cwd = os.getcwd()
+
+    def tearDown(self):
+        os.chdir(self.current_cwd)
+
     #
     # GIT
     #

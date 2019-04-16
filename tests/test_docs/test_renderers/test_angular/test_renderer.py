@@ -13,6 +13,7 @@ from lily.base.test import override_settings
 from lily.base.utils import normalize_indentation
 from lily.docs.renderers.angular.domain import Domain
 from lily.docs.renderers.angular.renderer import AngularClientRenderer
+from lily.docs.renderers.angular.interface import Enum
 from tests import remove_white_chars
 
 
@@ -37,10 +38,14 @@ class AngularClientRendererTestCase(TestCase):
         self.mocker.patch.object(
             tempfile, 'mkdtemp').return_value = str(self.base_dir)
         self.renderer = AngularClientRenderer('origin', 'prefix')
+        self.current_cwd = os.getcwd()
         self.renderer.repo.cd_to_repo()
 
+    def tearDown(self):
+        os.chdir(self.current_cwd)
+
     #
-    # render
+    # RENDER
     #
     def test_render(self):
 
@@ -72,6 +77,9 @@ class AngularClientRendererTestCase(TestCase):
         render_domain = self.mocker.patch.object(
             self.renderer, 'render_domain')
 
+        render_enums_ts = self.mocker.patch.object(
+            self.renderer, 'render_enums_ts')
+
         self.renderer.render()
 
         assert group_commands_by_domain.call_count == 1
@@ -85,6 +93,7 @@ class AngularClientRendererTestCase(TestCase):
             call(Domain('cards', ''), ['B', 'X']),
             call(Domain('paths', ''), ['A', 'Z']),
         ]
+        assert render_enums_ts.call_args_list == [call(['B', 'X', 'A', 'Z'])]
 
         assert template_repo.clone.call_count == 1
 
@@ -131,6 +140,9 @@ class AngularClientRendererTestCase(TestCase):
         render_domain = self.mocker.patch.object(
             self.renderer, 'render_domain')
 
+        render_enums_ts = self.mocker.patch.object(
+            self.renderer, 'render_enums_ts')
+
         self.renderer.render(only_build=True)
 
         assert group_commands_by_domain.call_count == 1
@@ -144,6 +156,7 @@ class AngularClientRendererTestCase(TestCase):
             call(Domain('cards', ''), ['B', 'X']),
             call(Domain('paths', ''), ['A', 'Z']),
         ]
+        assert render_enums_ts.call_args_list == [call(['B', 'X', 'A', 'Z'])]
 
         assert template_repo.clone.call_count == 1
 
@@ -161,7 +174,7 @@ class AngularClientRendererTestCase(TestCase):
         assert http_repo.link.call_count == 1
 
     #
-    # group_commands_by_domain
+    # GROUP_COMMANDS_BY_DOMAIN
     #
     def test_group_commands_by_domain(self):
 
@@ -344,14 +357,14 @@ class AngularClientRendererTestCase(TestCase):
             self.renderer.group_commands_by_domain()
 
         assert e.value.data == {
-            '@event': 'DUPLICATE_PUBLIC_DOMAIN_COMMAND_DETECTED',
+            '@event': 'DUPLICATED_PUBLIC_DOMAIN_COMMAND_DETECTED',
             '@type': 'error',
             'command_name': 'CREATE_CARD',
             'domain_id': 'recall',
         }
 
     #
-    # collect_entrypoints
+    # COLLECT_ENTRYPOINTS
     #
     @override_settings(LILY_COMMAND_ENTRYPOINTS=[
         'http://localhost:8000',
@@ -419,7 +432,7 @@ class AngularClientRendererTestCase(TestCase):
         }
 
     #
-    # render_domain
+    # RENDER_DOMAIN
     #
     def test_render_domain(self):
 
@@ -450,7 +463,7 @@ class AngularClientRendererTestCase(TestCase):
         assert render_access_ts.call_args_list == [call(domain, [])]
 
     #
-    # render_index_ts
+    # RENDER_INDEX_TS
     #
     def test_render_index_ts(self):
 
@@ -468,7 +481,7 @@ class AngularClientRendererTestCase(TestCase):
             ''', 0)
 
     #
-    # render_models_ts
+    # RENDER_MODELS_TS
     #
     def test_render_models_ts(self):
 
@@ -513,7 +526,7 @@ class AngularClientRendererTestCase(TestCase):
             ''', 0)
 
     #
-    # render_domain_ts
+    # RENDER_DOMAIN_TS
     #
     def test_render_domain_ts(self):
 
@@ -560,7 +573,7 @@ class AngularClientRendererTestCase(TestCase):
             ''', 0)  # noqa
 
     #
-    # render_examples_ts
+    # RENDER_EXAMPLES_TS
     #
     def test_render_examples_ts(self):
 
@@ -593,7 +606,7 @@ class AngularClientRendererTestCase(TestCase):
             ''', 0)  # noqa
 
     #
-    # render_access_ts
+    # RENDER_ACCESS_TS
     #
     def test_render_access_ts(self):
 
@@ -631,7 +644,110 @@ class AngularClientRendererTestCase(TestCase):
             ''', 0)  # noqa
 
     #
-    # render_api_index_ts
+    # RENDER_ENUMS_TS
+    #
+    def test_render_enums_ts__no_enums(self):
+
+        self.mocker.patch.object(
+            self.renderer,
+            'collect_unique_enums'
+        ).return_value = []
+
+        self.renderer.render_enums_ts(Mock())
+
+        assert os.listdir(self.src_dir) == ['domains', 'services', 'shared']
+        assert self.src_dir.join('shared/enums.ts').read() == ''
+
+    def test_render_enums_ts(self):
+
+        self.mocker.patch.object(
+            self.renderer,
+            'collect_unique_enums'
+        ).return_value = [
+            Enum('age', [11, 33]),
+            Enum('category', ['AA', 'YY', 'XX']),
+            Enum('name', ['Jack', 'Alice', 'Joe']),
+        ]
+
+        self.renderer.render_enums_ts(Mock())
+
+        assert os.listdir(self.src_dir) == ['domains', 'services', 'shared']
+        assert (
+            self.src_dir.join('shared/enums.ts').read() ==
+            normalize_indentation('''
+                export enum Age {
+                    VALUE_11 = 11,
+                    VALUE_33 = 33,
+                }
+
+                export enum Category {
+                    AA = 'AA',
+                    XX = 'XX',
+                    YY = 'YY',
+                }
+
+                export enum Name {
+                    Alice = 'Alice',
+                    Jack = 'Jack',
+                    Joe = 'Joe',
+                }
+            ''', 0))  # noqa
+
+    #
+    # COLLECT_UNIQUE_ENUMS
+    #
+    def test_collect_unique_enums__all_unique(self):
+
+        e0 = Enum('age', [11, 33])
+        e1 = Enum('name', ['Jack', 'Alice', 'Joe'])
+        e2 = Enum('category', ['AA', 'YY', 'XX'])
+
+        assert self.renderer.collect_unique_enums([
+            Mock(enums=[e0, e1]),
+            Mock(enums=[e2]),
+        ]) == [e0, e2, e1]
+
+    def test_collect_unique_enums__with_duplicates(self):
+
+        e0 = Enum('age', [11, 33])
+        e1 = Enum('age', [11, 33])
+        e2 = Enum('name', ['Jack', 'Alice', 'Joe'])
+        e3 = Enum('name', ['Jack', 'Alice', 'Joe'])
+        e4 = Enum('category', ['AA', 'YY', 'XX'])
+
+        assert self.renderer.collect_unique_enums([
+            Mock(enums=[e0]),
+            Mock(enums=[e1, e2]),
+            Mock(enums=[e3, e4]),
+        ]) == [e0, e4, e2]
+
+    def test_collect_unique_enums__inconsistent_duplicates_detected(self):
+
+        e0 = Enum('age', [11, 33])
+        e1 = Enum('age', [11, 22, 33])
+        e2 = Enum('name', ['Jack', 'Alice', 'Joe'])
+
+        with pytest.raises(EventFactory.ServerError) as e:
+            self.renderer.collect_unique_enums([
+                Mock(enums=[e0]),
+                Mock(enums=[e1, e2]),
+            ])
+
+        assert e.value.data == {
+            '@event': 'INCONSISTENT_ENUMS_DETECTED',
+            '@type': 'error',
+            'enum.0': {
+                'name': 'Age',
+                'values': [33, 11],
+            },
+            'enum.1': {
+                'name': 'Age',
+                'values': [33, 11, 22],
+            },
+        }
+
+    #
+    # RENDER_API_INDEX_TS
     #
     def test_render_api_index_ts(self):
 
@@ -653,7 +769,7 @@ class AngularClientRendererTestCase(TestCase):
             ''', 0))  # noqa
 
     #
-    # render_api_ts
+    # RENDER_API_TS
     #
     def test_render_api_ts(self):
 
@@ -730,7 +846,7 @@ class AngularClientRendererTestCase(TestCase):
             ''', 0))  # noqa
 
     #
-    # render_client_module_ts
+    # RENDER_CLIENT_MODULE_TS
     #
     def test_render_client_module_ts(self):
 

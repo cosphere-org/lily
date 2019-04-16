@@ -42,6 +42,7 @@ class CliTestCase(TestCase):
 
     def test_init__config_does_not_exist(self):
 
+        current_cwd = os.getcwd()
         os.chdir(str(self.tmpdir))
 
         copy = self.mocker.patch.object(Copier, 'copy')
@@ -55,3 +56,4 @@ class CliTestCase(TestCase):
             `lily init <src_dir>`
         ''')
         assert copy.call_count == 0
+        os.chdir(current_cwd)

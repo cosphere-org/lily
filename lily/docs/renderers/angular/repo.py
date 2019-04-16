@@ -43,6 +43,10 @@ class AngularRepo(Repo):
     #
     # UTILS
     #
+    # FIXME: allow here passing the version from the api gateway!!!
+    # to have match between client version and API version
+    # upgrades of the client itself, how can we control them???
+    # -- maybe by adding extra API-<version>-CLIENT-<version>
     def upgrade_version(
             self, upgrade_type=VersionRenderer.VERSION_UPGRADE.PATCH):
 

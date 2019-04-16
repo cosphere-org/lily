@@ -17,7 +17,7 @@ class BaseRendererTestCase(TestCase):
         self.mocker = mocker
 
     #
-    # render
+    # RENDER
     #
     def test_render__simple_flat_url_patterns(self):
 
@@ -145,6 +145,73 @@ class BaseRendererTestCase(TestCase):
             'duplicates': ['HiView'],
         }
 
+    def test_render__not_lily_compatible_view(self):
+
+        class HiView(View):
+            def post(self):
+                pass
+
+        renderer = BaseRenderer([
+            re_path(r'^hi/there$', HiView.as_view(), name='hi.there'),
+        ])
+
+        with pytest.raises(EventFactory.BrokenRequest) as e:
+            renderer.render()
+
+        assert e.value.data == {
+            '@event': 'NOT_LILY_COMPATIBLE_VIEW_DETECTED',
+            '@type': 'error',
+            'name': 'HiView',
+        }
+
+    def test_render__duplicated_command(self):
+
+        class HiView(View):
+
+            def post(self):
+                pass
+
+            post.command_conf = {
+                'name': 'HI',
+                'some': 'hi.conf',
+            }
+
+        class HelloView(View):
+
+            def delete(self):
+                pass
+
+            delete.command_conf = {
+                'name': 'HI',
+                'some': 'hello.conf',
+            }
+
+        renderer = BaseRenderer([
+            re_path(r'^root/hi$', HiView.as_view(), name='hi'),
+
+            re_path(r'^root/hello$', HelloView.as_view(), name='hello'),
+        ])
+
+        with pytest.raises(EventFactory.BrokenRequest) as e:
+            renderer.render()
+
+        assert e.value.data == {
+            '@event': 'DUPLICATED_COMMAND_DETECTED',
+            '@type': 'error',
+            'command_name': 'HI',
+            'duplicate_command': {
+                'path': '/root/hello',
+                'method': 'DELETE',
+            },
+            'existing_command': {
+                'path': '/root/hi',
+                'method': 'POST',
+            },
+        }
+
+    #
+    # CRAWL_VIEWS
+    #
     def test_crawl_views__deep_url_patterns(self):
 
         class HiView(View):
@@ -231,19 +298,6 @@ class BaseRendererTestCase(TestCase):
                 'conf.wat': 'wat',
             },
         }
-
-    def test_render__not_lily_compatible_view(self):
-
-        class HiView(View):
-            def post(self):
-                pass
-
-        renderer = BaseRenderer([
-            re_path(r'^hi/there$', HiView.as_view(), name='hi.there'),
-        ])
-
-        with pytest.raises(EventFactory.BrokenRequest):
-            renderer.render()
 
     #
     # url_pattern_to_conf
