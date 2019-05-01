@@ -58,7 +58,10 @@ class EntryPointCommandsTestCase(TestCase):
         self.mocker.patch.object(
             EntryPointCommands,
             'get_commands'
-        ).return_value = {'UPDATE_HELLO': CommandSerializer(deepcopy(c)).data}
+        ).return_value = {
+            '@enums': [],
+            'UPDATE_HELLO': CommandSerializer(deepcopy(c)).data,
+        }
 
         response = self.app.get(self.uri, **self.auth_headers)
 
@@ -66,6 +69,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -84,7 +88,10 @@ class EntryPointCommandsTestCase(TestCase):
         self.mocker.patch.object(
             EntryPointCommands,
             'get_commands'
-        ).return_value = {'UPDATE_HELLO': CommandSerializer(deepcopy(c)).data}
+        ).return_value = {
+            '@enums': [],
+            'UPDATE_HELLO': CommandSerializer(deepcopy(c)).data,
+        }
         self.commands_dir.join('2.5.6.json').write('..')
         self.commands_dir.join('2.14.5.json').write('..')
         self.commands_dir.join('2.120.0.json').write('..')
@@ -96,6 +103,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -116,11 +124,13 @@ class EntryPointCommandsTestCase(TestCase):
             'get_commands'
         ).side_effect = [
             {
+                '@enums': [],
                 'UPDATE_HELLO': CommandSerializer(deepcopy(c0)).data,
                 'READ_PAYMENTS': CommandSerializer(deepcopy(c1)).data,
                 'FIND_TOOL': CommandSerializer(deepcopy(c2)).data,
             },
             {
+                '@enums': [],
                 'UPDATE_HELLO': CommandSerializer(deepcopy(c0)).data,
                 'READ_PAYMENTS': CommandSerializer(deepcopy(c1)).data,
                 'FIND_TOOL': CommandSerializer(deepcopy(c2)).data,
@@ -139,6 +149,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -164,6 +175,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -186,11 +198,13 @@ class EntryPointCommandsTestCase(TestCase):
             'get_commands'
         ).side_effect = [
             {
+                '@enums': [],
                 'UPDATE_HELLO': CommandSerializer(deepcopy(c0)).data,
                 'CREATE_HELLO': CommandSerializer(deepcopy(c1)).data,
                 'DELETE_HELLO': CommandSerializer(deepcopy(c2)).data,
             },
             {
+                '@enums': [],
                 'UPDATE_HELLO': CommandSerializer(deepcopy(c0)).data,
                 'CREATE_HELLO': CommandSerializer(deepcopy(c1)).data,
                 'DELETE_HELLO': CommandSerializer(deepcopy(c2)).data,
@@ -207,6 +221,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -230,6 +245,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -252,11 +268,13 @@ class EntryPointCommandsTestCase(TestCase):
             'get_commands'
         ).side_effect = [
             {
+                '@enums': [{'A': 'C'}],
                 'UPDATE_HELLO': CommandSerializer(deepcopy(c0)).data,
                 'CREATE_HELLO': CommandSerializer(deepcopy(c1)).data,
                 'DELETE_HELLO': CommandSerializer(deepcopy(c2)).data,
             },
             {
+                '@enums': [{'A': 'X'}],
                 'UPDATE_HELLO': CommandSerializer(deepcopy(c0)).data,
                 'CREATE_HELLO': CommandSerializer(deepcopy(c1)).data,
                 'DELETE_HELLO': CommandSerializer(deepcopy(c2)).data,
@@ -273,6 +291,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [{'A': 'C'}],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -295,6 +314,7 @@ class EntryPointCommandsTestCase(TestCase):
         assert response.json() == {
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
+            '@enums': [{'A': 'X'}],
             'name': 'test',
             'version_info': {
                 '@type': 'version_info',
@@ -314,6 +334,7 @@ class EntryPointCommandsTestCase(TestCase):
         get_commands = self.mocker.patch.object(
             EntryPointCommands, 'get_commands')
         get_commands.return_value = {
+            '@enums': [],
             'UPDATE_HELLO': CommandSerializer(deepcopy(c)).data,
         }
 

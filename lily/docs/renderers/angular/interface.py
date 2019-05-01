@@ -23,21 +23,10 @@ class Interface:
     def is_empty(self):
         return self.schema is None or self.schema == {}
 
-    def append_enum(self, field_name, values):
+    def append_enum(self, name, values):
 
-        index = 0
-        new_enum = None
-        for enum in self.enums:
-            if enum.field_name == field_name and enum.values != set(values):
-                index += 1
-
-            elif enum.field_name == field_name and enum.values == set(values):
-                new_enum = enum
-                break
-
-        if not new_enum:
-            new_enum = Enum(
-                field_name, values, index > 0 and index or None)
+        new_enum = Enum(name, values)
+        if new_enum not in self.enums:
             self.enums.append(new_enum)
 
         return new_enum
@@ -71,7 +60,7 @@ class Interface:
                 return 'number'
 
             elif _type == 'string' and schema.get('enum'):
-                enum = self.append_enum(name, schema['enum'])
+                enum = self.append_enum(schema['enum_name'], schema['enum'])
                 return enum.name
 
             elif _type == 'null':
@@ -162,12 +151,11 @@ class Interface:
                     self=self,
                     interface_content=to_interface(entity_schema))
 
-            # !!!!!!!!!!!!!!!!!!!!!!!!!!
             # -- FIXME: this is a hack allowing one to provide very
             # -- forgiving interface when output schema is missing, when
             # -- for example one uses output from one service to provide
             # -- output for itself. This behaviour will be solved in the future
-            # -- by usage of service client with exporatable serializers!
+            # -- by usage of service client with exportable serializes
             except KeyError:
 
                 interface = normalize_indentation('''
@@ -203,21 +191,15 @@ class Interface:
 
 class Enum:
 
-    def __init__(self, field_name, values, index=None):
-        self.field_name = field_name
+    def __init__(self, name, values, index=None):
+        self.name = to_camelcase(name)
         self.values = set(values)
         self.index = index
 
     def __eq__(self, other):
         return (
-            self.field_name.lower() == other.field_name.lower() and
+            self.name.lower() == other.name.lower() and
             self.values == other.values)
-
-    @property
-    def name(self):
-        return '{field_name}{index}'.format(
-            field_name=to_camelcase(self.field_name),
-            index=(self.index is not None and self.index) or '')
 
     def render(self):
 

@@ -23,6 +23,10 @@ class Json201(JsonResponseBase):
     status_code = 201
 
 
+class Json303(JsonResponseBase):
+    status_code = 303
+
+
 class Json400(JsonResponseBase):
     status_code = 400
 
@@ -217,6 +221,8 @@ class EventFactory:
     #
     class BaseErrorException(Exception):
 
+        extra_headers = None
+
         is_critical = None
 
         def __init__(
@@ -271,6 +277,15 @@ class EventFactory:
                 self.data.update({
                     '@access': log_access,
                 })
+
+    class Redirect(BaseErrorException):
+        response_class = Json303
+
+        def __init__(self, *args, **kwargs):
+            self.extra_headers = {
+                'Location': kwargs.pop('redirect_uri'),
+            }
+            super(EventFactory.Redirect, self).__init__(*args, **kwargs)
 
     class BrokenRequest(BaseErrorException):
         response_class = Json400

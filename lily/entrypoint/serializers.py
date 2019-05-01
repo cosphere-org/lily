@@ -9,7 +9,8 @@ class CommandSerializer(serializers.Serializer):
 
     _type = 'command'
 
-    method = serializers.ChoiceField(
+    method = serializers.EnumChoiceField(
+        enum_name='command_method',
         choices=('POST', 'GET', 'PUT', 'DELETE'))
 
     path_conf = serializers.JSONField()

@@ -5,7 +5,7 @@ import os
 import djclick as click
 from lily_assistant.config import Config
 
-from ...renderers.commands import CommandsRenderer
+from ...renderer import CommandsRenderer
 from ...serializers import CommandSerializer
 
 
@@ -28,11 +28,17 @@ def command():
     commands_path = os.path.join(commands_dir_path, f'{version}.json')
     with open(commands_path, 'w') as f:
         commands = CommandsRenderer().render()
+        enums = commands.pop('@enums')
+
+        commands = {
+            name: CommandSerializer(conf).data
+            for name, conf in commands.items()
+        }
         f.write(
             json.dumps(
                 {
-                    name: CommandSerializer(conf).data
-                    for name, conf in commands.items()
+                    **commands,
+                    '@enums': enums,
                 },
                 indent=4,
                 sort_keys=False))

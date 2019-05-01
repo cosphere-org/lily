@@ -6,7 +6,7 @@ from django.test import TestCase
 import pytest
 
 from lily.entrypoint.management.commands.render_commands import command
-from lily.entrypoint.renderers.commands import CommandsRenderer
+from lily.entrypoint.renderer import CommandsRenderer
 from lily.entrypoint.serializers import CommandSerializer
 from tests.factory import EntityFactory
 
@@ -52,6 +52,7 @@ class RenderCommandsTestCase(TestCase):
             CommandsRenderer,
             'render'
         ).return_value = {
+            '@enums': [{'enum_name': 'C'}],
             'BULK_READ_CLIENTS': c0,
             'DELETE_PRODUCT': c1,
         }
@@ -64,6 +65,7 @@ class RenderCommandsTestCase(TestCase):
             result.output.strip() ==
             f'Commands rendered for to file {str(commands_json)}')
         assert json.loads(commands_json.read()) == {
+            '@enums': [{'enum_name': 'C'}],
             'BULK_READ_CLIENTS': CommandSerializer(c0).data,
             'DELETE_PRODUCT': CommandSerializer(c1).data,
         }
@@ -95,6 +97,7 @@ class RenderCommandsTestCase(TestCase):
             CommandsRenderer,
             'render'
         ).return_value = {
+            '@enums': [],
             'BULK_READ_CLIENTS': c0,
             'DELETE_PRODUCT': c1,
         }
@@ -107,6 +110,7 @@ class RenderCommandsTestCase(TestCase):
             result.output.strip() ==
             f'Commands rendered for to file {str(commands_json)}')
         assert json.loads(commands_json.read()) == {
+            '@enums': [],
             'BULK_READ_CLIENTS': CommandSerializer(c0).data,
             'DELETE_PRODUCT': CommandSerializer(c1).data,
         }

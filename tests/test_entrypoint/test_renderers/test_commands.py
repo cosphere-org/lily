@@ -6,8 +6,8 @@ from unittest.mock import Mock
 from django.test import TestCase
 import pytest
 
-from lily.entrypoint.renderers.commands import CommandsRenderer
-from lily.entrypoint.renderers.base import BaseRenderer
+from lily.entrypoint.renderer import CommandsRenderer
+from lily.entrypoint.base import BaseRenderer
 from lily import Input, Output, Meta, Domain, Access, Source
 
 
@@ -26,14 +26,15 @@ class CommandsRendererTestCase(TestCase):
         examples.write('{}')
         self.examples_filepath = str(examples)
         self.mocker.patch(
-            'lily.entrypoint.renderers.commands.get_examples_filepath'
+            'lily.entrypoint.renderer.get_examples_filepath'
         ).return_value = self.examples_filepath
 
     def test_render(self):
         renderer = self.mocker.patch(
-            'lily.entrypoint.renderers.commands.SchemaRenderer')
+            'lily.entrypoint.renderer.SchemaRenderer')
         serialize = Mock()
-        renderer.return_value.render.return_value = Mock(serialize=serialize)
+        renderer.return_value.render.return_value = Mock(
+            serialize=serialize, enums=[])
         serialize.side_effect = [
             {'output': 'schema'},
             {'query': 'schema'},
@@ -63,6 +64,73 @@ class CommandsRendererTestCase(TestCase):
         }
 
         assert CommandsRenderer().render() == {
+            '@enums': [],
+            'READ_CARD': {
+                'access': access,
+                'meta': meta,
+                'method': 'get',
+                'path_conf': {
+                    'parameters': [],
+                    'path': '/hi',
+                },
+                'schemas': {
+                    'input_body': {'body': 'schema'},
+                    'input_query': {'query': 'schema'},
+                    'output': {'output': 'schema'},
+                },
+                'source': source,
+                'examples': {},
+            }
+        }
+
+    def test_render__with_enums(self):
+
+        renderer = self.mocker.patch(
+            'lily.entrypoint.renderer.SchemaRenderer')
+        renderer.return_value.render.side_effect = [
+            Mock(
+                enums=[{'enum_name': 'A'}],
+                serialize=Mock(return_value={'output': 'schema'})),
+            Mock(
+                enums=[
+                    {'enum_name': 'C'},
+                    {'enum_name': 'A'},
+                    {'enum_name': 'D'},
+                ],
+                serialize=Mock(return_value={'query': 'schema'})),
+            Mock(
+                enums=[{'enum_name': 'D'}],
+                serialize=Mock(return_value={'body': 'schema'})),
+        ]
+
+        meta = Meta(
+            title='hi',
+            description='ho',
+            domain=Domain(id='h', name='hh'))
+        access = Access(access_list=['EVERYONE'], is_private=True)
+        source = Source(fn)
+        self.mocker.patch.object(BaseRenderer, 'render').return_value = {
+            'READ_CARD': {
+                'method': 'get',
+                'path_conf': {
+                    'path': '/hi',
+                    'pattern': '/hi',
+                    'parameters': [],
+                },
+                'meta': meta,
+                'access': access,
+                'input': Input(query_parser=Mock(), body_parser=Mock()),
+                'output': Output(serializer=Mock()),
+                'source': source,
+            }
+        }
+
+        assert CommandsRenderer().render() == {
+            '@enums': [
+                {'enum_name': 'A'},
+                {'enum_name': 'C'},
+                {'enum_name': 'D'},
+            ],
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -83,9 +151,10 @@ class CommandsRendererTestCase(TestCase):
 
     def test_render__many_commands(self):
         renderer = self.mocker.patch(
-            'lily.entrypoint.renderers.commands.SchemaRenderer')
+            'lily.entrypoint.renderer.SchemaRenderer')
         serialize = Mock()
-        renderer.return_value.render.return_value = Mock(serialize=serialize)
+        renderer.return_value.render.return_value = Mock(
+            serialize=serialize, enums=[])
         serialize.side_effect = [
             {'output': 'read.schema'},
             {'query': 'read.schema'},
@@ -93,7 +162,6 @@ class CommandsRendererTestCase(TestCase):
             {'output': 'delete.schema'},
             {'query': 'delete.schema'},
             {'body': 'delete.schema'},
-
         ]
 
         meta = Meta(
@@ -140,6 +208,7 @@ class CommandsRendererTestCase(TestCase):
             )])
 
         assert CommandsRenderer().render() == {
+            '@enums': [],
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -176,9 +245,10 @@ class CommandsRendererTestCase(TestCase):
 
     def test_render__with_examples(self):
         renderer = self.mocker.patch(
-            'lily.entrypoint.renderers.commands.SchemaRenderer')
+            'lily.entrypoint.renderer.SchemaRenderer')
         serialize = Mock()
-        renderer.return_value.render.return_value = Mock(serialize=serialize)
+        renderer.return_value.render.return_value = Mock(
+            serialize=serialize, enums=[])
         serialize.side_effect = [
             {'output': 'schema'},
             {'query': 'schema'},
@@ -220,6 +290,7 @@ class CommandsRendererTestCase(TestCase):
             }))
 
         assert CommandsRenderer().render() == {
+            '@enums': [],
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -248,7 +319,7 @@ class CommandsRendererTestCase(TestCase):
     def test_render__no_commands(self):
         self.mocker.patch.object(BaseRenderer, 'render').return_value = {}
 
-        assert CommandsRenderer().render() == {}
+        assert CommandsRenderer().render() == {'@enums': []}
 
     #
     # get_examples

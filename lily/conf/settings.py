@@ -26,13 +26,6 @@ LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST = getattr(
     None)
 
 
-# LILY_COMMAND_ENTRYPOINTS = []
-# -- this should be note needed --> rather it should be build based on
-# -- the entrypoint!!!!!!!
-LILY_COMMAND_ENTRYPOINTS = [
-    'http://localhost:7000',
-]
-
 LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS = getattr(
     settings,
     'LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS',
@@ -84,11 +77,13 @@ USE_TZ = True
 #
 INSTALLED_APPS = [
     'rest_framework',
+
     'docs',
     'base',
     'search',
     'entrypoint',
     'assertion',
+
     'django.contrib.contenttypes',
     'django.contrib.auth',
 ]

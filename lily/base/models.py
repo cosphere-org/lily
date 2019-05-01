@@ -1,4 +1,7 @@
 
+import math
+from enum import EnumMeta
+
 from django.db import models
 from django.db.models.expressions import RawSQL
 from django.contrib.postgres.fields import JSONField
@@ -76,6 +79,38 @@ class JSONSchemaField(JSONField):
 
         super(JSONSchemaField, self).__init__(*args, **kwargs)
         self.validators.insert(0, JSONSchemaValidator(schema=schema))
+
+
+class EnumChoiceField(models.CharField):
+
+    def __init__(self, *args, enum_name=None, enum=None, **kwargs):
+
+        self.enum_name = None
+        if enum_name:
+            self.enum_name = enum_name
+
+        if enum:
+            self.enum_name = enum.__name__
+            kwargs['choices'] = [(e.value, e.value) for e in enum]
+
+        # FIXME: test it!!!
+        # -- setting dynamical max_length
+        if not kwargs.get('max_length'):
+            max_length = 0
+            for choice in kwargs['choices']:
+                if len(choice[0]) > max_length:
+                    max_length = len(choice[0])
+
+            kwargs['max_length'] = 2 ** math.ceil(math.log2(max_length))
+
+        super(EnumChoiceField, self).__init__(*args, **kwargs)
+
+    def deconstruct(self):
+
+        name, path, args, kwargs = super().deconstruct()
+        kwargs['enum_name'] = self.enum_name
+
+        return name, path, args, kwargs
 
 
 #
@@ -167,8 +202,22 @@ def url():
 
 
 def enum(*enums):
+
+    enum_name = None
+    if len(enums) == 1 and isinstance(enums[0], EnumMeta):
+        enum = enums[0]
+        enum_name = enum.__name__
+        enums = [e.value for e in enum]
+
+    if isinstance(enums[0], int):
+        _type = 'integer'
+
+    else:
+        _type = 'string'
+
     return {
-        'type': 'string',
+        'type': _type,
+        'enum_name': enum_name,
         'enum': list(enums),
     }
 

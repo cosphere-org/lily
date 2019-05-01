@@ -1,16 +1,29 @@
 
+import json
 import os
 
-import requests
 from lily_assistant.repo.version import VersionRenderer
+from lily_assistant.config import Config
 
-from lily.conf import settings
 from lily.base.events import EventFactory
 from .command import Command
 from lily.base.utils import normalize_indentation
 from .repo import AngularRepo, AngularHTTPRepo, TemplateRepo
 from .domain import Domain
 from .utils import to_camelcase
+
+
+class local_cwd:  # noqa
+
+    def __init__(self, cwd):
+        self.cwd = cwd
+
+    def __enter__(self):
+        self.current_cwd = os.getcwd()
+        os.chdir(self.cwd)
+
+    def __exit__(self, *args, **kwargs):
+        os.chdir(self.current_cwd)
 
 
 class AngularClientRenderer(EventFactory):
@@ -41,6 +54,8 @@ class AngularClientRenderer(EventFactory):
             include_domains=None,
             exclude_domains=None):
 
+        root_cwd = os.getcwd()
+
         # -- HTTP client
         self.http_repo.cd_to_repo()
         self.http_repo.clone()
@@ -61,8 +76,11 @@ class AngularClientRenderer(EventFactory):
         self.repo.link()
 
         # -- render domains
-        commands_by_domain = self.group_commands_by_domain(
-            include_domains, exclude_domains)
+        with local_cwd(root_cwd):
+            commands_by_domain = self.group_commands_by_domain(
+                include_domains, exclude_domains)
+
+        # -- render client
         self.render_client_module_ts(commands_by_domain)
         self.render_api_ts(commands_by_domain)
         self.render_api_index_ts(commands_by_domain)
@@ -103,52 +121,36 @@ class AngularClientRenderer(EventFactory):
         exclude_domains = [d.lower() for d in exclude_domains]
 
         commands_by_domain = {}
-        seen = []
-        for entrypoint in self.collect_entrypoints():
-            for name, conf in entrypoint['commands'].items():
-                command = Command(name, conf)
+        for name, conf in self.get_commands().items():
+            command = Command(name, conf)
 
-                # -- skip excluded domains
-                if command.domain_id.lower() in exclude_domains:
-                    continue
+            # -- skip excluded domains
+            if command.domain_id.lower() in exclude_domains:
+                continue
 
-                # -- skip not included domains
-                if (include_domains and
-                        command.domain_id.lower() not in include_domains):
-                    continue
+            # -- skip not included domains
+            if (include_domains and
+                    command.domain_id.lower() not in include_domains):
+                continue
 
-                domain = Domain(command.domain_id, command.domain_name)
+            domain = Domain(command.domain_id, command.domain_name)
 
-                if not command.is_private:
-                    if name in seen:
-                        raise self.ServerError(
-                            'DUPLICATED_PUBLIC_DOMAIN_COMMAND_DETECTED',
-                            data={
-                                'command_name': name,
-                                'domain_id': domain.id,
-                            })
-
-                    commands_by_domain.setdefault(domain, {})
-                    commands_by_domain[domain][name] = command
-                    seen.append(name)
+            if not command.is_private:
+                commands_by_domain.setdefault(domain, {})
+                commands_by_domain[domain][name] = command
 
         return commands_by_domain
 
-    def collect_entrypoints(self):
+    def get_commands(self):
 
-        entrypoints = []
-        for url in settings.LILY_COMMAND_ENTRYPOINTS:
-            response = requests.get(url, params={'with_examples': True})
+        config = Config()
 
-            if response.status_code != 200:
-                raise self.ServerError(
-                    'BROKEN_SERVICE_DETECTED',
-                    data={'service': url})
-
-            else:
-                entrypoints.append(response.json())
-
-        return entrypoints
+        commands_path = os.path.join(
+            Config.get_lily_path(),
+            'commands',
+            f'{config.version}.json')
+        with open(commands_path, 'r') as f:
+            return json.loads(f.read())
 
     #
     # Domain Specific Folder
@@ -302,10 +304,18 @@ class AngularClientRenderer(EventFactory):
     def collect_unique_enums(self, all_commands):
 
         all_enums = []
+
         for command in all_commands:
-            all_enums.extend(command.enums)
+            command.request_query.render()
+            command.request_body.render()
+            command.response.render()
+
+            all_enums.extend(command.request_query.enums)
+            all_enums.extend(command.request_body.enums)
+            all_enums.extend(command.response.enums)
 
         unique_enums = {}
+        inconsistent_enums = []
         for maybe in all_enums:
             is_unique = True
             for unique_enum in unique_enums.values():
@@ -314,24 +324,28 @@ class AngularClientRenderer(EventFactory):
                     break
 
             if is_unique:
-                # -- search for not inconsistent duplicates
-                if unique_enums.get(maybe.field_name):
-                    existing = unique_enums[maybe.field_name]
+                # -- search for inconsistent duplicates
+                if unique_enums.get(maybe.name):
+                    existing = unique_enums[maybe.name]
 
-                    raise self.ServerError(
-                        'INCONSISTENT_ENUMS_DETECTED',
-                        data={
-                            'enum.0': {
-                                'name': existing.name,
-                                'values': list(existing.values),
-                            },
-                            'enum.1': {
-                                'name': maybe.name,
-                                'values': list(maybe.values),
-                            },
-                        })
+                    inconsistent_enums.append({
+                        'enum.0': {
+                            'name': existing.name,
+                            'values': list(existing.values),
+                        },
+                        'enum.1': {
+                            'name': maybe.name,
+                            'values': list(maybe.values),
+                        },
+                    })
 
-                unique_enums[maybe.field_name] = maybe
+                else:
+                    unique_enums[maybe.name] = maybe
+
+        if inconsistent_enums:
+            raise self.ServerError(
+                'INCONSISTENT_ENUMS_DETECTED',
+                data={'inconsistent_enums': inconsistent_enums})
 
         return sorted(
             unique_enums.values(),

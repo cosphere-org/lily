@@ -173,6 +173,22 @@ class TestCommands(HTTPCommands):
         pass
 
 
+class DoAndGoCommands(HTTPCommands):
+
+    @command(
+        name='DO_AND_GO',
+        meta=Meta(
+            title='do and go',
+            domain=Domain(id='test', name='test management')),
+        access=Access(access_list=['PREMIUM'])
+    )
+    def post(self, request):
+
+        raise self.event.Redirect(
+            'DONE_SO_GO',
+            redirect_uri='http://go.there.org')
+
+
 class CommandTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
@@ -230,6 +246,18 @@ class CommandTestCase(TestCase):
             },
             'name': 'Jake',
             'card_id': 190,
+        }
+
+    def test_redirect(self):
+
+        request = Mock(META=get_auth_headers(11, 'PREMIUM'))
+
+        response = DoAndGoCommands().post(request)
+        assert response.status_code == 303
+        assert to_json(response) == {
+            '@access': {'account_type': 'PREMIUM', 'user_id': 11},
+            '@event': 'DONE_SO_GO',
+            '@type': 'error',
         }
 
     #

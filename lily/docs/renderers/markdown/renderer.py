@@ -7,7 +7,7 @@ from collections import OrderedDict
 
 from django.template import engines
 
-from lily.entrypoint.renderers.base import BaseRenderer
+from lily.entrypoint.base import BaseRenderer
 from lily.base.meta import MetaSerializer
 from lily.base.test import get_examples_filepath
 
