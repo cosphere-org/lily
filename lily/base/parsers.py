@@ -26,7 +26,11 @@ class QueryParser(drf_serializers.Serializer):
                         pass
 
                 else:
-                    data[field_name] = raw_data.getlist(field_name)
+                    try:
+                        data[field_name] = raw_data.getlist(field_name)
+
+                    except AttributeError:
+                        data[field_name] = raw_data.get(field_name)
 
             kwargs['data'] = data
             super(QueryParser, self).__init__(*args, **kwargs)

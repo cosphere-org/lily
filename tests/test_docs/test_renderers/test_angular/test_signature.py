@@ -255,7 +255,7 @@ class SignatureTestCase(TestCase):
         assert (
             s.call_args ==
             '`/cards/${cardId}/users/${userId}`, '
-            '{ responseMap: \'cards\', authorizationRequired: true }')
+            '{ authorizationRequired: true }')
 
     def test_call_args__bulk_read_field_and_path_parameters_and_query_params(self):  # noqa
 
@@ -272,8 +272,7 @@ class SignatureTestCase(TestCase):
 
         assert (
             s.call_args ==
-            '`/cards/${cardId}`, '
-            '{ params, responseMap: \'cards\', authorizationRequired: true }')
+            '`/cards/${cardId}`, { params, authorizationRequired: true }')
 
     #
     # CALL_ARGS_WITHOUT_PATH

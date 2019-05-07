@@ -78,20 +78,8 @@ class Signature:
         #
         # -- query
         options = []
-        if not self.request_query.is_empty() and not self.bulk_read_field:
+        if not self.request_query.is_empty():
             options.append('params')
-
-        # -- query and mapping
-        elif (not self.request_query.is_empty() and
-                self.bulk_read_field and
-                self.method == 'get'):
-            options.append(f"params, responseMap: '{self.bulk_read_field}'")
-
-        # -- mapping only
-        elif (self.request_query.is_empty() and
-                self.bulk_read_field and
-                self.method == 'get'):
-            options.append(f"responseMap: '{self.bulk_read_field}'")
 
         # -- authorization
         options.append(

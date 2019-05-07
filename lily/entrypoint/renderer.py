@@ -76,7 +76,6 @@ class CommandsRenderer(BaseRenderer):
         rendered['@enums'] = self.unique_enums(enums)
         return rendered
 
-    # FIXME: test it!!!!
     def unique_enums(self, enums):
         unique_enums = set(
             [json.dumps(enum, sort_keys=True) for enum in enums])

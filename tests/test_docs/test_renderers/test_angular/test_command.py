@@ -256,7 +256,7 @@ class CommandTestCase(TestCase):
             /**
              * Update Task
              */
-            public updateTask(taskId: any, body: X.UpdateTaskBody): Observable<X.UpdateTaskResponseEntity[]> {
+            public updateTask(taskId: any, body: X.UpdateTaskBody): Observable<X.UpdateTaskResponse> {
                 return this.client
                     .put<X.UpdateTaskResponse>(`/tasks/${taskId}`, body, { authorizationRequired: true })
                     .pipe(map(x => x.people));
@@ -314,8 +314,8 @@ class CommandTestCase(TestCase):
             /**
              * Read Task
              */
-            public readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
-                return this.client.get<X.ReadTaskResponseEntity[]>(`/tasks/${taskId}`, { params, responseMap: 'people', authorizationRequired: true });
+            public readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
+                return this.client.get<X.ReadTaskResponse>(`/tasks/${taskId}`, { params, authorizationRequired: true });
             }
         ''', 0)  # noqa
 
@@ -450,7 +450,7 @@ class CommandTestCase(TestCase):
             })
 
         assert command.render_facade() == normalize_indentation('''
-            readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponseEntity[]> {
+            readTask(taskId: any, params: X.ReadTaskQuery): Observable<X.ReadTaskResponse> {
                 return this.tasksDomain.readTask(taskId, params);
             }
         ''', 0)  # noqa

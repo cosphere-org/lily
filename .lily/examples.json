@@ -1,78 +1,10 @@
 {
-    "SIGN_PROCESS": {
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@access": {
-                        "user_id": 56,
-                        "account_type": "PREMIUM"
-                    }
-                }
-            }
-        },
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        }
-    },
     "READ_ENTRY_POINT": {
-        "500 (GENERIC_ERROR_OCCURRED)": {
-            "method": "get",
-            "description": "GENERIC_ERROR_OCCURRED",
-            "request": {
-                "path": "/?version=2.1.3",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "response": {
-                "status": 500,
-                "content_type": "application/json",
-                "content": {
-                    "errors": [
-                        "'@enums'"
-                    ],
-                    "@type": "error",
-                    "@event": "GENERIC_ERROR_OCCURRED"
-                }
-            }
-        },
         "200 (ENTRY_POINT_READ)": {
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?domain_id=PATHS",
+                "path": "/?is_private=False",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -91,15 +23,15 @@
                     "name": "test",
                     "commands": {
                         "CREATE_HELLO": {
-                            "method": "PUT",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Sunt voluptatibus distinctio corporis inventore ducimus.",
-                                "description": "Incidunt possimus fugit dolores hic.",
+                                "title": "Fugiat dolores vel debitis occaecati nesciunt eos.",
+                                "description": "Sint adipisci quidem recusandae blanditiis.",
                                 "domain": {
-                                    "id": "paths",
+                                    "id": "consequuntur",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -126,53 +58,58 @@
                                 "some": "examples"
                             },
                             "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "method": "POST",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Facere vitae officia laboriosam corporis ullam aliquid.",
-                                "description": "Officia minus officia magnam ab vitae.",
-                                "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": true,
-                                "is_external": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "@type": "command"
                         }
                     },
-                    "@enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
+                    "@enums": [],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
+            }
+        }
+    },
+    "SIGN_PROCESS": {
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "This field is required."
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@access": {
+                        "user_id": 56,
+                        "account_type": "PREMIUM"
+                    }
+                }
+            }
+        },
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
         }
     }
