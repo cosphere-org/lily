@@ -28,8 +28,13 @@ from lily.docs.renderers.angular.utils import to_camelcase
         ('ab_cde_f', 'AbCdeF'),
 
         # -- mixed case
-        ('ab_CDe_f', 'AbCdeF'),
+        ('ab_CDe_f', 'AbCDeF'),
 
+        # -- camel case stays camel case
+        ('AgeChoice', 'AgeChoice'),
+
+        # -- all upper is lower first
+        ('AGE_CHOICE', 'AgeChoice'),
     ])
 def test_to_camelcase(name, expected):
 
@@ -45,13 +50,13 @@ def test_to_camelcase(name, expected):
         ('A', 'a'),
 
         # -- all lower to camel
-        ('ABcd', 'abcd'),
+        ('ABcd', 'aBcd'),
 
         # -- underscore case
         ('ab_cde_f', 'abCdeF'),
 
         # -- mixed case
-        ('ab_CDe_f', 'abCdeF'),
+        ('ab_CDe_f', 'abCDeF'),
     ])
 def test_to_camelcase__first_lower(name, expected):
 

@@ -1,19 +1,18 @@
 
-import os
 from collections import OrderedDict
-import tempfile
 from unittest.mock import call, Mock
+import json
+import os
+import tempfile
 
 from django.test import TestCase
 import pytest
-import requests
 
 from lily.base.events import EventFactory
-from lily.base.test import override_settings
 from lily.base.utils import normalize_indentation
 from lily.docs.renderers.angular.domain import Domain
-from lily.docs.renderers.angular.renderer import AngularClientRenderer
 from lily.docs.renderers.angular.interface import Enum
+from lily.docs.renderers.angular.renderer import AngularClientRenderer
 from tests import remove_white_chars
 
 
@@ -188,20 +187,12 @@ class AngularClientRendererTestCase(TestCase):
         ).side_effect = [command0, command1, command2]
         self.mocker.patch.object(
             AngularClientRenderer,
-            'collect_entrypoints'
-        ).return_value = [
-            {
-                'commands': OrderedDict([
-                    ('CREATE_CARD', {'create_card': 'conf'}),
-                    ('REMOVE_PATH', {'remove_path': 'conf'}),
-                ]),
-            },
-            {
-                'commands': {
-                    'REMOVE_CARD': {'remove_card': 'conf'},
-                },
-            },
-        ]
+            'get_commands'
+        ).return_value = OrderedDict([
+            ('CREATE_CARD', {'create_card': 'conf'}),
+            ('REMOVE_PATH', {'remove_path': 'conf'}),
+            ('REMOVE_CARD', {'remove_card': 'conf'}),
+        ])
 
         commands_by_domain = self.renderer.group_commands_by_domain()
 
@@ -227,20 +218,12 @@ class AngularClientRendererTestCase(TestCase):
         ).side_effect = [command0, command1, command2]
         self.mocker.patch.object(
             AngularClientRenderer,
-            'collect_entrypoints'
-        ).return_value = [
-            {
-                'commands': OrderedDict([
-                    ('CREATE_CARD', {'create_card': 'conf'}),
-                    ('REMOVE_PATH', {'remove_path': 'conf'}),
-                ]),
-            },
-            {
-                'commands': {
-                    'REMOVE_CARD': {'remove_card': 'conf'},
-                },
-            },
-        ]
+            'get_commands'
+        ).return_value = OrderedDict([
+            ('CREATE_CARD', {'create_card': 'conf'}),
+            ('REMOVE_PATH', {'remove_path': 'conf'}),
+            ('REMOVE_CARD', {'remove_card': 'conf'}),
+        ])
 
         commands_by_domain = self.renderer.group_commands_by_domain(
             exclude_domains=('PATHS',))
@@ -264,20 +247,12 @@ class AngularClientRendererTestCase(TestCase):
         ).side_effect = [command0, command1, command2]
         self.mocker.patch.object(
             AngularClientRenderer,
-            'collect_entrypoints'
-        ).return_value = [
-            {
-                'commands': OrderedDict([
-                    ('CREATE_HASHTAG', {'create_hashtag': 'conf'}),
-                    ('REMOVE_PATH', {'remove_path': 'conf'}),
-                ]),
-            },
-            {
-                'commands': {
-                    'REMOVE_CARD': {'remove_card': 'conf'},
-                },
-            },
-        ]
+            'get_commands'
+        ).return_value = OrderedDict([
+            ('CREATE_HASHTAG', {'create_hashtag': 'conf'}),
+            ('REMOVE_PATH', {'remove_path': 'conf'}),
+            ('REMOVE_CARD', {'remove_card': 'conf'}),
+        ])
 
         commands_by_domain = self.renderer.group_commands_by_domain(
             include_domains=('PATHS', 'hashtags'))
@@ -303,20 +278,12 @@ class AngularClientRendererTestCase(TestCase):
         ).side_effect = [command0, command1, command2]
         self.mocker.patch.object(
             AngularClientRenderer,
-            'collect_entrypoints'
-        ).return_value = [
-            {
-                'commands': OrderedDict([
-                    ('CREATE_CARD', {'create_card': 'conf'}),
-                    ('REMOVE_PATH', {'remove_path': 'conf'}),
-                ]),
-            },
-            {
-                'commands': {
-                    'REMOVE_CARD': {'remove_card': 'conf'},
-                },
-            },
-        ]
+            'get_commands'
+        ).return_value = OrderedDict([
+            ('CREATE_CARD', {'create_card': 'conf'}),
+            ('REMOVE_PATH', {'remove_path': 'conf'}),
+            ('REMOVE_CARD', {'remove_card': 'conf'}),
+        ])
 
         commands_by_domain = self.renderer.group_commands_by_domain()
 
@@ -326,110 +293,27 @@ class AngularClientRendererTestCase(TestCase):
             }
         }
 
-    def test_group_commands_by_domain__duplicated_command(self):
+    #
+    # GET_COMMANDS
+    #
+    def test_get_commands(self):
 
-        command0, command1, command2 = (
-            Mock(domain_id='cards', domain_name='', is_private=False),
-            Mock(domain_id='paths', domain_name='', is_private=False),
-            Mock(domain_id='recall', domain_name='', is_private=False),
-        )
+        class MockConfig:
+
+            @property
+            def version(self):
+                return '0.9.1'
+
+            @classmethod
+            def get_lily_path(cls):
+                return str(self.tmpdir)
+
+        commands_dir = self.tmpdir.mkdir('commands')
+        commands_dir.join('0.9.1.json').write(json.dumps({'some': 'commands'}))
         self.mocker.patch(
-            'lily.docs.renderers.angular.renderer.Command'
-        ).side_effect = [command0, command1, command2]
-        self.mocker.patch.object(
-            AngularClientRenderer,
-            'collect_entrypoints'
-        ).return_value = [
-            {
-                'commands': OrderedDict([
-                    ('CREATE_CARD', {'create_card': 'conf'}),
-                    ('REMOVE_PATH', {'remove_path': 'conf'}),
-                ]),
-            },
-            {
-                'commands': {
-                    'CREATE_CARD': {'remove_card': 'conf'},
-                },
-            },
-        ]
+            'lily.docs.renderers.angular.renderer.Config', MockConfig)
 
-        with pytest.raises(EventFactory.ServerError) as e:
-            self.renderer.group_commands_by_domain()
-
-        assert e.value.data == {
-            '@event': 'DUPLICATED_PUBLIC_DOMAIN_COMMAND_DETECTED',
-            '@type': 'error',
-            'command_name': 'CREATE_CARD',
-            'domain_id': 'recall',
-        }
-
-    #
-    # COLLECT_ENTRYPOINTS
-    #
-    @override_settings(LILY_COMMAND_ENTRYPOINTS=[
-        'http://localhost:8000',
-        'http://localhost:9000',
-    ])
-    def test_collect_entrypoints(self):
-
-        self.mocker.patch.object(requests, 'get').side_effect = [
-            Mock(
-                status_code=200,
-                json=Mock(return_value={
-                    'commands': OrderedDict([
-                        ('CREATE_CARD', {'create_card': 'conf'}),
-                        ('REMOVE_PATH', {'remove_path': 'conf'}),
-                    ]),
-                })),
-            Mock(
-                status_code=200,
-                json=Mock(return_value={
-                    'commands': {
-                        'REMOVE_CARD': {'remove_card': 'conf'},
-                    },
-                })),
-        ]
-
-        entrypoints = self.renderer.collect_entrypoints()
-
-        assert entrypoints == [
-            {
-                'commands': {
-                    'CREATE_CARD': {'create_card': 'conf'},
-                    'REMOVE_PATH': {'remove_path': 'conf'},
-                },
-            },
-            {'commands': {'REMOVE_CARD': {'remove_card': 'conf'}}},
-        ]
-
-    @override_settings(LILY_COMMAND_ENTRYPOINTS=[
-        'http://localhost:8000',
-        'http://localhost:9000',
-    ])
-    def test_collect_entrypoints__broken_service(self):
-
-        self.mocker.patch.object(requests, 'get').side_effect = [
-            Mock(
-                status_code=200,
-                json=Mock(return_value={
-                    'commands': OrderedDict([
-                        ('CREATE_CARD', {'create_card': 'conf'}),
-                        ('REMOVE_PATH', {'remove_path': 'conf'}),
-                    ]),
-                })),
-            Mock(
-                status_code=400,
-                json=Mock(return_value={})),
-        ]
-
-        with pytest.raises(EventFactory.ServerError) as e:
-            self.renderer.collect_entrypoints()
-
-        assert e.value.data == {
-            '@event': 'BROKEN_SERVICE_DETECTED',
-            '@type': 'error',
-            'service': 'http://localhost:9000',
-        }
+        assert self.renderer.get_commands() == {'some': 'commands'}
 
     #
     # RENDER_DOMAIN
@@ -703,8 +587,14 @@ class AngularClientRendererTestCase(TestCase):
         e2 = Enum('category', ['AA', 'YY', 'XX'])
 
         assert self.renderer.collect_unique_enums([
-            Mock(enums=[e0, e1]),
-            Mock(enums=[e2]),
+            Mock(
+                request_query=Mock(enums=[e0, e1]),
+                request_body=Mock(enums=[]),
+                response=Mock(enums=[])),
+            Mock(
+                request_query=Mock(enums=[]),
+                request_body=Mock(enums=[e2]),
+                response=Mock(enums=[])),
         ]) == [e0, e2, e1]
 
     def test_collect_unique_enums__with_duplicates(self):
@@ -716,9 +606,18 @@ class AngularClientRendererTestCase(TestCase):
         e4 = Enum('category', ['AA', 'YY', 'XX'])
 
         assert self.renderer.collect_unique_enums([
-            Mock(enums=[e0]),
-            Mock(enums=[e1, e2]),
-            Mock(enums=[e3, e4]),
+            Mock(
+                request_query=Mock(enums=[e0]),
+                request_body=Mock(enums=[]),
+                response=Mock(enums=[])),
+            Mock(
+                request_query=Mock(enums=[]),
+                request_body=Mock(enums=[e1, e2]),
+                response=Mock(enums=[])),
+            Mock(
+                request_query=Mock(enums=[]),
+                request_body=Mock(enums=[]),
+                response=Mock(enums=[e3, e4])),
         ]) == [e0, e4, e2]
 
     def test_collect_unique_enums__inconsistent_duplicates_detected(self):
@@ -729,21 +628,31 @@ class AngularClientRendererTestCase(TestCase):
 
         with pytest.raises(EventFactory.ServerError) as e:
             self.renderer.collect_unique_enums([
-                Mock(enums=[e0]),
-                Mock(enums=[e1, e2]),
+                Mock(
+                    request_query=Mock(enums=[e0]),
+                    request_body=Mock(enums=[]),
+                    response=Mock(enums=[])),
+                Mock(
+                    request_query=Mock(enums=[]),
+                    request_body=Mock(enums=[e1, e2]),
+                    response=Mock(enums=[])),
             ])
 
         assert e.value.data == {
             '@event': 'INCONSISTENT_ENUMS_DETECTED',
             '@type': 'error',
-            'enum.0': {
-                'name': 'Age',
-                'values': [33, 11],
-            },
-            'enum.1': {
-                'name': 'Age',
-                'values': [33, 11, 22],
-            },
+            'inconsistent_enums': [
+                {
+                    'enum.0': {
+                        'name': 'Age',
+                        'values': [33, 11],
+                    },
+                    'enum.1': {
+                        'name': 'Age',
+                        'values': [33, 11, 22],
+                    },
+                },
+            ],
         }
 
     #

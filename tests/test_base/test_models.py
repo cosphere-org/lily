@@ -1,4 +1,6 @@
 
+from enum import Enum
+
 from django.test import TestCase
 from django.db import models
 from django.db.utils import DataError
@@ -10,7 +12,52 @@ from lily.base.models import (
     ImmutableModel,
     JSONSchemaField,
     ValidatingModel,
+    EnumChoiceField,
+    enum,
 )
+
+
+class SchemaHelpersTestCase(TestCase):
+
+    #
+    # ENUM
+    #
+    def test_enum__from_list(self):
+
+        assert enum('Jack', 'Alice') == {
+            'enum': ['Jack', 'Alice'],
+            'enum_name': None,
+            'type': 'string',
+        }
+        assert enum(1, 11) == {
+            'enum': [1, 11],
+            'enum_name': None,
+            'type': 'integer',
+        }
+
+    def test_enum__from_enum(self):
+
+        class Names(Enum):
+            JACK = 'Jack'
+
+            ALICE = 'Alice'
+
+        assert enum(Names) == {
+            'enum': ['Jack', 'Alice'],
+            'enum_name': 'Names',
+            'type': 'string',
+        }
+
+        class Ages(Enum):
+            kid = 10
+
+            adult = 21
+
+        assert enum(Ages) == {
+            'enum': [10, 21],
+            'enum_name': 'Ages',
+            'type': 'integer',
+        }
 
 
 class ImmutableEntity(fake_models.FakeModel, ImmutableModel):
@@ -117,6 +164,44 @@ class JSONSchemaFieldTestCase(TestCase):
             "JSON did not validate. "
             "PATH: '1' REASON: 'answer' is a required property"
         )
+
+
+class EnumModel(fake_models.FakeModel):
+
+    answer = EnumChoiceField(
+        enum_name='super_enum',
+        max_length=8,
+        choices=[('A', 'A'), ('B', 'B')])
+
+    class Names(Enum):
+
+        ALICE = 'ALICE'
+
+        JACK = 'JACK'
+
+    name = EnumChoiceField(enum=Names, max_length=8)
+
+
+@EnumModel.fake_me
+class EnumChoiceFieldTestCase(TestCase):
+
+    def test_model(self):
+
+        m = EnumModel(answer='A', name='JACK')
+        m.save()
+
+        assert m.answer == 'A'
+        assert m.name == 'JACK'
+
+    def test_extra_field_attributes(self):
+
+        for field in EnumModel._meta.fields:
+            if field.name == 'answer':
+                assert field.enum_name == 'super_enum'
+
+            if field.name == 'name':
+                assert field.enum_name == 'Names'
+                assert field.choices == [('ALICE', 'ALICE'), ('JACK', 'JACK')]
 
 
 class ValidatingEntity(fake_models.FakeModel, ValidatingModel):

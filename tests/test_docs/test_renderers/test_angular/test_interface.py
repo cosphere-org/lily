@@ -13,9 +13,7 @@ class EnumTestCase(TestCase):
     #
     def test_name(self):
         assert Enum('age', []).name == 'Age'
-
-    def test_name__with_index(self):
-        assert Enum('age', [], 2).name == 'Age2'
+        assert Enum('a_ge', []).name == 'AGe'
 
     #
     # RENDER
@@ -33,10 +31,10 @@ class EnumTestCase(TestCase):
 
     def test_render__numerical(self):
 
-        enum = Enum('position', [0, 1], 11)
+        enum = Enum('position', [0, 1])
 
         assert enum.render() == normalize_indentation('''
-            export enum Position11 {
+            export enum Position {
                 VALUE_0 = 0,
                 VALUE_1 = 1,
             }
@@ -89,11 +87,6 @@ class EnumTestCase(TestCase):
         assert (
             Enum('category', ['XX', 'AA']) !=
             Enum('category', ['XX', 'YY']))
-
-        # -- different index
-        assert (
-            Enum('category', ['XX', 'AA'], 10) ==
-            Enum('category', ['XX', 'AA'], 99))
 
 
 class InterfaceTestCase(TestCase):
@@ -262,6 +255,7 @@ class InterfaceTestCase(TestCase):
                 'properties': {
                     'occupation': {
                         'type': 'string',
+                        'enum_name': 'occupation_type',
                         'enum': ['AA', 'BB'],
                     },
                     'surname': {
@@ -276,10 +270,10 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            import { Occupation } from '../../shared/enums';
+            import { OccupationType } from '../../shared/enums';
 
             export interface ReadCardsResponse {
-                occupation: Occupation;
+                occupation: OccupationType;
                 surname?: string;
             }
             ''', 0)
@@ -294,10 +288,12 @@ class InterfaceTestCase(TestCase):
                     'occupation': {
                         'type': 'string',
                         'enum': ['AA', 'BB'],
+                        'enum_name': 'occupation',
                     },
                     'age': {
                         'type': 'string',
                         'enum': ['12', '21', '33'],
+                        'enum_name': 'AgeChoice',
                     },
                     'surname': {
                         'maxLength': 123,
@@ -311,10 +307,10 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            import { Age, Occupation } from '../../shared/enums';
+            import { AgeChoice, Occupation } from '../../shared/enums';
 
             export interface ReadCardsResponse {
-                age?: Age;
+                age?: AgeChoice;
                 occupation: Occupation;
                 surname?: string;
             }
@@ -331,6 +327,7 @@ class InterfaceTestCase(TestCase):
                         'type': 'array',
                         'items': {
                             'type': 'string',
+                            'enum_name': 'occupation',
                             'enum': ['AA', 'BB'],
                         }
                     },
@@ -496,6 +493,7 @@ class InterfaceTestCase(TestCase):
                     'age': {
                         'type': 'string',
                         'enum': ['A', 'B'],
+                        'enum_name': 'MyAge',
                     },
                     'people': {
                         'type': 'object',
@@ -503,6 +501,7 @@ class InterfaceTestCase(TestCase):
                         'properties': {
                             'category': {
                                 'type': 'string',
+                                'enum_name': 'cat',
                                 'enum': ['CAT0', 'CAT1', 'CAT2'],
                             }
                         },
@@ -515,12 +514,12 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            import { Age, Category } from '../../shared/enums';
+            import { Cat, MyAge } from '../../shared/enums';
 
             export interface ReadCardsResponse {
-                age: Age;
+                age: MyAge;
                 people?: {
-                    category: Category;
+                    category: Cat;
                 };
             }
             ''', 0)
@@ -884,6 +883,7 @@ class InterfaceTestCase(TestCase):
                                             {'type': 'null'},
                                             {
                                                 'type': 'string',
+                                                'enum_name': 'language',
                                                 'enum': [
                                                     'fr',
                                                     'nb',
@@ -911,11 +911,11 @@ class InterfaceTestCase(TestCase):
                  * http://here
                  */
 
-                import { AudioLanguage } from '../../shared/enums';
+                import { Language } from '../../shared/enums';
 
                 export interface ReadCardsResponse {
                     background: null | {
-                        audio_language?: null | AudioLanguage;
+                        audio_language?: null | Language;
                         audio_stop?: null | number;
                         audio_text?: null | string;
                         audio_uri?: null | string;

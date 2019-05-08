@@ -6,7 +6,7 @@ from django.urls import re_path, include
 from django.views.generic import View
 import pytest
 
-from lily.entrypoint.renderers.base import BaseRenderer
+from lily.entrypoint.base import BaseRenderer
 from lily.base.events import EventFactory
 
 

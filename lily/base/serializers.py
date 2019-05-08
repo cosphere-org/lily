@@ -44,6 +44,28 @@ class MissingTypeError(Exception):
     """
 
 
+class MissingRequiredArgumentsException(Exception):
+    pass
+
+
+class EnumChoiceField(ChoiceField):
+
+    def __init__(self, *args, enum_name=None, enum=None, **kwargs):
+
+        if enum_name:
+            self.enum_name = enum_name
+
+        if enum:
+            self.enum_name = enum.__name__
+            kwargs['choices'] = [e.value for e in enum]
+
+        if not (enum_name or enum):
+            raise MissingRequiredArgumentsException(
+                'either `enum_name` or `enum` must be provided')
+
+        super(EnumChoiceField, self).__init__(*args, **kwargs)
+
+
 class Serializer(drf_serializers.Serializer, EventFactory):
 
     def __init__(self, *args, fields_subset=None, **kwargs):
@@ -137,7 +159,22 @@ class Serializer(drf_serializers.Serializer, EventFactory):
 
 
 class ModelSerializer(drf_serializers.ModelSerializer, Serializer):
-    pass
+
+    serializer_choice_field = EnumChoiceField
+
+    def build_standard_field(self, field_name, model_field):
+
+        from . import models  # noqa - avoid circular dependency
+
+        field_class, field_kwargs = super(
+            ModelSerializer, self).build_standard_field(
+                field_name, model_field)
+
+        if isinstance(model_field, models.EnumChoiceField):
+            field_kwargs['enum_name'] = model_field.enum_name
+            field_class = EnumChoiceField
+
+        return field_class, field_kwargs
 
 
 class EmptySerializer(Serializer):

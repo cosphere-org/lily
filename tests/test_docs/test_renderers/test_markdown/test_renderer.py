@@ -6,7 +6,7 @@ import pytest
 
 from lily.base.meta import Meta, Domain
 from lily.docs.renderers.markdown.renderer import MarkdownRenderer
-from lily.entrypoint.renderers.base import BaseRenderer
+from lily.entrypoint.base import BaseRenderer
 from tests import remove_white_chars
 
 

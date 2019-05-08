@@ -205,7 +205,12 @@ def command(
             except EventFactory.BaseErrorException as e:
                 e.update_with_context(context=request)
 
-                return e.response_class(e.data)
+                response = e.response_class(e.data)
+                if e.extra_headers:
+                    for k, v in e.extra_headers.items():
+                        response[k] = v
+
+                return response
 
             #
             # GENERIC ERRORS HANDLING

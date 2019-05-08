@@ -36,6 +36,10 @@ class MissingSchemaMappingError(Exception):
     """
 
 
+class ForbiddenFieldError(Exception):
+    """Raise when schema field is forbidden."""
+
+
 class SERIALIZER_TYPES:  # noqa
     RESPONSE = 'RESPONSE'
 
@@ -124,20 +128,24 @@ class SchemaRenderer:
 
             # -- normal field boolean field
             elif self.is_simple_field(field):
+                value, enums = self.simple_field_to_schema(name, field)
                 schema.add(
                     name=name,
                     required=field.required,
-                    value=self.simple_field_to_schema(name, field))
+                    value=value)
+                schema.enums.extend(enums)
 
             # -- list field
             elif isinstance(field, serializers.ListField):
 
                 if self.is_simple_field(field.child):
+                    value, enums = self.simple_field_to_schema(
+                        name, field.child)
                     schema.add_array(
                         name=name,
                         required=field.required,
-                        value=self.simple_field_to_schema(
-                            name, field.child))
+                        value=value)
+                    schema.enums.extend(enums)
 
                 else:
                     schema.add_array(
@@ -228,50 +236,52 @@ class SchemaRenderer:
             ))
 
     def simple_field_to_schema(self, name, field):
+        enums = []
+        out = None
 
         def is_field(_types):
             return isinstance(field, _types)
 
         if is_field((serializers.BooleanField,)):
-            return {
+            out = {
                 'type': 'boolean',
             }
 
         # FIXME: figure out how to fetch the type hidden behind ReadOnly
         # Field!!!!!!!!!!!!!
         elif is_field((serializers.ReadOnlyField,)):
-            return {
+            out = {
                 'type': 'any',
             }
 
         # -- must be before CharField
         elif is_field(serializers.EmailField):
-            return {
+            out = {
                 'type': 'string',
                 'format': 'email',
             }
 
         # -- must be before CharField
         elif is_field(serializers.URLField):
-            return {
+            out = {
                 'type': 'string',
                 'format': 'uri',
             }
 
         elif is_field(serializers.DateField):
-            return {
+            out = {
                 'type': 'string',
                 'format': 'date',
             }
 
         elif is_field(serializers.DateTimeField):
-            return {
+            out = {
                 'type': 'string',
                 'format': 'date-time',
             }
 
         elif is_field(serializers.UUIDField):
-            return {
+            out = {
                 'type': 'string',
             }
 
@@ -286,7 +296,7 @@ class SchemaRenderer:
             if field.max_length:
                 field_schema['maxLength'] = field.max_length
 
-            return field_schema
+            out = field_schema
 
         elif is_field(serializers.IntegerField):
             field_schema = {
@@ -299,10 +309,10 @@ class SchemaRenderer:
             if field.max_value:
                 field_schema['maximum'] = field.max_value
 
-            return field_schema
+            out = field_schema
 
         elif is_field(serializers.DecimalField):
-            return {
+            out = {
                 'type': 'string',
             }
 
@@ -317,9 +327,19 @@ class SchemaRenderer:
             if field.max_value:
                 field_schema['maximum'] = field.max_value
 
-            return field_schema
+            out = field_schema
 
-        elif is_field(serializers.ChoiceField):
+        # -- choice fields are FORBIDDEN since they lead to ambiguous Enums
+        # -- on the client side
+        elif (
+                is_field(serializers.ChoiceField) and
+                not is_field(serializers.EnumChoiceField)):
+            raise ForbiddenFieldError(
+                f'{name} uses ChoiceField which is forbidden since it leads '
+                f'to ambiguous client side Enums. Please use '
+                f'`EnumChoiceField` instead')
+
+        elif is_field(serializers.EnumChoiceField):
             choices = list(field.choices.keys())
             choice_type = type(choices[0])
             has_same_type = all([isinstance(c, choice_type) for c in choices])
@@ -330,27 +350,31 @@ class SchemaRenderer:
             else:
                 schema_type = 'string'
 
-            return {
+            out = {
                 'type': schema_type,
+                'enum_name': field.enum_name,
                 'enum': sorted(choices),
             }
+            enums.append(out)
 
         elif is_field(serializers.DictField):
-            return {
+            out = {
                 'type': 'object',
             }
 
         elif is_field(serializers.JSONField):
 
+            out = {
+                'type': 'any',
+            }
+
             # -- search for the 1st JSONSchemaValidator validator
             # -- the should be always at most one.
             for validator in field.validators:
                 if isinstance(validator, JSONSchemaValidator):
-                    return validator.schema
+                    out = validator.schema
 
-            return {
-                'type': 'any',
-            }
+        return out, enums
 
     def native_type_to_schema(self, _type):
 
@@ -398,6 +422,9 @@ class Schema:
     # Adding Values to the Root Schema
     #
     def add_array(self, name, value, required=True):
+        if isinstance(value, Schema):
+            self.enums.extend(value.enums)
+
         self.add(name, ArrayValue(value), required)
 
     def add(self, name, value, required=True):

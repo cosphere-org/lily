@@ -1,19 +1,47 @@
 
 from unittest.mock import Mock, call
+from enum import Enum
 
 from django.test import TestCase
 from django.db import models
 import pytest
 from lily_assistant.config import Config
 
+from lily.base.models import EnumChoiceField
 from lily.base import serializers, parsers
 from lily.base.models import JSONSchemaField, array, string
-from lily.entrypoint.renderers.schema import (
+from lily.entrypoint.schema import (
     Schema,
     ArrayValue,
     SchemaRenderer,
     MissingSchemaMappingError,
+    ForbiddenFieldError,
 )
+
+
+class Enumer(models.Model):
+
+    nickname = EnumChoiceField(
+        max_length=100,
+        enum_name='human_nicknames',
+        choices=[('Jack', 'Jack'), ('Abel', 'Abel')])
+
+    class Brands(Enum):
+        nice = 'nice'
+
+        awesome = 'awesome'
+
+    brand = EnumChoiceField(max_length=100, enum=Brands)
+
+    class Meta:
+        app_label = 'base'
+
+
+class ForbiddenSerializer(serializers.Serializer):
+
+    _type = 'forbidden'
+
+    picks = serializers.ChoiceField(choices=('A', 'B'))
 
 
 class Human(models.Model):
@@ -47,7 +75,7 @@ class HumanSerializer(serializers.Serializer):
 
     age = serializers.IntegerField(min_value=18)
 
-    place = serializers.ChoiceField(choices=[0, 1, 2])
+    place = serializers.EnumChoiceField(choices=[0, 1, 2], enum_name='place')
 
 
 class CycleJSONSerializer(serializers.Serializer):
@@ -73,14 +101,23 @@ class CyclesJSONSerializer(serializers.Serializer):
 
 
 class HumanModelSerializer(serializers.ModelSerializer):
+
     is_underaged = serializers.SerializerMethodField()
 
     class Meta:
         model = Human
-        fields = ('name', 'age', 'is_ready', 'is_underaged', 'pets')
+        fields = (
+            'name', 'age', 'is_ready', 'is_underaged', 'pets')
 
     def get_is_underaged(self, instance) -> bool:
         return instance.age > 18
+
+
+class EnumerModelSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Enumer
+        fields = ('nickname', 'brand')
 
 
 class ProviderSerializer(serializers.Serializer):
@@ -185,6 +222,7 @@ class SchemaRendererTestCase(TestCase):
                     },
                     'place': {
                         'enum': [0, 1, 2],
+                        'enum_name': 'place',
                         'type': 'integer',
                     },
                 },
@@ -292,6 +330,44 @@ class SchemaRendererTestCase(TestCase):
             },
         }
 
+    def test_enumer_model_serializer(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(
+            EnumerModelSerializer
+        ).render().serialize() == {
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'properties': {
+                    'brand': {
+                        'enum': ['awesome', 'nice'],
+                        'enum_name': 'Brands',
+                        'type': 'string'
+                    },
+                    'nickname': {
+                        'enum': ['Abel', 'Jack'],
+                        'enum_name': 'human_nicknames',
+                        'type': 'string',
+                    },
+                },
+                'required': ['nickname', 'brand'],
+                'type': 'object',
+            },
+        }
+
+    def test_forbidden_serializer(self):
+
+        with pytest.raises(ForbiddenFieldError) as e:
+            SchemaRenderer(ForbiddenSerializer).render().serialize()
+
+        assert e.value.args == (
+            'picks uses ChoiceField which is forbidden since it leads to '
+            'ambiguous client side Enums. Please use `EnumChoiceField` '
+            'instead',)
+
     #
     # Method Derived Serializer Fields
     #
@@ -309,7 +385,8 @@ class SchemaRendererTestCase(TestCase):
 
             price = serializers.FloatField()
 
-            choice = serializers.ChoiceField(
+            choice = serializers.EnumChoiceField(
+                enum_name='choice',
                 choices=[('AA', 'aaa'), ('BB', 'bbb')])
 
             name = serializers.CharField(max_length=11)
@@ -354,6 +431,7 @@ class SchemaRendererTestCase(TestCase):
                     'choice': {
                         'type': 'string',
                         'enum': ['AA', 'BB'],
+                        'enum_name': 'choice',
                     },
                     'name': {
                         'maxLength': 11,
@@ -427,6 +505,7 @@ class SchemaRendererTestCase(TestCase):
                                 },
                                 'place': {
                                     'enum': [0, 1, 2],
+                                    'enum_name': 'place',
                                     'type': 'integer',
                                 },
                             },
@@ -536,6 +615,7 @@ class SchemaRendererTestCase(TestCase):
                                 },
                                 'place': {
                                     'enum': [0, 1, 2],
+                                    'enum_name': 'place',
                                     'type': 'integer',
                                 },
                             },
@@ -555,6 +635,7 @@ class SchemaRendererTestCase(TestCase):
                             },
                             'place': {
                                 'enum': [0, 1, 2],
+                                'enum_name': 'place',
                                 'type': 'integer',
                             },
                         },
@@ -644,6 +725,7 @@ class SchemaRendererTestCase(TestCase):
                                 },
                                 'place': {
                                     'enum': [0, 1, 2],
+                                    'enum_name': 'place',
                                     'type': 'integer',
                                 },
                             },
@@ -685,7 +767,7 @@ class SchemaRendererTestCase(TestCase):
                 return '/home/projects/lily'
 
         self.mocker.patch(
-            'lily.entrypoint.renderers.schema.Config', MockConfig)
+            'lily.entrypoint.schema.Config', MockConfig)
 
         schema = SchemaRenderer(HumanSerializer).render()
         schema.meta = {
@@ -710,7 +792,7 @@ class SchemaRendererTestCase(TestCase):
                 return '/home/projects/lily'
 
         self.mocker.patch(
-            'lily.entrypoint.renderers.schema.Config', MockConfig)
+            'lily.entrypoint.schema.Config', MockConfig)
 
         schema = SchemaRenderer(HumanSerializer).render()
         schema.meta = {
@@ -732,7 +814,7 @@ class SchemaRendererTestCase(TestCase):
         getfile = Mock(return_value='/home/projects/lily/a/views.py')
         getsourcelines = Mock(return_value=[None, 11])
         self.mocker.patch(
-            'lily.entrypoint.renderers.schema.inspect',
+            'lily.entrypoint.schema.inspect',
             Mock(getfile=getfile, getsourcelines=getsourcelines))
 
         renderer = SchemaRenderer(HumanSerializer)

@@ -116,7 +116,7 @@ class Command:
         if self.get_bulk_read_field() and self.method != 'get':
             return normalize_indentation('''
             {self.header}
-            public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
+            public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}> {{
                 return this.client
                     .{self.method}<X.{self.response.name}>({self.signature.call_args})
                     .pipe(map(x => x.{bulk_read_field}));
@@ -126,15 +126,7 @@ class Command:
                 bulk_read_field=self.get_bulk_read_field(),
             )
 
-        elif self.get_bulk_read_field() and self.method == 'get':
-            return normalize_indentation('''
-            {self.header}
-            public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
-                return this.client.get<X.{self.response.name}Entity[]>({self.signature.call_args});
-            }}
-            ''', 0).format(self=self)  # noqa
-
-        elif self.method == 'get':
+        elif self.get_bulk_read_field() or self.method == 'get':
             return normalize_indentation('''
             {self.header}
             public {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}> {{
@@ -156,7 +148,7 @@ class Command:
 
         if self.get_bulk_read_field():
             return normalize_indentation('''
-                {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}Entity[]> {{
+                {self.camel_name}({self.signature.input}): Observable<X.{self.response.name}> {{
                     return this.{self.domain_id}Domain.{self.camel_name}({self.signature.call_args_without_path});
                 }}
             ''', 0).format(self=self)  # noqa
