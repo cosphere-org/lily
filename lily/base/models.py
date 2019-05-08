@@ -201,9 +201,8 @@ def url():
     }
 
 
-def enum(*enums):
+def enum(*enums, enum_name=None):
 
-    enum_name = None
     if len(enums) == 1 and isinstance(enums[0], EnumMeta):
         enum = enums[0]
         enum_name = enum.__name__

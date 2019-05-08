@@ -1,78 +1,10 @@
 {
-    "READ_ENTRY_POINT": {
-        "200 (ENTRY_POINT_READ)": {
-            "method": "get",
-            "description": "ENTRY_POINT_READ",
-            "request": {
-                "path": "/?is_private=False",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "application/json",
-                "content": {
-                    "version_info": {
-                        "deployed": "2.5.6",
-                        "displayed": "2.5.6",
-                        "available": [],
-                        "@type": "version_info"
-                    },
-                    "name": "test",
-                    "commands": {
-                        "CREATE_HELLO": {
-                            "method": "DELETE",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Fugiat dolores vel debitis occaecati nesciunt eos.",
-                                "description": "Sint adipisci quidem recusandae blanditiis.",
-                                "domain": {
-                                    "id": "consequuntur",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "is_external": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "@type": "command"
-                        }
-                    },
-                    "@enums": [],
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ"
-                }
-            }
-        }
-    },
     "SIGN_PROCESS": {
         "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -84,7 +16,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
@@ -110,6 +42,74 @@
                 "status": 200,
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
+            }
+        }
+    },
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
+            "method": "get",
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "path": "/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "application/json",
+                "content": {
+                    "version_info": {
+                        "deployed": "2.5.6",
+                        "displayed": "2.5.6",
+                        "available": [],
+                        "@type": "version_info"
+                    },
+                    "name": "test",
+                    "commands": {
+                        "UPDATE_HELLO": {
+                            "method": "DELETE",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Neque omnis voluptates quam sequi sed dolores aliquam.",
+                                "description": "Voluptas deleniti amet quidem provident.",
+                                "domain": {
+                                    "id": "dolorum",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "end_line": 15,
+                                "@type": "source"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "@type": "command"
+                        }
+                    },
+                    "@enums": [],
+                    "@type": "entrypoint",
+                    "@event": "ENTRY_POINT_READ"
+                }
             }
         }
     }
