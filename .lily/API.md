@@ -8,17 +8,22 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?version=2.1.3 HTTP/1.1
+GET /?domain_id=PATHS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
+    "@enums": [
+        {
+            "A": "X"
+        }
+    ],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "UPDATE_HELLO": {
+        "CREATE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -33,15 +38,52 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Reiciendis officia iste voluptatem similique ut suscipit eaque.",
+                "description": "Ipsum molestiae ducimus perspiciatis id quisquam quisquam.",
                 "domain": {
                     "@type": "domain",
-                    "id": "deleniti",
+                    "id": "paths",
                     "name": "domain"
                 },
-                "title": "Ea delectus fugit numquam eveniet vitae veniam."
+                "title": "Nemo eligendi totam tenetur quod cupiditate explicabo."
             },
             "method": "DELETE",
+            "path_conf": {
+                "path": "conf"
+            },
+            "schemas": {
+                "some": "schemas"
+            },
+            "source": {
+                "@type": "source",
+                "end_line": 15,
+                "filepath": "/tests/factory.py",
+                "start_line": 14
+            }
+        },
+        "DELETE_HELLO": {
+            "@type": "command",
+            "access": {
+                "@type": "access",
+                "access_list": [
+                    "ANY"
+                ],
+                "is_external": false,
+                "is_private": false
+            },
+            "examples": {
+                "some": "examples"
+            },
+            "meta": {
+                "@type": "meta",
+                "description": "Maiores dolorum expedita odit qui.",
+                "domain": {
+                    "@type": "domain",
+                    "id": "paths",
+                    "name": "domain"
+                },
+                "title": "Voluptas molestiae at consequuntur error ipsum aliquam sunt."
+            },
+            "method": "POST",
             "path_conf": {
                 "path": "conf"
             },
@@ -61,7 +103,7 @@ Respone:
         "@type": "version_info",
         "available": [],
         "deployed": "2.5.6",
-        "displayed": "2.1.3"
+        "displayed": "2.5.6"
     }
 }
 ```
