@@ -105,6 +105,7 @@ class BaseRenderer(EventFactory):
         return views_index
 
     def url_pattern_to_dict(self, patterns):
+
         pattern = ''.join(patterns)
 
         # -- remove starting `^`
@@ -126,7 +127,7 @@ class BaseRenderer(EventFactory):
         path = pattern
         while True:
             param_pattern = re.compile(
-                r'\(\?P\<(?P<param_name>\w+)\>(?P<param_pattern>[^/]+)\)')
+                r'\(\?P\<(?P<param_name>\w+)\>(?P<param_pattern>[^\)]+)\)')
 
             match = param_pattern.search(path)
             if match:

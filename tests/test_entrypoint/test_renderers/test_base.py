@@ -366,16 +366,18 @@ class BaseRendererTestCase(TestCase):
 
         renderer = BaseRenderer(Mock())
 
-        assert renderer.url_pattern_to_dict([
-            '^mediaitems/',
-            '^by_process/(?P<process_id>[\\w+\\=]+)/hi/',
-        ]) == {
-            'path': '/mediaitems/by_process/{process_id}/hi/',
+        result = renderer.url_pattern_to_dict([
+            '^/mediaitems/uploads/sign/'
+            '(?P<upload_file_properties>[\\w\\=\\+\\/]+)',
+        ])
+        assert result == {
+            'path': '/mediaitems/uploads/sign/{upload_file_properties}',
             'pattern': (
-                '/mediaitems/by_process/(?P<process_id>[\\w+\\=]+)/hi/'),
+                '/mediaitems/uploads/sign/'
+                '(?P<upload_file_properties>[\\w\\=\\+\\/]+)'),
             'parameters': [
                 {
-                    'name': 'process_id',
+                    'name': 'upload_file_properties',
                     'description': '',
                     'type': 'string',
                 }
