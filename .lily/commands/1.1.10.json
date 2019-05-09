@@ -1,0 +1,179 @@
+{
+    "READ_ENTRY_POINT": {
+        "method": "get",
+        "path_conf": {
+            "path": "/",
+            "parameters": []
+        },
+        "meta": {
+            "title": "Read Entry Point",
+            "description": "Serve Service Entry Point data: - current or chosen version of the service - list of all available commands together with their configurations - examples collected for a given service.",
+            "domain": {
+                "id": "docs",
+                "name": "Docs Management",
+                "@type": "domain"
+            },
+            "@type": "meta"
+        },
+        "access": {
+            "access_list": null,
+            "is_private": true,
+            "is_external": false,
+            "@type": "access"
+        },
+        "source": {
+            "filepath": "/lily/entrypoint/commands.py",
+            "start_line": 54,
+            "end_line": 121,
+            "@type": "source"
+        },
+        "schemas": {
+            "output": {
+                "uri": "https://github.com/cosphere-org/lily/blob/9f9ca1408dbc9ee5b2c349df8550c65e966f4ad4/lily/entrypoint/commands.py/#L20",
+                "schema": {
+                    "type": "object",
+                    "required": [
+                        "version_info",
+                        "name",
+                        "commands",
+                        "at__enums"
+                    ],
+                    "properties": {
+                        "version_info": {
+                            "type": "object",
+                            "required": [
+                                "deployed",
+                                "displayed",
+                                "available"
+                            ],
+                            "properties": {
+                                "deployed": {
+                                    "type": "string"
+                                },
+                                "displayed": {
+                                    "type": "string"
+                                },
+                                "available": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "commands": {
+                            "type": "object"
+                        },
+                        "at__enums": {
+                            "type": "array",
+                            "items": {
+                                "type": "object"
+                            }
+                        }
+                    }
+                }
+            },
+            "input_query": {
+                "uri": "https://github.com/cosphere-org/lily/blob/9f9ca1408dbc9ee5b2c349df8550c65e966f4ad4/lily/entrypoint/commands.py/#L42",
+                "schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                        "commands": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            }
+                        },
+                        "with_schemas": {
+                            "type": "boolean"
+                        },
+                        "is_private": {
+                            "type": "boolean"
+                        },
+                        "domain_id": {
+                            "type": "string"
+                        },
+                        "version": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "examples": {
+            "200 (ENTRY_POINT_READ)": {
+                "method": "get",
+                "description": "ENTRY_POINT_READ",
+                "request": {
+                    "path": "/?version=2.1.3",
+                    "headers": {
+                        "X-CS-ACCOUNT-TYPE": "ADMIN",
+                        "X-CS-USER-ID": 190
+                    },
+                    "parameters": {}
+                },
+                "response": {
+                    "status": 200,
+                    "content_type": "application/json",
+                    "content": {
+                        "version_info": {
+                            "deployed": "2.5.6",
+                            "displayed": "2.1.3",
+                            "available": [],
+                            "@type": "version_info"
+                        },
+                        "name": "test",
+                        "commands": {
+                            "UPDATE_HELLO": {
+                                "method": "GET",
+                                "path_conf": {
+                                    "path": "conf"
+                                },
+                                "meta": {
+                                    "title": "Vitae temporibus rerum praesentium amet voluptas expedita ipsum magnam.",
+                                    "description": "Molestias accusamus voluptatem nostrum non aspernatur.",
+                                    "domain": {
+                                        "id": "sapiente",
+                                        "name": "domain",
+                                        "@type": "domain"
+                                    },
+                                    "@type": "meta"
+                                },
+                                "access": {
+                                    "access_list": [
+                                        "ANY"
+                                    ],
+                                    "is_private": false,
+                                    "is_external": false,
+                                    "@type": "access"
+                                },
+                                "source": {
+                                    "filepath": "/tests/factory.py",
+                                    "start_line": 14,
+                                    "end_line": 15,
+                                    "@type": "source"
+                                },
+                                "schemas": {
+                                    "some": "schemas"
+                                },
+                                "examples": {
+                                    "some": "examples"
+                                },
+                                "@type": "command"
+                            }
+                        },
+                        "@enums": [],
+                        "@type": "entrypoint",
+                        "@event": "ENTRY_POINT_READ"
+                    }
+                }
+            }
+        },
+        "@type": "command"
+    },
+    "@enums": []
+}
