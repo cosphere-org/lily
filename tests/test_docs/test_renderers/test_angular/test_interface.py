@@ -4,6 +4,7 @@ import pytest
 
 from lily.docs.renderers.angular.interface import Interface, Enum
 from lily.base.utils import normalize_indentation
+from lily import EventFactory
 
 
 class EnumTestCase(TestCase):
@@ -14,6 +15,18 @@ class EnumTestCase(TestCase):
     def test_name(self):
         assert Enum('age', []).name == 'Age'
         assert Enum('a_ge', []).name == 'AGe'
+
+    def test_name__empty_name(self):
+
+        with pytest.raises(EventFactory.BrokenRequest) as e:
+            Enum('', ['what'])
+
+        assert e.value.data == {
+            '@event': 'ENUMS_WITHOUT_NAME_DETECTED',
+            '@type': 'error',
+            'name': '',
+            'values': ['what'],
+        }
 
     #
     # RENDER
@@ -31,12 +44,46 @@ class EnumTestCase(TestCase):
 
     def test_render__numerical(self):
 
-        enum = Enum('position', [0, 1])
+        enum0 = Enum('position', [0, 1])
+        enum1 = Enum('position', ['0', '1', '2'])
 
-        assert enum.render() == normalize_indentation('''
+        assert enum0.render() == normalize_indentation('''
             export enum Position {
                 VALUE_0 = 0,
                 VALUE_1 = 1,
+            }
+        ''', 0)
+        assert enum1.render() == normalize_indentation('''
+            export enum Position {
+                VALUE_0 = '0',
+                VALUE_1 = '1',
+                VALUE_2 = '2',
+            }
+        ''', 0)
+
+    def test_render__starts_from_number(self):
+
+        enum = Enum('quality', ['240p', '720p', '1080p'])
+
+        assert enum.render() == normalize_indentation('''
+            export enum Quality {
+                VALUE_1080P = '1080p',
+                VALUE_240P = '240p',
+                VALUE_720P = '720p',
+            }
+        ''', 0)
+
+    def test_render__contains_extra_characters(self):
+
+        enum = Enum(
+            'content_type',
+            ['image/svg+xml', 'video/png', 'audio/ogg-what'])
+
+        assert enum.render() == normalize_indentation('''
+            export enum ContentType {
+                AUDIO_OGG_WHAT = 'audio/ogg-what',
+                IMAGE_SVG_XML = 'image/svg+xml',
+                VIDEO_PNG = 'video/png',
             }
         ''', 0)
 
@@ -151,13 +198,14 @@ class InterfaceTestCase(TestCase):
 
 
 @pytest.mark.parametrize(
-    'schema, bulk_read_field, expected',
+    'schema, bulk_read_field, expected_rendered, expected_enums',
     [
         # -- case 0 - None schema
         (
             None,
             None,
             '',
+            [],
         ),
 
         # -- case 1 - {} schema
@@ -171,6 +219,7 @@ class InterfaceTestCase(TestCase):
 
             export interface ReadCardsResponse {}
             ''', 0),
+            [],
         ),
 
         # -- case 2 - empty schema
@@ -184,7 +233,8 @@ class InterfaceTestCase(TestCase):
 
             export interface ReadCardsResponse {
             }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 3 - simple schema
@@ -213,7 +263,8 @@ class InterfaceTestCase(TestCase):
                 age: number;
                 name?: string;
             }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 4 - simple array
@@ -244,7 +295,8 @@ class InterfaceTestCase(TestCase):
                 age: number[];
                 surname?: string;
             }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 5 - enum
@@ -270,13 +322,12 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            import { OccupationType } from '../../shared/enums';
-
             export interface ReadCardsResponse {
                 occupation: OccupationType;
                 surname?: string;
             }
-            ''', 0)
+            ''', 0),
+            [Enum('OccupationType', ['AA', 'BB'])],
         ),
 
         # -- case 6 - enums
@@ -307,14 +358,16 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            import { AgeChoice, Occupation } from '../../shared/enums';
-
             export interface ReadCardsResponse {
                 age?: AgeChoice;
                 occupation: Occupation;
                 surname?: string;
             }
-            ''', 0)
+            ''', 0),
+            [
+                Enum('AgeChoice', ['12', '21', '33']),
+                Enum('Occupation', ['AA', 'BB']),
+            ],
         ),
 
         # -- case 7 - enums array
@@ -343,13 +396,12 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            import { Occupation } from '../../shared/enums';
-
             export interface ReadCardsResponse {
                 occupation: Occupation[];
                 surname?: string;
             }
-            ''', 0)
+            ''', 0),
+            [Enum('Occupation', ['AA', 'BB'])],
         ),
 
         # -- case 8 - 1 level deep nested
@@ -388,7 +440,8 @@ class InterfaceTestCase(TestCase):
                     name: string;
                 };
             }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 9 - 2 levels deep nested
@@ -439,7 +492,8 @@ class InterfaceTestCase(TestCase):
                     name: string;
                 };
             }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 10 - nested array
@@ -481,7 +535,8 @@ class InterfaceTestCase(TestCase):
                     name: string;
                 }[];
             }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 11 - nested with enums
@@ -514,15 +569,17 @@ class InterfaceTestCase(TestCase):
              * http://here
              */
 
-            import { Cat, MyAge } from '../../shared/enums';
-
             export interface ReadCardsResponse {
                 age: MyAge;
                 people?: {
                     category: Cat;
                 };
             }
-            ''', 0)
+            ''', 0),
+            [
+                Enum('Cat', ['CAT0', 'CAT1', 'CAT2']),
+                Enum('MyAge', ['A', 'B']),
+            ],
         ),
 
         # -- case 12 - mixed up primitive types
@@ -575,7 +632,8 @@ class InterfaceTestCase(TestCase):
                     count: number;
                 }
 
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 13 - bulk read response
@@ -615,7 +673,8 @@ class InterfaceTestCase(TestCase):
                 export interface ReadCardsResponse {
                     cards: ReadCardsResponseEntity[];
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 14 - bulk read simple response - integer
@@ -645,7 +704,8 @@ class InterfaceTestCase(TestCase):
                 export interface ReadCardsResponse {
                     card_ids: ReadCardsResponseEntity[];
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 15 - bulk read simple response - boolean
@@ -675,7 +735,8 @@ class InterfaceTestCase(TestCase):
                 export interface ReadCardsResponse {
                     card_ids: ReadCardsResponseEntity[];
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 16 - bulk read simple response - string
@@ -705,7 +766,8 @@ class InterfaceTestCase(TestCase):
                 export interface ReadCardsResponse {
                     card_ids: ReadCardsResponseEntity[];
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 17 - bulk read response
@@ -730,7 +792,8 @@ class InterfaceTestCase(TestCase):
                 export interface ReadCardsResponse {
                     cards: ReadCardsResponseEntity[];
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 18 - one of - null or string
@@ -755,7 +818,8 @@ class InterfaceTestCase(TestCase):
                 export interface ReadCardsResponse {
                     name?: null | string;
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 19 - one of - null or object
@@ -794,7 +858,8 @@ class InterfaceTestCase(TestCase):
                         audio_uri?: string;
                     };
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 20 - one of - null or object or string or other object
@@ -848,7 +913,8 @@ class InterfaceTestCase(TestCase):
                         text?: string;
                     };
                 }
-            ''', 0)
+            ''', 0),
+            [],
         ),
 
         # -- case 21 - one of - null or complex object
@@ -911,8 +977,6 @@ class InterfaceTestCase(TestCase):
                  * http://here
                  */
 
-                import { Language } from '../../shared/enums';
-
                 export interface ReadCardsResponse {
                     background: null | {
                         audio_language?: null | Language;
@@ -922,15 +986,20 @@ class InterfaceTestCase(TestCase):
                     };
                 }
 
-            ''', 0)
+            ''', 0),
+            [Enum('Language', ['fr', 'is', 'nb', 'en'])],
         ),
     ], ids=list([str(i) for i in range(22)]))
-def test_render(schema, bulk_read_field, expected):
-    result = Interface(
+def test_render(schema, bulk_read_field, expected_rendered, expected_enums):
+
+    rendered, enums = Interface(
         'READ_CARDS',
         Interface.TYPES.RESPONSE,
         schema,
         'http://here',
         bulk_read_field=bulk_read_field).render()
 
-    assert result == expected
+    assert rendered == expected_rendered
+    assert (
+        sorted(enums, key=lambda x: x.name) ==
+        sorted(expected_enums, key=lambda x: x.name))

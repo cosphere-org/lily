@@ -1,6 +1,9 @@
 
+import re
+
 from .utils import to_camelcase
 from lily.base.utils import normalize_indentation
+from lily import EventFactory
 
 
 class Interface:
@@ -49,7 +52,7 @@ class Interface:
     def render(self):
 
         if self.schema is None:
-            return ''
+            return '', []
 
         def optional(name, schema):
             return name not in schema.get('required', []) and '?' or ''
@@ -178,20 +181,19 @@ class Interface:
                     self=self,
                     interface_content=to_interface(self.schema)), 0)
 
-        if self.enums:
-            sorted_enum_names = sorted([e.name for e in self.enums])
-            blocks.append(normalize_indentation('''
-                import {{ {enums} }} from '../../shared/enums';
-            ''', 0).format(enums=', '.join(sorted_enum_names)))
-
         blocks.append(interface)
 
-        return '\n\n'.join(blocks)
+        return '\n\n'.join(blocks), self.enums
 
 
 class Enum:
 
     def __init__(self, name, values, index=None):
+        if not name:
+            raise EventFactory.BrokenRequest(
+                'ENUMS_WITHOUT_NAME_DETECTED',
+                data={'name': name, 'values': values})
+
         self.name = to_camelcase(name)
         self.values = set(values)
         self.index = index
@@ -203,14 +205,25 @@ class Enum:
 
     def render(self):
 
+        def transform_key(k):
+            return re.sub(r'[^\w]+', '_', k).upper()
+
         values = self.values
         value_pairs = []
         for v in sorted(values):
+
             if isinstance(v, int):
-                value_pairs.append((f'VALUE_{v}', v))
+                k = f'VALUE_{v}'
+
+            elif isinstance(v, str) and re.search(r'^\d+', v):
+                k = f'VALUE_{v}'
+                v = f"'{v}'"
 
             else:
-                value_pairs.append((v, f"'{v}'"))
+                k = v
+                v = f"'{v}'"
+
+            value_pairs.append((transform_key(k), v))
 
         return 'export enum {name} {{\n{fields}\n}}'.format(
             name=self.name,
