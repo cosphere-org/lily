@@ -187,20 +187,32 @@ def command(
                 #
                 # OUTPUT
                 #
-                body = output.serializer(
-                    (
-                        (e.data is not None and e.data) or
-                        (e.instance is not None and e.instance)
-                    ),
-                    context={
-                        **e.output_context,
-                        'request': request,
-                        'command_name': request._lily_context.command_name,
-                    }).data
+                try:
+                    body = output.serializer(
+                        (
+                            (e.data is not None and e.data) or
+                            (e.instance is not None and e.instance)
+                        ),
+                        context={
+                            **e.output_context,
+                            'request': request,
+                            'command_name': request._lily_context.command_name,
+                        }).data
 
-                body['@event'] = e.event
+                    body['@event'] = e.event
 
-                return e.response_class(body)
+                    return e.response_class(body)
+
+                # -- case of serializer returning error as well
+                except EventFactory.BaseErrorException as e:
+                    e.update_with_context(context=request)
+
+                    response = e.response_class(e.data)
+                    if e.extra_headers:
+                        for k, v in e.extra_headers.items():
+                            response[k] = v
+
+                    return response
 
             except EventFactory.BaseErrorException as e:
                 e.update_with_context(context=request)

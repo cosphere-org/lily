@@ -189,6 +189,32 @@ class DoAndGoCommands(HTTPCommands):
             redirect_uri='http://go.there.org')
 
 
+@FakeClient.fake_me
+class BrokenSerializerCommands(HTTPCommands):
+
+    class ClientSerializer(serializers.Serializer):
+
+        _type = 'client'
+
+        card_id = serializers.SerializerMethodField()
+
+        def get_card_id(self, instance):
+            raise EventFactory.AccessDenied('GO_AWAY')
+
+    @command(
+        name='BREAK_SERIALIZER',
+        meta=Meta(
+            title='break it',
+            domain=Domain(id='test', name='test management')),
+        output=Output(serializer=ClientSerializer),
+        access=Access(access_list=['PREMIUM', 'SUPER_PREMIUM'])
+    )
+    def post(self, request):
+        raise self.event.Executed(
+            event='NEVER_REACH_IT',
+            instance=FakeClient(name="Jake"))
+
+
 class CommandTestCase(TestCase):
 
     @pytest.fixture(autouse=True)
@@ -248,15 +274,35 @@ class CommandTestCase(TestCase):
             'card_id': 190,
         }
 
+    #
+    # REDIRECT
+    #
     def test_redirect(self):
 
         request = Mock(META=get_auth_headers(11, 'PREMIUM'))
 
         response = DoAndGoCommands().post(request)
+
         assert response.status_code == 303
         assert to_json(response) == {
             '@access': {'account_type': 'PREMIUM', 'user_id': 11},
             '@event': 'DONE_SO_GO',
+            '@type': 'error',
+        }
+
+    #
+    # BROKEN SERIALIZER
+    #
+    def test_exception_from_serializer(self):
+
+        request = Mock(META=get_auth_headers(11, 'PREMIUM'))
+
+        response = BrokenSerializerCommands().post(request)
+
+        assert response.status_code == 403
+        assert to_json(response) == {
+            '@access': {'account_type': 'PREMIUM', 'user_id': 11},
+            '@event': 'GO_AWAY',
             '@type': 'error',
         }
 
