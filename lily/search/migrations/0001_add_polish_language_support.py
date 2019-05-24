@@ -21,13 +21,6 @@ class AddLanguage(Operation):
                 public.%s ( COPY = pg_catalog.english );
         """ % self.name)
         schema_editor.execute("""
-            CREATE TEXT SEARCH DICTIONARY %s_ispell (
-                TEMPLATE = ispell,
-                DictFile = %s,
-                AffFile = %s,
-                StopWords = %s);
-        """ % (self.name, self.name, self.name, self.name))
-        schema_editor.execute("""
             ALTER TEXT SEARCH CONFIGURATION %s
                 ALTER MAPPING FOR
                     asciiword,
@@ -36,14 +29,12 @@ class AddLanguage(Operation):
                     word,
                     hword,
                     hword_part
-                WITH %s_ispell, simple;
-        """ % (self.name, self.name))
+                WITH simple;
+        """ % (self.name))
 
     def database_backwards(self, app_label, schema_editor, *args, **kwargs):
         schema_editor.execute(
             "DROP TEXT SEARCH CONFIGURATION %s" % self.name)
-        schema_editor.execute(
-            "DROP TEXT SEARCH DICTIONARY %s_ispell" % self.name)
 
     def describe(self):
         return "Creates Text Search Configuration for {0}".format(self.name)
@@ -51,8 +42,7 @@ class AddLanguage(Operation):
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         AddLanguage('polish'),

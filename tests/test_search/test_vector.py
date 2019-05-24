@@ -65,14 +65,10 @@ def test_stored_vector__to_sql(mocker):
         "'squared':7",
     ),
 
-    # case 7 - with weight option
-
-    # case 8 - with weight option - triangulation
-
     #
     # Language Specific Cases - POLISH
     #
-    # case 9 - polish - escape accents
+    # case 7 - polish - escape accents
     (
         'polish',
         'część grzegżółek dość Świata',
@@ -80,34 +76,38 @@ def test_stored_vector__to_sql(mocker):
         "'dosc':3 'świata':4 'swiata':4",
     ),
 
-    # case 10 - polish - escape accents - triangulation
-    (
+    # case 8 - polish - escape accents - triangulation
+    pytest.param(
         'polish',
         'Pchnąć w tę łódź jeża lub ośm skrzyń fig',
         "'pchnąć':1 'pchnac':1 'w':2 'te':3 'tę':3 'łódź':4 'lodz':4 'jeża':5 "
         "'jeż':5 'jeza':5 'lub':6 'luba':6 'lubić':6 'ośm':7 'osm':7 "
         "'skrzynia':8 'skrzyn':8 'figa':9 'figi':9",
+        marks=pytest.mark.xfail(
+            reason='it will work again after hunspell integration')
     ),
 
-    # case 11 - many hashtags - polish
-    (
+    # case 9 - many hashtags - polish
+    pytest.param(
         'polish',
         'część grzegżółek #dośćŚwiata #wokółNAS słyszałeś',
         "'część':1 'czesc':1 'grzegżółek':2 'grzegzolek':2 '007dośćświata':3 "
         "'007doscswiata':3 '007wokółnas':4 '007wokolnas':4 'slyszales':5 "
         "'słyszeć':5",
+        marks=pytest.mark.xfail(
+            reason='it will work again after hunspell integration')
     ),
 
-    # case 12 - latex transformation - poi
-    (
+    # case 10 - latex transformation - poi
+    pytest.param(
         'polish',
         'rowiązanie to $$ \\sqrt{a ^ 2} $$',
         "'rowiązanie':1 'rowiazanie':1 'ten':2 'to':2 'sqrt':3 'funkcja':4 "
         "'pierwiastek':5 'pierwiastka':5 'kwadratowy':6 'z':7 'a':8 'do':9 "
         "'kwadrat':10",
+        marks=pytest.mark.xfail(
+            reason='it will work again after hunspell integration')
     ),
-
-    # case 13 - with weight
 
 ], ids=list(map(str, range(0, 11))))
 @pytest.mark.django_db
