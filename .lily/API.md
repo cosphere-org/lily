@@ -8,22 +8,18 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?domain_id=PATHS HTTP/1.1
+GET / HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
-    "@enums": [
-        {
-            "A": "X"
-        }
-    ],
+    "@enums": [],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "CREATE_HELLO": {
+        "UPDATE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -38,50 +34,13 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Distinctio illum ipsam quasi placeat porro quos esse.",
+                "description": "Ipsam consequatur repellat explicabo facilis provident aut vero.",
                 "domain": {
                     "@type": "domain",
-                    "id": "paths",
+                    "id": "quod",
                     "name": "domain"
                 },
-                "title": "Accusamus reiciendis earum eius sequi a."
-            },
-            "method": "PUT",
-            "path_conf": {
-                "path": "conf"
-            },
-            "schemas": {
-                "some": "schemas"
-            },
-            "source": {
-                "@type": "source",
-                "end_line": 15,
-                "filepath": "/tests/factory.py",
-                "start_line": 14
-            }
-        },
-        "DELETE_HELLO": {
-            "@type": "command",
-            "access": {
-                "@type": "access",
-                "access_list": [
-                    "ANY"
-                ],
-                "is_external": false,
-                "is_private": true
-            },
-            "examples": {
-                "some": "examples"
-            },
-            "meta": {
-                "@type": "meta",
-                "description": "Necessitatibus harum cupiditate expedita quidem.",
-                "domain": {
-                    "@type": "domain",
-                    "id": "paths",
-                    "name": "domain"
-                },
-                "title": "Omnis suscipit architecto velit voluptas deserunt reiciendis sint."
+                "title": "Molestiae unde nostrum et accusamus rem."
             },
             "method": "DELETE",
             "path_conf": {
@@ -101,7 +60,12 @@ Respone:
     "name": "test",
     "version_info": {
         "@type": "version_info",
-        "available": [],
+        "available": [
+            "2.120.0",
+            "2.14.5",
+            "2.5.6",
+            "1.0.0"
+        ],
         "deployed": "2.5.6",
         "displayed": "2.5.6"
     }

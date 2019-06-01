@@ -60,7 +60,7 @@ class LanguageDetector(EventFactory):
         'ug', 'uk', 'ur', 'vi', 'vo', 'wa', 'xh', 'zh', 'zu'
     ])
 
-    identifier = LanguageIdentifier.from_modelstring(model, norm_probs=True)
+    identifier = None
 
     def __init__(self):
 
@@ -73,9 +73,13 @@ class LanguageDetector(EventFactory):
 
     def detect(self, text):
 
+        if not LanguageDetector.identifier:
+            LanguageDetector.identifier = LanguageIdentifier.from_modelstring(
+                model, norm_probs=True)
+
         language_abbrs = [
             lang
-            for lang, prob in self.identifier.rank(text)
+            for lang, prob in LanguageDetector.identifier.rank(text)
             if prob > self.DETECT_THRESHOLD_PROB
         ][:self.DETECT_THRESHOLD_LEN]
 
