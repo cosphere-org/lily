@@ -1,7 +1,9 @@
 
 from unittest import TestCase
+from unittest.mock import Mock
 
 import pytest
+from langid.langid import LanguageIdentifier
 
 from lily.search.detector import LanguageDetector
 from lily.base.events import EventFactory
@@ -14,6 +16,7 @@ class LanguageDetectorTestCase(TestCase):
         self.mocker = mocker
 
     def setUp(self):
+        LanguageDetector.identifier = None
         self.detector = LanguageDetector()
 
     #
@@ -22,11 +25,12 @@ class LanguageDetectorTestCase(TestCase):
     def test_detect_language(self):
 
         self.mocker.patch.object(
-            self.detector.identifier, 'rank'
-        ).return_value = [
-            ('en', 0.9),
-            ('de', 0.4),
-        ]
+            LanguageIdentifier, 'from_modelstring'
+        ).return_value = Mock(
+            rank=Mock(return_value=[
+                ('en', 0.9),
+                ('de', 0.4),
+            ]))
 
         assert self.detector.detect('hello world') == [
             {'abbr': 'en', 'name': 'English'},
@@ -36,25 +40,25 @@ class LanguageDetectorTestCase(TestCase):
     def test_detect_language__limit_by_probability(self):
 
         self.mocker.patch.object(
-            self.detector.identifier, 'rank'
-        ).return_value = [
-            ('en', 0.9),
-            ('fr', 0.6),
-            ('de', 0.55)
-        ]
-        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 5)
+            LanguageIdentifier, 'from_modelstring'
+        ).return_value = Mock(
+            rank=Mock(return_value=[
+                ('en', 0.9),
+                ('fr', 0.6),
+                ('de', 0.55),
+            ]))
+        self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_PROB', 0.56)
 
         assert self.detector.detect('hello world') == [
             {'abbr': 'en', 'name': 'English'},
             {'abbr': 'fr', 'name': 'French'},
-            {'abbr': 'de', 'name': 'German'},
         ]
 
     def test_detect_language__no_machted(self):
 
         self.mocker.patch.object(
-            self.detector.identifier, 'rank'
-        ).return_value = []
+            LanguageIdentifier, 'from_modelstring'
+        ).return_value = Mock(rank=Mock(return_value=[]))
 
         with pytest.raises(EventFactory.BrokenRequest) as e:
             self.detector.detect('hi world')
@@ -68,13 +72,15 @@ class LanguageDetectorTestCase(TestCase):
     def test_detect_language__limit_by_length(self):
 
         self.mocker.patch.object(
-            self.detector.identifier, 'rank'
-        ).return_value = [
-            ('en', 0.9),
-            ('fr', 0.6),
-            ('de', 0.55),
-            ('es', 0.1),
-        ]
+            LanguageIdentifier, 'from_modelstring'
+        ).return_value = Mock(
+            rank=Mock(return_value=[
+                ('en', 0.9),
+                ('fr', 0.6),
+                ('de', 0.55),
+                ('es', 0.1),
+            ]))
+
         self.mocker.patch.object(self.detector, 'DETECT_THRESHOLD_LEN', 2)
 
         assert self.detector.detect('hello world') == [
@@ -85,8 +91,8 @@ class LanguageDetectorTestCase(TestCase):
     def test_detect_language__no_results(self):
 
         self.mocker.patch.object(
-            self.detector.identifier, 'rank'
-        ).return_value = []
+            LanguageIdentifier, 'from_modelstring'
+        ).return_value = Mock(rank=Mock(return_value=[]))
 
         with pytest.raises(EventFactory.BrokenRequest) as e:
             self.detector.detect('hello world')
