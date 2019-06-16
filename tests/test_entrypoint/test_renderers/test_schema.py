@@ -9,7 +9,7 @@ from lily_assistant.config import Config
 
 from lily.base.models import EnumChoiceField
 from lily.base import serializers, parsers
-from lily.base.models import JSONSchemaField, array, string
+from lily.base.models import JSONSchemaField, array, string, number, object
 from lily.entrypoint.schema import (
     Schema,
     ArrayValue,
@@ -56,6 +56,21 @@ class Human(models.Model):
 
     class Meta:
         app_label = 'base'
+
+
+class JSONSchemaSerializer(serializers.Serializer):
+
+    names = JSONSchemaField(schema=array(string()))
+
+    users = serializers.SerializerMethodField()
+
+    owners = serializers.SerializerMethodField()
+
+    def get_users(self, instance) -> [object(name=string(), age=number())]:
+        return instance['users']
+
+    def get_owners(self, instance) -> array(object(name=string(), age=number())):  # noqa
+        return instance['owners']
 
 
 class HumanQueryParser(parsers.QueryParser):
@@ -229,7 +244,7 @@ class SchemaRendererTestCase(TestCase):
             },
         }
 
-    def test_cycle_json_serializer(self):
+    def test_object_json_serializer(self):
 
         self.mocker.patch.object(
             Schema, 'get_repository_uri'
@@ -248,7 +263,7 @@ class SchemaRendererTestCase(TestCase):
             },
         }
 
-    def test_cycles_json_serializer(self):
+    def test_array_json_serializer(self):
 
         self.mocker.patch.object(
             Schema, 'get_repository_uri'
@@ -285,6 +300,42 @@ class SchemaRendererTestCase(TestCase):
                     },
                 },
                 'required': ['card_cycle', 'path_cycle'],
+            },
+        }
+
+    def test_method_json_serializer(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(JSONSchemaSerializer).render().serialize() == {
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'properties': {
+                    'owners': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'age': {'type': 'number'},
+                                'name': {'type': 'string'},
+                            },
+                        },
+                    },
+                    'users': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'age': {'type': 'number'},
+                                'name': {'type': 'string'},
+                            },
+                        },
+                    },
+                },
+                'required': ['users', 'owners'],
             },
         }
 
