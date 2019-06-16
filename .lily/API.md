@@ -8,18 +8,59 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET / HTTP/1.1
+GET /?domain_id=PATHS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
-    "@enums": [],
+    "@enums": [
+        {
+            "A": "X"
+        }
+    ],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "UPDATE_HELLO": {
+        "CREATE_HELLO": {
+            "@type": "command",
+            "access": {
+                "@type": "access",
+                "access_list": [
+                    "ANY"
+                ],
+                "is_external": false,
+                "is_private": false
+            },
+            "examples": {
+                "some": "examples"
+            },
+            "meta": {
+                "@type": "meta",
+                "description": "Enim ullam at provident.",
+                "domain": {
+                    "@type": "domain",
+                    "id": "paths",
+                    "name": "domain"
+                },
+                "title": "Vitae vero est voluptatibus odit labore saepe."
+            },
+            "method": "GET",
+            "path_conf": {
+                "path": "conf"
+            },
+            "schemas": {
+                "some": "schemas"
+            },
+            "source": {
+                "@type": "source",
+                "end_line": 15,
+                "filepath": "/tests/factory.py",
+                "start_line": 14
+            }
+        },
+        "DELETE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -34,15 +75,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Ipsam consequatur repellat explicabo facilis provident aut vero.",
+                "description": "Quia reprehenderit necessitatibus excepturi commodi natus perferendis.",
                 "domain": {
                     "@type": "domain",
-                    "id": "quod",
+                    "id": "paths",
                     "name": "domain"
                 },
-                "title": "Molestiae unde nostrum et accusamus rem."
+                "title": "Voluptas fugit facilis quas corrupti voluptates libero."
             },
-            "method": "DELETE",
+            "method": "GET",
             "path_conf": {
                 "path": "conf"
             },
@@ -60,12 +101,7 @@ Respone:
     "name": "test",
     "version_info": {
         "@type": "version_info",
-        "available": [
-            "2.120.0",
-            "2.14.5",
-            "2.5.6",
-            "1.0.0"
-        ],
+        "available": [],
         "deployed": "2.5.6",
         "displayed": "2.5.6"
     }
