@@ -182,7 +182,14 @@ class SchemaRenderer:
             if isinstance(return_value, list):
                 item_type = return_value[0]
 
-                if isinstance(item_type(), serializers.Serializer):
+                # -- if it's already a schema
+                if isinstance(item_type, dict):
+                    schema.add_array(
+                        name=name,
+                        required=True,
+                        value=item_type)
+
+                elif isinstance(item_type(), serializers.Serializer):
                     schema.add_array(
                         name=name,
                         required=True,
@@ -193,6 +200,13 @@ class SchemaRenderer:
                         name=name,
                         required=True,
                         value=self.native_type_to_schema(item_type))
+
+            # -- if it's already a schema
+            elif isinstance(return_value, dict):
+                schema.add(
+                    name=name,
+                    required=True,
+                    value=return_value)
 
             elif isinstance(return_value(), serializers.Serializer):
                 schema.add(
