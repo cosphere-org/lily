@@ -23,13 +23,13 @@
                     "name": "test",
                     "commands": {
                         "CREATE_HELLO": {
-                            "method": "GET",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Vitae vero est voluptatibus odit labore saepe.",
-                                "description": "Enim ullam at provident.",
+                                "title": "Quia sed aliquid quae quaerat.",
+                                "description": "Error placeat unde deserunt quasi illum.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
@@ -60,13 +60,13 @@
                             "@type": "command"
                         },
                         "DELETE_HELLO": {
-                            "method": "GET",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Voluptas fugit facilis quas corrupti voluptates libero.",
-                                "description": "Quia reprehenderit necessitatibus excepturi commodi natus perferendis.",
+                                "title": "Sed eveniet asperiores aperiam beatae totam laborum.",
+                                "description": "Ea corrupti assumenda iure qui sequi laborum.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
@@ -109,22 +109,6 @@
         }
     },
     "SIGN_PROCESS": {
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        },
         "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
@@ -151,6 +135,22 @@
                         "account_type": "PREMIUM"
                     }
                 }
+            }
+        },
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
         }
     }

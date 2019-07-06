@@ -5,8 +5,8 @@ import re
 from functools import partial
 import tempfile
 
+from lily_assistant.config import Config
 from lily_assistant.repo.repo import Repo
-from lily_assistant.repo.version import VersionRenderer
 
 from lily.conf import settings
 
@@ -47,8 +47,7 @@ class AngularRepo(Repo):
     # to have match between client version and API version
     # upgrades of the client itself, how can we control them???
     # -- maybe by adding extra API-<version>-CLIENT-<version>
-    def upgrade_version(
-            self, upgrade_type=VersionRenderer.VERSION_UPGRADE.PATCH):
+    def upgrade_version(self):
 
         with open('package.json', 'r') as p:
             conf = p.read()
@@ -57,7 +56,8 @@ class AngularRepo(Repo):
             version = version_match.groupdict()['version']
             span = version_match.span()
 
-            next_version = VersionRenderer().render_next_version(version)
+            api_version = Config().version
+            next_version = f'API-{api_version}-CLIENT-{version}'
 
         with open('package.json', 'w') as p:
             conf = conf.replace(

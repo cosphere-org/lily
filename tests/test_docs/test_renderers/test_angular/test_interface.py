@@ -272,6 +272,7 @@ class InterfaceTestCase(TestCase):
             {
                 'type': 'object',
                 'required': ['age'],
+                'entity_type': 'human',
                 'properties': {
                     'age': {
                         'type': 'array',
@@ -292,6 +293,13 @@ class InterfaceTestCase(TestCase):
              */
 
             export interface ReadCardsResponse {
+                '@type'?: 'human';
+                '@commands'?: {
+                    [name: string]: {
+                        is_active: boolean;
+                        reason: string;
+                    };
+                };
                 age: number[];
                 surname?: string;
             }
@@ -409,6 +417,7 @@ class InterfaceTestCase(TestCase):
             {
                 'type': 'object',
                 'required': ['age'],
+                'entity_type': 'employee',
                 'properties': {
                     'age': {
                         'type': 'integer',
@@ -416,6 +425,7 @@ class InterfaceTestCase(TestCase):
                     'person': {
                         'type': 'object',
                         'required': ['name'],
+                        'entity_type': 'human',
                         'properties': {
                             'name': {
                                 'type': 'string',
@@ -434,8 +444,22 @@ class InterfaceTestCase(TestCase):
              */
 
             export interface ReadCardsResponse {
+                '@type'?: 'employee';
+                '@commands'?: {
+                    [name: string]: {
+                        is_active: boolean;
+                        reason: string;
+                    };
+                };
                 age: number;
                 person?: {
+                    '@type'?: 'human';
+                    '@commands'?: {
+                        [name: string]: {
+                            is_active: boolean;
+                            reason: string;
+                        };
+                    };
                     category?: number;
                     name: string;
                 };

@@ -2,7 +2,6 @@
 import json
 import os
 
-from lily_assistant.repo.version import VersionRenderer
 from lily_assistant.config import Config
 
 from lily.base.events import EventFactory
@@ -102,10 +101,8 @@ class AngularClientRenderer(EventFactory):
         self.repo.build()
 
         if not only_build:
-            # !!!!!!!!!!!!
-            # FIXME: make it dynamical based on the versions of services
-            next_version = self.repo.upgrade_version(
-                VersionRenderer.VERSION_UPGRADE.MINOR)
+            next_version = self.repo.upgrade_version()
+
             self.repo.add_all()
             self.repo.commit(next_version)
             self.repo.push()
