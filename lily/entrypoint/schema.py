@@ -92,7 +92,11 @@ class SchemaRenderer:
         return self.serializer_to_schema(self.serializer)
 
     def serializer_to_schema(self, serializer):
-        schema = Schema(self.type, self.meta)
+
+        schema = Schema(
+            self.type,
+            self.meta,
+            getattr(serializer, '_type', None))
 
         try:
             fields = serializer.get_fields()
@@ -416,10 +420,14 @@ class ArrayValue:
 
 class Schema:
 
-    def __init__(self, type_, meta):
+    def __init__(self, type_, meta, entity_type=None):
         self.type = type_
         self.meta = meta
         self.schema = self.get_empty_schema()
+
+        if entity_type:
+            self.schema['entity_type'] = entity_type
+
         self.enums = []
 
     def is_empty(self):
@@ -456,11 +464,16 @@ class Schema:
 
         def serialize(d):
 
+            entity_type = d.get('entity_type', None)
+
             o = {
                 'type': d['type'],
                 'required': d['required'],
                 'properties': {},
             }
+            if entity_type:
+                o['entity_type'] = entity_type
+
             p = o['properties']
 
             for k, v in d['properties'].items():

@@ -90,8 +90,25 @@ class Interface:
         def to_interface(schema, indent=4, base_indent=0):
 
             lines = []
+
             if schema['type'] == 'object':
                 lines.append('{')
+
+                entity_type = schema.get('entity_type')
+                if entity_type:
+                    lines.append(
+                        normalize_indentation(
+                            """
+                                '@type'?: '{entity_type}';
+                                '@commands'?: {{
+                                    [name: string]: {{
+                                        is_active: boolean;
+                                        reason: string;
+                                    }};
+                                }};
+                            """.format(entity_type=entity_type),
+                            indent))
+
                 names = sorted(schema['properties'].keys())
 
                 for name in names:

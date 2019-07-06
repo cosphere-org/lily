@@ -60,6 +60,8 @@ class Human(models.Model):
 
 class JSONSchemaSerializer(serializers.Serializer):
 
+    _type = 'json'
+
     names = JSONSchemaField(schema=array(string()))
 
     users = serializers.SerializerMethodField()
@@ -74,18 +76,23 @@ class JSONSchemaSerializer(serializers.Serializer):
 
 
 class HumanQueryParser(parsers.QueryParser):
-    name = serializers.CharField(max_length=123, required=False)
 
-    age = serializers.IntegerField(min_value=18)
+    name = parsers.CharField(max_length=123, required=False)
+
+    age = parsers.IntegerField(min_value=18)
 
 
 class HumanBodyParser(parsers.BodyParser):
-    name = serializers.CharField(max_length=123, required=False)
 
-    age = serializers.IntegerField(min_value=18)
+    name = parsers.CharField(max_length=123, required=False)
+
+    age = parsers.IntegerField(min_value=18)
 
 
 class HumanSerializer(serializers.Serializer):
+
+    _type = 'human'
+
     name = serializers.CharField(max_length=123, required=False)
 
     age = serializers.IntegerField(min_value=18)
@@ -95,6 +102,8 @@ class HumanSerializer(serializers.Serializer):
 
 class CycleJSONSerializer(serializers.Serializer):
 
+    _type = 'cycle'
+
     local_id = serializers.IntegerField(allow_null=True)
 
     stage_id = serializers.IntegerField(allow_null=True)
@@ -103,6 +112,8 @@ class CycleJSONSerializer(serializers.Serializer):
 
 
 class CyclesJSONSerializer(serializers.Serializer):
+
+    _type = 'cycles'
 
     card_cycle = serializers.SerializerMethodField()
 
@@ -117,6 +128,8 @@ class CyclesJSONSerializer(serializers.Serializer):
 
 class HumanModelSerializer(serializers.ModelSerializer):
 
+    _type = 'human'
+
     is_underaged = serializers.SerializerMethodField()
 
     class Meta:
@@ -130,16 +143,23 @@ class HumanModelSerializer(serializers.ModelSerializer):
 
 class EnumerModelSerializer(serializers.ModelSerializer):
 
+    _type = 'enumer'
+
     class Meta:
         model = Enumer
         fields = ('nickname', 'brand')
 
 
 class ProviderSerializer(serializers.Serializer):
+
+    _type = 'provider'
+
     name = serializers.CharField(default='Johnny')
 
 
 class FoodSerializer(serializers.Serializer):
+
+    _type = 'food'
 
     provider = ProviderSerializer()
 
@@ -147,6 +167,8 @@ class FoodSerializer(serializers.Serializer):
 
 
 class PartySerializer(serializers.Serializer):
+
+    _type = 'party'
 
     guests = HumanSerializer(many=True)
 
@@ -226,6 +248,7 @@ class SchemaRendererTestCase(TestCase):
             'schema': {
                 'type': 'object',
                 'required': ['age', 'place'],
+                'entity_type': 'human',
                 'properties': {
                     'age': {
                         'type': 'integer',
@@ -254,6 +277,7 @@ class SchemaRendererTestCase(TestCase):
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
+                'entity_type': 'cycle',
                 'properties': {
                     'local_id': {'type': 'integer'},
                     'stage_id': {'type': 'integer'},
@@ -273,10 +297,12 @@ class SchemaRendererTestCase(TestCase):
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
+                'entity_type': 'cycles',
                 'properties': {
                     'card_cycle': {
                         'type': 'array',
                         'items': {
+                            'entity_type': 'cycle',
                             'type': 'object',
                             'properties': {
                                 'entity': {'type': 'any'},
@@ -290,6 +316,7 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'array',
                         'items': {
                             'type': 'object',
+                            'entity_type': 'cycle',
                             'properties': {
                                 'entity': {'type': 'any'},
                                 'local_id': {'type': 'integer'},
@@ -313,6 +340,7 @@ class SchemaRendererTestCase(TestCase):
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
+                'entity_type': 'json',
                 'properties': {
                     'owners': {
                         'type': 'array',
@@ -354,6 +382,7 @@ class SchemaRendererTestCase(TestCase):
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
+                'entity_type': 'human',
                 'properties': {
                     'name': {
                         'type': 'string',
@@ -392,6 +421,7 @@ class SchemaRendererTestCase(TestCase):
         ).render().serialize() == {
             'uri': 'http://hi.there#123',
             'schema': {
+                'entity_type': 'enumer',
                 'properties': {
                     'brand': {
                         'enum': ['awesome', 'nice'],
@@ -521,6 +551,9 @@ class SchemaRendererTestCase(TestCase):
         ).return_value = 'http://hi.there#123'
 
         class Serializer(serializers.Serializer):
+
+            _type = 'complex'
+
             numbers = serializers.ListField(
                 child=serializers.IntegerField())
 
@@ -538,6 +571,7 @@ class SchemaRendererTestCase(TestCase):
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
+                'entity_type': 'complex',
                 'required': ['numbers', 'person'],
                 'properties': {
                     'person': {
@@ -545,6 +579,7 @@ class SchemaRendererTestCase(TestCase):
                         'items': {
                             'required': ['age', 'place'],
                             'type': 'object',
+                            'entity_type': 'human',
                             'properties': {
                                 'name': {
                                     'maxLength': 123,
@@ -578,6 +613,7 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'array',
                         'items': {
                             'type': 'object',
+                            'entity_type': 'provider',
                             'properties': {
                                 'name': {
                                     'type': 'string',
@@ -600,6 +636,8 @@ class SchemaRendererTestCase(TestCase):
         ).return_value = 'http://hi.there#123'
 
         class MethodDerivedFieldsSerializer(serializers.Serializer):
+
+            _type = 'method'
 
             number = serializers.SerializerMethodField()
 
@@ -634,6 +672,7 @@ class SchemaRendererTestCase(TestCase):
                 'type': 'object',
                 'required': [
                     'number', 'ingredients', 'names', 'hosts', 'owner'],
+                'entity_type': 'method',
                 'properties': {
                     'number': {
                         'type': 'number',
@@ -655,6 +694,7 @@ class SchemaRendererTestCase(TestCase):
                         'items': {
                             'type': 'object',
                             'required': ['age', 'place'],
+                            'entity_type': 'human',
                             'properties': {
                                 'name': {
                                     'type': 'string',
@@ -674,6 +714,7 @@ class SchemaRendererTestCase(TestCase):
                     },
                     'owner': {
                         'type': 'object',
+                        'entity_type': 'human',
                         'required': ['age', 'place'],
                         'properties': {
                             'name': {
@@ -709,6 +750,7 @@ class SchemaRendererTestCase(TestCase):
             'schema': {
                 'type': 'object',
                 'required': ['guests', 'host', 'food'],
+                'entity_type': 'party',
                 'properties': {
                     'host': {
                         'type': 'object',
@@ -718,6 +760,7 @@ class SchemaRendererTestCase(TestCase):
                             'is_underaged',
                             'pets',
                         ],
+                        'entity_type': 'human',
                         'properties': {
                             'name': {
                                 'type': 'string',
@@ -744,10 +787,12 @@ class SchemaRendererTestCase(TestCase):
                     },
                     'food': {
                         'type': 'object',
+                        'entity_type': 'food',
                         'required': ['provider', 'amount'],
                         'properties': {
                             'provider': {
                                 'type': 'object',
+                                'entity_type': 'provider',
                                 'properties': {
                                     'name': {
                                         'type': 'string',
@@ -764,6 +809,7 @@ class SchemaRendererTestCase(TestCase):
                         'type': 'array',
                         'items': {
                             'type': 'object',
+                            'entity_type': 'human',
                             'required': ['age', 'place'],
                             'properties': {
                                 'name': {
