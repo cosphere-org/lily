@@ -38,15 +38,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Enim ullam at provident.",
+                "description": "Error placeat unde deserunt quasi illum.",
                 "domain": {
                     "@type": "domain",
                     "id": "paths",
                     "name": "domain"
                 },
-                "title": "Vitae vero est voluptatibus odit labore saepe."
+                "title": "Quia sed aliquid quae quaerat."
             },
-            "method": "GET",
+            "method": "DELETE",
             "path_conf": {
                 "path": "conf"
             },
@@ -75,15 +75,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Quia reprehenderit necessitatibus excepturi commodi natus perferendis.",
+                "description": "Ea corrupti assumenda iure qui sequi laborum.",
                 "domain": {
                     "@type": "domain",
                     "id": "paths",
                     "name": "domain"
                 },
-                "title": "Voluptas fugit facilis quas corrupti voluptates libero."
+                "title": "Sed eveniet asperiores aperiam beatae totam laborum."
             },
-            "method": "GET",
+            "method": "DELETE",
             "path_conf": {
                 "path": "conf"
             },
