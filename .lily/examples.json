@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?domain_id=PATHS",
+                "path": "/?version=2.1.3",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -16,22 +16,22 @@
                 "content": {
                     "version_info": {
                         "deployed": "2.5.6",
-                        "displayed": "2.5.6",
+                        "displayed": "2.1.3",
                         "available": [],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
-                        "CREATE_HELLO": {
+                        "UPDATE_HELLO": {
                             "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Quia sed aliquid quae quaerat.",
-                                "description": "Error placeat unde deserunt quasi illum.",
+                                "title": "Nesciunt quas architecto eligendi dolore illum voluptatum.",
+                                "description": "Occaecati earum aperiam commodi aut harum dolorum.",
                                 "domain": {
-                                    "id": "paths",
+                                    "id": "nisi",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -58,50 +58,9 @@
                                 "some": "examples"
                             },
                             "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "method": "DELETE",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Sed eveniet asperiores aperiam beatae totam laborum.",
-                                "description": "Ea corrupti assumenda iure qui sequi laborum.",
-                                "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": true,
-                                "is_external": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "@type": "command"
                         }
                     },
-                    "@enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
+                    "@enums": [],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
@@ -113,7 +72,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -125,7 +84,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",
