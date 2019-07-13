@@ -55,6 +55,9 @@ class AngularClientRenderer(EventFactory):
 
         root_cwd = os.getcwd()
 
+        # -- save it now before all directory jumps
+        config = Config()
+
         # -- HTTP client
         self.http_repo.cd_to_repo()
         self.http_repo.clone()
@@ -101,7 +104,7 @@ class AngularClientRenderer(EventFactory):
         self.repo.build()
 
         if not only_build:
-            next_version = self.repo.upgrade_version()
+            next_version = self.repo.upgrade_version(config)
 
             self.repo.add_all()
             self.repo.commit(next_version)
@@ -143,12 +146,10 @@ class AngularClientRenderer(EventFactory):
 
     def get_commands(self):
 
-        config = Config()
-
         commands_path = os.path.join(
             Config.get_lily_path(),
             'commands',
-            f'{config.version}.json')
+            f'{Config().version}.json')
         with open(commands_path, 'r') as f:
             return json.loads(f.read())
 
