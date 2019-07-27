@@ -106,7 +106,6 @@ class CommandTestCase(TestCase):
         assert command.domain_id == 'tasks'
         assert command.domain_name == 'Tasks Management'
         assert command.title == 'Read Task'
-        assert command.description == 'Read Task Now'
         assert command.is_private is True
         assert command.authorization_required is True
         assert command.path == '/tasks/{task_id}'
@@ -165,9 +164,6 @@ class CommandTestCase(TestCase):
         assert command.header == normalize_indentation('''
             /**
              * Read Task
-             * -------------
-             *
-             * Read Task Now
              */
         ''', 0)
 

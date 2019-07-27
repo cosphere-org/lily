@@ -334,7 +334,7 @@ class DOMRenderer {
             title: command.meta.title,
             description: (
                 command.meta.description ?
-                command.meta.description :
+                marked(command.meta.description) :
                 ''),
             accessList: (
                 command.access.access_list ?

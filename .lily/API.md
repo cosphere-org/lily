@@ -8,18 +8,22 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET / HTTP/1.1
+GET /?domain_id=PATHS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
-    "@enums": [],
+    "@enums": [
+        {
+            "A": "X"
+        }
+    ],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "UPDATE_HELLO": {
+        "CREATE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -34,13 +38,50 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Officia laudantium officiis quo alias sed quis.",
+                "description": "Ratione asperiores dolorem quia nostrum laboriosam quia.",
                 "domain": {
                     "@type": "domain",
-                    "id": "qui",
+                    "id": "paths",
                     "name": "domain"
                 },
-                "title": "Voluptate doloribus a facere dolor hic qui."
+                "title": "Ex cumque consequuntur dicta molestiae placeat."
+            },
+            "method": "DELETE",
+            "path_conf": {
+                "path": "conf"
+            },
+            "schemas": {
+                "some": "schemas"
+            },
+            "source": {
+                "@type": "source",
+                "end_line": 15,
+                "filepath": "/tests/factory.py",
+                "start_line": 14
+            }
+        },
+        "DELETE_HELLO": {
+            "@type": "command",
+            "access": {
+                "@type": "access",
+                "access_list": [
+                    "ANY"
+                ],
+                "is_external": false,
+                "is_private": true
+            },
+            "examples": {
+                "some": "examples"
+            },
+            "meta": {
+                "@type": "meta",
+                "description": "Corrupti velit aliquam aliquid numquam aspernatur ad perferendis.",
+                "domain": {
+                    "@type": "domain",
+                    "id": "paths",
+                    "name": "domain"
+                },
+                "title": "Totam inventore quod nesciunt fugiat modi modi tempore."
             },
             "method": "POST",
             "path_conf": {
@@ -60,12 +101,7 @@ Respone:
     "name": "test",
     "version_info": {
         "@type": "version_info",
-        "available": [
-            "2.120.0",
-            "2.14.5",
-            "2.5.6",
-            "1.0.0"
-        ],
+        "available": [],
         "deployed": "2.5.6",
         "displayed": "2.5.6"
     }

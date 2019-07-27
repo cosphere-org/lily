@@ -20,7 +20,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -32,7 +32,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?domain_id=PATHS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -63,26 +63,21 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [
-                            "2.120.0",
-                            "2.14.5",
-                            "2.5.6",
-                            "1.0.0"
-                        ],
+                        "available": [],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
-                        "UPDATE_HELLO": {
-                            "method": "POST",
+                        "CREATE_HELLO": {
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Voluptate doloribus a facere dolor hic qui.",
-                                "description": "Officia laudantium officiis quo alias sed quis.",
+                                "title": "Ex cumque consequuntur dicta molestiae placeat.",
+                                "description": "Ratione asperiores dolorem quia nostrum laboriosam quia.",
                                 "domain": {
-                                    "id": "qui",
+                                    "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -109,9 +104,50 @@
                                 "some": "examples"
                             },
                             "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "method": "POST",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Totam inventore quod nesciunt fugiat modi modi tempore.",
+                                "description": "Corrupti velit aliquam aliquid numquam aspernatur ad perferendis.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "end_line": 15,
+                                "@type": "source"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "@type": "command"
                         }
                     },
-                    "@enums": [],
+                    "@enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
