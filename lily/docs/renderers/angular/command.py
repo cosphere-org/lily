@@ -21,7 +21,6 @@ class Command:
         self.domain_id = self.conf['meta']['domain']['id']
         self.domain_name = self.conf['meta']['domain']['name']
         self.title = self.conf['meta']['title']
-        self.description = self.conf['meta'].get('description')
 
         # -- ACCESS
         self.is_private = self.conf['access']['is_private']
@@ -75,22 +74,11 @@ class Command:
 
     @property
     def header(self):
-        if self.description:
-            return normalize_indentation('''
-            /**
-             * {self.title}
-             * -------------
-             *
-             * {self.description}
-             */
-            ''', 0).format(self=self)
-
-        else:
-            return normalize_indentation('''
-            /**
-             * {self.title}
-             */
-            ''', 0).format(self=self)
+        return normalize_indentation('''
+        /**
+         * {self.title}
+         */
+        ''', 0).format(self=self)
 
     def get_bulk_read_field(self):
 

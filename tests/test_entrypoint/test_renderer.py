@@ -83,6 +83,66 @@ class CommandsRendererTestCase(TestCase):
             }
         }
 
+    def test_render__with_markdown_description(self):
+        renderer = self.mocker.patch(
+            'lily.entrypoint.renderer.SchemaRenderer')
+        serialize = Mock()
+        renderer.return_value.render.return_value = Mock(
+            serialize=serialize, enums=[])
+        serialize.side_effect = [
+            {'output': 'schema'},
+            {'query': 'schema'},
+            {'body': 'schema'},
+        ]
+
+        meta = Meta(
+            title='hi',
+            description='./description.md',
+            domain=Domain(id='h', name='hh'))
+        access = Access(access_list=['EVERYONE'], is_private=True)
+        source = Source(fn)
+        self.mocker.patch.object(BaseRenderer, 'render').return_value = {
+            'READ_CARD': {
+                'method': 'get',
+                'path_conf': {
+                    'path': '/hi',
+                    'pattern': '/hi',
+                    'parameters': [],
+                },
+                'meta': meta,
+                'access': access,
+                'input': Input(query_parser=Mock(), body_parser=Mock()),
+                'output': Output(serializer=Mock()),
+                'source': source,
+            }
+        }
+
+        result = CommandsRenderer().render()
+
+        meta = Meta(
+            title='hi',
+            description='# this is test of markdown description',
+            domain=Domain(id='h', name='hh'))
+        assert result == {
+            '@enums': [],
+            'READ_CARD': {
+                'access': access,
+                'meta': meta,
+                'method': 'get',
+                'path_conf': {
+                    'parameters': [],
+                    'path': '/hi',
+                },
+                'schemas': {
+                    'input_body': {'body': 'schema'},
+                    'input_query': {'query': 'schema'},
+                    'output': {'output': 'schema'},
+                },
+                'source': source,
+                'examples': {},
+            }
+        }
+
     def test_render__with_enums(self):
 
         renderer = self.mocker.patch(

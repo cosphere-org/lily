@@ -20,7 +20,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -32,7 +32,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
@@ -63,12 +63,7 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [
-                            "2.120.0",
-                            "2.14.5",
-                            "2.5.6",
-                            "1.0.0"
-                        ],
+                        "available": [],
                         "@type": "version_info"
                     },
                     "name": "test",
@@ -79,10 +74,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Voluptate doloribus a facere dolor hic qui.",
-                                "description": "Officia laudantium officiis quo alias sed quis.",
+                                "title": "Assumenda excepturi quo tempora totam assumenda.",
+                                "description": "Dolore omnis quae recusandae aliquam culpa commodi ea.",
                                 "domain": {
-                                    "id": "qui",
+                                    "id": "nemo",
                                     "name": "domain",
                                     "@type": "domain"
                                 },

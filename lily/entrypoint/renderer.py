@@ -35,11 +35,11 @@ class CommandsRenderer(BaseRenderer):
 
             path_conf = conf['path_conf']
             method = conf['method']
-            meta = conf['meta']
             access = conf['access']
             input_ = conf['input']
             output = conf['output']
             source = conf['source']
+            meta = self.resolve_description(conf['meta'], source)
 
             configuration = {
                 'method': method,
@@ -75,6 +75,16 @@ class CommandsRenderer(BaseRenderer):
 
         rendered['@enums'] = self.unique_enums(enums)
         return rendered
+
+    def resolve_description(self, meta, source):
+        desc = meta.description
+
+        if desc and desc.endswith('.md'):
+            base = os.path.dirname(source.filepath)[1:]
+            with open(os.path.join(base, desc), 'r') as f:
+                meta.description = f.read().strip()
+
+        return meta
 
     def unique_enums(self, enums):
         unique_enums = set(
