@@ -31,22 +31,22 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": false
+                "is_private": true
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Ratione asperiores dolorem quia nostrum laboriosam quia.",
+                "description": "Veniam et exercitationem magnam.",
                 "domain": {
                     "@type": "domain",
                     "id": "paths",
                     "name": "domain"
                 },
-                "title": "Ex cumque consequuntur dicta molestiae placeat."
+                "title": "Nam culpa placeat explicabo nihil repellendus voluptates quos."
             },
-            "method": "DELETE",
+            "method": "POST",
             "path_conf": {
                 "path": "conf"
             },
@@ -75,13 +75,13 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Corrupti velit aliquam aliquid numquam aspernatur ad perferendis.",
+                "description": "Tempora impedit dolor ratione earum maxime.",
                 "domain": {
                     "@type": "domain",
                     "id": "paths",
                     "name": "domain"
                 },
-                "title": "Totam inventore quod nesciunt fugiat modi modi tempore."
+                "title": "Veniam exercitationem officiis architecto itaque."
             },
             "method": "POST",
             "path_conf": {
