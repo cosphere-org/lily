@@ -1,8 +1,8 @@
 
-from unittest import TestCase
 import json
 import os
 
+from django.test import TestCase
 from click.testing import CliRunner
 import pytest
 

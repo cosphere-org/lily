@@ -34,7 +34,26 @@ class ImmutableModel(models.Model):
 class ValidatingModel(models.Model):
 
     def save(self, *args, **kwargs):
-        self.full_clean()
+
+        # -- call all clean & validation methods without capturing
+        # -- their individual ValidationErrors
+        try:
+            self.clean_fields()
+
+        except ValidationError as e:
+            raise ValidationError(e.update_error_dict({}))
+
+        try:
+            self.clean()
+
+        except ValidationError as e:
+            raise ValidationError(e.update_error_dict({}))
+
+        try:
+            self.validate_unique()
+
+        except ValidationError as e:
+            raise ValidationError(e.update_error_dict({}))
 
         return super(ValidatingModel, self).save(*args, **kwargs)
 

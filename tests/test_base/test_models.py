@@ -14,6 +14,9 @@ from lily.base.models import (
     ValidatingModel,
     EnumChoiceField,
     enum,
+    array,
+    object,
+    string,
 )
 
 
@@ -209,9 +212,25 @@ class ValidatingEntity(fake_models.FakeModel, ValidatingModel):
     name = models.CharField(max_length=10)
 
 
+class ValidatingEntityWithJSON(fake_models.FakeModel, ValidatingModel):
+
+    tasks = JSONSchemaField(
+        schema=array(
+            object(
+                name=string())))
+
+    def clean(self):
+        if len(set([t['name'] for t in self.tasks])) < 2:
+            raise ValidationError('at least 2 unique task needed')
+
+
 @ValidatingEntity.fake_me
+@ValidatingEntityWithJSON.fake_me
 class ValidatingModelTestCase(TestCase):
 
+    #
+    # ValidatingEntity
+    #
     def test_validates_on_save(self):
 
         with pytest.raises(ValidationError) as e:
@@ -240,3 +259,27 @@ class ValidatingModelTestCase(TestCase):
             ValidatingEntity.objects.bulk_create([
                 ValidatingEntity(name=11 * 'a'),
             ])
+
+    #
+    # ValidatingEntityWithJSON
+    #
+    def test_schema_validation__run_before_clean(self):
+
+        with pytest.raises(ValidationError) as e:
+            ValidatingEntityWithJSON.objects.create(tasks={'what': 'hey'})
+
+        assert e.value.message_dict == {
+            'tasks': [
+                "JSON did not validate. PATH: '.' REASON: {'what': 'hey'} "
+                "is not of type 'array'",
+            ],
+        }
+
+    def test_schema_validation_when_ok_clean_is_called(self):
+
+        with pytest.raises(ValidationError) as e:
+            ValidatingEntityWithJSON.objects.create(tasks=[{'name': 'hey'}])
+
+        assert e.value.message_dict == {
+            '__all__': ['at least 2 unique task needed'],
+        }

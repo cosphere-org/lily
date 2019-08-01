@@ -20,7 +20,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -32,7 +32,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",
@@ -69,13 +69,13 @@
                     "name": "test",
                     "commands": {
                         "CREATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Ex cumque consequuntur dicta molestiae placeat.",
-                                "description": "Ratione asperiores dolorem quia nostrum laboriosam quia.",
+                                "title": "Fuga dolores accusantium nemo inventore similique numquam itaque.",
+                                "description": "Autem nam distinctio sequi praesentium quasi.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
@@ -87,7 +87,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -106,13 +106,13 @@
                             "@type": "command"
                         },
                         "DELETE_HELLO": {
-                            "method": "POST",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Totam inventore quod nesciunt fugiat modi modi tempore.",
-                                "description": "Corrupti velit aliquam aliquid numquam aspernatur ad perferendis.",
+                                "title": "Ea aspernatur aliquam ab fuga eum.",
+                                "description": "Itaque nostrum voluptates quos maiores culpa est incidunt reprehenderit.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
@@ -124,7 +124,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
