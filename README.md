@@ -1,4 +1,6 @@
 
+# WARNING: this project is still undergoing some heavy changes and is still quite poorly documented so if you're interested in using it, well do that at your own risk.
+
 # Lily - microservices by humans for humans
 
 Lily is built around:

@@ -83,6 +83,7 @@ INSTALLED_APPS = [
     'search',
     'entrypoint',
     'assertion',
+    'migrator',
 
     'django.contrib.contenttypes',
     'django.contrib.auth',

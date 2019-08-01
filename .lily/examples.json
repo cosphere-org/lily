@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?domain_id=PATHS",
+                "path": "/?version=2.1.3",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -62,59 +62,22 @@
                 "content": {
                     "version_info": {
                         "deployed": "2.5.6",
-                        "displayed": "2.5.6",
+                        "displayed": "2.1.3",
                         "available": [],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
-                        "CREATE_HELLO": {
+                        "UPDATE_HELLO": {
                             "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Ex cumque consequuntur dicta molestiae placeat.",
-                                "description": "Ratione asperiores dolorem quia nostrum laboriosam quia.",
+                                "title": "Accusamus dolore ullam incidunt consectetur corporis veniam.",
+                                "description": "Itaque laborum fugit nulla id.",
                                 "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "is_external": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "method": "POST",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Totam inventore quod nesciunt fugiat modi modi tempore.",
-                                "description": "Corrupti velit aliquam aliquid numquam aspernatur ad perferendis.",
-                                "domain": {
-                                    "id": "paths",
+                                    "id": "animi",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -143,11 +106,7 @@
                             "@type": "command"
                         }
                     },
-                    "@enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
+                    "@enums": [],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
