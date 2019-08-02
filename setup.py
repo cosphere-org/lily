@@ -43,10 +43,11 @@ setup(
     author='CoSphere Team',
     install_requires=requirements,
     data_files=[(
-        'lakey_client',
+        'lily',
         [
             'requirements.txt',
             '.lily/config.json',
+            'lily/cli/base.makefile',
         ],
     )],
     include_package_data=True,

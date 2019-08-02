@@ -39,8 +39,6 @@ sphinx-output
 .cache
 .commands
 # Settings overrides
-.pytest_cache
-
 settings_local.py
 
 # docs
@@ -59,4 +57,5 @@ docker-compose.yml
 # django
 collectedstatic
 
-lily/.lily-cache/
+.pytest_cache
+.python-version
