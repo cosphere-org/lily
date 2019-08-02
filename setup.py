@@ -41,6 +41,7 @@ setup(
     url=config['repository'],
     version=config['version'],
     author='CoSphere Team',
+    author_email='contact@cosphere.org',
     install_requires=requirements,
     data_files=[(
         '',
@@ -49,6 +50,8 @@ setup(
             'README.md',
             '.lily/config.json',
             'lily/cli/base.makefile',
+            'lily/search/detector/data/language_codes.yaml',
+            'lily/search/detector/data/language_to_configuration_map.yaml',
         ],
     )],
     include_package_data=True,
