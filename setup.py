@@ -52,6 +52,7 @@ setup(
             'lily/cli/base.makefile',
             'lily/search/detector/data/language_codes.yaml',
             'lily/search/detector/data/language_to_configuration_map.yaml',
+            'lily/docs/renderers/markdown/base.md',
         ],
     )],
     include_package_data=True,
