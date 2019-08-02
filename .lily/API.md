@@ -27,22 +27,22 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": true
+                "is_private": false
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Itaque laborum fugit nulla id.",
+                "description": "Eum molestias molestiae ab tenetur vero.",
                 "domain": {
                     "@type": "domain",
-                    "id": "animi",
+                    "id": "facilis",
                     "name": "domain"
                 },
-                "title": "Accusamus dolore ullam incidunt consectetur corporis veniam."
+                "title": "Libero qui officia sequi mollitia reprehenderit."
             },
-            "method": "DELETE",
+            "method": "PUT",
             "path_conf": {
                 "path": "conf"
             },

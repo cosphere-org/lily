@@ -69,15 +69,15 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Accusamus dolore ullam incidunt consectetur corporis veniam.",
-                                "description": "Itaque laborum fugit nulla id.",
+                                "title": "Libero qui officia sequi mollitia reprehenderit.",
+                                "description": "Eum molestias molestiae ab tenetur vero.",
                                 "domain": {
-                                    "id": "animi",
+                                    "id": "facilis",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -87,7 +87,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
