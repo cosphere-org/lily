@@ -1,0 +1,16 @@
+{
+    "plan": [
+        [
+            "search",
+            "0002_add_ts_function_and_aggregate"
+        ]
+    ],
+    "dependencies": {
+        "search.0002_add_ts_function_and_aggregate": [
+            [
+                "search",
+                "0001_add_polish_language_support"
+            ]
+        ]
+    }
+}
