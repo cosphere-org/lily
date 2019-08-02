@@ -2,7 +2,7 @@
 
 import json
 import os.path
-from setuptools import setup
+from setuptools import setup, find_packages
 
 
 BASE_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -36,16 +36,17 @@ with open(os.path.join(BASE_DIR, '.lily', 'config.json')) as f:
 
 setup(
     name=config['name'],
-    packages=['lily'],
+    packages=find_packages(),
     description='Lily MicroService Framework for Humans',
     url=config['repository'],
     version=config['version'],
     author='CoSphere Team',
     install_requires=requirements,
     data_files=[(
-        'lily',
+        '',
         [
             'requirements.txt',
+            'README.md',
             '.lily/config.json',
             'lily/cli/base.makefile',
         ],
