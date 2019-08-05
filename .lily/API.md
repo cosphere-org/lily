@@ -8,22 +8,18 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?domain_id=PATHS HTTP/1.1
+GET /?version=2.1.3 HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
-    "@enums": [
-        {
-            "A": "X"
-        }
-    ],
+    "@enums": [],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "CREATE_HELLO": {
+        "UPDATE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -31,59 +27,22 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": false
+                "is_private": true
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Repellendus vel iure vel id numquam modi similique.",
+                "description": "Veritatis aperiam ullam suscipit modi.",
                 "domain": {
                     "@type": "domain",
-                    "id": "paths",
+                    "id": "expedita",
                     "name": "domain"
                 },
-                "title": "Soluta fugit harum praesentium cumque unde sint dolore."
+                "title": "Adipisci rerum doloribus at."
             },
             "method": "GET",
-            "path_conf": {
-                "path": "conf"
-            },
-            "schemas": {
-                "some": "schemas"
-            },
-            "source": {
-                "@type": "source",
-                "end_line": 15,
-                "filepath": "/tests/factory.py",
-                "start_line": 14
-            }
-        },
-        "DELETE_HELLO": {
-            "@type": "command",
-            "access": {
-                "@type": "access",
-                "access_list": [
-                    "ANY"
-                ],
-                "is_external": false,
-                "is_private": false
-            },
-            "examples": {
-                "some": "examples"
-            },
-            "meta": {
-                "@type": "meta",
-                "description": "Asperiores iusto vel quis possimus a sint rem soluta.",
-                "domain": {
-                    "@type": "domain",
-                    "id": "paths",
-                    "name": "domain"
-                },
-                "title": "Cumque cupiditate vitae id eaque natus blanditiis."
-            },
-            "method": "PUT",
             "path_conf": {
                 "path": "conf"
             },
@@ -103,7 +62,7 @@ Respone:
         "@type": "version_info",
         "available": [],
         "deployed": "2.5.6",
-        "displayed": "2.5.6"
+        "displayed": "2.1.3"
     }
 }
 ```
