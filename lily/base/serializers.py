@@ -142,6 +142,12 @@ class Serializer(drf_serializers.Serializer, EventFactory):
         # --
         # -- attach type meta info
         # --
+        # -- for `AbstractSerializer` do not attach any extra data they are
+        # -- here only for storing SubEntities without having their own
+        # -- interpretation
+        if isinstance(self, AbstractSerializer):
+            return body
+
         try:
             body['@type'] = self._type
 
@@ -156,6 +162,15 @@ class Serializer(drf_serializers.Serializer, EventFactory):
             body['@commands'] = commands
 
         return body
+
+
+class AbstractSerializer(Serializer):
+    """Store abstract entities.
+
+    Designed for storing only abstract entities without having it's
+    own meaning.
+
+    """
 
 
 class ModelSerializer(drf_serializers.ModelSerializer, Serializer):

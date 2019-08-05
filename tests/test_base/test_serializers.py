@@ -167,6 +167,17 @@ class EmptySerializerTestCase(TestCase):
         assert s.data == {'@type': 'empty'}
 
 
+class AbstractSerializerTestCase(TestCase):
+
+    def test_type_not_needed(self):
+
+        class AbstractCustomer(serializers.AbstractSerializer):
+
+            name = serializers.CharField()
+
+        assert AbstractCustomer({'name': 'Jack'}).data == {'name': 'Jack'}
+
+
 class ObjectSerializerTestCase(TestCase):
 
     def test__passes_everything(self):
