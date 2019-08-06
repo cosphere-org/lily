@@ -130,7 +130,7 @@ class InputTestCase(TestCase):
                 'user_id': 902,
             },
             'errors': {
-                'prices': ['A valid integer is required.'],
+                'prices': {0: ['A valid integer is required.']},
             },
         }
 
