@@ -56,7 +56,7 @@ class AngularRepo(Repo):
             span = version_match.span()
 
             api_version = config.version
-            next_version = f'API-{api_version}-CLIENT-{version}'
+            next_version = f'{api_version}-API-{version}-CLIENT'
 
         with open('package.json', 'w') as p:
             conf = conf.replace(
