@@ -107,9 +107,9 @@ class AngularRepoTestCase(TestCase):
         r = AngularRepo('origin')
         r.cd_to_repo()
 
-        assert r.upgrade_version(MockConfig()) == 'API-0.9.1-CLIENT-0.1.18'
+        assert r.upgrade_version(MockConfig()) == '0.9.1-API-0.1.18-CLIENT'
         with open('package.json') as f:
-            assert f.read() == '"version": "API-0.9.1-CLIENT-0.1.18"'
+            assert f.read() == '"version": "0.9.1-API-0.1.18-CLIENT"'
 
 
 class PathRuleTestCase(TestCase):
