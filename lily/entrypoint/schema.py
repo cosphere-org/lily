@@ -1,4 +1,5 @@
 
+from enum import Enum, unique
 import inspect
 import re
 import os
@@ -40,7 +41,9 @@ class ForbiddenFieldError(Exception):
     """Raise when schema field is forbidden."""
 
 
-class SERIALIZER_TYPES:  # noqa
+@unique
+class SerializerType(Enum):
+
     RESPONSE = 'RESPONSE'
 
     REQUEST_QUERY = 'REQUEST_QUERY'
@@ -52,7 +55,7 @@ class SERIALIZER_TYPES:  # noqa
 
 class SchemaRenderer:
 
-    def __init__(self, serializer):
+    def __init__(self, serializer, parser_type=None):
 
         # -- figure out with which type of Serializer or Parser we're
         # -- dealing with
@@ -63,13 +66,15 @@ class SchemaRenderer:
             instance = serializer
 
         if isinstance(instance, serializers.Serializer):
-            self.type = SERIALIZER_TYPES.RESPONSE
+            self.type = SerializerType.RESPONSE.value
 
-        elif isinstance(instance, parsers.BodyParser):
-            self.type = SERIALIZER_TYPES.REQUEST_BODY
+        elif (isinstance(instance, parsers.Parser) and
+                parser_type == parsers.ParserTypeEnum.BODY.value):
+            self.type = SerializerType.REQUEST_BODY.value
 
-        elif isinstance(instance, parsers.QueryParser):
-            self.type = SERIALIZER_TYPES.REQUEST_QUERY
+        elif (isinstance(instance, parsers.Parser) and
+                parser_type == parsers.ParserTypeEnum.QUERY.value):
+            self.type = SerializerType.REQUEST_QUERY.value
 
         else:
             self.type = None
@@ -117,8 +122,7 @@ class SchemaRenderer:
             # -- singleton nested serializer
             elif (
                     isinstance(field, serializers.Serializer) or
-                    isinstance(field, parsers.BodyParser) or
-                    isinstance(field, parsers.QueryParser)):
+                    isinstance(field, parsers.Parser)):
 
                 schema.add(
                     name=name,

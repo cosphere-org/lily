@@ -39,7 +39,7 @@ class EntryPointCommands(HTTPCommands):
 
         at__enums = serializers.ListField(child=serializers.DictField())
 
-    class QueryParser(parsers.QueryParser):
+    class QueryParser(parsers.Parser):
 
         commands = parsers.ListField(child=parsers.CharField(), default=None)
 

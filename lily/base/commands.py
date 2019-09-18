@@ -13,9 +13,10 @@ from . import name, parsers
 
 # FIXME: to be removed!!!!!
 # it's not needed any more!!!! --> to cosphere specific
+# it's still used in the game-service
 class S3UploadSignCommands(HTTPCommands):
 
-    class QueryParser(parsers.QueryParser):
+    class QueryParser(parsers.Parser):
 
         to_sign = parsers.CharField()
 

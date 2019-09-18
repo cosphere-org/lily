@@ -36,7 +36,7 @@ class Input(EventFactory):
 
     def parse_query(self, request):
 
-        parsed = self.query_parser(data=request.GET)
+        parsed = self.query_parser.as_query_parser(data=request.GET)
 
         if not parsed.is_valid():
             raise self.BrokenRequest(
@@ -55,7 +55,7 @@ class Input(EventFactory):
             raise self.BrokenRequest(
                 'BODY_JSON_DID_NOT_PARSE', context=request, is_critical=True)
 
-        parsed = self.body_parser(
+        parsed = self.body_parser.as_body_parser(
             data=data,
             context={
                 'request': request,
