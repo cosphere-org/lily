@@ -104,11 +104,11 @@ class QueryParserTestCase(TestCase):
         QueryParser.as_query_parser()
 
 
-class PageQueryParserTestCase(TestCase):
+class PageQueryParstCase(TestCase):
 
     def test_parse(self):
 
-        parser = parsers.PageQueryParser.as_query_parser(
+        parser = parsers.PageParser.as_query_parser(
             data={'offset': '11', 'limit': 456})
 
         assert parser.is_valid() is True
@@ -116,14 +116,14 @@ class PageQueryParserTestCase(TestCase):
 
     def test_parse__defaults(self):
 
-        parser = parsers.PageQueryParser.as_query_parser(data={})
+        parser = parsers.PageParser.as_query_parser(data={})
 
         assert parser.is_valid() is True
         assert parser.data == {'offset': 0, 'limit': 100}
 
     def test_parse__invalid(self):
 
-        parser = parsers.PageQueryParser.as_query_parser(
+        parser = parsers.PageParser.as_query_parser(
             data={'offset': 'HEY', 'limit': 'X'})
 
         assert parser.is_valid() is False
@@ -133,11 +133,11 @@ class PageQueryParserTestCase(TestCase):
         }
 
 
-class FullTextSearchQueryParserTestCase(TestCase):
+class FullTextSearchParserTestCase(TestCase):
 
     def test_parse(self):
 
-        parser = parsers.FullTextSearchQueryParser.as_query_parser(
+        parser = parsers.FullTextSearchParser.as_query_parser(
             data={'query': 'hello'})
 
         assert parser.is_valid() is True
@@ -145,7 +145,7 @@ class FullTextSearchQueryParserTestCase(TestCase):
 
     def test_parse__defaults(self):
 
-        parser = parsers.FullTextSearchQueryParser.as_query_parser(data={})
+        parser = parsers.FullTextSearchParser.as_query_parser(data={})
 
         assert parser.is_valid() is True
         assert parser.data == {'query': None}
