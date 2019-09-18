@@ -87,7 +87,7 @@ class HttpCommands(HTTPCommands):
 @FakeClient.fake_me
 class TestCommands(HTTPCommands):
 
-    class BodyParser(parsers.BodyParser):
+    class BodyParser(parsers.Parser):
 
         name = parsers.CharField()
 

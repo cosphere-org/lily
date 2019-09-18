@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/?domain_id=PATHS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -28,10 +28,47 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Deleniti aut dolorum earum corporis molestiae.",
-                                "description": "Omnis cum vel in dolorem perferendis consequatur.",
+                                "title": "Sint nemo cumque dolorum consequuntur.",
+                                "description": "Ea a debitis maiores ipsum ducimus fugit error.",
                                 "domain": {
-                                    "id": "aliquid",
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "end_line": 15,
+                                "@type": "source"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "method": "POST",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Sunt reiciendis assumenda quia amet eos cupiditate velit.",
+                                "description": "Repellat autem enim asperiores explicabo modi.",
+                                "domain": {
+                                    "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -60,7 +97,11 @@
                             "@type": "command"
                         }
                     },
-                    "@enums": [],
+                    "@enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }

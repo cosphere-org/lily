@@ -42,7 +42,7 @@ class InputTestCase(TestCase):
     # PARSE_QUERY
     #
     def test_parse_query__all_ok(self):
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
             title = parsers.CharField()
             prices = parsers.ListField(child=parsers.IntegerField())
 
@@ -57,11 +57,11 @@ class InputTestCase(TestCase):
         assert data == {'title': 'hi there', 'prices': [67, 89, 11]}
 
     def test_parse_query__multiple_parsers(self):
-        class AParser(parsers.QueryParser):
+        class AParser(parsers.Parser):
             title = parsers.CharField()
             prices = parsers.ListField(child=parsers.IntegerField())
 
-        class BParser(parsers.QueryParser):
+        class BParser(parsers.Parser):
             title = parsers.CharField()
             quantity = parsers.IntegerField()
 
@@ -86,7 +86,7 @@ class InputTestCase(TestCase):
         }
 
     def test_parse_query__all_missing(self):
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
             title = parsers.CharField()
             prices = parsers.ListField(child=parsers.IntegerField())
 
@@ -106,7 +106,7 @@ class InputTestCase(TestCase):
 
     def test_parse_query__event__query_did_not_validate(self):
 
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
             title = parsers.CharField()
 
             prices = parsers.ListField(child=parsers.IntegerField())
@@ -138,7 +138,7 @@ class InputTestCase(TestCase):
     # PARSE_BODY
     #
     def _prepare_body_parser(self):
-        class BodyParser(parsers.BodyParser):
+        class BodyParser(parsers.Parser):
             title = parsers.CharField()
             amount = parsers.IntegerField(max_value=19)
 

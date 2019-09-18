@@ -7,6 +7,7 @@ import sys
 
 from lily.conf import settings
 from lily.base.test import get_examples_filepath
+from lily.base import parsers
 from .base import BaseRenderer
 from .schema import SchemaRenderer
 
@@ -61,12 +62,19 @@ class CommandsRenderer(BaseRenderer):
 
             if input_.query_parser:
                 input_query_schema = (
-                    SchemaRenderer(input_.query_parser).render())
+                    SchemaRenderer(
+                        input_.query_parser,
+                        parser_type=parsers.ParserTypeEnum.QUERY.value
+                    ).render())
                 schemas['input_query'] = input_query_schema.serialize()
                 enums.extend(input_query_schema.enums)
 
             if input_.body_parser:
-                input_body_schema = SchemaRenderer(input_.body_parser).render()
+                input_body_schema = (
+                    SchemaRenderer(
+                        input_.body_parser,
+                        parser_type=parsers.ParserTypeEnum.BODY.value
+                    ).render())
                 schemas['input_body'] = input_body_schema.serialize()
                 enums.extend(input_body_schema.enums)
 

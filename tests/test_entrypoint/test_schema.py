@@ -75,14 +75,14 @@ class JSONSchemaSerializer(serializers.Serializer):
         return instance['owners']
 
 
-class HumanQueryParser(parsers.QueryParser):
+class HumanQueryParser(parsers.Parser):
 
     name = parsers.CharField(max_length=123, required=False)
 
     age = parsers.IntegerField(min_value=18)
 
 
-class HumanBodyParser(parsers.BodyParser):
+class HumanBodyParser(parsers.Parser):
 
     name = parsers.CharField(max_length=123, required=False)
 
@@ -192,7 +192,10 @@ class SchemaRendererTestCase(TestCase):
             Schema, 'get_repository_uri'
         ).return_value = 'http://hi.there#123'
 
-        assert SchemaRenderer(HumanBodyParser).render().serialize() == {
+        assert SchemaRenderer(
+            HumanBodyParser,
+            parser_type=parsers.ParserTypeEnum.BODY.value
+        ).render().serialize() == {
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -216,7 +219,10 @@ class SchemaRendererTestCase(TestCase):
             Schema, 'get_repository_uri'
         ).return_value = 'http://hi.there#123'
 
-        assert SchemaRenderer(HumanQueryParser).render().serialize() == {
+        assert SchemaRenderer(
+            HumanQueryParser,
+            parser_type=parsers.ParserTypeEnum.QUERY.value
+        ).render().serialize() == {
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',

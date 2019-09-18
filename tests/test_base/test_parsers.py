@@ -17,7 +17,7 @@ class RequestGet(dict):
 class QueryParserTestCase(TestCase):
 
     def test_init__boolean_field(self):
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
             is_ready = parsers.BooleanField()
 
         cases = [
@@ -31,13 +31,15 @@ class QueryParserTestCase(TestCase):
             (['F'], False),
         ]
         for input_value, expected in cases:
-            parser = QueryParser(data=RequestGet(is_ready=input_value))
+            parser = QueryParser.as_query_parser(
+                data=RequestGet(is_ready=input_value))
 
             assert parser.is_valid() is True
             assert parser.data == {'is_ready': expected}
 
     def test_init__list_boolean_field(self):
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
+
             is_ready = parsers.ListField(child=parsers.BooleanField())
 
         cases = [
@@ -48,13 +50,14 @@ class QueryParserTestCase(TestCase):
             (['T', 'F', 'f'], [True, False, False]),
         ]
         for input_value, expected in cases:
-            parser = QueryParser(data=RequestGet(is_ready=input_value))
+            parser = QueryParser.as_query_parser(
+                data=RequestGet(is_ready=input_value))
 
             assert parser.is_valid() is True
             assert parser.data == {'is_ready': expected}
 
     def test_init__number_fields(self):
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
             price = parsers.IntegerField(default=12)
             value = parsers.FloatField(default=18.5)
 
@@ -67,14 +70,15 @@ class QueryParserTestCase(TestCase):
         for input_value, expected in cases:
             price, value = input_value
             expected_price, expected_value = expected
-            parser = QueryParser(data=RequestGet(price=price, value=value))
+            parser = QueryParser.as_query_parser(
+                data=RequestGet(price=price, value=value))
 
             assert parser.is_valid() is True
             assert parser.data == {
                 'price': expected_price, 'value': expected_value}
 
     def test_init__list_number_fields(self):
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
             price = parsers.ListField(child=parsers.IntegerField(default=12))
             value = parsers.ListField(child=parsers.FloatField(default=18.5))
 
@@ -85,25 +89,26 @@ class QueryParserTestCase(TestCase):
         for input_value, expected in cases:
             price, value = input_value
             expected_price, expected_value = expected
-            parser = QueryParser(data=RequestGet(price=price, value=value))
+            parser = QueryParser.as_query_parser(
+                data=RequestGet(price=price, value=value))
 
             assert parser.is_valid() is True
             assert parser.data == {
                 'price': expected_price, 'value': expected_value}
 
     def test_init__data_is_optional(self):
-        class QueryParser(parsers.QueryParser):
+        class QueryParser(parsers.Parser):
             is_ready = parsers.BooleanField()
 
         # -- no error is raised
-        QueryParser()
+        QueryParser.as_query_parser()
 
 
 class PageQueryParserTestCase(TestCase):
 
     def test_parse(self):
 
-        parser = parsers.PageQueryParser(
+        parser = parsers.PageQueryParser.as_query_parser(
             data={'offset': '11', 'limit': 456})
 
         assert parser.is_valid() is True
@@ -111,14 +116,15 @@ class PageQueryParserTestCase(TestCase):
 
     def test_parse__defaults(self):
 
-        parser = parsers.PageQueryParser(data={})
+        parser = parsers.PageQueryParser.as_query_parser(data={})
 
         assert parser.is_valid() is True
         assert parser.data == {'offset': 0, 'limit': 100}
 
     def test_parse__invalid(self):
 
-        parser = parsers.PageQueryParser(data={'offset': 'HEY', 'limit': 'X'})
+        parser = parsers.PageQueryParser.as_query_parser(
+            data={'offset': 'HEY', 'limit': 'X'})
 
         assert parser.is_valid() is False
         assert parser.errors == {
@@ -131,14 +137,15 @@ class FullTextSearchQueryParserTestCase(TestCase):
 
     def test_parse(self):
 
-        parser = parsers.FullTextSearchQueryParser(data={'query': 'hello'})
+        parser = parsers.FullTextSearchQueryParser.as_query_parser(
+            data={'query': 'hello'})
 
         assert parser.is_valid() is True
         assert parser.data == {'query': 'hello'}
 
     def test_parse__defaults(self):
 
-        parser = parsers.FullTextSearchQueryParser(data={})
+        parser = parsers.FullTextSearchQueryParser.as_query_parser(data={})
 
         assert parser.is_valid() is True
         assert parser.data == {'query': None}
