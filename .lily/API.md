@@ -34,15 +34,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Omnis cum vel in dolorem perferendis consequatur.",
+                "description": "A omnis voluptatibus dicta dolores.",
                 "domain": {
                     "@type": "domain",
-                    "id": "aliquid",
+                    "id": "unde",
                     "name": "domain"
                 },
-                "title": "Deleniti aut dolorum earum corporis molestiae."
+                "title": "Minima fugiat animi impedit."
             },
-            "method": "GET",
+            "method": "PUT",
             "path_conf": {
                 "path": "conf"
             },
