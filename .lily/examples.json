@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/?domain_id=PATHS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -28,10 +28,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Minima fugiat animi impedit.",
-                                "description": "A omnis voluptatibus dicta dolores.",
+                                "title": "Distinctio tempore culpa quibusdam natus enim sint eum.",
+                                "description": "Quidem molestias explicabo non maiores.",
                                 "domain": {
-                                    "id": "unde",
+                                    "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -41,7 +41,44 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "end_line": 15,
+                                "@type": "source"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "method": "GET",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Assumenda ex quod officia.",
+                                "description": "Exercitationem veritatis quos neque nostrum natus.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -60,7 +97,11 @@
                             "@type": "command"
                         }
                     },
-                    "@enums": [],
+                    "@enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }

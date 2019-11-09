@@ -102,12 +102,12 @@ class RendererTestCase(TestCase):
             (
                 'task',
                 '0001_add_model',
-                'task.migrations.0001_add_model',
+                'src.task.migrations.0001_add_model',
             ),
             (
                 'auth',
                 '0001_add_column',
-                'auth.migrations.0001_add_column',
+                'src.auth.migrations.0001_add_column',
             ),
         ]
 
@@ -124,12 +124,12 @@ class RendererTestCase(TestCase):
             (
                 'task',
                 '0002_add_column',
-                'task.migrations.0002_add_column',
+                'src.task.migrations.0002_add_column',
             ),
             (
                 'auth',
                 '0003_rename_column',
-                'auth.migrations.0003_rename_column',
+                'src.auth.migrations.0003_rename_column',
             ),
         ]
 

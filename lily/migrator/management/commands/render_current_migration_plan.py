@@ -39,7 +39,6 @@ class Renderer:
             module = re.sub(r'(.py$|\.\/)', '', module)
             module = re.sub(r'\/', '.', module)
             module_parts = module.split('.')
-            module = '.'.join(module_parts[1:])
 
             app_name, migration = module_parts[-3], module_parts[-1]
 
