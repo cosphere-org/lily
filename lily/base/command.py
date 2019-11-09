@@ -240,8 +240,7 @@ def command(
                 model_name = str(e).split()[0].upper()
                 e = event.DoesNotExist(
                     'COULD_NOT_FIND_{}'.format(model_name),
-                    context=request,
-                    is_critical=True)
+                    context=request)
                 return e.response_class(e.data)
 
             except MultipleObjectsReturned as e:
