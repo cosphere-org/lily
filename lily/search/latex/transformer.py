@@ -674,7 +674,7 @@ def transform(text, language):
             raw_formula,
             _transform_formula(formula_inner, language))
 
-    return text
+    return re.sub(r'\s+', ' ', text.strip())
 
 
 def _transform_formula(formula, language):

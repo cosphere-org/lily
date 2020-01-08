@@ -94,6 +94,7 @@ class SchemaRenderer:
         }
 
     def render(self):
+
         return self.serializer_to_schema(self.serializer)
 
     def serializer_to_schema(self, serializer):
@@ -252,6 +253,7 @@ class SchemaRenderer:
                 serializers.FloatField,
                 serializers.IntegerField,
                 serializers.JSONField,
+                serializers.JSONSchemaField,
                 serializers.URLField,
                 serializers.ReadOnlyField,
                 serializers.UUIDField,
@@ -264,14 +266,14 @@ class SchemaRenderer:
         def is_field(_types):
             return isinstance(field, _types)
 
-        if is_field((serializers.BooleanField,)):
+        if is_field(serializers.BooleanField):
             out = {
                 'type': 'boolean',
             }
 
         # FIXME: figure out how to fetch the type hidden behind ReadOnly
         # Field!!!!!!!!!!!!!
-        elif is_field((serializers.ReadOnlyField,)):
+        elif is_field(serializers.ReadOnlyField):
             out = {
                 'type': 'any',
             }
@@ -384,7 +386,7 @@ class SchemaRenderer:
                 'type': 'object',
             }
 
-        elif is_field(serializers.JSONField):
+        elif is_field((serializers.JSONField, serializers.JSONSchemaField)):
 
             out = {
                 'type': 'any',
@@ -393,8 +395,16 @@ class SchemaRenderer:
             # -- search for the 1st JSONSchemaValidator validator
             # -- the should be always at most one.
             for validator in field.validators:
-                if isinstance(validator, JSONSchemaValidator):
+                validator_classes = (
+                    JSONSchemaValidator,
+                    serializers.JSONSchemaValidator,
+                )
+                if isinstance(validator, validator_classes):
                     out = validator.schema
+                    if 'schemas' in out:
+                        out = {
+                            'oneOf': out['oneOf']
+                        }
 
         return out, enums
 

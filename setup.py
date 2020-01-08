@@ -53,6 +53,7 @@ setup(
             'lily/search/detector/data/language_codes.yaml',
             'lily/search/detector/data/language_to_configuration_map.yaml',
             'lily/docs/renderers/markdown/base.md',
+            'lily/search/stopwords/pl.json',
         ],
     )],
     include_package_data=True,

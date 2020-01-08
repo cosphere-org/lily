@@ -4,7 +4,7 @@ from .rank import Rank, RankCD  # noqa
 from .vector import (  # noqa
     StoredVector,
     OnTheFlyVector,
-    to_tsvector,
+    TextVector,
     concatenate_tsvectors,
 )
 from .detector import detector  # noqa

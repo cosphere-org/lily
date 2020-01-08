@@ -23,13 +23,13 @@
                     "name": "test",
                     "commands": {
                         "CREATE_HELLO": {
-                            "method": "PUT",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Distinctio tempore culpa quibusdam natus enim sint eum.",
-                                "description": "Quidem molestias explicabo non maiores.",
+                                "title": "Optio quaerat vero ullam quas.",
+                                "description": "Voluptatibus nostrum facere iste nesciunt veritatis aliquid aspernatur.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
@@ -41,7 +41,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -60,13 +60,13 @@
                             "@type": "command"
                         },
                         "DELETE_HELLO": {
-                            "method": "GET",
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Assumenda ex quod officia.",
-                                "description": "Exercitationem veritatis quos neque nostrum natus.",
+                                "title": "Distinctio reiciendis illum architecto ducimus.",
+                                "description": "Rem reprehenderit nam fugiat.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
@@ -78,7 +78,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -129,7 +129,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -141,7 +141,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",

@@ -1,10 +1,11 @@
 
-import re
+# import re
 
 from django.contrib.postgres.search import SearchQuery
 
 from .detector import detector
-from .latex.transformer import transform
+# from .latex.transformer import transform
+from .vector import TextVector
 from .constants import HASHTAG_ESCAPE_SEQUENCE, HASHTAG_PATTERN
 
 
@@ -25,13 +26,14 @@ class Query(SearchQuery):
         super(Query, self).__init__(value, config=language_conf)
 
     def parse_value(self, text, language_conf):
-        table = str.maketrans(
-            self.forbidden_chars, len(self.forbidden_chars) * " ")
 
-        text = transform(text, language_conf)
-        text = text.translate(table).strip()
+        # table = str.maketrans(
+        #     self.forbidden_chars, len(self.forbidden_chars) * " ")
 
-        # fetch all hashtags
+        # text = transform(text, language_conf)
+        # text = text.translate(table).strip()
+
+        # # fetch all hashtags
         hashtags = []
 
         def remove_hashtag(match):
@@ -41,12 +43,13 @@ class Query(SearchQuery):
             return match.group('prefix') + ' '
 
         tokens_only_text = HASHTAG_PATTERN.sub(remove_hashtag, text)
+        tokens = TextVector().parse_to_list(language_conf, tokens_only_text)
 
-        if not tokens_only_text.strip():
-            tokens = []
+        # if not tokens_only_text.strip():
+        #     tokens = []
 
-        else:
-            tokens = re.split(r'\s+', tokens_only_text.strip())
+        # else:
+        #     tokens = re.split(r'\s+', tokens_only_text.strip())
 
         if hashtags and tokens:
             return '{hashtags} & ({tokens})'.format(

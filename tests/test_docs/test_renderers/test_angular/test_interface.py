@@ -660,7 +660,95 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 13 - bulk read response
+        # -- case 13 - const types
+        (
+            {
+                'required': ['type', 'age'],
+                'type': 'object',
+                'properties': {
+                    'type': {
+                        'type': 'string',
+                        'pattern': '^MAN$',
+                        'const': 'MAN',
+                    },
+                    'age': {
+                        'type': 'number',
+                    }
+                },
+            },
+            None,
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponse {
+                    age: number;
+                    type: "MAN";
+                }
+
+            ''', 0),
+            [],
+        ),
+
+        # -- case 14 - const and oneOf
+        (
+            {
+                'required': ['person'],
+                'type': 'object',
+                'properties': {
+                    'person': {
+                        'oneOf': [
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': {
+                                        'type': 'string',
+                                        'pattern': '^DOG$',
+                                        'const': 'DOG',
+                                    },
+                                    'age': {
+                                        'type': 'number',
+                                    }
+                                }
+                            },
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': {
+                                        'type': 'string',
+                                        'pattern': '^CAT$',
+                                        'const': 'CAT',
+                                    },
+                                    'name': {
+                                        'type': 'string',
+                                    }
+                                }
+                            },
+                        ],
+                    }
+                }
+            },
+            None,
+            normalize_indentation('''
+                /**
+                 * http://here
+                 */
+
+                export interface ReadCardsResponse {
+                    person: {
+                        age?: number;
+                        type?: "DOG";
+                    } | {
+                        name?: string;
+                        type?: "CAT";
+                    };
+                }
+            ''', 0),
+            [],
+        ),
+
+        # -- case 15 - bulk read response
         (
             {
                 'type': 'object',
@@ -701,7 +789,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 14 - bulk read simple response - integer
+        # -- case 16 - bulk read simple response - integer
         (
             {
                 'type': 'object',
@@ -732,7 +820,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 15 - bulk read simple response - boolean
+        # -- case 17 - bulk read simple response - boolean
         (
             {
                 'type': 'object',
@@ -763,7 +851,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 16 - bulk read simple response - string
+        # -- case 18 - bulk read simple response - string
         (
             {
                 'type': 'object',
@@ -794,7 +882,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 17 - bulk read response
+        # -- case 19 - bulk read response
         (
             {
                 'type': 'object',
@@ -820,7 +908,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 18 - one of - null or string
+        # -- casecase 20 - one of - null or string
         (
             {
                 'type': 'object',
@@ -846,7 +934,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 19 - one of - null or object
+        # -- case 21 - one of - null or object
         (
             {
                 'type': 'object',
@@ -886,7 +974,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 20 - one of - null or object or string or other object
+        # -- case 22 - one of - null or object or string or other object
         (
             {
                 'type': 'object',
@@ -941,7 +1029,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 21 - one of - null or complex object
+        # -- case 23 - one of - null or complex object
         (
             {
                 'type': 'object',
@@ -1013,7 +1101,7 @@ class InterfaceTestCase(TestCase):
             ''', 0),
             [Enum('Language', ['fr', 'is', 'nb', 'en'])],
         ),
-    ], ids=list([str(i) for i in range(22)]))
+    ], ids=list([str(i) for i in range(24)]))
 def test_render(schema, bulk_read_field, expected_rendered, expected_enums):
 
     rendered, enums = Interface(
