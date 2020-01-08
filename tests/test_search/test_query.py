@@ -6,35 +6,36 @@ import pytest
 import search
 
 
+@pytest.mark.django_db
 @pytest.mark.parametrize("value, expected", [
 
     # case 0 - single word input - no transformation required
     ('hi', 'hi'),
 
     # case 1 - two words input should be separated by | operator
-    ('hi all', 'hi | all'),
+    ('hi all', 'all | hi'),
 
     # case 2 - many words input should be separated by | operator
-    ('hi all how are you doing', 'hi | all | how | are | you | doing'),
+    ('hi all how are you doing', 'all | are | doing | hi | how | you'),
 
     # case 3 - all punctuation characters are removed and used as split pivotal
     # points
     (
         'hi <>.all||&how&^%%are$@\' you !"|\\/ doing',
-        'hi | all | how | are | you | doing'
+        'all | are | doing | hi | how | you'
     ),
 
     # case 4 - hashtags are not removed (hash character is replaced) and
     # presence of hashtags is treated as request for filtering
     # single hashtag
-    ('#universe is crazy!', 'hhuniverse & (is | crazy)'),
+    ('#universe is crazy!', 'hhuniverse & (crazy | is)'),
 
     # case 5 - hashtags are not removed (hash character is replaced) and
     # presence of hashtags is treated as request for filtering -
     # many hashtags
     (
         '#universe is #crazy and #beautiful',
-        'hhuniverse & hhcrazy & hhbeautiful & (is | and)',
+        'hhuniverse & hhcrazy & hhbeautiful & (and | is)',
     ),
 
     # case 6 - only hashtags
@@ -52,20 +53,22 @@ def test_query__parse_value(value, expected, mocker):
     assert expected == q.parse_value(value, 'simple')
 
 
+@pytest.mark.django_db
 @pytest.mark.parametrize("value, language_conf, expected", [
 
     # case 0 - with auto language detection and latex - pl
     (
         r'witam $$ 2 * x = \\pi $$',
         'polish',
-        r'witam | 2 | razy | mnożone | przez | x | równa | się | liczba | pi',
+        '2 | liczba | mnozone | mnozyc | mnożyć | pi | raz | rowna | '
+        'rownac | rowny | równać | równy | witac | witać | x',
     ),
 
     # case 1 - with auto language detection and latex - en
     (
         r'hi there $$ 2 * x = \\pi $$',
         'english',
-        r'hi | there | 2 | times | x | equals | to | number | pi',
+        '2 | equal | hi | number | pi | time | x',
     ),
 
     # case 2 - with auto language detection and latex - unsupported language
@@ -73,7 +76,7 @@ def test_query__parse_value(value, expected, mocker):
     (
         r'hi there $$ 2 * x = \\pi $$',
         'french',
-        r'hi | there | 2 | times | x | equals | to | number | pi',
+        '2 | equal | hi | numb | pi | ther | tim | to | x',
     ),
 
 ], ids=['0', '1', '2'])
@@ -89,6 +92,7 @@ def test_query__get_transformed_value__with_latex(
     assert expected == q.parse_value(value, language_conf)
 
 
+@pytest.mark.django_db
 def test_query__to_sql__with_config(mocker):
     mocker.patch(
         'search.query.detector.detect_db_conf'
@@ -104,6 +108,7 @@ def test_query__to_sql__with_config(mocker):
     assert params == ['a', 'b', 'hi | there']
 
 
+@pytest.mark.django_db
 def test_query__auto_detects_language(mocker):
     mocker.patch(
         'search.query.detector.detect_db_conf'

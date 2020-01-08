@@ -9,14 +9,18 @@ from django.core.exceptions import ValidationError
 import pytest
 
 from lily.base.models import (
+    array,
+    boolean,
+    const,
+    enum,
+    EnumChoiceField,
     ImmutableModel,
     JSONSchemaField,
-    ValidatingModel,
-    EnumChoiceField,
-    enum,
-    array,
+    multischema,
+    number,
     object,
     string,
+    ValidatingModel,
 )
 
 
@@ -100,30 +104,36 @@ class ImmutableModelTestCase(TestCase):
 
 class JSONModel(fake_models.FakeModel):
 
-    SCHEMA = {
-        '$schema': 'http://json-schema.org/draft-04/schema#',
-        'type': 'array',
-        'minItems': 1,
-        'items': {
-            'type': 'object',
-            'properties': {
-                'answer': {
-                    'type': 'string',
-                },
-                'correct': {
-                    'type': 'boolean',
-                },
-            },
-            'required': ['answer', 'correct'],
-        },
-    }
+    answers = JSONSchemaField(schema=array(
+        object(
+            answer=string(),
+            correct=boolean(),
+            required=['answer', 'correct'])))
 
-    answers = JSONSchemaField(schema=SCHEMA)
+
+class JSONMultiSchemaModel(fake_models.FakeModel):
+
+    entity = JSONSchemaField(schema=multischema(
+        {
+            'PERSON': object(
+                type=const('PERSON'),
+                name=string(),
+                required=['type', 'name']),
+            'ANIMAL': object(
+                type=const('ANIMAL'),
+                age=number(),
+                required=['type', 'age'])
+        },
+        by_field='type'))
 
 
 @JSONModel.fake_me
+@JSONMultiSchemaModel.fake_me
 class JSONSchemaFieldTestCase(TestCase):
 
+    #
+    # JSONModel
+    #
     def test_valid_model(self):
 
         m = JSONModel(answers=[
@@ -166,6 +176,76 @@ class JSONSchemaFieldTestCase(TestCase):
         assert error.message == (
             "JSON did not validate. "
             "PATH: '1' REASON: 'answer' is a required property"
+        )
+
+    #
+    # JSONMultiSchemaModel
+    #
+    def test_valid_model__multischema(self):
+
+        # -- schema PERSON
+        m = JSONMultiSchemaModel(entity={
+            'type': 'PERSON',
+            'name': 'Roger',
+        })
+        m.save()
+
+        assert m.entity == {
+            'type': 'PERSON',
+            'name': 'Roger',
+        }
+
+        # -- schema ANIMAL
+        m = JSONMultiSchemaModel(entity={
+            'type': 'ANIMAL',
+            'age': 45,
+        })
+        m.save()
+
+        assert m.entity == {
+            'type': 'ANIMAL',
+            'age': 45,
+        }
+
+    def test_invalid_model__multischema__missing_schema(self):
+
+        with pytest.raises(ValidationError) as e:
+            JSONMultiSchemaModel(entity={
+                'type': 'ALIEN',
+                'age': 45,
+            }).clean_fields()
+
+        error = e.value.error_dict['entity'][0]
+        assert error.message == (
+            "JSON did not validate. PATH: 'type' REASON: 'ALIEN' is "
+            "not one of ['ANIMAL', 'PERSON']"
+        )
+
+    def test_invalid_model__multischema(self):
+
+        # -- schema PERSON
+        with pytest.raises(ValidationError) as e:
+            JSONMultiSchemaModel(entity={
+                'type': 'PERSON',
+            }).clean_fields()
+
+        error = e.value.error_dict['entity'][0]
+        assert error.message == (
+            "JSON did not validate. PATH: '.' REASON: 'name' is a "
+            "required property"
+        )
+
+        # -- schema ANIMAL
+        with pytest.raises(ValidationError) as e:
+            JSONMultiSchemaModel(entity={
+                'type': 'ANIMAL',
+                'age': 'WHAT',
+            }).clean_fields()
+
+        error = e.value.error_dict['entity'][0]
+        assert error.message == (
+            "JSON did not validate. PATH: 'age' REASON: 'WHAT' is not of "
+            "type 'number'"
         )
 
 
@@ -217,6 +297,7 @@ class ValidatingEntityWithJSON(fake_models.FakeModel, ValidatingModel):
     tasks = JSONSchemaField(
         schema=array(
             object(
+                type=const('TASK'),
                 name=string())))
 
     def clean(self):
@@ -278,8 +359,24 @@ class ValidatingModelTestCase(TestCase):
     def test_schema_validation_when_ok_clean_is_called(self):
 
         with pytest.raises(ValidationError) as e:
-            ValidatingEntityWithJSON.objects.create(tasks=[{'name': 'hey'}])
+            ValidatingEntityWithJSON.objects.create(tasks=[
+                {'name': 'hey', 'type': 'TASK'},
+            ])
 
         assert e.value.message_dict == {
             '__all__': ['at least 2 unique task needed'],
+        }
+
+    def test_schema_validation_when_const_is_broken(self):
+
+        with pytest.raises(ValidationError) as e:
+            ValidatingEntityWithJSON.objects.create(tasks=[
+                {'name': 'hey', 'type': 'TASKY'},
+            ])
+
+        assert e.value.message_dict == {
+            'tasks': [
+                "JSON did not validate. PATH: '0.type' REASON: 'TASKY' "
+                "does not match '^TASK$'",
+            ],
         }

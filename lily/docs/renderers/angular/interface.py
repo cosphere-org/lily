@@ -73,6 +73,10 @@ class Interface:
                 return 'boolean'
 
             elif _type == 'string':
+                if 'const' in schema:
+                    const = schema['const']
+                    return f'"{const}"'
+
                 return 'string'
 
             elif _type == 'any':

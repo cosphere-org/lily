@@ -4,6 +4,10 @@ import os
 from copy import copy, deepcopy
 
 from rest_framework import serializers as drf_serializers
+from jsonschema import (
+    validate as json_validate,
+    ValidationError as JsonValidationError,
+)
 from rest_framework.serializers import (  # noqa
     BooleanField,
     CharField,
@@ -227,3 +231,53 @@ class CommandSerializer(Serializer):
     query = DictField(required=False)
 
     result = DictField(required=False)
+
+
+class JSONSchemaValidator:
+
+    def __init__(self, schema):
+        self.schema = schema
+
+    def __call__(self, value):
+
+        # -- multischema case
+        if 'schemas' in self.schema:
+            from .models import object, enum
+
+            by_field = self.schema['by_field']
+            schemas = self.schema['schemas']
+            by_field_values = sorted(schemas.keys())
+
+            self.validate_against_schema(
+                object(**{by_field: enum(*by_field_values)}),
+                {by_field: value[by_field]})
+
+            for schema_key, schema in schemas.items():
+                if value[by_field] == schema_key:
+                    self.validate_against_schema(schema, value)
+
+        # -- single schema case
+        else:
+            self.validate_against_schema(self.schema, value)
+
+    def validate_against_schema(self, schema, value):
+        try:
+            json_validate(value, schema)
+
+        except JsonValidationError as e:
+            path = '.'.join([str(p) for p in e.path]) or '.'
+            raise ValidationError(
+                f"JSON did not validate. PATH: '{path}' REASON: {e.message}"
+            )
+
+
+class JSONSchemaField(JSONField):
+    def __init__(self, *args, **kwargs):
+        try:
+            schema = kwargs.pop('schema')
+
+        except KeyError:
+            schema = {}
+
+        super(JSONSchemaField, self).__init__(*args, **kwargs)
+        self.validators.insert(0, JSONSchemaValidator(schema=schema))

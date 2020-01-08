@@ -78,8 +78,28 @@ class JSONSchemaValidator:
         self.schema = schema
 
     def __call__(self, value):
+
+        # -- multischema case
+        if 'schemas' in self.schema:
+            by_field = self.schema['by_field']
+            schemas = self.schema['schemas']
+            by_field_values = sorted(schemas.keys())
+
+            self.validate_against_schema(
+                object(**{by_field: enum(*by_field_values)}),
+                {by_field: value[by_field]})
+
+            for schema_key, schema in schemas.items():
+                if value[by_field] == schema_key:
+                    self.validate_against_schema(schema, value)
+
+        # -- single schema case
+        else:
+            self.validate_against_schema(self.schema, value)
+
+    def validate_against_schema(self, schema, value):
         try:
-            json_validate(value, self.schema)
+            json_validate(value, schema)
 
         except JsonValidationError as e:
             path = '.'.join([str(p) for p in e.path]) or '.'
@@ -178,6 +198,14 @@ def string(
     return schema
 
 
+def const(value):
+    return {
+        'type': 'string',
+        'const': value,
+        'pattern': f'^{value}$'
+    }
+
+
 def number(
         multipleOf=None,  # noqa
         minimum=None,
@@ -266,4 +294,12 @@ def array(items, extra=None):
         'type': 'array',
         'items': items,
         **extra,
+    }
+
+
+def multischema(schemas, by_field):
+    return {
+        'schemas': schemas,
+        'by_field': by_field,
+        'oneOf': list(schemas.values()),
     }

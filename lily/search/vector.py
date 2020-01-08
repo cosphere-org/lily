@@ -1,4 +1,7 @@
 
+import re
+from copy import deepcopy
+
 from django.contrib.postgres.search import (
     SearchVector,
     SearchVectorCombinable,
@@ -6,55 +9,205 @@ from django.contrib.postgres.search import (
 )
 from django.db import connection
 from trans import trans
+import hunspell
 
 from .latex.transformer import transform as transform_latex
 from .constants import HASHTAG_ESCAPE_SEQUENCE, HASHTAG_PATTERN
+from .stopwords import stopwords_filter
 
 
-def to_tsvector(conf, text, weight=None):
-    if text is None:
-        return text
+class TextVector:
 
-    def replace_hashtag(match):
+    hobj_pl = hunspell.HunSpell(
+        '/usr/share/hunspell/pl_PL.dic',
+        '/usr/share/hunspell/pl_PL.aff')
 
-        return "{prefix}{escape_seq}{text}".format(
-            prefix=match.group('prefix'),
-            escape_seq=HASHTAG_ESCAPE_SEQUENCE,
-            text=match.group('text'))
+    def parse_to_tsvector(self, conf, text, weight=None):
 
-    text = HASHTAG_PATTERN.sub(replace_hashtag, text)
-    text = transform_latex(text, conf)
+        stems = self.parse(conf, text, weight)
+        return self.to_tsvector(stems)
 
-    with connection.cursor() as c:
-        # deal with accents
-        c.execute(
-            "SELECT token FROM ts_debug(%s, %s) WHERE alias != 'blank'",
-            [conf, text])
-        tokens = [t[0] for t in c.fetchall()]
+    def parse_to_list(self, conf, text, weight=None):
 
-        escaped_tsvector_part = ''
-        if tokens:
-            for i, token in enumerate(tokens):
-                escaped_token = trans(token.lower())
-                if escaped_token != token:
-                    escaped_tsvector_part += " '{token}':{position}".format(
-                        token=escaped_token,
-                        position=i + 1)
+        stems = self.parse(conf, text, weight)
+        return sorted(stems.keys())
 
-        if not weight:
-            c.execute("SELECT to_tsvector(%s, %s)", [conf, text])
+    def parse(self, conf, text, weight=None):
+        if text is None or not text.strip():
+            return {}
+
+        # -- transformers
+        text = text.strip()
+        text = self.transform_hashtags(text)
+        text = self.transform_latex(conf, text)
+
+        # -- tokens
+        tokens = self.tokenize(conf, text)
+
+        # -- stems
+        stems = {}
+        stems = self.augument_with_stems(conf, text, weight, stems, tokens)
+        stems = self.augument_with_unaccents(conf, weight, stems, tokens)
+
+        return stems
+
+    #
+    # HASHTAGS
+    #
+    def transform_hashtags(self, text):
+        def replace_hashtag(match):
+
+            return "{prefix}{escape_seq}{text}".format(
+                prefix=match.group('prefix'),
+                escape_seq=HASHTAG_ESCAPE_SEQUENCE,
+                text=match.group('text'))
+
+        return HASHTAG_PATTERN.sub(replace_hashtag, text)
+
+    #
+    # LATEX
+    #
+    def transform_latex(self, conf, text):
+        return transform_latex(text, conf)
+
+    #
+    # TOKENIZE
+    #
+    def tokenize(self, conf, text):
+        with connection.cursor() as c:
+            # deal with accents
+            c.execute(
+                "SELECT token FROM ts_debug(%s, %s) WHERE alias != 'blank'",
+                [conf, text])
+
+            tokens = [
+                (t[0], i + 1)
+                for i, t in enumerate(c.fetchall())]
+
+        return [
+            (token, position)
+            for token, position in tokens
+            if not stopwords_filter.is_stopword(conf, token)
+        ]
+
+    #
+    # UNACCENTS
+    #
+    def augument_with_unaccents(self, conf, weight, stems, tokens):
+
+        # -- unaccent original tokens
+        for token, position in tokens:
+
+            token = token.lower()
+            unaccented_token = trans(token)
+            if unaccented_token != token:
+                stems.setdefault(unaccented_token, set())
+                stems[unaccented_token] |= set([
+                    self.get_position(position, weight)
+                ])
+
+        # -- unaccent stems
+        for stem, positions in deepcopy(stems).items():
+
+            stem = stem.lower()
+            unaccented_stem = trans(stem)
+            if unaccented_stem != stem:
+                stems.setdefault(unaccented_stem, set())
+                stems[unaccented_stem] |= positions
+
+        return stems
+
+    #
+    # STEMS
+    #
+    def augument_with_stems(self, conf, text, weight, stems, tokens):
+
+        if conf == 'polish':
+            return self._augument_with_stems_polish(
+                conf, weight, stems, tokens)
 
         else:
-            c.execute(
-                "SELECT setweight(to_tsvector(%s, %s), %s)",
-                [conf, text, weight])
+            return self._augument_with_stems_generic(conf, text, weight, stems)
 
-        tsvector = c.fetchone()[0]
+    def _augument_with_stems_polish(self, conf, weight, stems, tokens):
 
-        tsvector += escaped_tsvector_part
-        return tsvector
+        if conf == 'polish':
+            for token, position in tokens:
+                token_stems = self._get_polish_stems(token)
+                for stem in token_stems:
+                    stems.setdefault(stem, set())
+                    stems[stem].add(self.get_position(position, weight))
+
+        return stems
+
+    def _get_polish_stems(self, token):
+        token_stems = self.hobj_pl.stem(token)
+        stems = []
+
+        if token_stems:
+            for stem in token_stems:
+                stem = stem.decode(self.hobj_pl.get_dic_encoding())
+                stems.append(stem.lower())
+
+        else:
+            stems.append(token.lower())
+
+        return stems
+
+    def _augument_with_stems_generic(self, conf, text, weight, stems):
+        with connection.cursor() as c:
+            if not weight:
+                c.execute("SELECT to_tsvector(%s, %s)", [conf, text])
+
+            else:
+                c.execute(
+                    "SELECT setweight(to_tsvector(%s, %s), %s)",
+                    [conf, text, weight])
+
+            tsstems = self.from_tsvestor(c.fetchone()[0])
+
+        for stem, positions in tsstems.items():
+            stems.setdefault(stem, set())
+            stems[stem] = stems[stem] | positions
+
+        return stems
+
+    #
+    # GENERAL
+    #
+    def get_position(self, i, weight):
+        if weight:
+            return f'{i}{weight}'
+
+        else:
+            return f'{i}'
+
+    def from_tsvestor(self, tsvector):
+        stems = {}
+        for stem_pos in tsvector.split():
+            stem, positions = stem_pos.split(':')
+
+            stem = stem.strip()
+            stem = re.sub(r"^'", '', stem)
+            stem = re.sub(r"'$", '', stem)
+
+            stems[stem] = set(positions.split(','))
+
+        return stems
+
+    def to_tsvector(self, stems):
+        def join_positions(x):
+            return ','.join([str(c) for c in x])
+
+        return ' '.join([
+            f"'{stem}':{join_positions(positions)}"
+            for stem, positions in stems.items()
+        ])
 
 
+#
+# HELPERS
+#
 def _concatenate_tsvectors(v1, v2):
 
     with connection.cursor() as c:

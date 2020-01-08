@@ -9,7 +9,15 @@ from lily_assistant.config import Config
 
 from lily.base.models import EnumChoiceField
 from lily.base import serializers, parsers
-from lily.base.models import JSONSchemaField, array, string, number, object
+from lily.base.models import (
+    array,
+    const,
+    JSONSchemaField,
+    multischema,
+    number,
+    object,
+    string,
+)
 from lily.entrypoint.schema import (
     Schema,
     ArrayValue,
@@ -62,17 +70,45 @@ class JSONSchemaSerializer(serializers.Serializer):
 
     _type = 'json'
 
-    names = JSONSchemaField(schema=array(string()))
+    names = serializers.JSONSchemaField(schema=array(string()))
 
     users = serializers.SerializerMethodField()
 
     owners = serializers.SerializerMethodField()
 
-    def get_users(self, instance) -> [object(name=string(), age=number())]:
+    def get_users(self, instance) -> [object(name=const('YO'), age=number())]:
         return instance['users']
 
     def get_owners(self, instance) -> array(object(name=string(), age=number())):  # noqa
         return instance['owners']
+
+
+class JSONSchemaMultiSchemaModel(models.Model):
+
+    entity = JSONSchemaField(schema=multischema(
+        {
+            'PERSON': object(
+                type=const('PERSON'),
+                name=string(),
+                required=['type', 'name']),
+            'ANIMAL': object(
+                type=const('ANIMAL'),
+                age=number(),
+                required=['type', 'age'])
+        },
+        by_field='type'))
+
+    class Meta:
+        app_label = 'base'
+
+
+class JSONSchemaMultiSchemaSerializer(serializers.ModelSerializer):
+
+    _type = 'json_multischema'
+
+    class Meta:
+        model = JSONSchemaMultiSchemaModel
+        fields = ('entity',)
 
 
 class HumanQueryParser(parsers.Parser):
@@ -348,6 +384,10 @@ class SchemaRendererTestCase(TestCase):
                 'type': 'object',
                 'entity_type': 'json',
                 'properties': {
+                    'names': {
+                        'type': 'array',
+                        'items': {'type': 'string'},
+                    },
                     'owners': {
                         'type': 'array',
                         'items': {
@@ -364,13 +404,68 @@ class SchemaRendererTestCase(TestCase):
                             'type': 'object',
                             'properties': {
                                 'age': {'type': 'number'},
-                                'name': {'type': 'string'},
+                                'name': {
+                                    'type': 'string',
+                                    'pattern': '^YO$',
+                                    'const': 'YO',
+                                },
                             },
                         },
                     },
                 },
-                'required': ['users', 'owners'],
+                'required': ['names', 'users', 'owners'],
             },
+        }
+
+    def test_method_json_multischema_serializer(self):
+
+        self.mocker.patch.object(
+            Schema, 'get_repository_uri'
+        ).return_value = 'http://hi.there#123'
+
+        assert SchemaRenderer(
+            JSONSchemaMultiSchemaSerializer
+        ).render().serialize() == {
+            'uri': 'http://hi.there#123',
+            'schema': {
+                'type': 'object',
+                'required': ['entity'],
+                'properties': {
+                    'entity': {
+                        'oneOf': [
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': {
+                                        'type': 'string',
+                                        'const': 'PERSON',
+                                        'pattern': '^PERSON$'
+                                    },
+                                    'name': {
+                                        'type': 'string'
+                                    }
+                                },
+                                'required': ['type', 'name']
+                            },
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': {
+                                        'type': 'string',
+                                        'const': 'ANIMAL',
+                                        'pattern': '^ANIMAL$'
+                                    },
+                                    'age': {
+                                        'type': 'number'
+                                    }
+                                },
+                                'required': ['type', 'age']
+                            }
+                        ]
+                    }
+                },
+                'entity_type': 'json_multischema',
+            }
         }
 
     #
