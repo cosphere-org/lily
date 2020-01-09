@@ -8,14 +8,18 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?is_private=False HTTP/1.1
+GET /?domain_id=PATHS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
-    "@enums": [],
+    "@enums": [
+        {
+            "A": "X"
+        }
+    ],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
@@ -34,13 +38,50 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Ex sequi architecto iste minus.",
+                "description": "Amet incidunt sint deleniti perspiciatis.",
                 "domain": {
                     "@type": "domain",
-                    "id": "magni",
+                    "id": "paths",
                     "name": "domain"
                 },
-                "title": "Assumenda repudiandae perferendis animi necessitatibus culpa vero."
+                "title": "Temporibus provident voluptatum atque tenetur similique corrupti."
+            },
+            "method": "POST",
+            "path_conf": {
+                "path": "conf"
+            },
+            "schemas": {
+                "some": "schemas"
+            },
+            "source": {
+                "@type": "source",
+                "end_line": 15,
+                "filepath": "/tests/factory.py",
+                "start_line": 14
+            }
+        },
+        "DELETE_HELLO": {
+            "@type": "command",
+            "access": {
+                "@type": "access",
+                "access_list": [
+                    "ANY"
+                ],
+                "is_external": false,
+                "is_private": false
+            },
+            "examples": {
+                "some": "examples"
+            },
+            "meta": {
+                "@type": "meta",
+                "description": "Aliquid minus assumenda atque doloribus.",
+                "domain": {
+                    "@type": "domain",
+                    "id": "paths",
+                    "name": "domain"
+                },
+                "title": "Aperiam magni exercitationem saepe eveniet ullam."
             },
             "method": "PUT",
             "path_conf": {
