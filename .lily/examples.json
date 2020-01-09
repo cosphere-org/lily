@@ -28,10 +28,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Laborum quibusdam laborum molestias quisquam.",
-                                "description": "Maiores recusandae error aliquid doloremque aliquid placeat.",
+                                "title": "Asperiores blanditiis ea labore dolorum sint.",
+                                "description": "Molestiae ratione eligendi minima quo.",
                                 "domain": {
-                                    "id": "repellat",
+                                    "id": "illum",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -41,7 +41,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -68,34 +68,6 @@
         }
     },
     "SIGN_PROCESS": {
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "This field is required."
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@access": {
-                        "user_id": 56,
-                        "account_type": "PREMIUM"
-                    }
-                }
-            }
-        },
         "200": {
             "method": "get",
             "description": null,
@@ -110,6 +82,34 @@
                 "status": 200,
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
+            }
+        },
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@access": {
+                        "user_id": 56,
+                        "account_type": "PREMIUM"
+                    }
+                }
             }
         }
     }

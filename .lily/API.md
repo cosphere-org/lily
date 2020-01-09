@@ -27,20 +27,20 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": true
+                "is_private": false
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Maiores recusandae error aliquid doloremque aliquid placeat.",
+                "description": "Molestiae ratione eligendi minima quo.",
                 "domain": {
                     "@type": "domain",
-                    "id": "repellat",
+                    "id": "illum",
                     "name": "domain"
                 },
-                "title": "Laborum quibusdam laborum molestias quisquam."
+                "title": "Asperiores blanditiis ea labore dolorum sint."
             },
             "method": "PUT",
             "path_conf": {
