@@ -1,10 +1,56 @@
 {
+    "SIGN_PROCESS": {
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
+            }
+        },
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@access": {
+                        "user_id": 56,
+                        "account_type": "PREMIUM"
+                    }
+                }
+            }
+        }
+    },
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?commands=READ_PAYMENTS",
+                "path": "/?is_private=False",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -22,16 +68,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "READ_PAYMENTS": {
+                        "CREATE_HELLO": {
                             "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Nisi omnis sequi ab autem quam consequuntur ullam.",
-                                "description": "Commodi quae earum velit accusantium.",
+                                "title": "Assumenda repudiandae perferendis animi necessitatibus culpa vero.",
+                                "description": "Ex sequi architecto iste minus.",
                                 "domain": {
-                                    "id": "autem",
+                                    "id": "magni",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -63,52 +109,6 @@
                     "@enums": [],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
-                }
-            }
-        }
-    },
-    "SIGN_PROCESS": {
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        },
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "This field is required."
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@access": {
-                        "user_id": 56,
-                        "account_type": "PREMIUM"
-                    }
                 }
             }
         }
