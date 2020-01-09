@@ -429,6 +429,7 @@ class SchemaRendererTestCase(TestCase):
                         },
                     },
                     'selected_shoppings': {
+                        'by_field': None,
                         'oneOf': [
                             {
                                 'type': 'object',

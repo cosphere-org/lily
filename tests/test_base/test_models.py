@@ -19,6 +19,7 @@ from lily.base.models import (
     multischema,
     number,
     object,
+    one_of,
     string,
     ValidatingModel,
 )
@@ -127,8 +128,30 @@ class JSONMultiSchemaModel(fake_models.FakeModel):
         by_field='type'))
 
 
+class JSONArrayMultiSchemaModel(fake_models.FakeModel):
+
+    class EntityType(Enum):
+
+        WORKER = 'WORKER'
+
+        FREE = 'FREE'
+
+    entities = JSONSchemaField(schema=array(
+        one_of(
+            object(
+                name=string(),
+                type=enum(EntityType, const=EntityType.WORKER.value),
+                required=['type', 'name']),
+            object(
+                age=number(),
+                type=enum(EntityType, const=EntityType.FREE.value),
+                required=['type', 'age']),
+            by_field='type')))
+
+
 @JSONModel.fake_me
 @JSONMultiSchemaModel.fake_me
+@JSONArrayMultiSchemaModel.fake_me
 class JSONSchemaFieldTestCase(TestCase):
 
     #
@@ -245,6 +268,64 @@ class JSONSchemaFieldTestCase(TestCase):
         error = e.value.error_dict['entity'][0]
         assert error.message == (
             "JSON did not validate. PATH: 'age' REASON: 'WHAT' is not of "
+            "type 'number'"
+        )
+
+    #
+    # JSONArrayMultiSchemaModel
+    #
+    def test_valid_model__array_multischema(self):
+
+        # -- schema PERSON
+        m = JSONArrayMultiSchemaModel(
+            entities=[{'type': 'WORKER', 'name': 'Roger'}])
+        m.save()
+
+        assert m.entities == [{'type': 'WORKER', 'name': 'Roger'}]
+
+        # -- schema ANIMAL
+        m = JSONArrayMultiSchemaModel(
+            entities=[{'type': 'FREE', 'age': 45}])
+        m.save()
+
+        assert m.entities == [{'type': 'FREE', 'age': 45}]
+
+    def test_invalid_model__array_multischema__missing_schema(self):
+
+        with pytest.raises(ValidationError) as e:
+            JSONArrayMultiSchemaModel(
+                entities=[{'type': 'BOSS', 'name': 'Roger'}]
+            ).clean_fields()
+
+        error = e.value.error_dict['entities'][0]
+        assert error.message == (
+            "JSON did not validate. PATH: 'type' REASON: 'BOSS' is "
+            "not one of ['FREE', 'WORKER']"
+        )
+
+    def test_invalid_model__array_multischema(self):
+
+        # -- schema WORKER
+        with pytest.raises(ValidationError) as e:
+            JSONArrayMultiSchemaModel(
+                entities=[{'type': 'WORKER'}]
+            ).clean_fields()
+
+        error = e.value.error_dict['entities'][0]
+        assert error.message == (
+            "JSON did not validate. PATH: '.' REASON: 'name' is a "
+            "required property"
+        )
+
+        # -- schema FREE
+        with pytest.raises(ValidationError) as e:
+            JSONArrayMultiSchemaModel(
+                entities=[{'type': 'FREE', 'age': 'what'}]
+            ).clean_fields()
+
+        error = e.value.error_dict['entities'][0]
+        assert error.message == (
+            "JSON did not validate. PATH: 'age' REASON: 'what' is not of "
             "type 'number'"
         )
 

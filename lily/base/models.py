@@ -74,6 +74,8 @@ class ExtraColumn(RawSQL):
 
 class JSONSchemaValidator:
 
+    validation_error_cls = ValidationError
+
     def __init__(self, schema):
         self.schema = schema
 
@@ -93,6 +95,33 @@ class JSONSchemaValidator:
                 if value[by_field] == schema_key:
                     self.validate_against_schema(schema, value)
 
+        # -- array multischema
+        elif (self.schema['type'] == 'array' and
+                self.schema['items'].get('oneOf') and
+                self.schema['items'].get('by_field')):
+
+            # -- for now only support for the enum fields
+            by_field = self.schema['items'].get('by_field')
+
+            by_field_values = sorted([
+                schema['properties'][by_field].get('const_value')
+                for schema in self.schema['items']['oneOf']
+            ])
+            schemas_index = {
+                schema['properties'][by_field].get('const_value'): schema
+                for schema in self.schema['items']['oneOf']
+            }
+
+            # -- assert its an array
+            self.validate_against_schema(array(object()), value)
+            for item in value:
+                self.validate_against_schema(
+                    object(**{by_field: enum(*by_field_values)}),
+                    {by_field: item[by_field]})
+
+                schema = schemas_index[item[by_field]]
+                self.validate_against_schema(schema, item)
+
         # -- single schema case
         else:
             self.validate_against_schema(self.schema, value)
@@ -103,7 +132,7 @@ class JSONSchemaValidator:
 
         except JsonValidationError as e:
             path = '.'.join([str(p) for p in e.path]) or '.'
-            raise ValidationError(
+            raise self.validation_error_cls(
                 f"JSON did not validate. PATH: '{path}' REASON: {e.message}"
             )
 
@@ -132,7 +161,6 @@ class EnumChoiceField(models.CharField):
             self.enum_name = enum.__name__
             kwargs['choices'] = [(e.value, e.value) for e in enum]
 
-        # FIXME: test it!!!
         # -- setting dynamical max_length
         if not kwargs.get('max_length'):
             max_length = 0
@@ -163,12 +191,6 @@ def null_or(other):
             },
             other,
         ],
-    }
-
-
-def one_of(*options):
-    return {
-        'oneOf': list(options),
     }
 
 
@@ -307,4 +329,11 @@ def multischema(schemas, by_field):
         'schemas': schemas,
         'by_field': by_field,
         'oneOf': list(schemas.values()),
+    }
+
+
+def one_of(*schemas, by_field=None):
+    return {
+        'oneOf': list(schemas),
+        'by_field': by_field,
     }
