@@ -338,7 +338,67 @@ class InterfaceTestCase(TestCase):
             [Enum('OccupationType', ['AA', 'BB'])],
         ),
 
-        # -- case 6 - enums
+        # -- case 6 - enum with const value
+        (
+            {
+                'type': 'object',
+                'properties': {
+                    'employees': {
+                        'type': 'array',
+                        'items': {
+                            'oneOf': [
+                                {
+                                    'type': 'object',
+                                    'properties': {
+                                        'name': {
+                                            'type': 'string',
+                                        },
+                                        'occupation': {
+                                            'type': 'string',
+                                            'enum_name': 'occupation_type',
+                                            'enum': ['AA', 'BB'],
+                                            'const_value': 'AA',
+                                        }
+                                    },
+                                    'required': ['occupation'],
+                                },
+                                {
+                                    'type': 'object',
+                                    'properties': {
+                                        'occupation': {
+                                            'type': 'string',
+                                            'enum_name': 'occupation_type',
+                                            'enum': ['AA', 'BB'],
+                                            'const_value': 'BB',
+                                        }
+                                    },
+                                    'required': ['occupation'],
+                                },
+                            ]
+                        },
+                    },
+                },
+            },
+            None,
+            normalize_indentation('''
+            /**
+             * http://here
+             */
+
+            export interface ReadCardsResponse {
+                employees?: {
+                    name?: string;
+                    occupation: OccupationType.AA;
+                } | {
+                    occupation: OccupationType.BB;
+                }[];
+            }
+
+            ''', 0),
+            [Enum('OccupationType', ['AA', 'BB'])],
+        ),
+
+        # -- case 7 - enums
         (
             {
                 'type': 'object',
@@ -378,7 +438,7 @@ class InterfaceTestCase(TestCase):
             ],
         ),
 
-        # -- case 7 - enums array
+        # -- case 8 - enums array
         (
             {
                 'type': 'object',
@@ -412,7 +472,7 @@ class InterfaceTestCase(TestCase):
             [Enum('Occupation', ['AA', 'BB'])],
         ),
 
-        # -- case 8 - 1 level deep nested
+        # -- case 9 - 1 level deep nested
         (
             {
                 'type': 'object',
@@ -468,7 +528,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 9 - 2 levels deep nested
+        # -- case 10 - 2 levels deep nested
         (
             {
                 'type': 'object',
@@ -520,7 +580,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 10 - nested array
+        # -- case 11 - nested array
         (
             {
                 'type': 'object',
@@ -563,7 +623,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 11 - nested with enums
+        # -- case 12 - nested with enums
         (
             {
                 'type': 'object',
@@ -606,7 +666,7 @@ class InterfaceTestCase(TestCase):
             ],
         ),
 
-        # -- case 12 - mixed up primitive types
+        # -- case 13 - mixed up primitive types
         (
             {
                 'required': ['attempt_stats', 'count'],
@@ -660,7 +720,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 13 - const types
+        # -- case 14 - const types
         (
             {
                 'required': ['type', 'age'],
@@ -691,7 +751,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 14 - const and oneOf
+        # -- case 15 - const and oneOf
         (
             {
                 'required': ['person'],
@@ -748,7 +808,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 15 - bulk read response
+        # -- case 16 - bulk read response
         (
             {
                 'type': 'object',
@@ -789,7 +849,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 16 - bulk read simple response - integer
+        # -- case 17 - bulk read simple response - integer
         (
             {
                 'type': 'object',
@@ -820,7 +880,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 17 - bulk read simple response - boolean
+        # -- case 18 - bulk read simple response - boolean
         (
             {
                 'type': 'object',
@@ -851,7 +911,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 18 - bulk read simple response - string
+        # -- case 19 - bulk read simple response - string
         (
             {
                 'type': 'object',
@@ -882,7 +942,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 19 - bulk read response
+        # -- case 20 - bulk read response
         (
             {
                 'type': 'object',
@@ -908,7 +968,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- casecase 20 - one of - null or string
+        # -- case 21 - one of - null or string
         (
             {
                 'type': 'object',
@@ -934,7 +994,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 21 - one of - null or object
+        # -- case 23 - one of - null or object
         (
             {
                 'type': 'object',
@@ -974,7 +1034,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 22 - one of - null or object or string or other object
+        # -- case 24 - one of - null or object or string or other object
         (
             {
                 'type': 'object',
@@ -1029,7 +1089,7 @@ class InterfaceTestCase(TestCase):
             [],
         ),
 
-        # -- case 23 - one of - null or complex object
+        # -- case 25 - one of - null or complex object
         (
             {
                 'type': 'object',
@@ -1101,7 +1161,7 @@ class InterfaceTestCase(TestCase):
             ''', 0),
             [Enum('Language', ['fr', 'is', 'nb', 'en'])],
         ),
-    ], ids=list([str(i) for i in range(24)]))
+    ], ids=list([str(i) for i in range(25)]))
 def test_render(schema, bulk_read_field, expected_rendered, expected_enums):
 
     rendered, enums = Interface(

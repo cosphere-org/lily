@@ -248,7 +248,7 @@ def url():
     }
 
 
-def enum(*enums, enum_name=None):
+def enum(*enums, enum_name=None, const=None):
 
     if len(enums) == 1 and isinstance(enums[0], EnumMeta):
         enum = enums[0]
@@ -261,11 +261,16 @@ def enum(*enums, enum_name=None):
     else:
         _type = 'string'
 
-    return {
+    output = {
         'type': _type,
         'enum_name': enum_name,
         'enum': list(enums),
     }
+
+    if const:
+        output['const_value'] = const
+
+    return output
 
 
 def object(dependencies=None, required=None, **properties):

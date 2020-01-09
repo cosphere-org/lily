@@ -16,7 +16,9 @@ from lily.base.models import (
     multischema,
     number,
     object,
+    one_of,
     string,
+    enum,
 )
 from lily.entrypoint.schema import (
     Schema,
@@ -75,6 +77,20 @@ class JSONSchemaSerializer(serializers.Serializer):
     users = serializers.SerializerMethodField()
 
     owners = serializers.SerializerMethodField()
+
+    class Shopping(Enum):
+        bread = 'bread'
+
+        milk = 'milk'
+
+    shoppings = serializers.JSONSchemaField(
+        schema=array(
+            object(type=enum(Shopping))))
+
+    selected_shoppings = serializers.JSONSchemaField(
+        schema=one_of(
+            object(type=enum(Shopping, const=Shopping.bread.value)),
+            object(type=enum(Shopping, const=Shopping.milk.value))))
 
     def get_users(self, instance) -> [object(name=const('YO'), age=number())]:
         return instance['users']
@@ -412,8 +428,54 @@ class SchemaRendererTestCase(TestCase):
                             },
                         },
                     },
+                    'selected_shoppings': {
+                        'oneOf': [
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': {
+                                        'const_value': 'bread',
+                                        'enum': ['bread', 'milk'],
+                                        'enum_name': 'Shopping',
+                                        'type': 'string'
+                                    }
+                                },
+                            },
+                            {
+                                'type': 'object',
+                                'properties': {
+                                    'type': {
+                                        'const_value': 'milk',
+                                        'enum': ['bread', 'milk'],
+                                        'enum_name': 'Shopping',
+                                        'type': 'string'
+                                    }
+                                },
+                            },
+                        ],
+                    },
+                    'shoppings': {
+                        'type': 'array',
+                        'items': {
+                            'properties': {
+                                'type': {
+                                    'enum': ['bread', 'milk'],
+                                    'enum_name': 'Shopping',
+                                    'type': 'string'
+                                }
+                            },
+                            'type': 'object'
+                        },
+                    },
+
                 },
-                'required': ['names', 'users', 'owners'],
+                'required': [
+                    'names',
+                    'users',
+                    'owners',
+                    'shoppings',
+                    'selected_shoppings',
+                ],
             },
         }
 

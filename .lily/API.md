@@ -34,15 +34,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Ut itaque odit iste repellendus error architecto.",
+                "description": "Molestiae ratione eligendi minima quo.",
                 "domain": {
                     "@type": "domain",
-                    "id": "fugiat",
+                    "id": "illum",
                     "name": "domain"
                 },
-                "title": "Voluptatum esse ipsam vitae provident facilis distinctio."
+                "title": "Asperiores blanditiis ea labore dolorum sint."
             },
-            "method": "DELETE",
+            "method": "PUT",
             "path_conf": {
                 "path": "conf"
             },

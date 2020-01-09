@@ -64,6 +64,11 @@ class Interface:
 
             elif _type == 'string' and schema.get('enum'):
                 enum = self.append_enum(schema['enum_name'], schema['enum'])
+
+                if schema.get('const_value'):
+                    v = schema['const_value']
+                    return f'{enum.name}.{enum.get_key_for_value(v)}'
+
                 return enum.name
 
             elif _type == 'null':
@@ -124,6 +129,16 @@ class Interface:
                             values.append(to_type(name, alt_schema, indent))
 
                         value = ' | '.join(values)
+
+                    elif (sub_schema.get('type') == 'array' and
+                            sub_schema['items'].get('oneOf')):
+
+                        values = []
+                        for alt_schema in sub_schema['items']['oneOf']:
+                            values.append(to_type(name, alt_schema, indent))
+
+                        value = ' | '.join(values)
+                        value += '[]'
 
                     elif sub_schema.get('type') == 'array':
                         value = to_type(name, sub_schema['items'], indent)
@@ -226,27 +241,35 @@ class Enum:
 
     def render(self):
 
-        def transform_key(k):
-            return re.sub(r'[^\w]+', '_', k).upper()
-
         values = self.values
         value_pairs = []
         for v in sorted(values):
 
             if isinstance(v, int):
-                k = f'VALUE_{v}'
-
-            elif isinstance(v, str) and re.search(r'^\d+', v):
-                k = f'VALUE_{v}'
-                v = f"'{v}'"
+                value = v
 
             else:
-                k = v
-                v = f"'{v}'"
+                value = f"'{v}'"
 
-            value_pairs.append((transform_key(k), v))
+            value_pairs.append((self.get_key_for_value(v), value))
 
         return 'export enum {name} {{\n{fields}\n}}'.format(
             name=self.name,
             fields='\n'.join([
                 f"    {k} = {v}," for k, v in value_pairs]))
+
+    def get_key_for_value(self, value):
+
+        def transform_key(k):
+            return re.sub(r'[^\w]+', '_', k).upper()
+
+        if isinstance(value, int):
+            key = f'VALUE_{value}'
+
+        elif isinstance(value, str) and re.search(r'^\d+', value):
+            key = f'VALUE_{value}'
+
+        else:
+            key = value
+
+        return transform_key(key)
