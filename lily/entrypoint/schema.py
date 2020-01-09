@@ -395,11 +395,7 @@ class SchemaRenderer:
             # -- search for the 1st JSONSchemaValidator validator
             # -- the should be always at most one.
             for validator in field.validators:
-                validator_classes = (
-                    JSONSchemaValidator,
-                    serializers.JSONSchemaValidator,
-                )
-                if isinstance(validator, validator_classes):
+                if isinstance(validator, JSONSchemaValidator):
                     out = validator.schema
                     if 'schemas' in out:
                         out = {
