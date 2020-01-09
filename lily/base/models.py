@@ -96,9 +96,9 @@ class JSONSchemaValidator:
                     self.validate_against_schema(schema, value)
 
         # -- array multischema
-        elif (self.schema['type'] == 'array' and
-                self.schema['items'].get('oneOf') and
-                self.schema['items'].get('by_field')):
+        elif (self.schema.get('type') == 'array' and
+                self.schema.get('items', {}).get('oneOf') and
+                self.schema.get('items', {}).get('by_field')):
 
             # -- for now only support for the enum fields
             by_field = self.schema['items'].get('by_field')
