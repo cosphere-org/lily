@@ -115,9 +115,15 @@ class JSONSchemaValidator:
             # -- assert its an array
             self.validate_against_schema(array(object()), value)
             for item in value:
+                fields = {by_field: enum(*by_field_values)}
+
+                # -- assert required
                 self.validate_against_schema(
-                    object(**{by_field: enum(*by_field_values)}),
-                    {by_field: item[by_field]})
+                    object(**fields, required=[by_field]), item)
+
+                # -- assert in enum
+                self.validate_against_schema(
+                    object(**fields), {by_field: item[by_field]})
 
                 schema = schemas_index[item[by_field]]
                 self.validate_against_schema(schema, item)
