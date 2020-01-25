@@ -138,7 +138,7 @@ class Interface:
                             values.append(to_type(name, alt_schema, indent))
 
                         value = ' | '.join(values)
-                        value += '[]'
+                        value = f'({value})[]'
 
                     elif sub_schema.get('type') == 'array':
                         value = to_type(name, sub_schema['items'], indent)

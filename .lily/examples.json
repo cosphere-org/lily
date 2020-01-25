@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -22,16 +22,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "CREATE_HELLO": {
-                            "method": "PUT",
+                        "UPDATE_HELLO": {
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Accusamus doloribus fugiat sequi illum.",
-                                "description": "Tempore sequi atque hic.",
+                                "title": "Officiis esse qui dolorum ducimus unde eos.",
+                                "description": "Quo amet modi eaque et fugiat ad illo.",
                                 "domain": {
-                                    "id": "illo",
+                                    "id": "aut",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -41,7 +41,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },

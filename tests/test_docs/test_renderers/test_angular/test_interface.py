@@ -386,12 +386,12 @@ class InterfaceTestCase(TestCase):
              */
 
             export interface ReadCardsResponse {
-                employees?: {
+                employees?: ({
                     name?: string;
                     occupation: OccupationType.AA;
                 } | {
                     occupation: OccupationType.BB;
-                }[];
+                })[];
             }
 
             ''', 0),
