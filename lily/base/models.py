@@ -171,8 +171,8 @@ class EnumChoiceField(models.CharField):
         if not kwargs.get('max_length'):
             max_length = 0
             for choice in kwargs['choices']:
-                if len(choice[0]) > max_length:
-                    max_length = len(choice[0])
+                if len(str(choice[0])) > max_length:
+                    max_length = len(str(choice[0]))
 
             kwargs['max_length'] = 2 ** math.ceil(math.log2(max_length))
 
