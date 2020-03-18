@@ -587,7 +587,8 @@ class CommandTestCase(TestCase):
 
         command = Command('BULK_READ_TASKS', conf)
 
-        assert command.render_access() == 'BulkReadTasks: ["LEARNER","MENTOR"]'
+        assert command.render_access('AccountType') == (
+            'BULK_READ_TASKS: [AccountType.LEARNER,AccountType.MENTOR]')
 
     def test_render_access__no_access(self):
 
@@ -599,7 +600,8 @@ class CommandTestCase(TestCase):
 
         command = Command('BULK_READ_TASKS', conf)
 
-        assert command.render_access() == 'BulkReadTasks: null'
+        assert command.render_access('AccountType') == (
+            'BULK_READ_TASKS: null')
 
     #
     # get_bulk_read_field

@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?commands=READ_PAYMENTS",
+                "path": "/?domain_id=PATHS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -22,16 +22,53 @@
                     },
                     "name": "test",
                     "commands": {
-                        "READ_PAYMENTS": {
-                            "method": "POST",
+                        "CREATE_HELLO": {
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Earum praesentium molestias voluptates accusantium fugit iure earum.",
-                                "description": "Necessitatibus consequatur nulla sequi.",
+                                "title": "Nostrum nulla explicabo illum magnam distinctio itaque corporis quidem.",
+                                "description": "Blanditiis eum quae minima maiores illum reiciendis voluptatibus.",
                                 "domain": {
-                                    "id": "optio",
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "end_line": 15,
+                                "@type": "source"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "method": "PUT",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Quidem vero magnam iusto a.",
+                                "description": "Adipisci officiis impedit eligendi dicta.",
+                                "domain": {
+                                    "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -60,7 +97,11 @@
                             "@type": "command"
                         }
                     },
-                    "@enums": [],
+                    "@enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
@@ -72,7 +113,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -84,7 +125,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",

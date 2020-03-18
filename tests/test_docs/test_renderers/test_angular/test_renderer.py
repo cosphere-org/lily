@@ -576,9 +576,13 @@ class AngularClientRendererTestCase(TestCase):
         domain = Domain('paths', 'Path Management')
         commands = [
             Mock(render_access=Mock(
-                return_value='BulkReadWhat: ["LEARNER", "MENTOR"]')),
-            Mock(render_access=Mock(return_value='BulkDeleteThis: null')),
-            Mock(render_access=Mock(return_value='Create: ["ADMIN"]')),
+                return_value=(
+                    'BULK_READ_WHAT: [AccountType.LEARNER, AccountType.MENTOR]'
+                ))),
+            Mock(render_access=Mock(return_value='BULK_DELETE_THIS: null')),
+            Mock(
+                render_access=Mock(
+                    return_value='CREATE: [AccountType.ADMIN]')),
         ]
 
         assert os.listdir(paths_path) == []
@@ -598,10 +602,12 @@ class AngularClientRendererTestCase(TestCase):
                  * Path Management Domain Access
                  */
 
+                import { AccountType } from '../../shared/enums';
+
                 export const PathsAccess = {
-                  BulkReadWhat: ["LEARNER", "MENTOR"],
-                  BulkDeleteThis: null,
-                  Create: ["ADMIN"],
+                  BULK_READ_WHAT: [AccountType.LEARNER, AccountType.MENTOR],
+                  BULK_DELETE_THIS: null,
+                  CREATE: [AccountType.ADMIN],
                 }
             ''', 0)  # noqa
 

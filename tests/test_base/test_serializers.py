@@ -31,7 +31,7 @@ class CustomerSerializer(serializers.Serializer):
 
     age = serializers.IntegerField(min_value=18)
 
-    def get_commands(self, instance):
+    def get_access(self, instance):
 
         return [
             (Mock(command_conf={'name': 'MARK_IT'}), True),
@@ -43,7 +43,7 @@ class CustomerModelSerializer(serializers.ModelSerializer):
 
     _type = 'customer'
 
-    def get_commands(self, instance):
+    def get_access(self, instance):
 
         return [
             (Mock(command_conf={'name': 'MARK_IT'}), True),
@@ -112,12 +112,12 @@ class SerializerTestCase(TestCase):
             'what': ['what'],
         }
 
-    def test_to_representation__without_command_links(self):
+    def test_to_representation__without_access_links(self):
 
         p = Customer(name='John', age=81)
 
         self.mocker.patch.object(
-            self.serializer, 'get_commands').return_value = []
+            self.serializer, 'get_access').return_value = []
 
         assert self.serializer(
             context={'request': Mock(), 'command_name': 'ACT_NOW'}
@@ -127,7 +127,7 @@ class SerializerTestCase(TestCase):
             'name': 'John',
         }
 
-    def test_to_representation__with_command_links(self):
+    def test_to_representation__with_access_links(self):
 
         p = Customer(name='John', age=81)
 
@@ -135,15 +135,9 @@ class SerializerTestCase(TestCase):
             context={'request': Mock(), 'command_name': 'ACT_NOW'}
         ).to_representation(p) == {
             '@type': 'customer',
-            '@commands': {
-                'MARK_IT': {
-                    'is_active': True,
-                    'reason': 'REASON.ACCESS.MARK_IT',
-                },
-                'REMOVE_IT': {
-                    'is_active': False,
-                    'reason': 'REASON.ACCESS.REMOVE_IT',
-                },
+            '@access': {
+                'MARK_IT': True,
+                'REMOVE_IT': False,
             },
             'age': 81,
             'name': 'John',

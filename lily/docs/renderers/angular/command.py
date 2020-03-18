@@ -180,14 +180,13 @@ class Command:
             command_name=to_camelcase(self.name),
             examples=normalize_indentation(',\n\n'.join(examples_blocks), 4))
 
-    def render_access(self):
+    def render_access(self, access_enum):
 
-        command_name = to_camelcase(self.name)
         if self.access_list:
 
             access_list = '[{}]'.format(
-                ','.join([f'"{a}"' for a in self.access_list]))
+                ','.join([f'{access_enum}.{a}' for a in self.access_list]))
 
-            return f'{command_name}: {access_list}'
+            return f'{self.name}: {access_list}'
 
-        return f'{command_name}: null'
+        return f'{self.name}: null'

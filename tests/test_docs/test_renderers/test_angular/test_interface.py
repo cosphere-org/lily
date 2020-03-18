@@ -294,7 +294,7 @@ class InterfaceTestCase(TestCase):
 
             export interface ReadCardsResponse {
                 '@type'?: 'human';
-                '@commands'?: {
+                '@access'?: {
                     [name: string]: {
                         is_active: boolean;
                         reason: string;
@@ -505,7 +505,7 @@ class InterfaceTestCase(TestCase):
 
             export interface ReadCardsResponse {
                 '@type'?: 'employee';
-                '@commands'?: {
+                '@access'?: {
                     [name: string]: {
                         is_active: boolean;
                         reason: string;
@@ -514,7 +514,7 @@ class InterfaceTestCase(TestCase):
                 age: number;
                 person?: {
                     '@type'?: 'human';
-                    '@commands'?: {
+                    '@access'?: {
                         [name: string]: {
                             is_active: boolean;
                             reason: string;

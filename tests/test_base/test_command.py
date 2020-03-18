@@ -99,7 +99,7 @@ class TestCommands(HTTPCommands):
 
         card_id = serializers.SerializerMethodField()
 
-        def get_commands(self, instance):
+        def get_access(self, instance):
             return [(TestCommands.put, True)]
 
         class Meta:
@@ -264,11 +264,8 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@type': 'client',
             '@event': 'MADE_IT',
-            '@commands': {
-                'BREAK': {
-                    'is_active': True,
-                    'reason': 'REASON.ACCESS.BREAK',
-                },
+            '@access': {
+                'BREAK': True,
             },
             'name': 'Jake',
             'card_id': 190,
