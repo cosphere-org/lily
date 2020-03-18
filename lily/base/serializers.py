@@ -72,19 +72,16 @@ class Serializer(drf_serializers.Serializer, EventFactory):
         self._fields_subset = fields_subset
         super(Serializer, self).__init__(*args, **kwargs)
 
-    def render_commands(self, instance):
+    def render_access(self, instance):
 
         try:
-            out_commands = {}
-            for cmd, is_active in self.get_commands(instance):
+            out_access = {}
+            for cmd, is_active in self.get_access(instance):
                 name = cmd.command_conf['name']
 
-                out_commands[name] = {
-                    'is_active': is_active,
-                    'reason': f'REASON.ACCESS.{name}',
-                }
+                out_access[name] = is_active
 
-            return out_commands
+            return out_access
 
         except AttributeError:
             pass
@@ -157,9 +154,9 @@ class Serializer(drf_serializers.Serializer, EventFactory):
                 'the client about the semantic type a result of the '
                 'Serializer represents')
 
-        commands = self.render_commands(instance)
-        if commands:
-            body['@commands'] = commands
+        access = self.render_access(instance)
+        if access:
+            body['@access'] = access
 
         return body
 

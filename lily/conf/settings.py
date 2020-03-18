@@ -20,6 +20,12 @@ LILY_AUTHORIZER_CLASS = getattr(
     'lily.base.authorizer.BaseAuthorizer')
 
 
+LILY_AUTHORIZER_ACCESS_ENUM_CLASS = getattr(
+    settings,
+    'LILY_AUTHORIZER_ACCESS_ENUM_CLASS',
+    'AccountType')
+
+
 LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST = getattr(
     settings,
     'LILY_ENTRYPOINT_COMMANDS_ACCESS_LIST',

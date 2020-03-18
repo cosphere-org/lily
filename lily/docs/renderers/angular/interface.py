@@ -109,7 +109,7 @@ class Interface:
                         normalize_indentation(
                             """
                                 '@type'?: '{entity_type}';
-                                '@commands'?: {{
+                                '@access'?: {{
                                     [name: string]: {{
                                         is_active: boolean;
                                         reason: string;
