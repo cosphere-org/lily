@@ -282,7 +282,7 @@ class CommandTestCase(TestCase):
 
         assert response.status_code == 303
         assert to_json(response) == {
-            '@access': {'account_type': 'PREMIUM', 'user_id': 11},
+            '@authorizer': {'account_type': 'PREMIUM', 'user_id': 11},
             '@event': 'DONE_SO_GO',
             '@type': 'error',
         }
@@ -298,7 +298,7 @@ class CommandTestCase(TestCase):
 
         assert response.status_code == 403
         assert to_json(response) == {
-            '@access': {'account_type': 'PREMIUM', 'user_id': 11},
+            '@authorizer': {'account_type': 'PREMIUM', 'user_id': 11},
             '@event': 'GO_AWAY',
             '@type': 'error',
         }
@@ -396,7 +396,7 @@ class CommandTestCase(TestCase):
         meta['SERVER_NAME'] = 'testserver'
         request = Mock(
             body=dump_to_bytes({'amount': 81}),
-            log_access={
+            log_authorizer={
                 'user_id': u.id,
             },
             META=meta)
@@ -418,7 +418,7 @@ class CommandTestCase(TestCase):
         meta['SERVER_NAME'] = 'testserver'
         request = Mock(
             body=dump_to_bytes({'not_amount': 81}),
-            log_access={
+            log_authorizer={
                 'user_id': u.id,
             },
             META=meta)
@@ -428,7 +428,7 @@ class CommandTestCase(TestCase):
 
         assert response.status_code == 400
         assert to_json(response) == {
-            '@access': {
+            '@authorizer': {
                 'user_id': u.id,
             },
             '@type': 'error',
@@ -458,7 +458,7 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            log_access={
+            log_authorizer={
                 'user_id': u.id,
             },
             META=get_auth_headers(u.id))
@@ -484,7 +484,7 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'DATABASE_ERROR_OCCURRED',
             '@type': 'error',
-            '@access': {
+            '@authorizer': {
                 'user_id': u.id,
             },
 
@@ -499,7 +499,7 @@ class CommandTestCase(TestCase):
             '@event': 'GENERIC_ERROR_OCCURRED',
             '@type': 'error',
             'errors': ['hi there'],
-            '@access': {
+            '@authorizer': {
                 'user_id': u.id,
             },
         }
@@ -512,7 +512,7 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'ERROR!',
             '@type': 'error',
-            '@access': {
+            '@authorizer': {
                 'user_id': u.id,
             },
         }
@@ -579,7 +579,7 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            log_access={
+            log_authorizer={
                 'user_id': u.id,
             },
             META=get_auth_headers(u.id))
@@ -593,7 +593,7 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'BODY_JSON_DID_NOT_PARSE',
             '@type': 'error',
-            '@access': {
+            '@authorizer': {
                 'user_id': u.id,
             },
             'errors': {'field': ['is broken']},
@@ -603,7 +603,7 @@ class CommandTestCase(TestCase):
 
         u = User.objects.create_user(username='jacky')
         request = Mock(
-            log_access={
+            log_authorizer={
                 'user_id': u.id,
             },
             META=get_auth_headers(u.id))
@@ -617,7 +617,7 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'COULD_NOT_FIND_USER',
             '@type': 'error',
-            '@access': {
+            '@authorizer': {
                 'user_id': u.id,
             },
         }
@@ -627,7 +627,7 @@ class CommandTestCase(TestCase):
         u = User.objects.create_user(username='jacky')
         u = User.objects.create_user(username='jacks')
         request = Mock(
-            log_access={
+            log_authorizer={
                 'user_id': u.id,
             },
             META=get_auth_headers(u.id))
@@ -641,7 +641,7 @@ class CommandTestCase(TestCase):
         assert to_json(response) == {
             '@event': 'FOUND_MULTIPLE_INSTANCES_OF_USER',
             '@type': 'error',
-            '@access': {
+            '@authorizer': {
                 'user_id': u.id,
             },
         }
