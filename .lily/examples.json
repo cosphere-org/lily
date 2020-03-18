@@ -17,7 +17,12 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [],
+                        "available": [
+                            "2.120.0",
+                            "2.14.5",
+                            "2.5.6",
+                            "1.0.0"
+                        ],
                         "@type": "version_info"
                     },
                     "name": "test",
@@ -28,10 +33,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Quod neque eos perspiciatis soluta ipsum non.",
-                                "description": "Deleniti ad vero culpa animi sit vitae enim.",
+                                "title": "Nihil illo explicabo deserunt adipisci.",
+                                "description": "Quis nemo ratione recusandae quibusdam.",
                                 "domain": {
-                                    "id": "vero",
+                                    "id": "rerum",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -41,7 +46,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -68,22 +73,6 @@
         }
     },
     "SIGN_PROCESS": {
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        },
         "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
@@ -110,6 +99,22 @@
                         "account_type": "PREMIUM"
                     }
                 }
+            }
+        },
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
         }
     }
