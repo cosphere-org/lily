@@ -96,7 +96,7 @@ class MySignCommandsTestCase(TestCase):
             '@event': 'QUERY_DID_NOT_VALIDATE',
             '@type': 'error',
             'errors': {'to_sign': ['This field is required.']},
-            '@access': {
+            '@authorizer': {
                 'account_type': 'PREMIUM',
                 'user_id': self.user_id,
             }
@@ -113,7 +113,7 @@ class MySignCommandsTestCase(TestCase):
             '@event': 'QUERY_DID_NOT_VALIDATE',
             '@type': 'error',
             'errors': {'datetime': ['This field is required.']},
-            '@access': {
+            '@authorizer': {
                 'account_type': 'PREMIUM',
                 'user_id': self.user_id,
             },
@@ -138,7 +138,7 @@ class MySignCommandsTestCase(TestCase):
                     'invalid datetime format accepted is YYYYMMDDThhmmssZ'
                 )]
             },
-            '@access': {
+            '@authorizer': {
                 'account_type': 'PREMIUM',
                 'user_id': self.user_id,
             },

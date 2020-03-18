@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?version=2.1.3",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -16,7 +16,7 @@
                 "content": {
                     "version_info": {
                         "deployed": "2.5.6",
-                        "displayed": "2.1.3",
+                        "displayed": "2.5.6",
                         "available": [],
                         "@type": "version_info"
                     },
@@ -28,10 +28,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Vel nobis itaque accusantium ipsum quibusdam cupiditate veritatis et.",
-                                "description": "Sunt molestiae reiciendis vitae saepe laudantium.",
+                                "title": "Quod neque eos perspiciatis soluta ipsum non.",
+                                "description": "Deleniti ad vero culpa animi sit vitae enim.",
                                 "domain": {
-                                    "id": "a",
+                                    "id": "vero",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -41,7 +41,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -105,7 +105,7 @@
                     },
                     "@type": "error",
                     "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@access": {
+                    "@authorizer": {
                         "user_id": 56,
                         "account_type": "PREMIUM"
                     }

@@ -95,7 +95,7 @@ class InputTestCase(TestCase):
         request = Mock(
             GET=RequestGet(),
             origin=None,
-            log_access={
+            log_authorizer={
                 'user_id': 902,
             })
 
@@ -116,7 +116,7 @@ class InputTestCase(TestCase):
         request = Mock(
             GET=RequestGet(title=['hi there'], prices=['what']),
             origin=None,
-            log_access={
+            log_authorizer={
                 'user_id': 902,
             })
 
@@ -126,7 +126,7 @@ class InputTestCase(TestCase):
         assert e.value.data == {
             '@type': 'error',
             '@event': 'QUERY_DID_NOT_VALIDATE',
-            '@access': {
+            '@authorizer': {
                 'user_id': 902,
             },
             'errors': {
@@ -163,7 +163,7 @@ class InputTestCase(TestCase):
         request = Mock(
             body='{not json',
             origin=None,
-            log_access={
+            log_authorizer={
                 'user_id': 902,
             })
 
@@ -174,7 +174,7 @@ class InputTestCase(TestCase):
         assert e.value.data == {
             '@type': 'error',
             '@event': 'BODY_JSON_DID_NOT_PARSE',
-            '@access': {
+            '@authorizer': {
                 'user_id': 902,
             },
         }
@@ -186,7 +186,7 @@ class InputTestCase(TestCase):
         # -- amount too big error
         request = Mock(
             body=b'{"title": "hi there", "amount": 20}',
-            log_access={
+            log_authorizer={
                 'user_id': 902,
             },
             origin=None)
@@ -198,7 +198,7 @@ class InputTestCase(TestCase):
         assert e.value.data == {
             '@type': 'error',
             '@event': 'BODY_DID_NOT_VALIDATE',
-            '@access': {
+            '@authorizer': {
                 'user_id': 902,
             },
             'errors': {
@@ -213,7 +213,7 @@ class InputTestCase(TestCase):
         request = Mock(
             body=b'{"amount": 19}',
             origin=None,
-            log_access={
+            log_authorizer={
                 'user_id': 902,
             })
 
@@ -224,7 +224,7 @@ class InputTestCase(TestCase):
         assert e.value.data == {
             '@type': 'error',
             '@event': 'BODY_DID_NOT_VALIDATE',
-            '@access': {
+            '@authorizer': {
                 'user_id': 902,
             },
             'errors': {

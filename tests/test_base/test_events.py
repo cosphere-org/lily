@@ -95,14 +95,14 @@ class BaseSuccessExceptionTestCase(TestCase):
         dumps = self.mocker.patch('lily.base.events.json.dumps')
         dumps.return_value = '{XX}'
         e = EventFactory.BaseSuccessException(
-            context=Mock(log_access={'user_id': 12}), event='HELLO')
+            context=Mock(log_authorizer={'user_id': 12}), event='HELLO')
         logger = self.mocker.patch.object(e, 'logger')
 
         e.log()
 
         assert logger.info.call_args_list == [call('HELLO: {XX}')]
         assert dumps.call_args_list == [
-            call({'@access': {'user_id': 12}, '@event': 'HELLO'})]
+            call({'@authorizer': {'user_id': 12}, '@event': 'HELLO'})]
 
     def test_log__no_user_id_in_context(self):
 

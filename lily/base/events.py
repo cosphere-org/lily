@@ -157,12 +157,12 @@ class EventFactory:
 
         def log(self):
 
-            log_access = getattr(self.context, 'log_access', {})
+            log_authorizer = getattr(self.context, 'log_authorizer', {})
             data = {
                 '@event': self.event,
             }
-            if log_access:
-                data['@access'] = log_access
+            if log_authorizer:
+                data['@authorizer'] = log_authorizer
 
             # -- notify about the event
             message = '{event}: {log_data}'.format(
@@ -240,10 +240,10 @@ class EventFactory:
                 '@event': event,
             })
 
-            log_access = getattr(context, 'log_access', {})
-            if log_access:
+            log_authorizer = getattr(context, 'log_authorizer', {})
+            if log_authorizer:
                 self.data.update({
-                    '@access': log_access,
+                    '@authorizer': log_authorizer,
                 })
 
             self.logger = logging.getLogger()
@@ -272,10 +272,10 @@ class EventFactory:
                 self.logger.info(message)
 
         def update_with_context(self, context):
-            log_access = getattr(context, 'log_access', {})
-            if log_access:
+            log_authorizer = getattr(context, 'log_authorizer', {})
+            if log_authorizer:
                 self.data.update({
-                    '@access': log_access,
+                    '@authorizer': log_authorizer,
                 })
 
     class Redirect(BaseErrorException):

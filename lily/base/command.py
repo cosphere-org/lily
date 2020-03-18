@@ -112,7 +112,7 @@ def command(
                         settings.LILY_AUTHORIZER_CLASS
                     )(access.access_list)
                     request.access = authorizer.authorize(request)
-                    request.log_access = authorizer.log(request.access)
+                    request.log_authorizer = authorizer.log(request.access)
 
                 #
                 # INPUT
