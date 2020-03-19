@@ -91,6 +91,9 @@ class AngularClientRendererTestCase(TestCase):
         render_domain = self.mocker.patch.object(
             self.renderer, 'render_domain')
 
+        render_access_ts = self.mocker.patch.object(
+            self.renderer, 'render_access_ts')
+
         render_enums_ts = self.mocker.patch.object(
             self.renderer, 'render_enums_ts')
 
@@ -107,7 +110,21 @@ class AngularClientRendererTestCase(TestCase):
             call(Domain('cards', ''), ['B', 'X']),
             call(Domain('paths', ''), ['A', 'Z']),
         ]
-        assert render_enums_ts.call_args_list == [call(['B', 'X', 'A', 'Z'])]
+
+        # -- shared
+        assert self.renderer.repo.create_dir.call_args_list == [
+            call('./projects/client/src/shared'),
+        ]
+        assert render_access_ts.call_args_list == [
+            call(
+                './projects/client/src/shared',
+                ['B', 'X', 'A', 'Z']
+            )]
+        assert render_enums_ts.call_args_list == [
+            call(
+                './projects/client/src/shared',
+                ['B', 'X', 'A', 'Z']
+            )]
 
         assert template_repo.clone.call_count == 1
 
@@ -169,6 +186,9 @@ class AngularClientRendererTestCase(TestCase):
         render_domain = self.mocker.patch.object(
             self.renderer, 'render_domain')
 
+        render_access_ts = self.mocker.patch.object(
+            self.renderer, 'render_access_ts')
+
         render_enums_ts = self.mocker.patch.object(
             self.renderer, 'render_enums_ts')
 
@@ -185,7 +205,21 @@ class AngularClientRendererTestCase(TestCase):
             call(Domain('cards', ''), ['B', 'X']),
             call(Domain('paths', ''), ['A', 'Z']),
         ]
-        assert render_enums_ts.call_args_list == [call(['B', 'X', 'A', 'Z'])]
+
+        # -- shared
+        assert self.renderer.repo.create_dir.call_args_list == [
+            call('./projects/client/src/shared'),
+        ]
+        assert render_access_ts.call_args_list == [
+            call(
+                './projects/client/src/shared',
+                ['B', 'X', 'A', 'Z']
+            )]
+        assert render_enums_ts.call_args_list == [
+            call(
+                './projects/client/src/shared',
+                ['B', 'X', 'A', 'Z']
+            )]
 
         assert template_repo.clone.call_count == 1
 
@@ -358,8 +392,6 @@ class AngularClientRendererTestCase(TestCase):
             AngularClientRenderer, 'render_domain_ts')
         render_examples_ts = self.mocker.patch.object(
             AngularClientRenderer, 'render_examples_ts')
-        render_access_ts = self.mocker.patch.object(
-            AngularClientRenderer, 'render_access_ts')
 
         domain = Domain('cards', 'Cards Management')
 
@@ -374,7 +406,6 @@ class AngularClientRendererTestCase(TestCase):
         assert render_models_ts.call_args_list == [call(domain, [])]
         assert render_domain_ts.call_args_list == [call(domain, [])]
         assert render_examples_ts.call_args_list == [call(domain, [])]
-        assert render_access_ts.call_args_list == [call(domain, [])]
 
     #
     # RENDER_INDEX_TS
@@ -572,8 +603,7 @@ class AngularClientRendererTestCase(TestCase):
     #
     def test_render_access_ts(self):
 
-        paths_path = str(self.domains_dir.mkdir('paths'))
-        domain = Domain('paths', 'Path Management')
+        shared_path = str(self.src_dir.mkdir('shared'))
         commands = [
             Mock(render_access=Mock(
                 return_value=(
@@ -585,12 +615,12 @@ class AngularClientRendererTestCase(TestCase):
                     return_value='CREATE: [AccountType.ADMIN]')),
         ]
 
-        assert os.listdir(paths_path) == []
+        assert os.listdir(shared_path) == []
 
-        self.renderer.render_access_ts(domain, commands)
+        self.renderer.render_access_ts(shared_path, commands)
 
-        assert os.listdir(paths_path) == ['paths.access.ts']
-        with open(os.path.join(paths_path, 'paths.access.ts'), 'r') as f:
+        assert os.listdir(shared_path) == ['access.ts']
+        with open(os.path.join(shared_path, 'access.ts'), 'r') as f:
             result = f.read()
             assert result == normalize_indentation('''
                 /**
@@ -598,13 +628,9 @@ class AngularClientRendererTestCase(TestCase):
                   * OVERWRITTEN
                   */
 
-                /**
-                 * Path Management Domain Access
-                 */
+                import { AccountType } from './enums';
 
-                import { AccountType } from '../../shared/enums';
-
-                export const PathsAccess = {
+                export const Access = {
                   BULK_READ_WHAT: [AccountType.LEARNER, AccountType.MENTOR],
                   BULK_DELETE_THIS: null,
                   CREATE: [AccountType.ADMIN],
@@ -620,10 +646,10 @@ class AngularClientRendererTestCase(TestCase):
             self.renderer,
             'collect_unique_enums'
         ).return_value = []
+        shared_path = str(self.src_dir.mkdir('shared'))
 
-        self.renderer.render_enums_ts(Mock())
+        self.renderer.render_enums_ts(shared_path, Mock())
 
-        assert os.listdir(self.src_dir) == ['domains', 'services', 'shared']
         assert self.src_dir.join('shared/enums.ts').read() == ''
 
     def test_render_enums_ts(self):
@@ -636,8 +662,9 @@ class AngularClientRendererTestCase(TestCase):
             Enum('category', ['AA', 'YY', 'XX']),
             Enum('name', ['Jack', 'Alice', 'Joe']),
         ]
+        shared_path = str(self.src_dir.mkdir('shared'))
 
-        self.renderer.render_enums_ts(Mock())
+        self.renderer.render_enums_ts(shared_path, Mock())
 
         assert os.listdir(self.src_dir) == ['domains', 'services', 'shared']
         assert (

@@ -1,4 +1,50 @@
 {
+    "SIGN_PROCESS": {
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
+            }
+        },
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "This field is required."
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "user_id": 56,
+                        "account_type": "PREMIUM"
+                    }
+                }
+            }
+        }
+    },
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
             "method": "get",
@@ -17,26 +63,21 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [
-                            "2.120.0",
-                            "2.14.5",
-                            "2.5.6",
-                            "1.0.0"
-                        ],
+                        "available": [],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Nihil illo explicabo deserunt adipisci.",
-                                "description": "Quis nemo ratione recusandae quibusdam.",
+                                "title": "Harum consequuntur dignissimos quidem minima eos ipsum rem.",
+                                "description": "Sit quae et quis accusamus exercitationem beatae voluptas.",
                                 "domain": {
-                                    "id": "rerum",
+                                    "id": "reprehenderit",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -46,7 +87,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -69,52 +110,6 @@
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
-            }
-        }
-    },
-    "SIGN_PROCESS": {
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@authorizer": {
-                        "user_id": 56,
-                        "account_type": "PREMIUM"
-                    }
-                }
-            }
-        },
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
         }
     }

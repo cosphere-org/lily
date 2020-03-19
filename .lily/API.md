@@ -27,22 +27,22 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": true
+                "is_private": false
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Quis nemo ratione recusandae quibusdam.",
+                "description": "Sit quae et quis accusamus exercitationem beatae voluptas.",
                 "domain": {
                     "@type": "domain",
-                    "id": "rerum",
+                    "id": "reprehenderit",
                     "name": "domain"
                 },
-                "title": "Nihil illo explicabo deserunt adipisci."
+                "title": "Harum consequuntur dignissimos quidem minima eos ipsum rem."
             },
-            "method": "DELETE",
+            "method": "PUT",
             "path_conf": {
                 "path": "conf"
             },
@@ -60,12 +60,7 @@ Respone:
     "name": "test",
     "version_info": {
         "@type": "version_info",
-        "available": [
-            "2.120.0",
-            "2.14.5",
-            "2.5.6",
-            "1.0.0"
-        ],
+        "available": [],
         "deployed": "2.5.6",
         "displayed": "2.5.6"
     }
