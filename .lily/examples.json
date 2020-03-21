@@ -1,5 +1,33 @@
 {
     "SIGN_PROCESS": {
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "This field is required."
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "user_id": 56,
+                        "account_type": "PREMIUM"
+                    }
+                }
+            }
+        },
         "200": {
             "method": "get",
             "description": null,
@@ -15,34 +43,6 @@
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
-        },
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@authorizer": {
-                        "user_id": 56,
-                        "account_type": "PREMIUM"
-                    }
-                }
-            }
         }
     },
     "READ_ENTRY_POINT": {
@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?commands=READ_PAYMENTS",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -68,16 +68,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "READ_PAYMENTS": {
-                            "method": "PUT",
+                        "UPDATE_HELLO": {
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Maxime corporis sequi occaecati.",
-                                "description": "Aliquam iure incidunt at corporis excepturi nihil.",
+                                "title": "Consectetur nesciunt exercitationem distinctio dolorem.",
+                                "description": "Veniam asperiores illum debitis cupiditate.",
                                 "domain": {
-                                    "id": "accusantium",
+                                    "id": "consequuntur",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -87,7 +87,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },
