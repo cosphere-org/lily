@@ -27,22 +27,22 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": false
+                "is_private": true
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Sit quae et quis accusamus exercitationem beatae voluptas.",
+                "description": "Veniam asperiores illum debitis cupiditate.",
                 "domain": {
                     "@type": "domain",
-                    "id": "reprehenderit",
+                    "id": "consequuntur",
                     "name": "domain"
                 },
-                "title": "Harum consequuntur dignissimos quidem minima eos ipsum rem."
+                "title": "Consectetur nesciunt exercitationem distinctio dolorem."
             },
-            "method": "PUT",
+            "method": "GET",
             "path_conf": {
                 "path": "conf"
             },
