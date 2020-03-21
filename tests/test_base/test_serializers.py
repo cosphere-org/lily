@@ -36,6 +36,7 @@ class CustomerSerializer(serializers.Serializer):
         return [
             (Mock(command_conf={'name': 'MARK_IT'}), True),
             (Mock(command_conf={'name': 'REMOVE_IT'}), False),
+            ('ALLOW_IT', False),
         ]
 
 
@@ -48,6 +49,7 @@ class CustomerModelSerializer(serializers.ModelSerializer):
         return [
             (Mock(command_conf={'name': 'MARK_IT'}), True),
             (Mock(command_conf={'name': 'REMOVE_IT'}), False),
+            ('ALLOW_IT', False),
         ]
 
     class Meta:
@@ -112,7 +114,7 @@ class SerializerTestCase(TestCase):
             'what': ['what'],
         }
 
-    def test_to_representation__without_access_links(self):
+    def test_to_representation__without_access(self):
 
         p = Customer(name='John', age=81)
 
@@ -127,7 +129,7 @@ class SerializerTestCase(TestCase):
             'name': 'John',
         }
 
-    def test_to_representation__with_access_links(self):
+    def test_to_representation__with_access(self):
 
         p = Customer(name='John', age=81)
 
@@ -138,13 +140,11 @@ class SerializerTestCase(TestCase):
             '@access': {
                 'MARK_IT': True,
                 'REMOVE_IT': False,
+                'ALLOW_IT': False,
             },
             'age': 81,
             'name': 'John',
         }
-
-        # -- make sure that the test doesn't expose any side effects
-        self.serializer._command_links = []
 
 
 class ModelSerializerTestCase(SerializerTestCase):

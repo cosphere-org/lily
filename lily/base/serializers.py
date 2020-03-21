@@ -77,7 +77,11 @@ class Serializer(drf_serializers.Serializer, EventFactory):
         try:
             out_access = {}
             for cmd, is_active in self.get_access(instance):
-                name = cmd.command_conf['name']
+                if isinstance(cmd, str):
+                    name = cmd
+
+                else:
+                    name = cmd.command_conf['name']
 
                 out_access[name] = is_active
 

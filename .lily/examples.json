@@ -20,7 +20,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -32,7 +32,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?commands=READ_PAYMENTS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -68,16 +68,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "UPDATE_HELLO": {
+                        "READ_PAYMENTS": {
                             "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Harum consequuntur dignissimos quidem minima eos ipsum rem.",
-                                "description": "Sit quae et quis accusamus exercitationem beatae voluptas.",
+                                "title": "Maxime corporis sequi occaecati.",
+                                "description": "Aliquam iure incidunt at corporis excepturi nihil.",
                                 "domain": {
-                                    "id": "reprehenderit",
+                                    "id": "accusantium",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
