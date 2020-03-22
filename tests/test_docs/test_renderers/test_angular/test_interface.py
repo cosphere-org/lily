@@ -295,10 +295,7 @@ class InterfaceTestCase(TestCase):
             export interface ReadCardsResponse {
                 '@type'?: 'human';
                 '@access'?: {
-                    [name: string]: {
-                        is_active: boolean;
-                        reason: string;
-                    };
+                    [name: string]: boolean;
                 };
                 age: number[];
                 surname?: string;
@@ -506,19 +503,13 @@ class InterfaceTestCase(TestCase):
             export interface ReadCardsResponse {
                 '@type'?: 'employee';
                 '@access'?: {
-                    [name: string]: {
-                        is_active: boolean;
-                        reason: string;
-                    };
+                    [name: string]: boolean;
                 };
                 age: number;
                 person?: {
                     '@type'?: 'human';
                     '@access'?: {
-                        [name: string]: {
-                            is_active: boolean;
-                            reason: string;
-                        };
+                        [name: string]: boolean;
                     };
                     category?: number;
                     name: string;
