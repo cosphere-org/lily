@@ -110,10 +110,7 @@ class Interface:
                             """
                                 '@type'?: '{entity_type}';
                                 '@access'?: {{
-                                    [name: string]: {{
-                                        is_active: boolean;
-                                        reason: string;
-                                    }};
+                                    [name: string]: boolean;
                                 }};
                             """.format(entity_type=entity_type),
                             indent))

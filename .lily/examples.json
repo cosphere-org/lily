@@ -63,7 +63,12 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [],
+                        "available": [
+                            "2.120.0",
+                            "2.14.5",
+                            "2.5.6",
+                            "1.0.0"
+                        ],
                         "@type": "version_info"
                     },
                     "name": "test",
@@ -74,10 +79,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Consectetur nesciunt exercitationem distinctio dolorem.",
-                                "description": "Veniam asperiores illum debitis cupiditate.",
+                                "title": "Doloribus enim facere praesentium odio.",
+                                "description": "Aliquam dolorem at corporis similique animi saepe totam exercitationem.",
                                 "domain": {
-                                    "id": "consequuntur",
+                                    "id": "dolor",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
