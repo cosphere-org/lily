@@ -47,7 +47,7 @@ jsonschema==2.6.0
 
 # -- needed for deployment
 gunicorn==19.6.0
-gevent==1.2.1
+gevent==1.4.0
 
 # -- spell checking
 hunspell==0.5.5
