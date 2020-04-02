@@ -3,10 +3,10 @@ from unittest import TestCase
 from unittest.mock import Mock
 
 from django.urls import re_path, include
-from django.views.generic import View
 import pytest
 
 from lily.entrypoint.base import BaseRenderer
+from lily.base.command import HTTPCommands
 from lily.base.events import EventFactory
 
 
@@ -21,7 +21,7 @@ class BaseRendererTestCase(TestCase):
     #
     def test_render__simple_flat_url_patterns(self):
 
-        class HiView(View):
+        class HiCommands(HTTPCommands):
             def post(self):
                 pass
 
@@ -30,7 +30,7 @@ class BaseRendererTestCase(TestCase):
                 'some': 'hi.conf',
             }
 
-        class HelloView(View):
+        class HelloCommands(HTTPCommands):
             def delete(self):
                 pass
 
@@ -39,11 +39,11 @@ class BaseRendererTestCase(TestCase):
                 'some': 'hello.conf',
             }
 
-        hi_view, hello_view = HiView.as_view(), HelloView.as_view()
+        hi_cmds, hello_cmds = HiCommands.as_view(), HelloCommands.as_view()
 
         renderer = BaseRenderer([
-            re_path(r'^hi/there$', hi_view, name='hi.there'),
-            re_path(r'^hiyo', hello_view, name='hiyo'),
+            re_path(r'^hi/there$', hi_cmds, name='hi.there'),
+            re_path(r'^hiyo', hello_cmds, name='hiyo'),
         ])
 
         assert renderer.render() == {
@@ -71,7 +71,7 @@ class BaseRendererTestCase(TestCase):
 
     def test_render__same_path_many_commands(self):
 
-        class HiView(View):
+        class HiCommands(HTTPCommands):
             def post(self):
                 pass
 
@@ -88,10 +88,10 @@ class BaseRendererTestCase(TestCase):
                 'some': 'hello.conf',
             }
 
-        hi_view = HiView.as_view()
+        hi_cmds = HiCommands.as_view()
 
         renderer = BaseRenderer([
-            re_path(r'^hi/there$', hi_view, name='hi.there'),
+            re_path(r'^hi/there$', hi_cmds, name='hi.there'),
         ])
 
         assert renderer.render() == {
@@ -119,7 +119,7 @@ class BaseRendererTestCase(TestCase):
 
     def test_render__command_belongs_to_many_paths_error(self):
 
-        class HiView(View):
+        class HiCommands(HTTPCommands):
             def post(self):
                 pass
 
@@ -128,11 +128,11 @@ class BaseRendererTestCase(TestCase):
                 'some': 'hi.conf',
             }
 
-        hi_view = HiView.as_view()
+        hi_cmds = HiCommands.as_view()
 
         renderer = BaseRenderer([
-            re_path(r'^hi/there$', hi_view, name='hi.there'),
-            re_path(r'^hello/there$', hi_view, name='hello.there'),
+            re_path(r'^hi/there$', hi_cmds, name='hi.there'),
+            re_path(r'^hello/there$', hi_cmds, name='hello.there'),
         ])
 
         with pytest.raises(EventFactory.ServerError) as e:
@@ -142,17 +142,17 @@ class BaseRendererTestCase(TestCase):
         assert e.value.data == {
             '@event': 'VIEWS_BELONGING_TO_MULTIPLE_PATHS_DETECTED',
             '@type': 'error',
-            'duplicates': ['HiView'],
+            'duplicates': ['HiCommands'],
         }
 
-    def test_render__not_lily_compatible_view(self):
+    def test_render__not_lily_compatible_cmds(self):
 
-        class HiView(View):
+        class HiCommands(HTTPCommands):
             def post(self):
                 pass
 
         renderer = BaseRenderer([
-            re_path(r'^hi/there$', HiView.as_view(), name='hi.there'),
+            re_path(r'^hi/there$', HiCommands.as_view(), name='hi.there'),
         ])
 
         with pytest.raises(EventFactory.BrokenRequest) as e:
@@ -161,12 +161,12 @@ class BaseRendererTestCase(TestCase):
         assert e.value.data == {
             '@event': 'NOT_LILY_COMPATIBLE_VIEW_DETECTED',
             '@type': 'error',
-            'name': 'HiView',
+            'name': 'HiCommands',
         }
 
     def test_render__duplicated_command(self):
 
-        class HiView(View):
+        class HiCommands(HTTPCommands):
 
             def post(self):
                 pass
@@ -176,7 +176,7 @@ class BaseRendererTestCase(TestCase):
                 'some': 'hi.conf',
             }
 
-        class HelloView(View):
+        class HelloCommands(HTTPCommands):
 
             def delete(self):
                 pass
@@ -187,9 +187,9 @@ class BaseRendererTestCase(TestCase):
             }
 
         renderer = BaseRenderer([
-            re_path(r'^root/hi$', HiView.as_view(), name='hi'),
+            re_path(r'^root/hi$', HiCommands.as_view(), name='hi'),
 
-            re_path(r'^root/hello$', HelloView.as_view(), name='hello'),
+            re_path(r'^root/hello$', HelloCommands.as_view(), name='hello'),
         ])
 
         with pytest.raises(EventFactory.BrokenRequest) as e:
@@ -212,9 +212,9 @@ class BaseRendererTestCase(TestCase):
     #
     # CRAWL_VIEWS
     #
-    def test_crawl_views__deep_url_patterns(self):
+    def test_crawl_commands__deep_url_patterns(self):
 
-        class HiView(View):
+        class HiCommands(HTTPCommands):
             def post(self):
                 pass
 
@@ -223,7 +223,7 @@ class BaseRendererTestCase(TestCase):
                 'conf': 'hi',
             }
 
-        class WatView(View):
+        class WatCommands(HTTPCommands):
             def get(self):
                 pass
 
@@ -232,7 +232,7 @@ class BaseRendererTestCase(TestCase):
                 'conf.wat': 'wat',
             }
 
-        class YoView(View):
+        class YoCommands(HTTPCommands):
             def delete(self):
                 pass
 
@@ -241,15 +241,15 @@ class BaseRendererTestCase(TestCase):
                 'conf': 'yo',
             }
 
-        hi_view, yo_view, wat_view = (
-            HiView.as_view(), YoView.as_view(), WatView.as_view())
+        hi_cmds, yo_cmds, wat_cmds = (
+            HiCommands.as_view(), YoCommands.as_view(), WatCommands.as_view())
 
         renderer = BaseRenderer([
             re_path(r'^payment/$', include([
-                re_path(r'^hi/there$', hi_view, 'hi.there'),
+                re_path(r'^hi/there$', hi_cmds, 'hi.there'),
                 re_path(r'^now/(?P<when>\d+)/$', include([
-                    re_path(r'^yes/$', yo_view, 'yo'),
-                    re_path(r'^wat/$', wat_view, 'wat'),
+                    re_path(r'^yes/$', yo_cmds, 'yo'),
+                    re_path(r'^wat/$', wat_cmds, 'wat'),
                 ])),
             ])),
         ])

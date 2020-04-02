@@ -4,7 +4,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -16,7 +16,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
@@ -69,15 +69,15 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "POST",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Sunt eligendi ipsum deserunt voluptas fuga ullam.",
-                                "description": "Maiores expedita laboriosam ipsam.",
+                                "title": "Quam laudantium cum dolore.",
+                                "description": "Velit id minus debitis doloremque.",
                                 "domain": {
-                                    "id": "quae",
+                                    "id": "praesentium",
                                     "name": "domain",
                                     "@type": "domain"
                                 },

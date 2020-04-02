@@ -34,15 +34,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Maiores expedita laboriosam ipsam.",
+                "description": "Velit id minus debitis doloremque.",
                 "domain": {
                     "@type": "domain",
-                    "id": "quae",
+                    "id": "praesentium",
                     "name": "domain"
                 },
-                "title": "Sunt eligendi ipsum deserunt voluptas fuga ullam."
+                "title": "Quam laudantium cum dolore."
             },
-            "method": "POST",
+            "method": "GET",
             "path_conf": {
                 "path": "conf"
             },
