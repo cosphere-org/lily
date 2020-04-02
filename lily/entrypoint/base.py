@@ -5,6 +5,7 @@ import re
 from django.urls import URLResolver, URLPattern
 
 from lily.base.events import EventFactory
+from lily.base.command import HTTPCommands
 
 
 class BaseRenderer(EventFactory):
@@ -81,6 +82,18 @@ class BaseRenderer(EventFactory):
                         pattern.url_patterns, inner_path_patterns))
 
             elif isinstance(pattern, URLPattern):
+                # -- allow only the valid lily commands to be considered
+                is_lily_commands = (
+                    hasattr(pattern.callback, '__self__') and
+                    isinstance(pattern.callback.__self__, HTTPCommands)
+                ) or (
+                    hasattr(pattern.callback, 'view_class') and
+                    issubclass(pattern.callback.view_class, HTTPCommands)
+                )
+
+                if not is_lily_commands:
+                    continue
+
                 view_name = pattern.callback.__name__
 
                 ignore_views = [
