@@ -166,6 +166,30 @@ class TextVectorTestCase(TestCase):
                 'łódź': (4,),
             })
 
+    def test_parse__conf_polish__weird_polish_characters_encoding(
+            self):
+        self.assert_parse(
+            'polish',
+            # -- warning: not visible to you eyes maybe but
+            # -- I've manually added here crazy polish letters
+            'Pchnąć w tę łódź jeża lub ośm skrzyń fig łódź.',
+            None,
+            {
+                'figa': (9,),
+                'figi': (9,),
+                'jez': (5,),
+                'jeza': (5,),
+                'jeż': (5,),
+                'lodz': (4, 10),
+                'osm': (7,),
+                'ośm': (7,),
+                'pchnac': (1,),
+                'pchnąć': (1,),
+                'skrzyn': (8,),
+                'skrzynia': (8,),
+                'łódź': (4, 10),
+            })
+
     def test_parse__conf_polish__many_hashtags(self):
         self.assert_parse(
             'polish',

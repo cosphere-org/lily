@@ -21,7 +21,7 @@ class InputTestCase(TestCase):
         self.mocker = mocker
 
     #
-    # parse
+    # PARSE
     #
     def test_parse__makes_the_right_calls(self):
         parse_body = self.mocker.patch.object(Input, 'parse_body')
@@ -156,6 +156,29 @@ class InputTestCase(TestCase):
 
         assert data == {'amount': 18, 'title': 'hi there'}
         assert raw_data == {'amount': '18', 'title': 'hi there'}
+
+    def test_parse_body__fixing_broken_characters(self):
+        input = self._prepare_body_parser()
+
+        request = Mock(
+            body=(
+                '{"title": "Pchnąć w tę łódź jeża lub ośm ' +
+                'skrzyń fig", "amount": "12"}').encode('utf8'),
+            origin=None,
+            log_authorizer={
+                'user_id': 902,
+            })
+
+        data, raw_data = input.parse_body(request, command_name='MAKE_IT')
+
+        assert data == {
+            'amount': 12,
+            'title': 'Pchnąć w tę łódź jeża lub ośm skrzyń fig',
+        }
+        assert raw_data == {
+            'amount': '12',
+            'title': 'Pchnąć w tę łódź jeża lub ośm skrzyń fig',
+        }
 
     def test_parse_body__broken_json(self):
         input = self._prepare_body_parser()

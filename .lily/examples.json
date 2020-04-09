@@ -4,7 +4,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -16,7 +16,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",
@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?commands=READ_PAYMENTS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -68,16 +68,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "UPDATE_HELLO": {
-                            "method": "GET",
+                        "READ_PAYMENTS": {
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Quam laudantium cum dolore.",
-                                "description": "Velit id minus debitis doloremque.",
+                                "title": "Ullam cumque magnam a accusantium maxime cupiditate recusandae nam.",
+                                "description": "Asperiores harum reprehenderit eius eveniet culpa reiciendis.",
                                 "domain": {
-                                    "id": "praesentium",
+                                    "id": "rerum",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
