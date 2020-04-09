@@ -38,6 +38,7 @@ class TextVector:
 
         # -- transformers
         text = text.strip()
+        text = self.transform_special_characters(text)
         text = self.transform_hashtags(text)
         text = self.transform_latex(conf, text)
 
@@ -50,6 +51,22 @@ class TextVector:
         stems = self.augument_with_unaccents(conf, weight, stems, tokens)
 
         return stems
+
+    #
+    # SPECIAL CHARACTERS
+    #
+    def transform_special_characters(self, text):
+        weird = [
+            'ą', 'Ą', 'ę', 'Ę', 'ł', 'Ł', 'ó', 'Ó', 'ć', 'Ć', 'ś', 'Ś',
+            'ż', 'Ż', 'ź', 'Ź', 'ń', 'Ń']
+        normal = [
+            'ą', 'Ą', 'ę', 'Ę', 'ł', 'Ł', 'ó', 'Ó', 'ć', 'Ć', 'ś', 'Ś',
+            'ż', 'Ż', 'ź', 'Ź', 'ń', 'Ń']
+
+        for w, n in zip(weird, normal):
+            text = text.replace(w, n)
+
+        return text
 
     #
     # HASHTAGS
