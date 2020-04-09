@@ -2,6 +2,7 @@
 import json
 
 from .events import EventFactory
+from ..search import TextVector
 
 
 class Input(EventFactory):
@@ -49,7 +50,10 @@ class Input(EventFactory):
 
     def parse_body(self, request, command_name):
         try:
-            data = json.loads(str(request.body, encoding='utf8') or '{}')
+            body = str(request.body, encoding='utf8') or '{}'
+            body = TextVector().transform_special_characters(body)
+
+            data = json.loads(body)
 
         except (TypeError, ValueError):
             raise self.BrokenRequest(

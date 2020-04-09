@@ -1,4 +1,77 @@
 {
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
+            "method": "get",
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "path": "/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "application/json",
+                "content": {
+                    "version_info": {
+                        "deployed": "2.5.6",
+                        "displayed": "2.5.6",
+                        "available": [
+                            "2.120.0",
+                            "2.14.5",
+                            "2.5.6",
+                            "1.0.0"
+                        ],
+                        "@type": "version_info"
+                    },
+                    "name": "test",
+                    "commands": {
+                        "UPDATE_HELLO": {
+                            "method": "GET",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Voluptatem autem harum est consectetur at id.",
+                                "description": "Voluptas inventore sint neque harum dicta vitae.",
+                                "domain": {
+                                    "id": "repudiandae",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "end_line": 15,
+                                "@type": "source"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "@type": "command"
+                        }
+                    },
+                    "@enums": [],
+                    "@type": "entrypoint",
+                    "@event": "ENTRY_POINT_READ"
+                }
+            }
+        }
+    },
     "SIGN_PROCESS": {
         "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
@@ -42,74 +115,6 @@
                 "status": 200,
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        }
-    },
-    "READ_ENTRY_POINT": {
-        "200 (ENTRY_POINT_READ)": {
-            "method": "get",
-            "description": "ENTRY_POINT_READ",
-            "request": {
-                "path": "/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "application/json",
-                "content": {
-                    "version_info": {
-                        "deployed": "2.5.6",
-                        "displayed": "2.5.6",
-                        "available": [],
-                        "@type": "version_info"
-                    },
-                    "name": "test",
-                    "commands": {
-                        "UPDATE_HELLO": {
-                            "method": "GET",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Quam laudantium cum dolore.",
-                                "description": "Velit id minus debitis doloremque.",
-                                "domain": {
-                                    "id": "praesentium",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "is_external": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "@type": "command"
-                        }
-                    },
-                    "@enums": [],
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ"
-                }
             }
         }
     }
