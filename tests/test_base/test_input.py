@@ -162,7 +162,9 @@ class InputTestCase(TestCase):
 
         request = Mock(
             body=(
-                '{"title": "Pchnąć w tę łódź jeża lub ośm ' +
+                # -- warning: not visible to you eyes maybe but
+                # -- I've manually added here crazy polish letters
+                '{"title": "Pchnąć w tę ło\u0301dź jeża lub ośm ' +
                 'skrzyń fig", "amount": "12"}').encode('utf8'),
             origin=None,
             log_authorizer={
@@ -184,7 +186,7 @@ class InputTestCase(TestCase):
         input = self._prepare_body_parser()
 
         request = Mock(
-            body='{not json',
+            body=b'{not json',
             origin=None,
             log_authorizer={
                 'user_id': 902,

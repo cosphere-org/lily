@@ -421,6 +421,31 @@ class TextVectorTestCase(TestCase):
             })
 
     #
+    # TRANSFORM_SPECIAL_CHARACTERS
+    #
+    def test_transform_special_characters(self):
+
+        assert self.vector.transform_special_characters(
+            # -- warning: not visible to you eyes maybe but
+            # -- I've manually added here crazy polish letters
+            'Pchnąć w tę łódź jeża lub ośm skrzyń fig łódź.'
+        ) == (
+            'Pchnąć w tę łódź jeża lub ośm skrzyń fig łódź.'
+        )
+
+    def test_transform_special_characters__unicode(self):
+
+        assert self.vector.transform_special_characters(
+            # -- warning: not visible to you eyes maybe but
+            # -- I've manually added here crazy polish letters
+            'Pchna\u0328c\u0301 w te\u0328 \u0142o\u0301dz\u0301 '
+            'jez\u0307a lub os\u0301m skrzyn\u0301 fig '
+            '\u0142o\u0301dz\u0301.'
+        ) == (
+            'Pchnąć w tę łódź jeża lub ośm skrzyń fig łódź.'
+        )
+
+    #
     # PARSE_TO_LIST
     #
     def test_parse_to_list__makes_the_right_calls(self):
