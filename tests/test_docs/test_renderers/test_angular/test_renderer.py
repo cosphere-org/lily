@@ -890,7 +890,8 @@ class AngularClientRendererTestCase(TestCase):
                   * OVERWRITTEN
                   */
 
-                import { NgModule } from '@angular/core';
+                import { NgModule, ModuleWithProviders } from '@angular/core';
+                import { HttpClientModule } from '@angular/common/http';
 
                 /** Domains */
                 import { CardsDomain } from './domains/cards/index';
@@ -899,8 +900,10 @@ class AngularClientRendererTestCase(TestCase):
 
                 /** Services */
                 import { APIService } from './services/api.service';
+                import { HttpService, Config } from './http.service';
 
                 @NgModule({
+                    imports: [HttpClientModule],
                     providers: [
                         // Domains
                         CardsDomain,
@@ -909,7 +912,19 @@ class AngularClientRendererTestCase(TestCase):
 
                         // Facade
                         APIService,
+                        HttpService,
                     ]
                 })
-                export class ClientModule {}
+                export class ClientModule {
+                  static forRoot(config: Config): ModuleWithProviders<ClientModule> {
+
+                    return {
+
+                      ngModule: ClientModule,
+
+                      providers: [{ provide: 'COSPHERE_CLIENT_CONFIG_TOKEN', useValue: config }]
+
+                    };
+                  }
+                }
             ''', 0)  # noqa
