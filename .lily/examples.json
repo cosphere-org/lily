@@ -4,7 +4,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -16,7 +16,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?commands=READ_PAYMENTS",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -68,16 +68,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "READ_PAYMENTS": {
+                        "UPDATE_HELLO": {
                             "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Alias illo modi ipsam quia est explicabo.",
-                                "description": "Iste fugiat voluptates ratione sequi.",
+                                "title": "Eaque harum ratione similique eum ex nostrum.",
+                                "description": "Laudantium quo neque inventore consequatur voluptate.",
                                 "domain": {
-                                    "id": "iure",
+                                    "id": "suscipit",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
