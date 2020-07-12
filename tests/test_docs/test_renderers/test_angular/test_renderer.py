@@ -550,7 +550,7 @@ class AngularClientRendererTestCase(TestCase):
                 import { Observable } from 'rxjs';
                 import * as _ from 'underscore';
 
-                import { HttpService } from '@lily/http';
+                import { HttpService } from '../../http.service';
 
                 import * as X from './paths.models';
 
@@ -820,8 +820,6 @@ class AngularClientRendererTestCase(TestCase):
                  */
                 import { Injectable, Injector } from '@angular/core';
                 import { Observable } from 'rxjs';
-
-                import { Options } from '@lily/http';
 
                 import * as X from '../domains/index';
 
