@@ -4,7 +4,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -16,7 +16,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",
@@ -63,21 +63,26 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [],
+                        "available": [
+                            "2.120.0",
+                            "2.14.5",
+                            "2.5.6",
+                            "1.0.0"
+                        ],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "POST",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Eaque harum ratione similique eum ex nostrum.",
-                                "description": "Laudantium quo neque inventore consequatur voluptate.",
+                                "title": "Alias doloremque itaque quam harum.",
+                                "description": "Quod repudiandae alias doloremque.",
                                 "domain": {
-                                    "id": "suscipit",
+                                    "id": "autem",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -87,7 +92,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },
