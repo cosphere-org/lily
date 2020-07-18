@@ -8,7 +8,7 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET / HTTP/1.1
+GET /?is_private=False HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
@@ -19,7 +19,7 @@ Respone:
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "UPDATE_HELLO": {
+        "CREATE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -34,15 +34,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Laudantium quo neque inventore consequatur voluptate.",
+                "description": "Occaecati amet distinctio fuga laudantium ex doloribus placeat.",
                 "domain": {
                     "@type": "domain",
-                    "id": "suscipit",
+                    "id": "officia",
                     "name": "domain"
                 },
-                "title": "Eaque harum ratione similique eum ex nostrum."
+                "title": "Magni quibusdam saepe nihil quibusdam."
             },
-            "method": "POST",
+            "method": "GET",
             "path_conf": {
                 "path": "conf"
             },
