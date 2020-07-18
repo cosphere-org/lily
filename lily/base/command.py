@@ -135,7 +135,7 @@ def command(
 
                 else:
                     success_exception = None
-                    with transaction.atomic():
+                    with transaction.atomic(using=is_atomic):
                         try:
                             return fn(self, request, *args, **kwargs)
 

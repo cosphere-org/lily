@@ -162,7 +162,7 @@ class TestCommands(HTTPCommands):
             title='atomic',
             description='atomic it...',
             domain=Domain(id='atomic', name='atomic')),
-        is_atomic=True)
+        is_atomic='default')
     def delete(self, request):
 
         self.some_stuff()
