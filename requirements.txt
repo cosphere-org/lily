@@ -3,7 +3,7 @@
 -e git+https://github.com/cosphere-org/lily-assistant.git#egg=lily-assistant
 
 # -- core
-Django==2.1.15
+Django==2.2.13
 
 # -- enhance with bulk_update capability
 django-bulk-update==2.2.0
