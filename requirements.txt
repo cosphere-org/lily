@@ -1,9 +1,10 @@
 
 # -- lily assistant
--e git+https://github.com/cosphere-org/lily-assistant.git#egg=lily-assistant
+# -e git+https://github.com/cosphere-org/lily-assistant.git#egg=lily-assistant
+-e ../lily-assistant
 
 # -- core
-Django==2.1.15
+Django==2.2.13
 
 # -- enhance with bulk_update capability
 django-bulk-update==2.2.0
@@ -15,9 +16,7 @@ djangorestframework==3.9.1
 psycopg2-binary==2.7.5
 
 # -- CLI
-django-click==2.1.0
-
-Click>=7.0
+django-click==2.2.0
 
 # -- utils
 pytz==2015.7
@@ -44,10 +43,6 @@ PyYAML==5.1
 
 # -- need by JSONSchemaField
 jsonschema==2.6.0
-
-# -- needed for deployment
-gunicorn==19.6.0
-gevent==1.4.0
 
 # -- spell checking
 hunspell==0.5.5

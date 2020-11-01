@@ -3,7 +3,7 @@
 pytest-pythonpath==0.7.1
 
 # -- helps testing django based code
-pytest-django==3.4.8
+pytest-django==4.1.0
 
 # -- provides injectable mocker fixture
 pytest-mock==0.10.1

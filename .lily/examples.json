@@ -23,15 +23,15 @@
                     "name": "test",
                     "commands": {
                         "CREATE_HELLO": {
-                            "method": "GET",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Magni quibusdam saepe nihil quibusdam.",
-                                "description": "Occaecati amet distinctio fuga laudantium ex doloribus placeat.",
+                                "title": "Dolores voluptatibus vero qui itaque.",
+                                "description": "Laudantium accusamus culpa aliquam enim ab explicabo delectus explicabo.",
                                 "domain": {
-                                    "id": "officia",
+                                    "id": "nam",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -72,7 +72,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -84,7 +84,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",
