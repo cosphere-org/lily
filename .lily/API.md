@@ -34,15 +34,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Occaecati amet distinctio fuga laudantium ex doloribus placeat.",
+                "description": "Laudantium accusamus culpa aliquam enim ab explicabo delectus explicabo.",
                 "domain": {
                     "@type": "domain",
-                    "id": "officia",
+                    "id": "nam",
                     "name": "domain"
                 },
-                "title": "Magni quibusdam saepe nihil quibusdam."
+                "title": "Dolores voluptatibus vero qui itaque."
             },
-            "method": "GET",
+            "method": "DELETE",
             "path_conf": {
                 "path": "conf"
             },
