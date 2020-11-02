@@ -18,9 +18,13 @@ from .stopwords import stopwords_filter
 
 class TextVector:
 
-    hobj_pl = hunspell.HunSpell(
-        '/usr/share/hunspell/pl_PL.dic',
-        '/usr/share/hunspell/pl_PL.aff')
+    hobj_pl = None
+
+    def __init__(self):
+        if not TextVector.hobj_pl:
+            TextVector.hobj_pl = hunspell.HunSpell(
+                '/usr/share/hunspell/pl_PL.dic',
+                '/usr/share/hunspell/pl_PL.aff')
 
     def parse_to_tsvector(self, conf, text, weight=None):
 
