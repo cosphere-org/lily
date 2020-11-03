@@ -22,9 +22,12 @@ class TextVector:
 
     def __init__(self):
         if not TextVector.hobj_pl:
-            TextVector.hobj_pl = hunspell.HunSpell(
-                '/usr/share/hunspell/pl_PL.dic',
-                '/usr/share/hunspell/pl_PL.aff')
+            try:
+                TextVector.hobj_pl = hunspell.HunSpell(
+                    '/usr/share/hunspell/pl_PL.dic',
+                    '/usr/share/hunspell/pl_PL.aff')
+            except Exception:
+                TextVector.hobj_pl = None
 
     def parse_to_tsvector(self, conf, text, weight=None):
 
@@ -176,6 +179,9 @@ class TextVector:
         return stems
 
     def _get_polish_stems(self, token):
+        if not self.hobj_pl:
+            return []
+
         token_stems = self.hobj_pl.stem(token)
         stems = []
 
