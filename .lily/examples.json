@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -22,16 +22,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "CREATE_HELLO": {
-                            "method": "POST",
+                        "UPDATE_HELLO": {
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Cumque totam eligendi vel reiciendis unde explicabo.",
-                                "description": "Maxime minima tenetur a error.",
+                                "title": "Iusto sequi pariatur voluptate magni molestiae.",
+                                "description": "Saepe quo soluta eos reprehenderit odio fugiat.",
                                 "domain": {
-                                    "id": "optio",
+                                    "id": "iure",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
