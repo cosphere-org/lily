@@ -1,9 +1,10 @@
 
-from django.conf.urls import url, include
+from django.conf.urls import include
+from django.urls import re_path
 
 urlpatterns = [
 
-    url(
+    re_path(
         r'^',
         include(('entrypoint.urls', 'entrypoint'), namespace='entrypoint')),
 
