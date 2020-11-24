@@ -28,15 +28,15 @@
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Mollitia dolore eveniet natus occaecati occaecati minima.",
-                                "description": "Impedit doloremque ullam at mollitia.",
+                                "title": "Reprehenderit voluptatem corrupti dolor ea magni.",
+                                "description": "Dicta quibusdam impedit accusamus provident.",
                                 "domain": {
-                                    "id": "nulla",
+                                    "id": "tempora",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -46,7 +46,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "is_external": false,
                                 "@type": "access"
                             },

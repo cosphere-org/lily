@@ -8,7 +8,7 @@ from django.conf import settings
 from lily.base.events import EventFactory
 from .command import Command
 from lily.base.utils import normalize_indentation
-from .repo import AngularRepo, AngularHTTPRepo, TemplateRepo
+from .repo import AngularRepo, TemplateRepo
 from .domain import Domain
 
 
