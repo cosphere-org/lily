@@ -88,17 +88,6 @@ class PathRule:
         return bool(self.pattern.search(path))
 
 
-class AngularHTTPRepo(AngularRepo):
-
-    origin = settings.LILY_ANGULAR_HTTP_ORIGIN
-
-    def __init__(self):
-        self.base_path = tempfile.mkdtemp()
-
-    def link(self):
-        self.npm('link')
-
-
 class TemplateRepo(Repo):
 
     origin = settings.LILY_ANGULAR_CLIENT_ORIGIN

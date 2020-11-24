@@ -66,9 +66,6 @@ class AngularClientRendererTestCase(TestCase):
         repo = Mock()
         self.mocker.patch.object(self.renderer, 'repo', repo)
 
-        http_repo = Mock()
-        self.mocker.patch.object(self.renderer, 'http_repo', http_repo)
-
         template_repo = Mock()
         self.mocker.patch.object(self.renderer, 'template_repo', template_repo)
 
@@ -135,11 +132,6 @@ class AngularClientRendererTestCase(TestCase):
         assert repo.add_all.call_count == 1
         assert repo.commit.call_count == 1
         assert repo.push.call_count == 1
-        assert http_repo.cd_to_repo.call_count == 1
-        assert http_repo.clone.call_count == 1
-        assert http_repo.install.call_count == 1
-        assert http_repo.build.call_count == 1
-        assert http_repo.link.call_count == 1
 
     def test_render__only_build(self):
 
@@ -160,9 +152,6 @@ class AngularClientRendererTestCase(TestCase):
 
         repo = Mock()
         self.mocker.patch.object(self.renderer, 'repo', repo)
-
-        http_repo = Mock()
-        self.mocker.patch.object(self.renderer, 'http_repo', http_repo)
 
         template_repo = Mock()
         self.mocker.patch.object(self.renderer, 'template_repo', template_repo)
@@ -230,11 +219,6 @@ class AngularClientRendererTestCase(TestCase):
         assert repo.add_all.call_count == 0
         assert repo.commit.call_count == 0
         assert repo.push.call_count == 0
-        assert http_repo.cd_to_repo.call_count == 1
-        assert http_repo.clone.call_count == 1
-        assert http_repo.install.call_count == 1
-        assert http_repo.build.call_count == 1
-        assert http_repo.link.call_count == 1
 
     #
     # GROUP_COMMANDS_BY_DOMAIN

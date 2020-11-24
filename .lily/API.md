@@ -27,22 +27,22 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": false
+                "is_private": true
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Impedit doloremque ullam at mollitia.",
+                "description": "Dicta quibusdam impedit accusamus provident.",
                 "domain": {
                     "@type": "domain",
-                    "id": "nulla",
+                    "id": "tempora",
                     "name": "domain"
                 },
-                "title": "Mollitia dolore eveniet natus occaecati occaecati minima."
+                "title": "Reprehenderit voluptatem corrupti dolor ea magni."
             },
-            "method": "DELETE",
+            "method": "GET",
             "path_conf": {
                 "path": "conf"
             },
