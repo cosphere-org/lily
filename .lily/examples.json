@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?commands=READ_PAYMENTS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -17,26 +17,21 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [
-                            "2.120.0",
-                            "2.14.5",
-                            "2.5.6",
-                            "1.0.0"
-                        ],
+                        "available": [],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
-                        "UPDATE_HELLO": {
-                            "method": "GET",
+                        "READ_PAYMENTS": {
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Reprehenderit voluptatem corrupti dolor ea magni.",
-                                "description": "Dicta quibusdam impedit accusamus provident.",
+                                "title": "Qui voluptate laboriosam esse illo velit cumque aut.",
+                                "description": "Illum earum dolorum sunt eius.",
                                 "domain": {
-                                    "id": "tempora",
+                                    "id": "maxime",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -46,7 +41,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
@@ -77,7 +72,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -89,7 +84,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",

@@ -258,6 +258,15 @@ class Enum:
     def get_key_for_value(self, value):
 
         def transform_key(k):
+            k = k.replace('>', 'GREATER_THAN')
+            k = k.replace('>=', 'GREATER_THAN_EQUAL')
+            k = k.replace('<', 'SMALLER_THAN')
+            k = k.replace('<=', 'SMALLER_THAN_EQUAL')
+            k = k.replace('=', 'EQUAL')
+            k = k.replace('!=', 'NOT_EQUAL')
+            k = k.replace('(', 'LEFT_PARANTHESIS')
+            k = k.replace(')', 'RIGHT_PARANTHESIS')
+
             return re.sub(r'[^\w]+', '_', k).upper()
 
         if isinstance(value, int):
