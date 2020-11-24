@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -17,21 +17,26 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [],
+                        "available": [
+                            "2.120.0",
+                            "2.14.5",
+                            "2.5.6",
+                            "1.0.0"
+                        ],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
-                        "CREATE_HELLO": {
-                            "method": "GET",
+                        "UPDATE_HELLO": {
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Temporibus aut quos distinctio unde similique et nam.",
-                                "description": "Ducimus beatae et veniam autem.",
+                                "title": "Mollitia dolore eveniet natus occaecati occaecati minima.",
+                                "description": "Impedit doloremque ullam at mollitia.",
                                 "domain": {
-                                    "id": "porro",
+                                    "id": "nulla",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -72,7 +77,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -84,7 +89,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
