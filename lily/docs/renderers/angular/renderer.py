@@ -66,7 +66,6 @@ class AngularClientRenderer(EventFactory):
         self.template_repo.copy_to(self.repo.base_path, self.client_prefix)
         self.repo.cd_to_repo()
         self.repo.install()
-        self.repo.link()
 
         # -- render domains
         with local_cwd(root_cwd):
