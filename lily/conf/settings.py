@@ -37,14 +37,8 @@ LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS = getattr(
     'LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS',
     None)
 
-# FIXME: !!!! should be moved to github!
 LILY_ANGULAR_CLIENT_ORIGIN = (
-    'git@bitbucket.org:goodai/lily-angular-client.git')
-# git@bitbucket.org:goodai/lily-angular-client-base.git
-
-# FIXME: !!!! should be moved to github!
-LILY_ANGULAR_HTTP_ORIGIN = (
-    'git@bitbucket.org:goodai/lily-angular-http.git')
+    'git@github.com:cosphere-org/lily-angular-client-base.git')
 
 #
 # ASYNC

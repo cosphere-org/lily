@@ -9,30 +9,10 @@ import pytest
 from lily_assistant.repo.repo import Repo
 
 from lily.docs.renderers.angular.repo import (
-    AngularHTTPRepo,
     AngularRepo,
     TemplateRepo,
     PathRule,
 )
-
-
-class AngularHTTPRepoTestCase(TestCase):
-
-    @pytest.fixture(autouse=True)
-    def initfixture(self, mocker, tmpdir):
-        self.mocker = mocker
-        self.tmpdir = tmpdir
-
-    #
-    # LINK
-    #
-    def test_link(self):
-        npm = self.mocker.patch.object(AngularHTTPRepo, 'npm')
-        r = AngularHTTPRepo()
-
-        r.link()
-
-        assert npm.call_args_list == [call('link')]
 
 
 class AngularRepoTestCase(TestCase):

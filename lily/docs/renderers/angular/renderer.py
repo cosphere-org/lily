@@ -38,8 +38,6 @@ class AngularClientRenderer(EventFactory):
         # -- source repo
         self.template_repo = TemplateRepo()
 
-        self.http_repo = AngularHTTPRepo()
-
         # -- target repo
         self.repo = AngularRepo(client_origin)
         self.client_prefix = client_prefix
@@ -57,13 +55,6 @@ class AngularClientRenderer(EventFactory):
 
         # -- save it now before all directory jumps
         config = Config()
-
-        # -- HTTP client
-        self.http_repo.cd_to_repo()
-        self.http_repo.clone()
-        self.http_repo.install()
-        self.http_repo.build()
-        self.http_repo.link()
 
         # -- pull newest changes to the template
         self.template_repo.clone()
