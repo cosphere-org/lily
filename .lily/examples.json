@@ -17,21 +17,26 @@
                     "version_info": {
                         "deployed": "2.5.6",
                         "displayed": "2.5.6",
-                        "available": [],
+                        "available": [
+                            "2.120.0",
+                            "2.14.5",
+                            "2.5.6",
+                            "1.0.0"
+                        ],
                         "@type": "version_info"
                     },
                     "name": "test",
                     "commands": {
                         "UPDATE_HELLO": {
-                            "method": "PUT",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Iusto sequi pariatur voluptate magni molestiae.",
-                                "description": "Saepe quo soluta eos reprehenderit odio fugiat.",
+                                "title": "Mollitia dolore eveniet natus occaecati occaecati minima.",
+                                "description": "Impedit doloremque ullam at mollitia.",
                                 "domain": {
-                                    "id": "iure",
+                                    "id": "nulla",
                                     "name": "domain",
                                     "@type": "domain"
                                 },

@@ -34,15 +34,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Saepe quo soluta eos reprehenderit odio fugiat.",
+                "description": "Impedit doloremque ullam at mollitia.",
                 "domain": {
                     "@type": "domain",
-                    "id": "iure",
+                    "id": "nulla",
                     "name": "domain"
                 },
-                "title": "Iusto sequi pariatur voluptate magni molestiae."
+                "title": "Mollitia dolore eveniet natus occaecati occaecati minima."
             },
-            "method": "PUT",
+            "method": "DELETE",
             "path_conf": {
                 "path": "conf"
             },
@@ -60,7 +60,12 @@ Respone:
     "name": "test",
     "version_info": {
         "@type": "version_info",
-        "available": [],
+        "available": [
+            "2.120.0",
+            "2.14.5",
+            "2.5.6",
+            "1.0.0"
+        ],
         "deployed": "2.5.6",
         "displayed": "2.5.6"
     }

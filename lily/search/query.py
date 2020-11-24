@@ -21,7 +21,7 @@ class Query(SearchQuery):
 
     def __init__(self, value, output_field=None, **extra):
         language_conf = detector.detect_db_conf(value)
-        value = self.parse_value(value, language_conf)
+        self.parsed_value = self.parse_value(value, language_conf)
 
         super(Query, self).__init__(value, config=language_conf)
 
@@ -63,7 +63,7 @@ class Query(SearchQuery):
             return ' | '.join(tokens)
 
     def as_sql(self, compiler, connection):
-        params = [self.value]
+        params = [self.parsed_value]
 
         config_sql, config_params = compiler.compile(self.config)
         template = 'to_tsquery({}::regconfig, %s)'.format(config_sql)

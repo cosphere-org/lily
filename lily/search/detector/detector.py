@@ -65,11 +65,14 @@ class LanguageDetector(EventFactory):
     def __init__(self):
 
         self.languages = [
-            l
-            for l in ALL_LANGUAGES
-            if l['abbr'] in self.language_abbrs]
+            lang
+            for lang in ALL_LANGUAGES
+            if lang['abbr'] in self.language_abbrs]
 
-        self.languages_index = {l['abbr']: l for l in self.languages}
+        self.languages_index = {
+            lang['abbr']:
+            lang for lang in self.languages
+        }
 
     def detect(self, text):
 

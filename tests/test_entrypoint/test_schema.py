@@ -92,7 +92,7 @@ class JSONSchemaSerializer(serializers.Serializer):
             object(type=enum(Shopping, const=Shopping.bread.value)),
             object(type=enum(Shopping, const=Shopping.milk.value))))
 
-    def get_users(self, instance) -> [object(name=const('YO'), age=number())]:
+    def get_users(self, instance) -> [object(name=const('YO'), age=number())]:  # noqa
         return instance['users']
 
     def get_owners(self, instance) -> array(object(name=string(), age=number())):  # noqa

@@ -3,16 +3,16 @@
 lily-assistant==1.1.6
 
 # -- core
-Django==2.2.13
+Django~=3.1.3
 
 # -- enhance with bulk_update capability
 django-bulk-update==2.2.0
 
 # -- rest API framework
-djangorestframework==3.9.1
+djangorestframework~=3.12.2
 
 # -- postgres communication
-psycopg2-binary==2.7.5
+psycopg2-binary==2.8.6
 
 # -- CLI
 django-click==2.2.0
