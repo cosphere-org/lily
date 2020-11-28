@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?commands=READ_PAYMENTS",
+                "path": "/?is_private=False",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -22,16 +22,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "READ_PAYMENTS": {
-                            "method": "POST",
+                        "CREATE_HELLO": {
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Qui voluptate laboriosam esse illo velit cumque aut.",
-                                "description": "Illum earum dolorum sunt eius.",
+                                "title": "Praesentium iusto neque corrupti optio neque autem officiis.",
+                                "description": "Cupiditate est natus numquam cum voluptatibus.",
                                 "domain": {
-                                    "id": "maxime",
+                                    "id": "reiciendis",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -72,7 +72,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -84,7 +84,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
