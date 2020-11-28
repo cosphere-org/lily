@@ -12,6 +12,7 @@ def test_stored_vector__to_sql(mocker):
 
     compiler, connection = Mock(), Mock()
     as_sql = mocker.patch('search.vector.SearchVector.as_sql')
+    as_sql.return_value = ['sql::text', ['param', 's']]
 
     vector = search.StoredVector('column')
     result = vector.as_sql(compiler, connection)
@@ -23,7 +24,7 @@ def test_stored_vector__to_sql(mocker):
             connection,
             function=None,
             template='%(expressions)s')])
-    assert result == as_sql.return_value
+    assert result == ('sql::tsvector', ['param', 's'])
 
 
 class TextVectorTestCase(TestCase):

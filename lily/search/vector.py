@@ -290,11 +290,14 @@ class StoredVector(SearchVector, VectorCombinable):
 
     def as_sql(self, compiler, connection, function=None, template=None):
 
-        return super(StoredVector, self).as_sql(
+        sql, params = super(StoredVector, self).as_sql(
             compiler,
             connection,
             function=None,
             template='%(expressions)s')
+
+        sql = sql.replace('::text', '::tsvector')
+        return sql, params
 
 
 class OnTheFlyVector(SearchVector, VectorCombinable):
