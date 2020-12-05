@@ -8,14 +8,18 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?is_private=False HTTP/1.1
+GET /?domain_id=PATHS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
-    "@enums": [],
+    "@enums": [
+        {
+            "A": "X"
+        }
+    ],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
@@ -34,15 +38,52 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Cupiditate est natus numquam cum voluptatibus.",
+                "description": "Consumer back determine news my their behind school.",
                 "domain": {
                     "@type": "domain",
-                    "id": "reiciendis",
+                    "id": "paths",
                     "name": "domain"
                 },
-                "title": "Praesentium iusto neque corrupti optio neque autem officiis."
+                "title": "Phone allow than determine society attention build almost prevent."
             },
-            "method": "DELETE",
+            "method": "GET",
+            "path_conf": {
+                "path": "conf"
+            },
+            "schemas": {
+                "some": "schemas"
+            },
+            "source": {
+                "@type": "source",
+                "end_line": 15,
+                "filepath": "/tests/factory.py",
+                "start_line": 14
+            }
+        },
+        "DELETE_HELLO": {
+            "@type": "command",
+            "access": {
+                "@type": "access",
+                "access_list": [
+                    "ANY"
+                ],
+                "is_external": false,
+                "is_private": false
+            },
+            "examples": {
+                "some": "examples"
+            },
+            "meta": {
+                "@type": "meta",
+                "description": "Affect great air other his.",
+                "domain": {
+                    "@type": "domain",
+                    "id": "paths",
+                    "name": "domain"
+                },
+                "title": "Near true environment none trouble."
+            },
+            "method": "POST",
             "path_conf": {
                 "path": "conf"
             },
