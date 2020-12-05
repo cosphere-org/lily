@@ -2,7 +2,7 @@
 from unittest import TestCase
 from time import time, sleep
 
-from lily.async import AsyncTask, ParallelExecutor
+from lily.asynchronous import AsyncTask, ParallelExecutor
 
 
 class ParallelExecutorTestCase(TestCase):
