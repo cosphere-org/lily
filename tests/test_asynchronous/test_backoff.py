@@ -7,7 +7,7 @@ import pytest
 import requests
 from requests.exceptions import ConnectionError, Timeout
 
-from lily.async import AsyncTask, BackoffExecutor
+from lily.asynchronous import AsyncTask, BackoffExecutor
 
 
 class Client:

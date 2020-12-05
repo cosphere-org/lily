@@ -7,8 +7,6 @@ from .task import AsyncTask
 
 class ParallelExecutor:
 
-    BACKOFF_UNIT = 3  # seconds
-
     def __init__(self, tasks: [AsyncTask]):
 
         self.tasks = tasks

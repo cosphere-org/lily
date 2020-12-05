@@ -1,7 +1,7 @@
 
 from unittest import TestCase
 
-from lily.async import AsyncTask
+from lily.asynchronous import AsyncTask
 
 
 class AsyncTaskTestCase(TestCase):

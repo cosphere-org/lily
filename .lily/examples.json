@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/?domain_id=PATHS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -23,15 +23,52 @@
                     "name": "test",
                     "commands": {
                         "CREATE_HELLO": {
-                            "method": "DELETE",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Praesentium iusto neque corrupti optio neque autem officiis.",
-                                "description": "Cupiditate est natus numquam cum voluptatibus.",
+                                "title": "Phone allow than determine society attention build almost prevent.",
+                                "description": "Consumer back determine news my their behind school.",
                                 "domain": {
-                                    "id": "reiciendis",
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "@type": "meta"
+                            },
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "is_external": false,
+                                "@type": "access"
+                            },
+                            "source": {
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "end_line": 15,
+                                "@type": "source"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "method": "POST",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "meta": {
+                                "title": "Near true environment none trouble.",
+                                "description": "Affect great air other his.",
+                                "domain": {
+                                    "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -60,7 +97,11 @@
                             "@type": "command"
                         }
                     },
-                    "@enums": [],
+                    "@enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
@@ -72,7 +113,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "PREMIUM",
                     "X-CS-USER-ID": 56
@@ -84,7 +125,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",
