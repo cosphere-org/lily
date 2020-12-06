@@ -487,7 +487,7 @@ class AngularClientRenderer(EventFactory):
 
                       ngModule: ClientModule,
 
-                      providers: [{{ provide: 'COSPHERE_CLIENT_CONFIG_TOKEN', useValue: config }}]
+                      providers: [{{ provide: 'CLIENT_CONFIG_TOKEN', useValue: config }}]
 
                     }};
                   }}

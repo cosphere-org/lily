@@ -8,22 +8,18 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?domain_id=PATHS HTTP/1.1
+GET / HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
 Respone:
 ```json
 {
-    "@enums": [
-        {
-            "A": "X"
-        }
-    ],
+    "@enums": [],
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "CREATE_HELLO": {
+        "UPDATE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -31,59 +27,22 @@ Respone:
                     "ANY"
                 ],
                 "is_external": false,
-                "is_private": false
+                "is_private": true
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Consumer back determine news my their behind school.",
+                "description": "Repellat officia eius beatae culpa delectus temporibus natus quod.",
                 "domain": {
                     "@type": "domain",
-                    "id": "paths",
+                    "id": "tempora",
                     "name": "domain"
                 },
-                "title": "Phone allow than determine society attention build almost prevent."
+                "title": "Id ducimus officia nam."
             },
-            "method": "GET",
-            "path_conf": {
-                "path": "conf"
-            },
-            "schemas": {
-                "some": "schemas"
-            },
-            "source": {
-                "@type": "source",
-                "end_line": 15,
-                "filepath": "/tests/factory.py",
-                "start_line": 14
-            }
-        },
-        "DELETE_HELLO": {
-            "@type": "command",
-            "access": {
-                "@type": "access",
-                "access_list": [
-                    "ANY"
-                ],
-                "is_external": false,
-                "is_private": false
-            },
-            "examples": {
-                "some": "examples"
-            },
-            "meta": {
-                "@type": "meta",
-                "description": "Affect great air other his.",
-                "domain": {
-                    "@type": "domain",
-                    "id": "paths",
-                    "name": "domain"
-                },
-                "title": "Near true environment none trouble."
-            },
-            "method": "POST",
+            "method": "PUT",
             "path_conf": {
                 "path": "conf"
             },

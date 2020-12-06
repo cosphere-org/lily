@@ -1,4 +1,5 @@
 
+import json
 import os
 import tempfile
 import textwrap
@@ -78,8 +79,16 @@ class AngularRepoTestCase(TestCase):
                 return '0.9.1'
 
         temp_dir = self.tmpdir.mkdir('repo')
-        package = temp_dir.join('package.json')
-        package.write('"version": "{}"'.format('0.1.18'))
+
+        app_package = temp_dir.join('package.json')
+        app_package.write(json.dumps({
+            'scripts': 'hi',
+            'what': 'where',
+        }))
+
+        client_dir = temp_dir.mkdir('projects').mkdir('client')
+        client_package = client_dir.join('package.json')
+        client_package.write(json.dumps({"version": "0.1.18"}))
 
         self.mocker.patch.object(
             tempfile, 'mkdtemp').return_value = str(temp_dir)
@@ -89,7 +98,11 @@ class AngularRepoTestCase(TestCase):
 
         assert r.upgrade_version(MockConfig()) == '0.9.1-API-0.1.18-CLIENT'
         with open('package.json') as f:
-            assert f.read() == '"version": "0.9.1-API-0.1.18-CLIENT"'
+            assert json.loads(f.read()) == {
+                'scripts': 'hi',
+                'version': '0.9.1-API-0.1.18-CLIENT',
+                'what': 'where',
+            }
 
 
 class PathRuleTestCase(TestCase):

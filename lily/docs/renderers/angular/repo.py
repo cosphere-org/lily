@@ -4,6 +4,8 @@ import os
 import re
 from functools import partial
 import tempfile
+import json
+import collections
 
 from lily_assistant.repo.repo import Repo
 
@@ -39,26 +41,37 @@ class AngularRepo(Repo):
     #
     # UTILS
     #
-    # FIXME: allow here passing the version from the api gateway!!!
-    # to have match between client version and API version
-    # upgrades of the client itself, how can we control them???
-    # -- maybe by adding extra API-<version>-CLIENT-<version>
     def upgrade_version(self, config):
 
-        with open('package.json', 'r') as p:
-            conf = p.read()
-            version_match = re.search(
-                r'\"version\"\:\s\"(?P<version>[\d\.]+)\"', conf, re.M)
-            version = version_match.groupdict()['version']
-            span = version_match.span()
+        # -- take only VERSION from here
+        with open('projects/client/package.json', 'r') as p:
+            packagejson = json.loads(p.read())
+            next_version = (
+                f'{config.version}-API-{packagejson["version"]}-CLIENT')
 
-            api_version = config.version
-            next_version = f'{api_version}-API-{version}-CLIENT'
+        # -- take the whole configuration from here
+        with open('package.json', 'r') as p:
+            packagejson = json.loads(
+                p.read(),
+                object_pairs_hook=collections.OrderedDict)
 
         with open('package.json', 'w') as p:
-            conf = conf.replace(
-                conf[span[0]: span[1]], '"version": "{}"'.format(next_version))
-            p.write(conf)
+            packagejson['version'] = next_version
+
+            # -- final clean up
+            try:
+                del packagejson['main_ivy_ngcc']
+
+            except KeyError:
+                pass
+
+            try:
+                del packagejson['__processed_by_ivy_ngcc__']
+
+            except KeyError:
+                pass
+
+            p.write(json.dumps(packagejson, indent=2))
 
         return next_version
 
