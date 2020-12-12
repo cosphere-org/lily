@@ -4,7 +4,7 @@ from enum import EnumMeta
 
 from django.db import models
 from django.db.models.expressions import RawSQL
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from jsonschema import (
     validate as json_validate,
     ValidationError as JsonValidationError,

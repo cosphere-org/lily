@@ -34,15 +34,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Repellat officia eius beatae culpa delectus temporibus natus quod.",
+                "description": "Hic laboriosam omnis odio repudiandae enim voluptatum a.",
                 "domain": {
                     "@type": "domain",
-                    "id": "tempora",
+                    "id": "quis",
                     "name": "domain"
                 },
-                "title": "Id ducimus officia nam."
+                "title": "Tenetur ab saepe sequi cumque laudantium culpa praesentium error."
             },
-            "method": "PUT",
+            "method": "GET",
             "path_conf": {
                 "path": "conf"
             },
