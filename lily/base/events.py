@@ -1,18 +1,21 @@
 
 import logging
-import json
 
-from django.http import JsonResponse, HttpResponse
+import orjson
+from django.http import HttpResponse
 
 
-class JsonResponseBase(JsonResponse):
+class JsonResponseBase(HttpResponse):
 
     status_code = NotImplemented
 
     data = {}
 
-    def __init__(self, data={}):
-        super(JsonResponseBase, self).__init__(data=(data or self.data))
+    def __init__(self, data=None):
+        self.data = data or self.data or {}
+
+        data = orjson.dumps(data, option=orjson.OPT_NON_STR_KEYS)
+        super().__init__(content=data, content_type='application/json')
 
 
 class Json200(JsonResponseBase):
@@ -167,7 +170,7 @@ class EventFactory:
             # -- notify about the event
             message = '{event}: {log_data}'.format(
                 event=self.event,
-                log_data=json.dumps(data))
+                log_data=orjson.dumps(data, option=orjson.OPT_NON_STR_KEYS))
 
             self.logger.info(message)
 
@@ -252,7 +255,8 @@ class EventFactory:
 
             # -- notify about the event
             message = '{event}: {data}'.format(
-                event=event, data=json.dumps(data))
+                event=event,
+                data=orjson.dumps(data, option=orjson.OPT_NON_STR_KEYS))
 
             # FIXME: !!!! make it log in the lazy way so that enriching with
             # the context could take place!!!
