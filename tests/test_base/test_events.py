@@ -92,7 +92,7 @@ class BaseSuccessExceptionTestCase(TestCase):
 
     def test_log__user_id_in_context(self):
 
-        dumps = self.mocker.patch('lily.base.events.json.dumps')
+        dumps = self.mocker.patch('lily.base.events.orjson.dumps')
         dumps.return_value = '{XX}'
         e = EventFactory.BaseSuccessException(
             context=Mock(log_authorizer={'user_id': 12}), event='HELLO')
@@ -102,11 +102,12 @@ class BaseSuccessExceptionTestCase(TestCase):
 
         assert logger.info.call_args_list == [call('HELLO: {XX}')]
         assert dumps.call_args_list == [
-            call({'@authorizer': {'user_id': 12}, '@event': 'HELLO'})]
+            call({'@authorizer': {'user_id': 12}, '@event': 'HELLO'}, option=4)
+        ]
 
     def test_log__no_user_id_in_context(self):
 
-        dumps = self.mocker.patch('lily.base.events.json.dumps')
+        dumps = self.mocker.patch('lily.base.events.orjson.dumps')
         dumps.return_value = '{XX}'
         logger = Mock()
         e = EventFactory.BaseSuccessException(
@@ -116,7 +117,7 @@ class BaseSuccessExceptionTestCase(TestCase):
         e.log()
 
         assert logger.info.call_args_list == [call('HELLO: {XX}')]
-        assert dumps.call_args_list == [call({'@event': 'HELLO'})]
+        assert dumps.call_args_list == [call({'@event': 'HELLO'}, option=4)]
 
 
 @pytest.mark.parametrize(

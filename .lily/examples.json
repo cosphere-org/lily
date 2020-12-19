@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?commands=READ_PAYMENTS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -68,16 +68,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "UPDATE_HELLO": {
-                            "method": "GET",
+                        "READ_PAYMENTS": {
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Tenetur ab saepe sequi cumque laudantium culpa praesentium error.",
-                                "description": "Hic laboriosam omnis odio repudiandae enim voluptatum a.",
+                                "title": "Dicta debitis possimus ratione explicabo.",
+                                "description": "Veniam aut reiciendis quod ea aut fugit.",
                                 "domain": {
-                                    "id": "quis",
+                                    "id": "cum",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -87,7 +87,7 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": true,
+                                "is_private": false,
                                 "is_external": false,
                                 "@type": "access"
                             },
