@@ -16,21 +16,28 @@ class AddLanguage(Operation):
         pass
 
     def database_forwards(self, app_label, schema_editor, *args, **kwargs):
-        schema_editor.execute("""
-            CREATE TEXT SEARCH CONFIGURATION
-                public.%s ( COPY = pg_catalog.english );
-        """ % self.name)
-        schema_editor.execute("""
-            ALTER TEXT SEARCH CONFIGURATION %s
-                ALTER MAPPING FOR
-                    asciiword,
-                    asciihword,
-                    hword_asciipart,
-                    word,
-                    hword,
-                    hword_part
-                WITH simple;
-        """ % (self.name))
+
+        with schema_editor.connection.cursor() as cursor:
+            cursor.execute("""
+                SELECT count(*) FROM pg_ts_config WHERE cfgname = '%s';
+            """ % self.name, [])
+            result = cursor.fetchall()
+            if result[0][0] == 0:
+                schema_editor.execute("""
+                    CREATE TEXT SEARCH CONFIGURATION
+                        public.%s ( COPY = pg_catalog.english );
+                """ % self.name)
+                schema_editor.execute("""
+                    ALTER TEXT SEARCH CONFIGURATION %s
+                        ALTER MAPPING FOR
+                            asciiword,
+                            asciihword,
+                            hword_asciipart,
+                            word,
+                            hword,
+                            hword_part
+                        WITH simple;
+                """ % (self.name))
 
     def database_backwards(self, app_label, schema_editor, *args, **kwargs):
         schema_editor.execute(
