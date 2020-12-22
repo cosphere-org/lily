@@ -38,8 +38,8 @@ def dump_to_bytes(data):
 
 def get_auth_headers(user_id, account_type='SUPER_PREMIUM'):
     return {
-        'HTTP_X_CS_ACCOUNT_TYPE': account_type,
-        'HTTP_X_CS_USER_ID': user_id,
+        'HTTP_X_ACCOUNT_TYPE': account_type,
+        'HTTP_X_USER_ID': user_id,
         'SERVER_NAME': 'yo',
     }
 
@@ -173,6 +173,21 @@ class TestCommands(HTTPCommands):
         pass
 
 
+@FakeClient.fake_me
+class TestReturnCommands(HTTPCommands):
+
+    @command(
+        name='ATOMIC',
+        meta=Meta(
+            title='atomic',
+            description='atomic it...',
+            domain=Domain(id='atomic', name='atomic')),
+        is_atomic='default')
+    def get(self, request):
+
+        return self.event.Executed(event='ATOMIC', context=request, data={})
+
+
 class DoAndGoCommands(HTTPCommands):
 
     @command(
@@ -269,6 +284,49 @@ class CommandTestCase(TestCase):
             },
             'name': 'Jake',
             'card_id': 190,
+        }
+
+    def test_success__instead_of_final_raise(self):
+
+        u = User.objects.create_user(username='jacky')
+        request = Mock(
+            log_authorizer={'jack': 'chan'},
+            body=dump_to_bytes({"name": "John", "age": 81}),
+            META=get_auth_headers(u.id, 'SUPER_PREMIUM'))
+        self.mocker.patch.object(
+            serializers,
+            'COMMANDS_CONF',
+            {
+                'MAKE_IT_BETTER': {
+                    'service_base_uri': 'http://192.11.2.1:9000',
+                    'method': 'post',
+                    'path_conf': {
+                        'path': '/payment_cards/{card_id}/sth/',
+                        'parameters': [
+                            {
+                                'name': 'card_id',
+                                'in': 'path',
+                                'description': None,
+                                'required': True,
+                                'type': 'integer'
+                            },
+                        ],
+                    },
+                    'access': {
+                        'is_private': False,
+                        'access_list': ['SUPER_PREMIUM'],
+                    },
+                },
+            })
+
+        c = TestReturnCommands()
+
+        response = c.get(request)
+
+        assert response.status_code == 200
+        assert to_json(response) == {
+            '@event': 'ATOMIC',
+            '@type': 'empty'
         }
 
     #

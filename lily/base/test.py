@@ -4,6 +4,7 @@ import json
 from copy import deepcopy
 from unittest.mock import patch
 from contextlib import ContextDecorator
+import requests
 
 from django.urls import get_resolver
 from django.test import Client as DjangoClient
@@ -42,7 +43,74 @@ class override_settings(ContextDecorator):  # noqa
             p.stop()
 
 
-class Client(DjangoClient):
+class E2EClient:
+
+    def post(self, path, data=None, json=None, **headers):
+        return self._make_request(
+            'post',
+            path,
+            data=data,
+            json=json,
+            headers=headers)
+
+    def get(self, path, data=None, json=None, **headers):
+        return self._make_request(
+            'get',
+            path,
+            data=data,
+            json=json,
+            headers=headers)
+
+    def put(self, path, data=None, json=None, **headers):
+        return self._make_request(
+            'put',
+            path,
+            data=data,
+            json=json,
+            headers=headers)
+
+    def delete(self, path, data=None, json=None, **headers):
+        return self._make_request(
+            'delete',
+            path,
+            data=data,
+            json=json,
+            headers=headers)
+
+    def _make_request(
+            self, http_verb, path, data=None, json=None, headers=None):
+
+        payload = {}
+        if json:
+            payload = {'json': json}
+
+        if data and http_verb in ['put', 'post']:
+            payload = {'data': data}
+
+        if data and http_verb in ['get']:
+            payload = {'params': data}
+
+        response = getattr(requests, http_verb)(
+            self._get_url(path),
+            headers=headers or {},
+            verify=self._verify_ssl,
+            **payload)
+
+        return response
+
+    def _get_url(self, path):
+        path = path.strip()
+        if not path.startswith('/'):
+            path = f'/{path}'
+
+        return f'{settings.LILY_TEST_CLIENT_BASE_URI}{path}'
+
+    @property
+    def _verify_ssl(self):
+        return settings.LILY_TEST_CLIENT_VERIFY_SSL
+
+
+class UnitClient(DjangoClient):
 
     resolver = get_resolver(None)
 
@@ -67,7 +135,13 @@ class Client(DjangoClient):
 
         assure_path_exists(get_examples_filepath())
 
-        response = getattr(super(Client, self), http_verb)(*args, **kwargs)
+        # -- handling json case
+        if 'json' in kwargs:
+            kwargs['data'] = json.dumps(kwargs['json'])
+            kwargs['content_type'] = 'application/json'
+            del kwargs['json']
+
+        response = getattr(super(UnitClient, self), http_verb)(*args, **kwargs)
 
         fn = self.resolver.resolve(response.request['PATH_INFO']).func
 
@@ -164,3 +238,12 @@ class Client(DjangoClient):
             })
 
         return response
+
+
+def Client():  # noqa
+
+    if settings.LILY_TEST_CLIENT_TYPE.upper() == 'UNIT':
+        return UnitClient()
+
+    else:
+        return E2EClient()

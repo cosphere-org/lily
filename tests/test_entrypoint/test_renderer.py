@@ -64,7 +64,7 @@ class CommandsRendererTestCase(TestCase):
         }
 
         assert CommandsRenderer().render() == {
-            '@enums': [],
+            'enums': [],
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -124,7 +124,7 @@ class CommandsRendererTestCase(TestCase):
             description='# this is test of markdown description',
             domain=Domain(id='h', name='hh'))
         assert result == {
-            '@enums': [],
+            'enums': [],
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -186,7 +186,7 @@ class CommandsRendererTestCase(TestCase):
         }
 
         assert CommandsRenderer().render() == {
-            '@enums': [
+            'enums': [
                 {'enum_name': 'A'},
                 {'enum_name': 'C'},
                 {'enum_name': 'D'},
@@ -268,7 +268,7 @@ class CommandsRendererTestCase(TestCase):
             )])
 
         assert CommandsRenderer().render() == {
-            '@enums': [],
+            'enums': [],
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -350,7 +350,7 @@ class CommandsRendererTestCase(TestCase):
             }))
 
         assert CommandsRenderer().render() == {
-            '@enums': [],
+            'enums': [],
             'READ_CARD': {
                 'access': access,
                 'meta': meta,
@@ -379,7 +379,7 @@ class CommandsRendererTestCase(TestCase):
     def test_render__no_commands(self):
         self.mocker.patch.object(BaseRenderer, 'render').return_value = {}
 
-        assert CommandsRenderer().render() == {'@enums': []}
+        assert CommandsRenderer().render() == {'enums': []}
 
     #
     # get_examples

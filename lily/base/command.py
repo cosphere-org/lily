@@ -107,12 +107,15 @@ def command(
                 #
                 # AUTHORIZATION
                 #
+                response_headers = {}
                 if access.access_list:
                     authorizer = import_from_string(
                         settings.LILY_AUTHORIZER_CLASS
                     )(access.access_list)
-                    request.access = authorizer.authorize(request)
+                    authorized = authorizer.authorize(request)
+                    request.access = authorized.request_access
                     request.log_authorizer = authorizer.log(request.access)
+                    response_headers = authorized.response_headers
 
                 #
                 # INPUT
@@ -131,13 +134,25 @@ def command(
                     # -- if no exception will be raised we return whatever it
                     # -- was returned since most likely some default Django's
                     # -- mechanism took place
-                    return fn(self, request, *args, **kwargs)
+                    response = fn(self, request, *args, **kwargs)
+                    if isinstance(response, EventFactory.BaseSuccessException):
+                        return _handle_response(
+                            request, name, output, response_headers, response)
+
+                    else:
+                        return response
 
                 else:
                     success_exception = None
                     with transaction.atomic(using=is_atomic):
                         try:
-                            return fn(self, request, *args, **kwargs)
+                            response = fn(self, request, *args, **kwargs)
+                            if isinstance(response, EventFactory.BaseSuccessException):  # noqa
+                                return _handle_response(
+                                    request, name, output, response_headers, response)  # noqa
+
+                            else:
+                                return response
 
                         except EventFactory.BaseSuccessException as e:
                             e.extend(
@@ -159,60 +174,8 @@ def command(
                 ).log().response()
 
             except EventFactory.BaseSuccessException as e:
-                e.extend(
-                    context=request,
-                    event=name.render_event_name(request, e)).log()
-
-                #
-                # RESPONSE VALIDATION (Test Server Only)
-                #
-                if e.data and request.META.get('SERVER_NAME') == 'testserver':
-                    serializer = output.serializer(
-                        data=e.data,
-                        context={
-                            **e.output_context,
-                            'request': request,
-                            'command_name': request._lily_context.command_name,
-                        })
-
-                    if not serializer.is_valid():
-                        e = event.BrokenRequest(
-                            'RESPONSE_DID_NOT_VALIDATE',
-                            context=request,
-                            data={'errors': serializer.errors},
-                            is_critical=True)
-
-                        return e.response_class(e.data)
-
-                #
-                # OUTPUT
-                #
-                try:
-                    body = output.serializer(
-                        (
-                            (e.data is not None and e.data) or
-                            (e.instance is not None and e.instance)
-                        ),
-                        context={
-                            **e.output_context,
-                            'request': request,
-                            'command_name': request._lily_context.command_name,
-                        }).data
-
-                    body['@event'] = e.event
-
-                    return e.response_class(body)
-
-                # -- case of serializer returning error as well
-                except EventFactory.BaseErrorException as e:
-                    e.update_with_context(context=request)
-
-                    response = e.response_class(e.data)
-                    if e.extra_headers:
-                        for k, v in e.extra_headers.items():
-                            response[k] = v
-
-                    return response
+                return _handle_response(
+                    request, name, output, response_headers, e)
 
             except EventFactory.BaseErrorException as e:
                 e.update_with_context(context=request)
@@ -293,3 +256,64 @@ def command(
         return inner
 
     return command_inner
+
+
+def _handle_response(request, name, output, response_headers, e):
+    e.extend(
+        context=request,
+        event=name.render_event_name(request, e)).log()
+
+    #
+    # RESPONSE VALIDATION (Test Server Only)
+    #
+    if e.data and request.META.get('SERVER_NAME') == 'testserver':
+        serializer = output.serializer(
+            data=e.data,
+            context={
+                **e.output_context,
+                'request': request,
+                'command_name': request._lily_context.command_name,
+            })
+
+        if not serializer.is_valid():
+            e = event.BrokenRequest(
+                'RESPONSE_DID_NOT_VALIDATE',
+                context=request,
+                data={'errors': serializer.errors},
+                is_critical=True)
+
+            return e.response_class(e.data)
+
+    #
+    # OUTPUT
+    #
+    try:
+        body = output.serializer(
+            (
+                (e.data is not None and e.data) or
+                (e.instance is not None and e.instance)
+            ),
+            context={
+                **e.output_context,
+                'request': request,
+                'command_name': request._lily_context.command_name,
+            }).data
+
+        body['@event'] = e.event
+
+        response = e.response_class(body)
+        for k, v in response_headers.items():
+            response[k] = v
+
+        return response
+
+    # -- case of serializer returning error as well
+    except EventFactory.BaseErrorException as e:
+        e.update_with_context(context=request)
+
+        response = e.response_class(e.data)
+        if e.extra_headers:
+            for k, v in e.extra_headers.items():
+                response[k] = v
+
+        return response

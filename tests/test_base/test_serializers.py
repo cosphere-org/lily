@@ -65,28 +65,6 @@ class SerializerTestCase(TestCase):
     def initfixture(self, mocker):
         self.mocker = mocker
 
-    def test_to_internal_value(self):
-
-        class MetaCustomer(serializers.Serializer):
-            _type = 'customer'
-            at__name = serializers.CharField()
-            at__age = serializers.IntegerField()
-            is_ready = serializers.BooleanField()
-
-        s = MetaCustomer(data={
-            '@name': 'George',
-            '@age': 13,
-            'is_ready': False,
-        })
-
-        assert s.is_valid() is True
-        assert s.data == {
-            '@type': 'customer',
-            '@name': 'George',
-            '@age': 13,
-            'is_ready': False,
-        }
-
     def test_to_internal_value_with_instance(self):
 
         class WhatSerializer(serializers.Serializer):
@@ -103,7 +81,7 @@ class SerializerTestCase(TestCase):
             'name': 'George',
             'age': 13,
             'is_ready': False,
-            'what': ['what'],
+            'what': {'what': 189},
         }
         s = MetaCustomer(data=data)
 
@@ -111,7 +89,7 @@ class SerializerTestCase(TestCase):
             'name': 'George',
             'age': 13,
             'is_ready': False,
-            'what': ['what'],
+            'what': {'what': 189},
         }
 
     def test_to_representation__without_access(self):

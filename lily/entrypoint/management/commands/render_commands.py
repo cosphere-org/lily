@@ -28,7 +28,7 @@ def command():
     commands_path = os.path.join(commands_dir_path, f'{version}.json')
     with open(commands_path, 'w') as f:
         commands = CommandsRenderer().render()
-        enums = commands.pop('@enums')
+        enums = commands.pop('enums')
 
         commands = {
             name: CommandSerializer(conf).data
@@ -38,7 +38,7 @@ def command():
             json.dumps(
                 {
                     **commands,
-                    '@enums': enums,
+                    'enums': enums,
                 },
                 indent=4,
                 sort_keys=False))

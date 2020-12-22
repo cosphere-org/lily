@@ -81,7 +81,7 @@ class CommandsRenderer(BaseRenderer):
             configuration['schemas'] = schemas
             rendered[name] = configuration
 
-        rendered['@enums'] = self.unique_enums(enums)
+        rendered['enums'] = self.unique_enums(enums)
         return rendered
 
     def resolve_description(self, meta, source):

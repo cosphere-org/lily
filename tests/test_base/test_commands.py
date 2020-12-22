@@ -47,8 +47,8 @@ class MySignCommandsTestCase(TestCase):
         self.app = Client()
         self.user_id = 56
         self.auth_headers = {
-            'HTTP_X_CS_ACCOUNT_TYPE': 'PREMIUM',
-            'HTTP_X_CS_USER_ID': self.user_id,
+            'HTTP_X_ACCOUNT_TYPE': 'PREMIUM',
+            'HTTP_X_USER_ID': self.user_id,
         }
 
     @override_settings(AWS_S3_ACCESS_KEY="access.key", AWS_S3_REGION="central")

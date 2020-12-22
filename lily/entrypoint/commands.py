@@ -37,7 +37,7 @@ class EntryPointCommands(HTTPCommands):
 
         commands = serializers.DictField(child=CommandSerializer())
 
-        at__enums = serializers.ListField(child=serializers.DictField())
+        enums = serializers.ListField(child=serializers.DictField())
 
     class QueryParser(parsers.Parser):
 
@@ -87,7 +87,7 @@ class EntryPointCommands(HTTPCommands):
         config = Config()
 
         commands = self.get_commands(version)
-        enums = commands.pop('@enums')
+        enums = commands.pop('enums')
 
         if command_names:
             commands = {
@@ -117,7 +117,7 @@ class EntryPointCommands(HTTPCommands):
                     'available': self.get_available_versions(),
                 },
                 'commands': commands,
-                'at__enums': enums,
+                'enums': enums,
             })
 
     def get_available_versions(self):

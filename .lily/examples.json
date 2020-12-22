@@ -6,8 +6,8 @@
             "request": {
                 "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
                 "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
                 }
             },
             "response": {
@@ -20,10 +20,10 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "path": "/sign/?to_sign=hi+there",
                 "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
                 }
             },
             "response": {
@@ -32,15 +32,34 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                            "This field is required."
                         ]
                     },
                     "@type": "error",
                     "@event": "QUERY_DID_NOT_VALIDATE",
                     "@authorizer": {
-                        "user_id": 56,
-                        "account_type": "PREMIUM"
+                        "account_type": "PREMIUM",
+                        "user_id": 56
                     }
+                }
+            }
+        },
+        "403 (ACCESS_DENIED)": {
+            "method": "get",
+            "description": "ACCESS_DENIED",
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
+                    "X-CS-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 403,
+                "content_type": "application/json",
+                "content": {
+                    "@type": "error",
+                    "@event": "ACCESS_DENIED"
                 }
             }
         }
@@ -50,7 +69,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?is_private=False",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -68,16 +87,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "UPDATE_HELLO": {
-                            "method": "PUT",
+                        "CREATE_HELLO": {
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Facilis odit labore quo culpa cum placeat nemo.",
-                                "description": "Illum quos repellat id similique modi.",
+                                "title": "Hic eligendi officia accusamus atque.",
+                                "description": "Veniam minima corrupti nam deserunt.",
                                 "domain": {
-                                    "id": "optio",
+                                    "id": "doloremque",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -88,7 +107,6 @@
                                     "ANY"
                                 ],
                                 "is_private": false,
-                                "is_external": false,
                                 "@type": "access"
                             },
                             "source": {
@@ -106,7 +124,7 @@
                             "@type": "command"
                         }
                     },
-                    "@enums": [],
+                    "enums": [],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
