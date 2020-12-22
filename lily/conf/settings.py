@@ -40,6 +40,25 @@ LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS = getattr(
 LILY_ANGULAR_CLIENT_ORIGIN = (
     'git@github.com:cosphere-org/lily-angular-client-base.git')
 
+
+#
+# TEST
+#
+LILY_TEST_CLIENT_TYPE = getattr(
+    settings,
+    'LILY_TEST_CLIENT_TYPE',
+    'UNIT')
+
+LILY_TEST_CLIENT_VERIFY_SSL = getattr(
+    settings,
+    'LILY_TEST_CLIENT_VERIFY_SSL',
+    False)
+
+LILY_TEST_CLIENT_BASE_URI = getattr(
+    settings,
+    'LILY_TEST_CLIENT_BASE_URI',
+    'http://localhost:8000')
+
 #
 # ASYNC
 #

@@ -119,7 +119,7 @@ class AngularClientRenderer(EventFactory):
 
         commands_by_domain = {}
         for name, conf in self.get_commands().items():
-            if name == '@enums':
+            if name == 'enums':
                 continue
 
             command = Command(name, conf)

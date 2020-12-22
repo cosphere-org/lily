@@ -2,6 +2,13 @@
 from lily.base.events import EventFactory
 
 
+class AuthorizedResponse:
+
+    def __init__(self, request_access=None, response_headers=None):
+        self.request_access = request_access or {}
+        self.response_headers = response_headers or {}
+
+
 class BaseAuthorizer(EventFactory):
     """Minimal Authorizer Class."""
 
@@ -10,10 +17,11 @@ class BaseAuthorizer(EventFactory):
 
     def authorize(self, request):
         try:
-            return {
-                'user_id': request.META['HTTP_X_CS_USER_ID'],
-                'account_type': request.META['HTTP_X_CS_ACCOUNT_TYPE'],
-            }
+            return AuthorizedResponse(
+                request_access={
+                    'account_type': request.META['HTTP_X_ACCOUNT_TYPE'],
+                    'user_id': request.META['HTTP_X_USER_ID'],
+                })
 
         except KeyError:
             raise self.AccessDenied('ACCESS_DENIED', context=request)

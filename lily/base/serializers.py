@@ -1,7 +1,5 @@
 
-import re
 import os
-from copy import copy, deepcopy
 
 from rest_framework import serializers as drf_serializers
 from rest_framework.serializers import (  # noqa
@@ -95,14 +93,7 @@ class Serializer(drf_serializers.Serializer, EventFactory):
     def to_internal_value(self, data):
 
         try:
-            transformed = deepcopy(data)
-            for field_name, value in data.items():
-                if field_name.startswith('@'):
-                    new_field_name = re.sub(r'^@', 'at__', field_name)
-                    transformed[new_field_name] = value
-                    del transformed[field_name]
-
-            return super(Serializer, self).to_internal_value(transformed)
+            return super(Serializer, self).to_internal_value(data)
 
         except AttributeError:
             # -- HACK: which allows me to return instances of models inside
@@ -119,26 +110,11 @@ class Serializer(drf_serializers.Serializer, EventFactory):
 
         # -- when dealing with DICT
         elif isinstance(instance, dict):
-            transformed = copy(instance)
-            for field_name, value in instance.items():
-                if field_name.startswith('@'):
-                    new_field_name = re.sub(r'^@', 'at__', field_name)
-                    transformed[new_field_name] = value
-                    del transformed[field_name]
-
-            body = super(Serializer, self).to_representation(transformed)
+            body = super(Serializer, self).to_representation(instance)
 
         # -- when dealing normal instance
         else:
             body = super(Serializer, self).to_representation(instance)
-
-        # -- transform `at__` to `@`
-        original = copy(body)
-        for field_name, value in original.items():
-            if field_name.startswith('at__'):
-                new_field_name = re.sub(r'^at__', '@', field_name)
-                body[new_field_name] = value
-                del body[field_name]
 
         # --
         # -- attach type meta info

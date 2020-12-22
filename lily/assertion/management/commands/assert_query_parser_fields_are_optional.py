@@ -21,7 +21,7 @@ def command():
         commands = json.loads(f.read())
 
         for name, command in commands.items():
-            if name in excluded or name == '@enums':
+            if name in excluded or name == 'enums':
                 continue
 
             input_query = command['schemas'].get(

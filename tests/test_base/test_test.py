@@ -440,8 +440,7 @@ class ClientTestCase(TestCase):
             content_type='application/json')
         Client().put(
             '/test/it/',
-            data=json.dumps({'update': 'it', 'please': 'now'}),
-            content_type='application/json')
+            json={'update': 'it', 'please': 'now'})
 
         assert json.loads(examples_file.read()) == {
             'POST_IT': {
