@@ -1,69 +1,4 @@
 {
-    "SIGN_PROCESS": {
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-ACCOUNT-TYPE": "PREMIUM",
-                    "X-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        },
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there",
-                "headers": {
-                    "X-ACCOUNT-TYPE": "PREMIUM",
-                    "X-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "This field is required."
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@authorizer": {
-                        "account_type": "PREMIUM",
-                        "user_id": 56
-                    }
-                }
-            }
-        },
-        "403 (ACCESS_DENIED)": {
-            "method": "get",
-            "description": "ACCESS_DENIED",
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "PREMIUM",
-                    "X-CS-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 403,
-                "content_type": "application/json",
-                "content": {
-                    "@type": "error",
-                    "@event": "ACCESS_DENIED"
-                }
-            }
-        }
-    },
     "READ_ENTRY_POINT": {
         "200 (ENTRY_POINT_READ)": {
             "method": "get",
@@ -93,10 +28,10 @@
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Hic eligendi officia accusamus atque.",
-                                "description": "Veniam minima corrupti nam deserunt.",
+                                "title": "Iste maiores quo excepturi commodi.",
+                                "description": "Quod nam dolore labore.",
                                 "domain": {
-                                    "id": "doloremque",
+                                    "id": "temporibus",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -128,6 +63,52 @@
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }
+            }
+        }
+    },
+    "SIGN_PROCESS": {
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "account_type": "PREMIUM",
+                        "user_id": 56
+                    }
+                }
+            }
+        },
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
         }
     }
