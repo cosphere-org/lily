@@ -1,0 +1,51 @@
+name: lily - test and publish
+
+on: push
+
+jobs:
+  test-and-push:
+    name: Unit Tests - working branch
+    runs-on: ubuntu-latest
+    environment: production
+
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_USER: local
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports:
+          - 5434:5432/tcp
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.7"
+          architecture: "x64"
+
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+
+      - name: Install dependencies
+        working-directory: .
+        run: |
+          sudo apt-get install libhunspell-dev
+          pip install -U pip
+          pip install -r requirements.txt
+          pip install -r test-requirements.txt
+
+      - name: Launch tests
+        working-directory: .
+        run: py.test --cov=./lily --cov-fail-under=90 -r w -s -vv tests
+
+      # if launched from master branch, then build and publish to PyPI
+      - name: Build and publish
+        if: github.ref == 'refs/heads/master'
+        working-directory: .
+        run: |
+          python setup.py bdist_wheel
+          twine upload -u __token__ -p ${{ secrets.PYPI_LILY_API_TOKEN }} dist/*.whl

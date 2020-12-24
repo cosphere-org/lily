@@ -58,4 +58,3 @@ docker-compose.yml
 collectedstatic
 
 .pytest_cache
-.python-version
