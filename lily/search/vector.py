@@ -190,8 +190,7 @@ class TextVector:
                 stem = stem.decode(self.hobj_pl.get_dic_encoding())
                 stems.append(stem.lower())
 
-        else:
-            stems.append(token.lower())
+        stems.append(token.lower())
 
         return stems
 
