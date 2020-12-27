@@ -296,16 +296,14 @@ class TextVectorTestCase(TestCase):
             self):
         self.assert_parse(
             'polish',
-            'zjezdzalnia brakuje polskich znakow',
+            'zjezdzalnia brakuje znakow',
             None,
             {
                 'brakowac': (2,),
                 'brakować': (2,),
                 'brakuje': (2,),
-                'polskich': (3,),
-                'polski': (3,),
                 'zjezdzalnia': (1,),
-                'znakow': (4,),
+                'znakow': (3,),
             })
 
     def test_parse__conf_polish__stop_words_removed(self):
