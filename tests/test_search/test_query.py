@@ -60,8 +60,9 @@ def test_query__parse_value(value, expected, mocker):
     (
         r'witam $$ 2 * x = \\pi $$',
         'polish',
-        '2 | liczba | mnozone | mnozyc | mnożyć | pi | raz | rowna | '
-        'rownac | rowny | równać | równy | witac | witać | x',
+        '2 | liczba | mnozone | mnozyc | mnożone | mnożyć | pi | raz | razy | '
+        'rowna | rownac | rowny | równa | równać | równy | witac | witam | '
+        'witać | x',
     ),
 
     # case 1 - with auto language detection and latex - en

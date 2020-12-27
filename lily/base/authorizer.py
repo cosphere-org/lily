@@ -8,6 +8,11 @@ class AuthorizedResponse:
         self.request_access = request_access or {}
         self.response_headers = response_headers or {}
 
+    def __eq__(self, other):
+        return (
+            self.request_access == other.request_access and
+            self.response_headers == other.response_headers)
+
 
 class BaseAuthorizer(EventFactory):
     """Minimal Authorizer Class."""

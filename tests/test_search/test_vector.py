@@ -152,9 +152,11 @@ class TextVectorTestCase(TestCase):
             'Pchnąć w tę łódź jeża lub ośm skrzyń fig',
             None,
             {
+                'fig': (9,),
                 'figa': (9,),
                 'figi': (9,),
                 'jez': (5,),
+                'jeża': (5,),
                 'jeza': (5,),
                 'jeż': (5,),
                 'lodz': (4,),
@@ -162,6 +164,7 @@ class TextVectorTestCase(TestCase):
                 'ośm': (7,),
                 'pchnac': (1,),
                 'pchnąć': (1,),
+                'skrzyń': (8,),
                 'skrzyn': (8,),
                 'skrzynia': (8,),
                 'łódź': (4,),
@@ -176,16 +179,19 @@ class TextVectorTestCase(TestCase):
             'Pchnąć w tę łódź jeża lub ośm skrzyń fig łódź.',
             None,
             {
+                'fig': (9,),
                 'figa': (9,),
                 'figi': (9,),
                 'jez': (5,),
                 'jeza': (5,),
                 'jeż': (5,),
+                'jeża': (5,),
                 'lodz': (4, 10),
                 'osm': (7,),
                 'ośm': (7,),
                 'pchnac': (1,),
                 'pchnąć': (1,),
+                'skrzyń': (8,),
                 'skrzyn': (8,),
                 'skrzynia': (8,),
                 'łódź': (4, 10),
@@ -205,6 +211,7 @@ class TextVectorTestCase(TestCase):
                 'część': (1,),
                 'grzegzolek': (2,),
                 'grzegżółek': (2,),
+                'słyszałeś': (5,),
                 'słyszeć': (5,),
                 'slyszec': (5,),
                 'slyszales': (5,),
@@ -218,6 +225,7 @@ class TextVectorTestCase(TestCase):
             {
                 'funkcja': (4,),
                 'kwadrat': (10,),
+                'kwadratu': (10,),
                 'kwadratowy': (6,),
                 'pierwiastek': (5,),
                 'pierwiastka': (5,),
@@ -247,6 +255,7 @@ class TextVectorTestCase(TestCase):
             'rozwiązanie, to. jest, ok, ale, inne, jest prostsze.',
             None,
             {
+                'prostsze': (8,),
                 'prostszy': (8,),
                 'rozwiazac': (1,),
                 'rozwiazanie': (1,),
@@ -260,6 +269,7 @@ class TextVectorTestCase(TestCase):
             'rozwiązanie;+- to%^& jest, ok, ale, san-jose, jest prostsze.',
             None,
             {
+                'prostsze': (10,),
                 'prostszy': (10,),
                 'rozwiazac': (1,),
                 'rozwiazanie': (1,),
@@ -286,15 +296,14 @@ class TextVectorTestCase(TestCase):
             self):
         self.assert_parse(
             'polish',
-            'zjezdzalnia brakuje polskich znakow',
+            'zjezdzalnia brakuje znakow',
             None,
             {
                 'brakowac': (2,),
                 'brakować': (2,),
                 'brakuje': (2,),
-                'polski': (3,),
                 'zjezdzalnia': (1,),
-                'znakow': (4,),
+                'znakow': (3,),
             })
 
     def test_parse__conf_polish__stop_words_removed(self):
@@ -702,7 +711,9 @@ class TextVectorTestCase(TestCase):
         ) == {
             'cześć': set(['1']),
             'wszystkie': set(['4']),
+            'zasługi': set(['5']),
             'zasługa': set(['5']),
+            'zdobyliście': set(['3']),
             'zdobyć': set(['3']),
         }
 

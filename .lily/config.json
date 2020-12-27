@@ -2,8 +2,8 @@
     "name": "lily",
     "src_dir": "lily",
     "repository": "https://github.com/cosphere-org/lily",
-    "version": "2.0.6",
+    "version": "2.1.0",
     "next_version": null,
-    "last_commit_hash": "4171fe0ec09521115c9284914fefe3453925c795",
+    "last_commit_hash": "419a66b3e724cc6ed19ecdf8a954cb212106a4d1",
     "next_last_commit_hash": null
 }
