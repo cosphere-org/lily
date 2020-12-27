@@ -8,7 +8,7 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?is_private=False HTTP/1.1
+GET /?version=2.1.3 HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
@@ -18,27 +18,27 @@ Respone:
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "CREATE_HELLO": {
+        "UPDATE_HELLO": {
             "@type": "command",
             "access": {
                 "@type": "access",
                 "access_list": [
                     "ANY"
                 ],
-                "is_private": false
+                "is_private": true
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Quod nam dolore labore.",
+                "description": "Voluptate sint ipsum placeat eligendi architecto quo consectetur magnam.",
                 "domain": {
                     "@type": "domain",
-                    "id": "temporibus",
+                    "id": "animi",
                     "name": "domain"
                 },
-                "title": "Iste maiores quo excepturi commodi."
+                "title": "Perspiciatis minima reprehenderit velit nulla."
             },
             "method": "GET",
             "path_conf": {
@@ -61,7 +61,7 @@ Respone:
         "@type": "version_info",
         "available": [],
         "deployed": "2.5.6",
-        "displayed": "2.5.6"
+        "displayed": "2.1.3"
     }
 }
 ```
