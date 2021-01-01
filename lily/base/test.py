@@ -7,7 +7,10 @@ from contextlib import ContextDecorator
 import requests
 
 from django.urls import get_resolver
-from django.test import Client as DjangoClient
+from django.test import Client as DjangoClient, SimpleTestCase
+from django.test.utils import CaptureQueriesContext
+
+from django.db import DEFAULT_DB_ALIAS, connections
 from lily_assistant.config import Config
 
 from lily.conf import settings
@@ -41,6 +44,56 @@ class override_settings(ContextDecorator):  # noqa
     def __exit__(self, exc_type, exc, exc_tb):
         for p in self.patchers:
             p.stop()
+
+
+class AssertNumQueriesContext(CaptureQueriesContext):
+
+    def __init__(self, test_case, num, connection):
+        self.test_case = test_case
+        self.num = num
+        super().__init__(connection)
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        super().__exit__(exc_type, exc_value, traceback)
+        if exc_type is not None:
+            return
+        executed = len(self)
+        self.test_case.assertEqual(
+            executed, self.num,
+            "%d queries executed, %d expected\nCaptured queries were:\n%s" % (
+                executed, self.num,
+                '\n'.join(
+                    '%d. %s' % (i, query['sql'])
+                    for i, query in enumerate(self.captured_queries, start=1)
+                )
+            )
+        )
+
+
+class TestCase(SimpleTestCase):
+
+    @property
+    def is_unit_type(self):
+        return settings.LILY_TEST_CLIENT_TYPE.upper() == 'UNIT'
+
+    @property
+    def authorization_header(self):
+        if self.is_unit_type:
+            return 'HTTP_AUTHORIZATION'
+
+        return 'Authorization'
+
+    def _fixture_setup(self, *args, **kwargs):
+        if self.is_unit_type:
+            super(TestCase, self)._fixture_setup(*args, **kwargs)
+
+    def _fixture_teardown(self, *args, **kwargs):
+        if self.is_unit_type:
+            super(TestCase, self)._fixture_teardown(*args, **kwargs)
+
+    def assertNumQueries(self, num, using=DEFAULT_DB_ALIAS):  # noqa
+
+        return AssertNumQueriesContext(self, num, connections[using])
 
 
 class E2EClient:
