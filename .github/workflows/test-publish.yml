@@ -28,19 +28,21 @@ jobs:
           architecture: "x64"
 
       - name: Display Python version
-        run: python -c "import sys; print(sys.version)"
+        run: python -V
 
       - name: Install dependencies
         working-directory: .
         run: |
           sudo apt-get install libhunspell-dev hunspell hunspell-pl
-          pip install -U pip
-          pip install -r requirements.txt
-          pip install -r test-requirements.txt
+          make install
+
+      - name: Launch Linter
+        working-directory: .
+        run: make lint
 
       - name: Launch tests
         working-directory: .
-        run: py.test --cov=./lily --cov-fail-under=90 -r w -s -vv tests
+        run: make test_all
 
       # if launched from master branch, then build and publish to PyPI
       - name: Build and publish
