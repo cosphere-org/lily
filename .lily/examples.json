@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?domain_id=PATHS",
+                "path": "/?commands=READ_PAYMENTS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -68,52 +68,16 @@
                     },
                     "name": "test",
                     "commands": {
-                        "CREATE_HELLO": {
-                            "method": "POST",
+                        "READ_PAYMENTS": {
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
                             "meta": {
-                                "title": "Quod nostrum itaque quam non at totam.",
-                                "description": "Expedita quo accusamus itaque sequi enim.",
+                                "title": "Deleniti voluptatem ducimus atque repellat ipsum natus quasi nam.",
+                                "description": "Voluptas voluptate eligendi porro sequi autem autem.",
                                 "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "method": "POST",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Laboriosam sapiente nostrum commodi maiores ducimus amet excepturi officia.",
-                                "description": "Dolores possimus sequi unde distinctio.",
-                                "domain": {
-                                    "id": "paths",
+                                    "id": "labore",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
@@ -141,11 +105,7 @@
                             "@type": "command"
                         }
                     },
-                    "enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
+                    "enums": [],
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
                 }

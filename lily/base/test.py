@@ -140,7 +140,7 @@ class E2EClient:
         if data and http_verb in ['put', 'post']:
             payload = {'data': data}
 
-        if data and http_verb in ['get']:
+        if data and http_verb in ['get', 'delete']:
             payload = {'params': data}
 
         response = getattr(requests, http_verb)(
