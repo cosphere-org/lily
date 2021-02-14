@@ -650,7 +650,8 @@ class AngularClientRendererTestCase(TestCase):
 
         self.renderer.render_enums_ts(shared_path, Mock())
 
-        assert os.listdir(self.src_dir) == ['domains', 'services', 'shared']
+        assert sorted(os.listdir(self.src_dir)) == sorted(
+            ['domains', 'services', 'shared'])
         assert (
             self.src_dir.join('shared/enums.ts').read() ==
             normalize_indentation('''

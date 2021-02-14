@@ -8,7 +8,7 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?domain_id=PATHS HTTP/1.1
+GET /?is_private=False HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
@@ -32,51 +32,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Expedita quo accusamus itaque sequi enim.",
+                "description": "Recusandae nostrum eius cupiditate unde ipsa.",
                 "domain": {
                     "@type": "domain",
-                    "id": "paths",
+                    "id": "vel",
                     "name": "domain"
                 },
-                "title": "Quod nostrum itaque quam non at totam."
+                "title": "Quam id asperiores velit vel."
             },
-            "method": "POST",
-            "path_conf": {
-                "path": "conf"
-            },
-            "schemas": {
-                "some": "schemas"
-            },
-            "source": {
-                "@type": "source",
-                "end_line": 15,
-                "filepath": "/tests/factory.py",
-                "start_line": 14
-            }
-        },
-        "DELETE_HELLO": {
-            "@type": "command",
-            "access": {
-                "@type": "access",
-                "access_list": [
-                    "ANY"
-                ],
-                "is_private": true
-            },
-            "examples": {
-                "some": "examples"
-            },
-            "meta": {
-                "@type": "meta",
-                "description": "Dolores possimus sequi unde distinctio.",
-                "domain": {
-                    "@type": "domain",
-                    "id": "paths",
-                    "name": "domain"
-                },
-                "title": "Laboriosam sapiente nostrum commodi maiores ducimus amet excepturi officia."
-            },
-            "method": "POST",
+            "method": "PUT",
             "path_conf": {
                 "path": "conf"
             },
@@ -91,11 +55,7 @@ Respone:
             }
         }
     },
-    "enums": [
-        {
-            "A": "X"
-        }
-    ],
+    "enums": [],
     "name": "test",
     "version_info": {
         "@type": "version_info",
