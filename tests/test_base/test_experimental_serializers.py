@@ -128,7 +128,8 @@ class SerializerTestCase(TestCase):
             '@type': 'account',
             'user_id': 11,
             'atype': 'FREE',
-            'freemium_till_datetime': now.isoformat().replace('+00:00', 'Z'),
+            'freemium_till_datetime': now,
+            # 'freemium_till_datetime': now.isoformat().replace('+00:00', 'Z'),
             'show_in_ranking': True,
             'email': 'jack@player.io',
         }
