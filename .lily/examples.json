@@ -14,29 +14,8 @@
                 "status": 200,
                 "content_type": "application/json",
                 "content": {
-                    "version_info": {
-                        "deployed": "2.5.6",
-                        "displayed": "2.5.6",
-                        "available": [],
-                        "@type": "version_info"
-                    },
-                    "name": "test",
                     "commands": {
                         "CREATE_HELLO": {
-                            "method": "PUT",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Quam id asperiores velit vel.",
-                                "description": "Recusandae nostrum eius cupiditate unde ipsa.",
-                                "domain": {
-                                    "id": "vel",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -44,24 +23,67 @@
                                 "is_private": false,
                                 "@type": "access"
                             },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "At deserunt ab pariatur repudiandae.",
+                                "domain": {
+                                    "id": "praesentium",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Suscipit optio quas quisquam laudantium molestias numquam temporibus.",
+                                "@type": "meta"
+                            },
+                            "method": "GET",
+                            "path_conf": {
+                                "path": "conf"
                             },
                             "schemas": {
                                 "some": "schemas"
                             },
-                            "examples": {
-                                "some": "examples"
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
                             },
                             "@type": "command"
                         }
                     },
                     "enums": [],
+                    "name": "test",
+                    "version_info": {
+                        "available": [],
+                        "deployed": "2.5.6",
+                        "displayed": "2.5.6",
+                        "@type": "version_info"
+                    },
                     "@type": "entrypoint",
                     "@event": "ENTRY_POINT_READ"
+                }
+            }
+        },
+        "500 (GENERIC_ERROR_OCCURRED)": {
+            "method": "get",
+            "description": "GENERIC_ERROR_OCCURRED",
+            "request": {
+                "path": "/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "response": {
+                "status": 500,
+                "content_type": "application/json",
+                "content": {
+                    "errors": [
+                        "'commands'"
+                    ],
+                    "@type": "error",
+                    "@event": "GENERIC_ERROR_OCCURRED"
                 }
             }
         }
@@ -104,6 +126,32 @@
                     },
                     "@type": "error",
                     "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "account_type": "PREMIUM",
+                        "user_id": 56
+                    }
+                }
+            }
+        },
+        "500 (GENERIC_ERROR_OCCURRED)": {
+            "method": "get",
+            "description": "GENERIC_ERROR_OCCURRED",
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 500,
+                "content_type": "application/json",
+                "content": {
+                    "errors": [
+                        "'to_sign'"
+                    ],
+                    "@type": "error",
+                    "@event": "GENERIC_ERROR_OCCURRED",
                     "@authorizer": {
                         "account_type": "PREMIUM",
                         "user_id": 56

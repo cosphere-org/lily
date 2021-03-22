@@ -1,36 +1,7 @@
 
-import os
+from copy import deepcopy
 
-from rest_framework import serializers as drf_serializers
-from rest_framework.serializers import (  # noqa
-    BooleanField,
-    CharField,
-    ChoiceField,
-    DateField,
-    DateTimeField,
-    DecimalField,
-    DictField,
-    EmailField,
-    FloatField,
-    IntegerField,
-    JSONField,
-    ListField,
-    ListSerializer,
-    SerializerMethodField,
-    URLField,
-    UUIDField,
-    NullBooleanField,
-    ValidationError,
-    ReadOnlyField,
-)
-
-from .events import EventFactory
-
-
-BASE_DIR = os.path.dirname(__file__)
-
-
-COMMANDS_CONF = {}
+from django.db import models
 
 
 class MissingTypeError(Exception):
@@ -46,16 +17,70 @@ class MissingRequiredArgumentsException(Exception):
     pass
 
 
+class Field:
+
+    def __init__(self, required=True, default=None, *args, **kwargs):
+        self.required = required
+        self.default = default
+
+    def serialize(self, value):
+        return value
+
+
+class BooleanField(Field):
+    pass
+
+
+class CharField(Field):
+
+    def __init__(self, *args, min_length=None, max_length=None, **kwargs):
+
+        self.min_length = min_length
+        self.max_length = max_length
+
+        super(CharField, self).__init__(*args, **kwargs)
+
+
+class ChoiceField(Field):
+    pass
+
+
+class DictField(Field):
+    pass
+
+
+class JSONSchemaField(Field):
+    pass
+
+
+class DateField(Field):
+    pass
+
+    # def serialize(self, value):
+    #     if value:
+    #         return value.isoformat().replace('+00:00', 'Z')
+
+
+class DateTimeField(Field):
+    pass
+
+    # def serialize(self, value):
+    #     if value:
+    #         return value.isoformat().replace('+00:00', 'Z')
+
+
 class EnumChoiceField(ChoiceField):
 
     def __init__(self, *args, enum_name=None, enum=None, **kwargs):
 
+        self.choices = {e: e for e in kwargs.get('choices', []) or []}
         if enum_name:
             self.enum_name = enum_name
 
         if enum:
             self.enum_name = enum.__name__
             kwargs['choices'] = [e.value for e in enum]
+            self.choices = {e: e for e in kwargs['choices']}
 
         if not (enum_name or enum):
             raise MissingRequiredArgumentsException(
@@ -64,11 +89,125 @@ class EnumChoiceField(ChoiceField):
         super(EnumChoiceField, self).__init__(*args, **kwargs)
 
 
-class Serializer(drf_serializers.Serializer, EventFactory):
+class EmailField(Field):
+    pass
 
-    def __init__(self, *args, fields_subset=None, **kwargs):
-        self._fields_subset = fields_subset
-        super(Serializer, self).__init__(*args, **kwargs)
+
+class FloatField(Field):
+
+    def __init__(self, *args, min_value=None, max_value=None, **kwargs):
+
+        self.min_value = min_value
+        self.max_value = max_value
+
+        super(FloatField, self).__init__(*args, **kwargs)
+
+
+class IntegerField(Field):
+
+    def __init__(self, *args, min_value=None, max_value=None, **kwargs):
+
+        self.min_value = min_value
+        self.max_value = max_value
+
+        super(IntegerField, self).__init__(*args, **kwargs)
+
+
+class DecimalField(Field):
+    pass
+
+
+class JSONField(Field):
+    pass
+
+
+class ListField(Field):
+    pass
+
+
+class ListSerializer(Field):
+    pass
+
+
+class SerializerMethodField(Field):
+    pass
+
+
+class URLField(Field):
+    pass
+
+
+class UUIDField(Field):
+    pass
+
+
+class NullBooleanField(Field):
+    pass
+
+
+class ValidationError(Field):
+    pass
+
+
+class ReadOnlyField(Field):
+    pass
+
+
+class Serializer:
+
+    _meta_cache = {}
+
+    def __init__(self, instance=None, context=None, many=None):
+        self.instance = instance
+        self.many = many
+        self.context = context
+
+        if 'fields' not in Serializer._meta_cache:
+            self._fields = {}
+            for attr in dir(self):
+                if attr == 'data':
+                    continue
+
+                if isinstance(getattr(self, attr), SerializerMethodField):
+                    self._fields[attr] = {
+                        'is_field': True,
+                        'is_method': True,
+                        'serializer': getattr(self, attr),
+                    }
+
+                elif isinstance(getattr(self, attr), Field):
+                    self._fields[attr] = {
+                        'is_field': True,
+                        'is_method': False,
+                        'serializer': getattr(self, attr),
+                    }
+
+                elif isinstance(getattr(self, attr), Serializer):
+                    self._fields[attr] = {
+                        'is_field': False,
+                        'is_method': False,
+                        'serializer': getattr(self, attr),
+                    }
+
+        else:
+            self._fields = Serializer._meta_cache['fields']
+
+    def get_fields(self):
+        """Calculate and return fields required by the schema renderer."""
+        fields = {}
+        allowed_types = (
+            SerializerMethodField,
+            Field,
+            Serializer,
+        )
+        for attr in dir(self):
+            if attr == 'data':
+                continue
+
+            if isinstance(getattr(self, attr), allowed_types):
+                fields[attr] = getattr(self, attr)
+
+        return fields
 
     def render_access(self, instance):
 
@@ -90,43 +229,71 @@ class Serializer(drf_serializers.Serializer, EventFactory):
 
         return {}
 
-    def to_internal_value(self, data):
+    def is_valid(self):
+        return True
 
-        try:
-            return super(Serializer, self).to_internal_value(data)
+    def serialize(self):
 
-        except AttributeError:
-            # -- HACK: which allows me to return instances of models inside
-            # -- normal dictionary
-            return data
+        serialized = {}
+        for name, field in self._fields.items():
+            s = field['serializer']
+            required = getattr(s, 'required', True)
+            default = getattr(s, 'default', True)
+            is_method = field['is_method']
+            is_field = field['is_field']
 
-    def to_representation(self, instance):
+            if not is_method and not required:
+                if isinstance(self.instance, dict):
+                    value = self.instance.get(name, default)
 
-        if self._fields_subset:
-            body = {
-                f: getattr(instance, f)
-                for f in self._fields_subset
-            }
+                else:
+                    value = getattr(self.instance, name, default)
 
-        # -- when dealing with DICT
-        elif isinstance(instance, dict):
-            body = super(Serializer, self).to_representation(instance)
+            elif not is_method:
+                if isinstance(self.instance, dict):
+                    value = self.instance[name]
 
-        # -- when dealing normal instance
-        else:
-            body = super(Serializer, self).to_representation(instance)
+                else:
+                    value = getattr(self.instance, name)
 
-        # --
-        # -- attach type meta info
-        # --
+            if is_method:
+                serialized[name] = (
+                    getattr(self, f'get_{name}')(self.instance))
+
+            elif is_field:
+                serialized[name] = s.serialize(value)
+
+            else:
+                def __serialize(v):
+                    return s.__class__(v, context=self.context).data
+
+                # -- if value of nested object is none just return it
+                if not value:
+                    if s.many:
+                        serialized[name] = []
+
+                    else:
+                        serialized[name] = value
+
+                if value and s.many:
+                    try:
+                        serialized[name] = [__serialize(v) for v in value]
+
+                    except TypeError:
+                        serialized[name] = [
+                            __serialize(v) for v in value.all()]
+
+                elif value:
+                    serialized[name] = __serialize(value)
+
         # -- for `AbstractSerializer` do not attach any extra data they are
         # -- here only for storing SubEntities without having their own
         # -- interpretation
         if isinstance(self, AbstractSerializer):
-            return body
+            return serialized
 
         try:
-            body['@type'] = self._type
+            serialized['@type'] = self._type
 
         except AttributeError:
             raise MissingTypeError(
@@ -134,11 +301,15 @@ class Serializer(drf_serializers.Serializer, EventFactory):
                 'the client about the semantic type a result of the '
                 'Serializer represents')
 
-        access = self.render_access(instance)
+        access = self.render_access(self.instance)
         if access:
-            body['@access'] = access
+            serialized['@access'] = access
 
-        return body
+        return serialized
+
+    @property
+    def data(self):
+        return self.serialize()
 
 
 class AbstractSerializer(Serializer):
@@ -150,23 +321,69 @@ class AbstractSerializer(Serializer):
     """
 
 
-class ModelSerializer(drf_serializers.ModelSerializer, Serializer):
+class ModelSerializer(Serializer):
 
-    serializer_choice_field = EnumChoiceField
+    def __init__(self, instance=None, context=None, many=None):
+        super(ModelSerializer, self).__init__(instance, context, many)
 
-    def build_standard_field(self, field_name, model_field):
+        if 'fields' not in Serializer._meta_cache:
 
-        from . import models  # noqa - avoid circular dependency
+            model_fields_index = {}
+            for field in self.Meta.model._meta.fields:
+                model_fields_index[field.name] = field
 
-        field_class, field_kwargs = super(
-            ModelSerializer, self).build_standard_field(
-                field_name, model_field)
+                if isinstance(field, (models.OneToOneField, models.ForeignKey)):  # noqa
+                    model_fields_index[f'{field.name}_id'] = field
 
-        if isinstance(model_field, models.EnumChoiceField):
-            field_kwargs['enum_name'] = model_field.enum_name
-            field_class = EnumChoiceField
+            for field in self.Meta.fields:
+                if field not in self._fields:
+                    try:
+                        model_field = model_fields_index[field]
 
-        return field_class, field_kwargs
+                        if isinstance(model_field, models.AutoField):
+                            serializer = IntegerField()
+
+                        elif isinstance(model_field, models.IntegerField):
+                            serializer = IntegerField()
+
+                        elif isinstance(model_field, models.OneToOneField):
+                            serializer = IntegerField()
+
+                        elif isinstance(model_field, models.ForeignKey):
+                            serializer = IntegerField()
+
+                        elif isinstance(model_field, models.CharField):
+                            serializer = CharField()
+
+                        elif isinstance(model_field, models.TextField):
+                            serializer = CharField()
+
+                        elif isinstance(model_field, models.JSONField):
+                            serializer = JSONField()
+
+                        elif isinstance(model_field, models.BooleanField):
+                            serializer = BooleanField()
+
+                        elif isinstance(model_field, models.DateTimeField):
+                            serializer = DateTimeField()
+
+                        elif isinstance(model_field, models.DateField):
+                            serializer = DateField()
+
+                        elif isinstance(model_field, models.URLField):
+                            serializer = URLField()
+
+                    except KeyError:
+                        serializer = Field()
+
+                    self._fields[field] = {
+                        'serializer': serializer,
+                        'is_field': True,
+                        'is_method': False,
+                    }
+
+        else:
+            self._fields = Serializer._meta_cache['fields']
 
 
 class EmptySerializer(Serializer):
@@ -178,15 +395,12 @@ class ObjectSerializer(Serializer):
 
     _type = 'object'
 
-    def to_internal_value(self, data):
+    def serialize(self):
 
-        return data
+        serialized = deepcopy(self.instance)
+        serialized['@type'] = self._type
 
-    def to_representation(self, data):
-
-        data['@type'] = self._type
-
-        return data
+        return serialized
 
 
 class CommandSerializer(Serializer):
@@ -204,22 +418,3 @@ class CommandSerializer(Serializer):
     query = DictField(required=False)
 
     result = DictField(required=False)
-
-
-class JSONSchemaField(JSONField):
-    def __init__(self, *args, **kwargs):
-        from .models import JSONSchemaValidator
-
-        class JSONSchemaValidatorSerializer(JSONSchemaValidator):
-
-            validation_error_cls = ValidationError
-
-        try:
-            schema = kwargs.pop('schema')
-
-        except KeyError:
-            schema = {}
-
-        super(JSONSchemaField, self).__init__(*args, **kwargs)
-        self.validators.insert(
-            0, JSONSchemaValidatorSerializer(schema=schema))

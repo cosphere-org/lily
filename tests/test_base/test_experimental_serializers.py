@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.utils import timezone
 import pytest
 
-from lily.base import experimental_serializers as serializers
+from lily.base import serializers
 from .serializers import (
     AccountPlainSerializer,
     PersonSerializer,
