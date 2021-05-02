@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -15,7 +15,7 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "CREATE_HELLO": {
+                        "UPDATE_HELLO": {
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -27,16 +27,16 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "At deserunt ab pariatur repudiandae.",
+                                "description": "Dignissimos neque nostrum asperiores voluptatum nemo eveniet.",
                                 "domain": {
-                                    "id": "praesentium",
+                                    "id": "ipsa",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Suscipit optio quas quisquam laudantium molestias numquam temporibus.",
+                                "title": "Maxime est cupiditate neque veritatis earum aspernatur nihil.",
                                 "@type": "meta"
                             },
-                            "method": "GET",
+                            "method": "PUT",
                             "path_conf": {
                                 "path": "conf"
                             },
@@ -109,7 +109,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-ACCOUNT-TYPE": "PREMIUM",
                     "X-USER-ID": 56
@@ -121,7 +121,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",

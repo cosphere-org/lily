@@ -341,7 +341,7 @@ class SchemaRendererTestCase(TestCase):
                     'stage_id': {'type': 'integer'},
                     'entity': {'type': 'any'},
                 },
-                'required': ['local_id', 'stage_id', 'entity'],
+                'required': ['entity', 'local_id', 'stage_id'],
             },
         }
 
@@ -351,7 +351,9 @@ class SchemaRendererTestCase(TestCase):
             Schema, 'get_repository_uri'
         ).return_value = 'http://hi.there#123'
 
-        assert SchemaRenderer(CyclesJSONSerializer).render().serialize() == {
+        rendered = SchemaRenderer(CyclesJSONSerializer).render().serialize()
+
+        assert rendered == {
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -367,7 +369,7 @@ class SchemaRendererTestCase(TestCase):
                                 'local_id': {'type': 'integer'},
                                 'stage_id': {'type': 'integer'},
                             },
-                            'required': ['local_id', 'stage_id', 'entity'],
+                            'required': ['entity', 'local_id', 'stage_id'],
                         },
                     },
                     'path_cycle': {
@@ -380,7 +382,7 @@ class SchemaRendererTestCase(TestCase):
                                 'local_id': {'type': 'integer'},
                                 'stage_id': {'type': 'integer'},
                             },
-                            'required': ['local_id', 'stage_id', 'entity'],
+                            'required': ['entity', 'local_id', 'stage_id'],
                         },
                     },
                 },
@@ -394,7 +396,7 @@ class SchemaRendererTestCase(TestCase):
             Schema, 'get_repository_uri'
         ).return_value = 'http://hi.there#123'
 
-        assert SchemaRenderer(JSONSchemaSerializer).render().serialize() == {
+        expected = {
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -472,13 +474,16 @@ class SchemaRendererTestCase(TestCase):
                 },
                 'required': [
                     'names',
-                    'users',
                     'owners',
-                    'shoppings',
                     'selected_shoppings',
+                    'shoppings',
+                    'users',
                 ],
             },
         }
+        rendered = SchemaRenderer(JSONSchemaSerializer).render().serialize()
+
+        assert rendered == expected
 
     def test_method_json_multischema_serializer(self):
 
@@ -540,9 +545,11 @@ class SchemaRendererTestCase(TestCase):
             Schema, 'get_repository_uri'
         ).return_value = 'http://hi.there#123'
 
-        assert SchemaRenderer(
+        rendered = SchemaRenderer(
             HumanModelSerializer
-        ).render().serialize() == {
+        ).render().serialize()
+
+        assert rendered == {
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -553,8 +560,6 @@ class SchemaRendererTestCase(TestCase):
                         'maxLength': 100,
                     },
                     'age': {
-                        'minimum': -2147483648,
-                        'maximum': 2147483647,
                         'type': 'integer',
                     },
                     'is_underaged': {
@@ -570,7 +575,7 @@ class SchemaRendererTestCase(TestCase):
                         },
                     },
                 },
-                'required': ['name', 'is_ready', 'is_underaged', 'pets'],
+                'required': ['is_underaged', 'name', 'is_ready', 'pets'],
             },
         }
 
@@ -580,9 +585,11 @@ class SchemaRendererTestCase(TestCase):
             Schema, 'get_repository_uri'
         ).return_value = 'http://hi.there#123'
 
-        assert SchemaRenderer(
+        rendered = SchemaRenderer(
             EnumerModelSerializer
-        ).render().serialize() == {
+        ).render().serialize()
+
+        assert rendered == {
             'uri': 'http://hi.there#123',
             'schema': {
                 'entity_type': 'enumer',
@@ -636,7 +643,7 @@ class SchemaRendererTestCase(TestCase):
 
             name = serializers.CharField(max_length=11)
 
-            data = serializers.DictField(required=False)
+            whatever = serializers.DictField(required=False)
 
             email = serializers.EmailField()
 
@@ -651,15 +658,21 @@ class SchemaRendererTestCase(TestCase):
 
             created_at = serializers.DateTimeField()
 
-        assert SchemaRenderer(
-            SimpleFieldsSerializer
-        ).render().serialize() == {
+        expected = {
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': [
-                    'number', 'is_correct', 'price', 'choice', 'name',
-                    'email', 'json', 'date_of_birth', 'created_at'],
+                    "choice",
+                    "created_at",
+                    "date_of_birth",
+                    "email",
+                    "is_correct",
+                    "json",
+                    "name",
+                    "number",
+                    "price"
+                ],
                 'properties': {
                     'amount': {
                         'type': 'string',
@@ -682,7 +695,7 @@ class SchemaRendererTestCase(TestCase):
                         'maxLength': 11,
                         'type': 'string',
                     },
-                    'data': {
+                    'whatever': {
                         'type': 'object',
                     },
                     'email': {
@@ -707,6 +720,9 @@ class SchemaRendererTestCase(TestCase):
                 },
             }
         }
+        rendered = SchemaRenderer(SimpleFieldsSerializer).render().serialize()
+
+        assert rendered == expected
 
     def test_list_field(self):
 
@@ -731,7 +747,9 @@ class SchemaRendererTestCase(TestCase):
             providers = serializers.ListField(
                 child=ProviderSerializer(), required=False)
 
-        assert SchemaRenderer(Serializer).render().serialize() == {
+        rendered = SchemaRenderer(Serializer).render().serialize()
+
+        assert rendered == {
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
@@ -835,7 +853,7 @@ class SchemaRendererTestCase(TestCase):
             'schema': {
                 'type': 'object',
                 'required': [
-                    'number', 'ingredients', 'names', 'hosts', 'owner'],
+                    'hosts', 'ingredients', 'names', 'number', 'owner'],
                 'entity_type': 'method',
                 'properties': {
                     'number': {
@@ -913,15 +931,15 @@ class SchemaRendererTestCase(TestCase):
             'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
-                'required': ['guests', 'host', 'food'],
+                'required': ['food', 'guests', 'host'],
                 'entity_type': 'party',
                 'properties': {
                     'host': {
                         'type': 'object',
                         'required': [
+                            'is_underaged',
                             'name',
                             'is_ready',
-                            'is_underaged',
                             'pets',
                         ],
                         'entity_type': 'human',
@@ -932,8 +950,6 @@ class SchemaRendererTestCase(TestCase):
                             },
                             'age': {
                                 'type': 'integer',
-                                'minimum': -2147483648,
-                                'maximum': 2147483647
                             },
                             'is_underaged': {
                                 'type': 'boolean',
@@ -952,7 +968,7 @@ class SchemaRendererTestCase(TestCase):
                     'food': {
                         'type': 'object',
                         'entity_type': 'food',
-                        'required': ['provider', 'amount'],
+                        'required': ['amount', 'provider'],
                         'properties': {
                             'provider': {
                                 'type': 'object',
@@ -995,9 +1011,9 @@ class SchemaRendererTestCase(TestCase):
                 },
             },
         }
+        rendered = SchemaRenderer(PartySerializer).render().serialize()
 
-        assert SchemaRenderer(
-            PartySerializer).render().serialize() == expected
+        assert rendered == expected
 
     def test_missing_mapping(self):
 

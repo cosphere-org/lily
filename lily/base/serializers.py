@@ -19,9 +19,20 @@ class MissingRequiredArgumentsException(Exception):
 
 class Field:
 
-    def __init__(self, required=True, default=None, *args, **kwargs):
+    def __init__(
+        self,
+        required=True,
+        default=None,
+        validators=None,
+        *args,
+        **kwargs
+    ):
         self.required = required
         self.default = default
+        self.validators = validators or []
+
+        if self.default:
+            self.required = False
 
     def serialize(self, value):
         return value
@@ -50,7 +61,15 @@ class DictField(Field):
 
 
 class JSONSchemaField(Field):
-    pass
+
+    def __init__(self, *args, schema=None, **kwargs):
+        super(JSONSchemaField, self).__init__(*args, **kwargs)
+
+        from .models import JSONSchemaValidator
+
+        self.validators = [
+            JSONSchemaValidator(schema=schema)
+        ]
 
 
 class DateField(Field):
@@ -73,7 +92,14 @@ class EnumChoiceField(ChoiceField):
 
     def __init__(self, *args, enum_name=None, enum=None, **kwargs):
 
-        self.choices = {e: e for e in kwargs.get('choices', []) or []}
+        self.choices = {}
+        for e in (kwargs.get('choices', []) or []):
+            if isinstance(e, (tuple, list)):
+                self.choices[e[0]] = e[0]
+
+            else:
+                self.choices[e] = e
+
         if enum_name:
             self.enum_name = enum_name
 
@@ -122,7 +148,11 @@ class JSONField(Field):
 
 
 class ListField(Field):
-    pass
+
+    def __init__(self, child, *args, **kwargs):
+        self.child = child
+
+        super(ListField, self).__init__(*args, **kwargs)
 
 
 class ListSerializer(Field):
@@ -157,9 +187,10 @@ class Serializer:
 
     _meta_cache = {}
 
-    def __init__(self, instance=None, context=None, many=None):
+    def __init__(self, instance=None, context=None, many=None, required=True):
         self.instance = instance
         self.many = many
+        self.required = required
         self.context = context
 
         if 'fields' not in Serializer._meta_cache:
@@ -324,6 +355,11 @@ class AbstractSerializer(Serializer):
 class ModelSerializer(Serializer):
 
     def __init__(self, instance=None, context=None, many=None):
+        from .models import (
+            JSONSchemaField as ModelJSONSchemaField,
+            EnumChoiceField as ModelEnumChoiceField,
+        )
+
         super(ModelSerializer, self).__init__(instance, context, many)
 
         if 'fields' not in Serializer._meta_cache:
@@ -339,39 +375,61 @@ class ModelSerializer(Serializer):
                 if field not in self._fields:
                     try:
                         model_field = model_fields_index[field]
+                        required = True
+                        if model_field.null or model_field.blank:
+                            required = False
 
                         if isinstance(model_field, models.AutoField):
-                            serializer = IntegerField()
+                            serializer = IntegerField(required=required)
 
                         elif isinstance(model_field, models.IntegerField):
-                            serializer = IntegerField()
+                            serializer = IntegerField(required=required)
 
                         elif isinstance(model_field, models.OneToOneField):
-                            serializer = IntegerField()
+                            serializer = IntegerField(required=required)
 
                         elif isinstance(model_field, models.ForeignKey):
-                            serializer = IntegerField()
-
-                        elif isinstance(model_field, models.CharField):
-                            serializer = CharField()
-
-                        elif isinstance(model_field, models.TextField):
-                            serializer = CharField()
+                            serializer = IntegerField(required=required)
 
                         elif isinstance(model_field, models.JSONField):
-                            serializer = JSONField()
+                            serializer = JSONField(
+                                required=required,
+                                validators=model_field.validators)
+
+                        elif isinstance(model_field, ModelJSONSchemaField):
+                            serializer = JSONSchemaField(
+                                required=required,
+                                validators=model_field.validators)
+
+                        elif isinstance(model_field, ModelEnumChoiceField):
+                            serializer = EnumChoiceField(
+                                required=required,
+                                enum_name=model_field.enum_name,
+                                choices=[c[0] for c in model_field.choices])
+
+                        elif isinstance(model_field, models.CharField):
+                            serializer = CharField(
+                                required=required,
+                                min_length=getattr(
+                                    model_field, 'min_length', None),
+                                max_length=getattr(
+                                    model_field, 'max_length', None),
+                            )
+
+                        elif isinstance(model_field, models.TextField):
+                            serializer = CharField(required=required)
 
                         elif isinstance(model_field, models.BooleanField):
-                            serializer = BooleanField()
+                            serializer = BooleanField(required=required)
 
                         elif isinstance(model_field, models.DateTimeField):
-                            serializer = DateTimeField()
+                            serializer = DateTimeField(required=required)
 
                         elif isinstance(model_field, models.DateField):
-                            serializer = DateField()
+                            serializer = DateField(required=required)
 
                         elif isinstance(model_field, models.URLField):
-                            serializer = URLField()
+                            serializer = URLField(required=required)
 
                     except KeyError:
                         serializer = Field()
@@ -384,6 +442,14 @@ class ModelSerializer(Serializer):
 
         else:
             self._fields = Serializer._meta_cache['fields']
+
+    def get_fields(self):
+        """Calculate and return fields required by the schema renderer."""
+
+        return {
+            attr: field['serializer']
+            for attr, field in self._fields.items()
+        }
 
 
 class EmptySerializer(Serializer):

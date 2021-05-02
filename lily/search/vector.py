@@ -182,7 +182,14 @@ class TextVector:
         if not self.hobj_pl:
             return []
 
-        token_stems = self.hobj_pl.stem(token)
+        try:
+            broken = False
+            token_stems = self.hobj_pl.stem(token)
+
+        except UnicodeEncodeError:
+            broken = True
+            token_stems = []
+
         stems = []
 
         if token_stems:
@@ -190,7 +197,8 @@ class TextVector:
                 stem = stem.decode(self.hobj_pl.get_dic_encoding())
                 stems.append(stem.lower())
 
-        stems.append(token.lower())
+        if not broken:
+            stems.append(token.lower())
 
         return stems
 
