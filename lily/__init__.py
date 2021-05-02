@@ -12,8 +12,5 @@ try:
     from .base.authorizer import *  # noqa
     from .base import name, parsers, serializers, commands  # noqa
 
-    # FIXME: experimental!!!
-    # from .base import experimental_serializers as serializers  # noqa
-
 except ImproperlyConfigured:
     pass

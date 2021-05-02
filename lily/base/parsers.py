@@ -2,10 +2,68 @@
 from enum import Enum, unique
 
 from rest_framework import serializers as drf_serializers
+from rest_framework.serializers import (  # noqa
+    BooleanField,
+    CharField,
+    ChoiceField,
+    DateField,
+    DateTimeField,
+    DecimalField,
+    DictField,
+    EmailField,
+    FloatField,
+    IntegerField,
+    JSONField,
+    ListField,
+    ListSerializer,
+    SerializerMethodField,
+    URLField,
+    UUIDField,
+    NullBooleanField,
+    ValidationError,
+    ReadOnlyField,
+)
 
-# -- needed for correct namespacing so that one could access all
-# -- serializers stuff as a part of the `parsers` namespace
-from .serializers import *  # noqa
+
+class MissingRequiredArgumentsException(Exception):
+    pass
+
+
+class EnumChoiceField(ChoiceField):
+
+    def __init__(self, *args, enum_name=None, enum=None, **kwargs):
+
+        if enum_name:
+            self.enum_name = enum_name
+
+        if enum:
+            self.enum_name = enum.__name__
+            kwargs['choices'] = [e.value for e in enum]
+
+        if not (enum_name or enum):
+            raise MissingRequiredArgumentsException(
+                'either `enum_name` or `enum` must be provided')
+
+        super(EnumChoiceField, self).__init__(*args, **kwargs)
+
+
+class JSONSchemaField(JSONField):
+    def __init__(self, *args, **kwargs):
+        from .models import JSONSchemaValidator
+
+        class JSONSchemaValidatorSerializer(JSONSchemaValidator):
+
+            validation_error_cls = ValidationError
+
+        try:
+            schema = kwargs.pop('schema')
+
+        except KeyError:
+            schema = {}
+
+        super(JSONSchemaField, self).__init__(*args, **kwargs)
+        self.validators.insert(
+            0, JSONSchemaValidatorSerializer(schema=schema))
 
 
 @unique

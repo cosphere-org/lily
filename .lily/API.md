@@ -8,7 +8,7 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?is_private=False HTTP/1.1
+GET /?domain_id=PATHS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
@@ -25,22 +25,58 @@ Respone:
                 "access_list": [
                     "ANY"
                 ],
-                "is_private": false
+                "is_private": true
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Recusandae nostrum eius cupiditate unde ipsa.",
+                "description": "In eveniet repellendus iste quo earum dolores.",
                 "domain": {
                     "@type": "domain",
-                    "id": "vel",
+                    "id": "paths",
                     "name": "domain"
                 },
-                "title": "Quam id asperiores velit vel."
+                "title": "Illo error vel optio deserunt."
             },
-            "method": "PUT",
+            "method": "POST",
+            "path_conf": {
+                "path": "conf"
+            },
+            "schemas": {
+                "some": "schemas"
+            },
+            "source": {
+                "@type": "source",
+                "end_line": 15,
+                "filepath": "/tests/factory.py",
+                "start_line": 14
+            }
+        },
+        "DELETE_HELLO": {
+            "@type": "command",
+            "access": {
+                "@type": "access",
+                "access_list": [
+                    "ANY"
+                ],
+                "is_private": true
+            },
+            "examples": {
+                "some": "examples"
+            },
+            "meta": {
+                "@type": "meta",
+                "description": "Modi ab deserunt enim praesentium laboriosam veniam provident dolores.",
+                "domain": {
+                    "@type": "domain",
+                    "id": "paths",
+                    "name": "domain"
+                },
+                "title": "Reprehenderit laudantium in architecto cum sapiente quasi adipisci."
+            },
+            "method": "POST",
             "path_conf": {
                 "path": "conf"
             },
@@ -55,7 +91,11 @@ Respone:
             }
         }
     },
-    "enums": [],
+    "enums": [
+        {
+            "A": "X"
+        }
+    ],
     "name": "test",
     "version_info": {
         "@type": "version_info",

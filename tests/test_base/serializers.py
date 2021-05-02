@@ -1,7 +1,7 @@
 
 from unittest.mock import Mock
 
-from lily.base import experimental_serializers as serializers
+from lily.base import serializers
 from .models import (
     Account,
     Person,

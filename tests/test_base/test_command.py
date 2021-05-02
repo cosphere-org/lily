@@ -245,31 +245,6 @@ class CommandTestCase(TestCase):
         request = Mock(
             body=dump_to_bytes({"name": "John", "age": 81}),
             META=get_auth_headers(u.id, 'SUPER_PREMIUM'))
-        self.mocker.patch.object(
-            serializers,
-            'COMMANDS_CONF',
-            {
-                'MAKE_IT_BETTER': {
-                    'service_base_uri': 'http://192.11.2.1:9000',
-                    'method': 'post',
-                    'path_conf': {
-                        'path': '/payment_cards/{card_id}/sth/',
-                        'parameters': [
-                            {
-                                'name': 'card_id',
-                                'in': 'path',
-                                'description': None,
-                                'required': True,
-                                'type': 'integer'
-                            },
-                        ],
-                    },
-                    'access': {
-                        'is_private': False,
-                        'access_list': ['SUPER_PREMIUM'],
-                    },
-                },
-            })
 
         c = TestCommands()
 
@@ -293,31 +268,6 @@ class CommandTestCase(TestCase):
             log_authorizer={'jack': 'chan'},
             body=dump_to_bytes({"name": "John", "age": 81}),
             META=get_auth_headers(u.id, 'SUPER_PREMIUM'))
-        self.mocker.patch.object(
-            serializers,
-            'COMMANDS_CONF',
-            {
-                'MAKE_IT_BETTER': {
-                    'service_base_uri': 'http://192.11.2.1:9000',
-                    'method': 'post',
-                    'path_conf': {
-                        'path': '/payment_cards/{card_id}/sth/',
-                        'parameters': [
-                            {
-                                'name': 'card_id',
-                                'in': 'path',
-                                'description': None,
-                                'required': True,
-                                'type': 'integer'
-                            },
-                        ],
-                    },
-                    'access': {
-                        'is_private': False,
-                        'access_list': ['SUPER_PREMIUM'],
-                    },
-                },
-            })
 
         c = TestReturnCommands()
 
@@ -467,31 +417,6 @@ class CommandTestCase(TestCase):
             '@type': 'simple',
             '@event': 'BROKEN',
             'amount': 81,
-        }
-
-    def test_broken_response_validation(self):
-
-        u = User.objects.create_user(username='jacky')
-        meta = get_auth_headers(u.id)
-        meta['SERVER_NAME'] = 'testserver'
-        request = Mock(
-            body=dump_to_bytes({'not_amount': 81}),
-            log_authorizer={
-                'user_id': u.id,
-            },
-            META=meta)
-        c = TestCommands()
-
-        response = c.put(request)
-
-        assert response.status_code == 400
-        assert to_json(response) == {
-            '@authorizer': {
-                'user_id': u.id,
-            },
-            '@type': 'error',
-            '@event': 'RESPONSE_DID_NOT_VALIDATE',
-            'errors': {'amount': ['This field is required.']},
         }
 
     #

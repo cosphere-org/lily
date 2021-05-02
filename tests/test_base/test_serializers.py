@@ -2,119 +2,69 @@
 from unittest.mock import Mock
 
 from django.test import TestCase
-from django.db import models
+from django.utils import timezone
 import pytest
 
 from lily.base import serializers
-
-
-#
-# Test Serializers
-#
-class Customer(models.Model):
-
-    name = models.CharField(max_length=100)
-
-    age = models.IntegerField(null=True, blank=True)
-
-    is_ready = models.BooleanField()
-
-    class Meta:
-        app_label = 'base'
-
-
-class CustomerSerializer(serializers.Serializer):
-
-    _type = 'customer'
-
-    name = serializers.CharField(max_length=123, required=False)
-
-    age = serializers.IntegerField(min_value=18)
-
-    def get_access(self, instance):
-
-        return [
-            (Mock(command_conf={'name': 'MARK_IT'}), True),
-            (Mock(command_conf={'name': 'REMOVE_IT'}), False),
-            ('ALLOW_IT', False),
-        ]
-
-
-class CustomerModelSerializer(serializers.ModelSerializer):
-
-    _type = 'customer'
-
-    def get_access(self, instance):
-
-        return [
-            (Mock(command_conf={'name': 'MARK_IT'}), True),
-            (Mock(command_conf={'name': 'REMOVE_IT'}), False),
-            ('ALLOW_IT', False),
-        ]
-
-    class Meta:
-        model = Customer
-        fields = ('name', 'age')
+from .serializers import (
+    AccountPlainSerializer,
+    PersonSerializer,
+    PersonModelSerializer,
+    AccountSerializer,
+    MediaItemFileSerializer,
+    MediaItemSerializer,
+)
+from .models import Account, Person, MediaItemFile
 
 
 class SerializerTestCase(TestCase):
-
-    serializer = CustomerSerializer
 
     @pytest.fixture(autouse=True)
     def initfixture(self, mocker):
         self.mocker = mocker
 
-    def test_to_internal_value_with_instance(self):
+    #
+    # CASE: SIMPLE SERIALIZER
+    #
+    def test_serialize__simple_serializer(self):
 
-        class WhatSerializer(serializers.Serializer):
-            what = serializers.IntegerField()
-
-        class MetaCustomer(serializers.Serializer):
-            _type = 'customer'
-            name = serializers.CharField()
-            age = serializers.IntegerField()
-            is_ready = serializers.BooleanField()
-            what = WhatSerializer()
-
-        data = {
-            'name': 'George',
-            'age': 13,
-            'is_ready': False,
-            'what': {'what': 189},
-        }
-        s = MetaCustomer(data=data)
-
-        assert dict(s.to_internal_value(data)) == {
-            'name': 'George',
-            'age': 13,
-            'is_ready': False,
-            'what': {'what': 189},
+        assert AccountPlainSerializer({
+            'user_id': 11,
+            'avatar_uri': 'this is avatar',
+            'username': 'Jack'
+        }).data == {
+            '@type': 'account_plain',
+            'user_id': 11,
+            'avatar_uri': 'this is avatar',
+            'username': 'Jack'
         }
 
-    def test_to_representation__without_access(self):
+    #
+    # CASE: SIMPLE SERIALIZER WITH ACCESS
+    #
+    def test_serialize__simple_serializer_with_empty_access(self):
 
-        p = Customer(name='John', age=81)
+        p = Person(name='John', age=81)
 
         self.mocker.patch.object(
-            self.serializer, 'get_access').return_value = []
+            PersonSerializer, 'get_access').return_value = []
 
-        assert self.serializer(
-            context={'request': Mock(), 'command_name': 'ACT_NOW'}
-        ).to_representation(p) == {
-            '@type': 'customer',
+        assert PersonSerializer(
+            p, context={'request': Mock()}
+        ).data == {
+            '@type': 'person',
             'age': 81,
             'name': 'John',
         }
 
-    def test_to_representation__with_access(self):
+    def test_serialize__simple_serializer_with_access(self):
 
-        p = Customer(name='John', age=81)
+        p = Person(name='John', age=81)
 
-        assert self.serializer(
-            context={'request': Mock(), 'command_name': 'ACT_NOW'}
-        ).to_representation(p) == {
-            '@type': 'customer',
+        assert PersonSerializer(
+            p, context={'request': Mock()}
+        ).data == {
+            '@type': 'person',
             '@access': {
                 'MARK_IT': True,
                 'REMOVE_IT': False,
@@ -124,10 +74,107 @@ class SerializerTestCase(TestCase):
             'name': 'John',
         }
 
+    #
+    # CASE: SIMPLE MODEL SERIALIZER WITH ACCESS
+    #
+    def test_serialize__simple_model_serializer_with_empty_access(self):
 
-class ModelSerializerTestCase(SerializerTestCase):
+        p = Person(name='John', age=81)
 
-    serializer = CustomerModelSerializer
+        self.mocker.patch.object(
+            PersonModelSerializer, 'get_access').return_value = []
+
+        assert PersonModelSerializer(
+            p, context={'request': Mock()}
+        ).data == {
+            '@type': 'person',
+            'age': 81,
+            'name': 'John',
+        }
+
+    def test_serialize__simple_model_serializer_with_access(self):
+
+        p = Person(name='John', age=81)
+
+        assert PersonModelSerializer(
+            p, context={'request': Mock()}
+        ).data == {
+            '@type': 'person',
+            '@access': {
+                'MARK_IT': True,
+                'REMOVE_IT': False,
+                'ALLOW_IT': False,
+            },
+            'age': 81,
+            'name': 'John',
+        }
+
+    #
+    # CASE: MODEL SERIALIZER WITH ENUM & SERIALIZER METHOD FIELD
+    #
+    def test_serialize__model_serializer_with_enum_and_method(self):
+
+        now = timezone.now()
+        a = Account(
+            user_id=11,
+            atype='FREE',
+            freemium_till_datetime=now,
+            show_in_ranking=True)
+        a.user_email = 'jack@player.io'
+
+        assert AccountSerializer(
+            a, context={'request': Mock(access={'user_id': 11})}
+        ).data == {
+            '@type': 'account',
+            'user_id': 11,
+            'atype': 'FREE',
+            'freemium_till_datetime': now,
+            'show_in_ranking': True,
+            'email': 'jack@player.io',
+        }
+
+    #
+    # CASE: NESTED SERIALIZERS AND MANY
+    #
+    def test_serialize__nested_serializer_and_many(self):
+
+        f0 = MediaItemFile(
+            content_type='image/png',
+            file_uri='http://image.png')
+        f1 = MediaItemFile(
+            content_type='image/jpg',
+            file_uri='http://image.jpg')
+        f2 = MediaItemFile(
+            content_type='image/gif',
+            file_uri='http://image.gif')
+
+        m = {
+            'id': 21,
+            'original': f0,
+            'files': [f1, f2],
+            'type': 'IMAGE',
+            'usage_type': 'MEDIAITEM',
+            'text': 'hello world',
+            'reference': {
+                'what': 'is it?',
+            }
+        }
+
+        assert MediaItemSerializer(m).data == {
+            '@type': 'mediaitem',
+            'id': 21,
+            'original': MediaItemFileSerializer(f0).data,
+            'files': [
+                MediaItemFileSerializer(f1).data,
+                MediaItemFileSerializer(f2).data,
+            ],
+            'type': 'IMAGE',
+            'usage_type': 'MEDIAITEM',
+            'text': 'hello world',
+            'reference': {
+                'what': 'is it?',
+            }
+        }
 
 
 class EmptySerializerTestCase(TestCase):
@@ -166,30 +213,19 @@ class CommandSerializerTestCase(TestCase):
 
     def test_serializes_command_correctly(self):
 
-        s = serializers.CommandSerializer(data={
+        s = serializers.CommandSerializer({
             'name': 'DO_IT',
             'method': 'post',
             'uri': 'http://do.it/now',
             'body': {'wat': 'yes'},
         })
 
-        assert s.is_valid() is True
         assert s.data == {
             '@type': 'command',
             'name': 'DO_IT',
             'method': 'post',
             'uri': 'http://do.it/now',
             'body': {'wat': 'yes'},
-        }
-
-    def test__fails_on_invalid_input(self):
-        s = serializers.CommandSerializer(data={
-            'name': 'hi there',
-            'uri': 'not url',
-        })
-
-        assert s.is_valid() is False
-        assert s.errors == {
-            'method': ['This field is required.'],
-            'uri': ['Enter a valid URL.'],
+            'query': None,
+            'result': None
         }

@@ -264,27 +264,6 @@ def _handle_response(request, name, output, response_headers, e):
         event=name.render_event_name(request, e)).log()
 
     #
-    # RESPONSE VALIDATION (Test Server Only)
-    #
-    if e.data and request.META.get('SERVER_NAME') == 'testserver':
-        serializer = output.serializer(
-            data=e.data,
-            context={
-                **e.output_context,
-                'request': request,
-                'command_name': request._lily_context.command_name,
-            })
-
-        if not serializer.is_valid():
-            e = event.BrokenRequest(
-                'RESPONSE_DID_NOT_VALIDATE',
-                context=request,
-                data={'errors': serializer.errors},
-                is_critical=True)
-
-            return e.response_class(e.data)
-
-    #
     # OUTPUT
     #
     try:

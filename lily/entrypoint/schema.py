@@ -94,8 +94,11 @@ class SchemaRenderer:
         }
 
     def render(self):
+        serializer = self.serializer
+        if inspect.isclass(serializer):
+            serializer = serializer()
 
-        return self.serializer_to_schema(self.serializer)
+        return self.serializer_to_schema(serializer)
 
     def serializer_to_schema(self, serializer):
 
@@ -113,12 +116,21 @@ class SchemaRenderer:
         for name, field in fields.items():
 
             # -- list serializer
-            if isinstance(field, serializers.ListSerializer):
+            if isinstance(
+                field,
+                (serializers.ListSerializer, parsers.ListSerializer)
+            ):
                 schema.add_array(
                     name=name,
                     required=field.child.required,
                     value=self.serializer_to_schema(
                         field.child.__class__()))
+
+            elif getattr(field, 'many', False):
+                schema.add_array(
+                    name=name,
+                    required=field.required,
+                    value=self.serializer_to_schema(field))
 
             # -- singleton nested serializer
             elif (
@@ -145,7 +157,7 @@ class SchemaRenderer:
                 schema.enums.extend(enums)
 
             # -- list field
-            elif isinstance(field, serializers.ListField):
+            elif isinstance(field, (serializers.ListField, parsers.ListField)):
 
                 if self.is_simple_field(field.child):
                     value, enums = self.simple_field_to_schema(
@@ -242,6 +254,7 @@ class SchemaRenderer:
         return isinstance(
             field,
             (
+                # -- serializers
                 serializers.BooleanField,
                 serializers.CharField,
                 serializers.ChoiceField,
@@ -257,59 +270,75 @@ class SchemaRenderer:
                 serializers.URLField,
                 serializers.ReadOnlyField,
                 serializers.UUIDField,
+                # -- parsers
+                parsers.BooleanField,
+                parsers.CharField,
+                parsers.ChoiceField,
+                parsers.DateField,
+                parsers.DateTimeField,
+                parsers.DecimalField,
+                parsers.DictField,
+                parsers.EmailField,
+                parsers.FloatField,
+                parsers.IntegerField,
+                parsers.JSONField,
+                parsers.JSONSchemaField,
+                parsers.URLField,
+                parsers.ReadOnlyField,
+                parsers.UUIDField,
             ))
 
     def simple_field_to_schema(self, name, field):
         enums = []
         out = None
 
-        def is_field(_types):
+        def is_field(*_types):
             return isinstance(field, _types)
 
-        if is_field(serializers.BooleanField):
+        if is_field(serializers.BooleanField, parsers.BooleanField):
             out = {
                 'type': 'boolean',
             }
 
         # FIXME: figure out how to fetch the type hidden behind ReadOnly
         # Field!!!!!!!!!!!!!
-        elif is_field(serializers.ReadOnlyField):
+        elif is_field(serializers.ReadOnlyField, parsers.ReadOnlyField):
             out = {
                 'type': 'any',
             }
 
         # -- must be before CharField
-        elif is_field(serializers.EmailField):
+        elif is_field(serializers.EmailField, parsers.EmailField):
             out = {
                 'type': 'string',
                 'format': 'email',
             }
 
         # -- must be before CharField
-        elif is_field(serializers.URLField):
+        elif is_field(serializers.URLField, parsers.URLField):
             out = {
                 'type': 'string',
                 'format': 'uri',
             }
 
-        elif is_field(serializers.DateField):
+        elif is_field(serializers.DateField, parsers.DateField):
             out = {
                 'type': 'string',
                 'format': 'date',
             }
 
-        elif is_field(serializers.DateTimeField):
+        elif is_field(serializers.DateTimeField, parsers.DateTimeField):
             out = {
                 'type': 'string',
                 'format': 'date-time',
             }
 
-        elif is_field(serializers.UUIDField):
+        elif is_field(serializers.UUIDField, parsers.UUIDField):
             out = {
                 'type': 'string',
             }
 
-        elif is_field(serializers.CharField):
+        elif is_field(serializers.CharField, parsers.CharField):
             field_schema = {
                 'type': 'string',
             }
@@ -322,7 +351,7 @@ class SchemaRenderer:
 
             out = field_schema
 
-        elif is_field(serializers.IntegerField):
+        elif is_field(serializers.IntegerField, parsers.IntegerField):
             field_schema = {
                 'type': 'integer',
             }
@@ -335,12 +364,12 @@ class SchemaRenderer:
 
             out = field_schema
 
-        elif is_field(serializers.DecimalField):
+        elif is_field(serializers.DecimalField, parsers.DecimalField):
             out = {
                 'type': 'string',
             }
 
-        elif is_field(serializers.FloatField):
+        elif is_field(serializers.FloatField, parsers.FloatField):
             field_schema = {
                 'type': 'number',
             }
@@ -356,14 +385,14 @@ class SchemaRenderer:
         # -- choice fields are FORBIDDEN since they lead to ambiguous Enums
         # -- on the client side
         elif (
-                is_field(serializers.ChoiceField) and
-                not is_field(serializers.EnumChoiceField)):
+                is_field(serializers.ChoiceField, parsers.ChoiceField) and
+                not is_field(serializers.EnumChoiceField, parsers.EnumChoiceField)):  # noqa
             raise ForbiddenFieldError(
                 f'{name} uses ChoiceField which is forbidden since it leads '
                 f'to ambiguous client side Enums. Please use '
                 f'`EnumChoiceField` instead')
 
-        elif is_field(serializers.EnumChoiceField):
+        elif is_field(serializers.EnumChoiceField, parsers.EnumChoiceField):
             choices = list(field.choices.keys())
             choice_type = type(choices[0])
             has_same_type = all([isinstance(c, choice_type) for c in choices])
@@ -381,12 +410,17 @@ class SchemaRenderer:
             }
             enums.append(out)
 
-        elif is_field(serializers.DictField):
+        elif is_field(serializers.DictField, parsers.DictField):
             out = {
                 'type': 'object',
             }
 
-        elif is_field((serializers.JSONField, serializers.JSONSchemaField)):
+        elif is_field(
+            serializers.JSONField,
+            serializers.JSONSchemaField,
+            parsers.JSONSchemaField,
+            parsers.JSONSchemaField,
+        ):
 
             out = {
                 'type': 'any',

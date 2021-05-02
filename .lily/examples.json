@@ -1,72 +1,33 @@
 {
-    "READ_ENTRY_POINT": {
-        "200 (ENTRY_POINT_READ)": {
+    "SIGN_PROCESS": {
+        "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
-            "description": "ENTRY_POINT_READ",
+            "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
                 }
             },
             "response": {
-                "status": 200,
+                "status": 400,
                 "content_type": "application/json",
                 "content": {
-                    "version_info": {
-                        "deployed": "2.5.6",
-                        "displayed": "2.5.6",
-                        "available": [],
-                        "@type": "version_info"
+                    "errors": {
+                        "datetime": [
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
+                        ]
                     },
-                    "name": "test",
-                    "commands": {
-                        "CREATE_HELLO": {
-                            "method": "PUT",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "meta": {
-                                "title": "Quam id asperiores velit vel.",
-                                "description": "Recusandae nostrum eius cupiditate unde ipsa.",
-                                "domain": {
-                                    "id": "vel",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "@type": "meta"
-                            },
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "@type": "access"
-                            },
-                            "source": {
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "end_line": 15,
-                                "@type": "source"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "@type": "command"
-                        }
-                    },
-                    "enums": [],
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ"
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "account_type": "PREMIUM",
+                        "user_id": 56
+                    }
                 }
             }
-        }
-    },
-    "SIGN_PROCESS": {
+        },
         "200": {
             "method": "get",
             "description": null,
@@ -82,32 +43,111 @@
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
-        },
-        "400 (QUERY_DID_NOT_VALIDATE)": {
+        }
+    },
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
             "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
+            "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/?domain_id=PATHS",
                 "headers": {
-                    "X-ACCOUNT-TYPE": "PREMIUM",
-                    "X-USER-ID": 56
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
                 }
             },
             "response": {
-                "status": 400,
+                "status": 200,
                 "content_type": "application/json",
                 "content": {
-                    "errors": {
-                        "datetime": [
-                            "This field is required."
-                        ]
+                    "commands": {
+                        "CREATE_HELLO": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "In eveniet repellendus iste quo earum dolores.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Illo error vel optio deserunt.",
+                                "@type": "meta"
+                            },
+                            "method": "POST",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "Modi ab deserunt enim praesentium laboriosam veniam provident dolores.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Reprehenderit laudantium in architecto cum sapiente quasi adipisci.",
+                                "@type": "meta"
+                            },
+                            "method": "POST",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        }
                     },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@authorizer": {
-                        "account_type": "PREMIUM",
-                        "user_id": 56
-                    }
+                    "enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
+                    "name": "test",
+                    "version_info": {
+                        "available": [],
+                        "deployed": "2.5.6",
+                        "displayed": "2.5.6",
+                        "@type": "version_info"
+                    },
+                    "@type": "entrypoint",
+                    "@event": "ENTRY_POINT_READ"
                 }
             }
         }

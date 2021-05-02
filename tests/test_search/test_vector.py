@@ -731,6 +731,29 @@ class TextVectorTestCase(TestCase):
             'hey': set(['1']),
         }
 
+    def test_augument_with_stems__polish_conf__special_chars(self):
+
+        assert self.vector.augument_with_stems(
+            'polish',
+            'Wierzchołek paraboli ⛰ Funkcja kwadratowa',
+            None,
+            {},
+            [
+                ('Wierzchołek', 1),
+                ('paraboli', 2),
+                ('⛰', 3),
+                ('Funkcja', 4),
+                ('kwadratowa', 5),
+            ]
+        ) == {
+            'wierzchołek': {'1'},
+            'parabola': {'2'},
+            'paraboli': {'2'},
+            'funkcja': {'4'},
+            'kwadratowa': {'5'},
+            'kwadratowy': {'5'},
+        }
+
 
 #
 # HELPERS
