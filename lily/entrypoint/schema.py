@@ -127,10 +127,19 @@ class SchemaRenderer:
                         field.child.__class__()))
 
             elif getattr(field, 'many', False):
-                schema.add_array(
-                    name=name,
-                    required=field.required,
-                    value=self.serializer_to_schema(field))
+                if self.is_simple_field(field):
+                    value, enums = self.simple_field_to_schema(name, field)
+                    schema.add_array(
+                        name=name,
+                        required=field.required,
+                        value=value)
+                    schema.enums.extend(enums)
+
+                else:
+                    schema.add_array(
+                        name=name,
+                        required=field.required,
+                        value=self.serializer_to_schema(field))
 
             # -- singleton nested serializer
             elif (
@@ -147,7 +156,7 @@ class SchemaRenderer:
                 schema = self.method_field_to_schema(
                     serializer, name, field, schema)
 
-            # -- normal field boolean field
+            # -- normal field
             elif self.is_simple_field(field):
                 value, enums = self.simple_field_to_schema(name, field)
                 schema.add(
