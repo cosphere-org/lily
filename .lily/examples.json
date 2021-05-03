@@ -1,4 +1,111 @@
 {
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
+            "method": "get",
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "path": "/?domain_id=PATHS",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "application/json",
+                "content": {
+                    "commands": {
+                        "CREATE_HELLO": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "Laborum voluptatum minus maiores quisquam laborum.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Magnam dolor blanditiis tempora porro quis perspiciatis.",
+                                "@type": "meta"
+                            },
+                            "method": "GET",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "Optio repellendus illo facere esse laborum dolor.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Quis quasi debitis quae inventore.",
+                                "@type": "meta"
+                            },
+                            "method": "PUT",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        }
+                    },
+                    "enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
+                    "name": "test",
+                    "version_info": {
+                        "available": [],
+                        "deployed": "2.5.6",
+                        "displayed": "2.5.6",
+                        "@type": "version_info"
+                    },
+                    "@type": "entrypoint",
+                    "@event": "ENTRY_POINT_READ"
+                }
+            }
+        }
+    },
     "SIGN_PROCESS": {
         "200": {
             "method": "get",
@@ -41,73 +148,6 @@
                         "account_type": "PREMIUM",
                         "user_id": 56
                     }
-                }
-            }
-        }
-    },
-    "READ_ENTRY_POINT": {
-        "200 (ENTRY_POINT_READ)": {
-            "method": "get",
-            "description": "ENTRY_POINT_READ",
-            "request": {
-                "path": "/",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "application/json",
-                "content": {
-                    "commands": {
-                        "UPDATE_HELLO": {
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": true,
-                                "@type": "access"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "meta": {
-                                "description": "In nisi tempora eveniet impedit.",
-                                "domain": {
-                                    "id": "eaque",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "title": "Unde non error sunt officia atque molestias excepturi placeat.",
-                                "@type": "meta"
-                            },
-                            "method": "DELETE",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "source": {
-                                "end_line": 15,
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "@type": "source"
-                            },
-                            "@type": "command"
-                        }
-                    },
-                    "enums": [],
-                    "name": "test",
-                    "version_info": {
-                        "available": [],
-                        "deployed": "2.5.6",
-                        "displayed": "2.5.6",
-                        "@type": "version_info"
-                    },
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ"
                 }
             }
         }

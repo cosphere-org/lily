@@ -492,7 +492,6 @@ class ModelSerializer(Serializer):
                                 t = f.fget.__annotations__['return']
 
                             except KeyError:
-                                import ipdb; ipdb.set_trace()
                                 raise Exception('MISSING_TYPE_FOR_FIELD')
 
                             if t == bool:
