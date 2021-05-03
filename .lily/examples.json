@@ -1,33 +1,5 @@
 {
     "SIGN_PROCESS": {
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
-                "headers": {
-                    "X-ACCOUNT-TYPE": "PREMIUM",
-                    "X-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@authorizer": {
-                        "account_type": "PREMIUM",
-                        "user_id": 56
-                    }
-                }
-            }
-        },
         "200": {
             "method": "get",
             "description": null,
@@ -43,6 +15,34 @@
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
+        },
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "This field is required."
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "account_type": "PREMIUM",
+                        "user_id": 56
+                    }
+                }
+            }
         }
     },
     "READ_ENTRY_POINT": {
@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?domain_id=PATHS",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -61,7 +61,7 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "CREATE_HELLO": {
+                        "UPDATE_HELLO": {
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -73,52 +73,16 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "In eveniet repellendus iste quo earum dolores.",
+                                "description": "In nisi tempora eveniet impedit.",
                                 "domain": {
-                                    "id": "paths",
+                                    "id": "eaque",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Illo error vel optio deserunt.",
+                                "title": "Unde non error sunt officia atque molestias excepturi placeat.",
                                 "@type": "meta"
                             },
-                            "method": "POST",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "source": {
-                                "end_line": 15,
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "@type": "source"
-                            },
-                            "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": true,
-                                "@type": "access"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "meta": {
-                                "description": "Modi ab deserunt enim praesentium laboriosam veniam provident dolores.",
-                                "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "title": "Reprehenderit laudantium in architecto cum sapiente quasi adipisci.",
-                                "@type": "meta"
-                            },
-                            "method": "POST",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
@@ -134,11 +98,7 @@
                             "@type": "command"
                         }
                     },
-                    "enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
+                    "enums": [],
                     "name": "test",
                     "version_info": {
                         "available": [],
