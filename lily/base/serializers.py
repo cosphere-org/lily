@@ -1,7 +1,9 @@
 
+from datetime import datetime, date
 from copy import deepcopy
 
 from django.db import models
+from django.contrib.postgres.fields import ArrayField
 
 
 class MissingTypeError(Exception):
@@ -24,12 +26,14 @@ class Field:
         required=True,
         default=None,
         validators=None,
+        many=None,
         *args,
         **kwargs
     ):
         self.required = required
         self.default = default
         self.validators = validators or []
+        self.many = many
 
         if self.default:
             self.required = False
@@ -73,19 +77,29 @@ class JSONSchemaField(Field):
 
 
 class DateField(Field):
-    pass
 
-    # def serialize(self, value):
-    #     if value:
-    #         return value.isoformat().replace('+00:00', 'Z')
+    def serialize(self, value):
+        if value:
+            if isinstance(value, datetime):
+                value = value.date()
+
+            if isinstance(value, date):
+                value = value.isoformat()
+
+            return value
 
 
 class DateTimeField(Field):
-    pass
 
-    # def serialize(self, value):
-    #     if value:
-    #         return value.isoformat().replace('+00:00', 'Z')
+    def serialize(self, value):
+        if value:
+            if isinstance(value, (datetime, date)):
+                value = value.isoformat().replace('+00:00', 'Z')
+
+            if not value.endswith('Z'):
+                value += 'Z'
+
+            return value
 
 
 class EnumChoiceField(ChoiceField):
@@ -128,6 +142,10 @@ class FloatField(Field):
 
         super(FloatField, self).__init__(*args, **kwargs)
 
+    def serialize(self, value):
+        if value is not None:
+            return float(value)
+
 
 class IntegerField(Field):
 
@@ -137,6 +155,11 @@ class IntegerField(Field):
         self.max_value = max_value
 
         super(IntegerField, self).__init__(*args, **kwargs)
+
+    def serialize(self, value):
+
+        if value is not None:
+            return int(value)
 
 
 class DecimalField(Field):
@@ -153,6 +176,11 @@ class ListField(Field):
         self.child = child
 
         super(ListField, self).__init__(*args, **kwargs)
+
+    def serialize(self, value):
+
+        if value is not None:
+            return [self.child.serialize(v) for v in value]
 
 
 class ListSerializer(Field):
@@ -196,7 +224,7 @@ class Serializer:
         if 'fields' not in Serializer._meta_cache:
             self._fields = {}
             for attr in dir(self):
-                if attr == 'data':
+                if attr in ['data', 'instance', 'many', 'required', 'context']:
                     continue
 
                 if isinstance(getattr(self, attr), SerializerMethodField):
@@ -273,6 +301,7 @@ class Serializer:
             is_method = field['is_method']
             is_field = field['is_field']
 
+            # -- VALUE
             if not is_method and not required:
                 if isinstance(self.instance, dict):
                     value = self.instance.get(name, default)
@@ -282,17 +311,22 @@ class Serializer:
 
             elif not is_method:
                 if isinstance(self.instance, dict):
-                    value = self.instance[name]
+                    value = self.instance.get(name, default)
 
                 else:
-                    value = getattr(self.instance, name)
+                    value = getattr(self.instance, name, default)
 
+            # -- SERIALIZATION
             if is_method:
                 serialized[name] = (
                     getattr(self, f'get_{name}')(self.instance))
 
             elif is_field:
-                serialized[name] = s.serialize(value)
+                if s.many:
+                    serialized[name] = [s.serialize(v) for v in value]
+
+                else:
+                    serialized[name] = s.serialize(value)
 
             else:
                 def __serialize(v):
@@ -300,6 +334,7 @@ class Serializer:
 
                 # -- if value of nested object is none just return it
                 if not value:
+
                     if s.many:
                         serialized[name] = []
 
@@ -365,6 +400,7 @@ class ModelSerializer(Serializer):
         if 'fields' not in Serializer._meta_cache:
 
             model_fields_index = {}
+
             for field in self.Meta.model._meta.fields:
                 model_fields_index[field.name] = field
 
@@ -373,6 +409,8 @@ class ModelSerializer(Serializer):
 
             for field in self.Meta.fields:
                 if field not in self._fields:
+                    serializer = None
+
                     try:
                         model_field = model_fields_index[field]
                         required = True
@@ -382,14 +420,17 @@ class ModelSerializer(Serializer):
                         if isinstance(model_field, models.AutoField):
                             serializer = IntegerField(required=required)
 
-                        elif isinstance(model_field, models.IntegerField):
-                            serializer = IntegerField(required=required)
-
                         elif isinstance(model_field, models.OneToOneField):
                             serializer = IntegerField(required=required)
 
                         elif isinstance(model_field, models.ForeignKey):
                             serializer = IntegerField(required=required)
+
+                        elif isinstance(model_field, models.IntegerField):
+                            serializer = IntegerField(required=required)
+
+                        elif isinstance(model_field, models.FloatField):
+                            serializer = FloatField(required=required)
 
                         elif isinstance(model_field, models.JSONField):
                             serializer = JSONField(
@@ -400,6 +441,18 @@ class ModelSerializer(Serializer):
                             serializer = JSONSchemaField(
                                 required=required,
                                 validators=model_field.validators)
+
+                        elif isinstance(model_field, ArrayField):
+                            if isinstance(model_field.base_field, models.IntegerField):  # noqa
+                                base_serializer = IntegerField
+
+                            elif isinstance(model_field.base_field, models.FloatField):  # noqa
+                                base_serializer = FloatField
+
+                            elif isinstance(model_field.base_field, models.CharField):  # noqa
+                                base_serializer = CharField
+
+                            serializer = base_serializer(many=True, required=required)  # noqa
 
                         elif isinstance(model_field, ModelEnumChoiceField):
                             serializer = EnumChoiceField(
@@ -433,6 +486,9 @@ class ModelSerializer(Serializer):
 
                     except KeyError:
                         serializer = Field()
+
+                    if not serializer:
+                        raise Exception('CANNOT_MATCH_FIELD')
 
                     self._fields[field] = {
                         'serializer': serializer,

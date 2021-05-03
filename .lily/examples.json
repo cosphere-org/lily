@@ -73,16 +73,16 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "In eveniet repellendus iste quo earum dolores.",
+                                "description": "Sint reiciendis consequatur dolorum incidunt numquam facere.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Illo error vel optio deserunt.",
+                                "title": "At quis deleniti officia ipsa.",
                                 "@type": "meta"
                             },
-                            "method": "POST",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
@@ -109,16 +109,16 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Modi ab deserunt enim praesentium laboriosam veniam provident dolores.",
+                                "description": "Expedita animi placeat aliquam porro.",
                                 "domain": {
                                     "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Reprehenderit laudantium in architecto cum sapiente quasi adipisci.",
+                                "title": "Provident doloremque recusandae dolores sequi eos quasi mollitia ab.",
                                 "@type": "meta"
                             },
-                            "method": "POST",
+                            "method": "GET",
                             "path_conf": {
                                 "path": "conf"
                             },
