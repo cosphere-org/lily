@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?domain_id=PATHS",
+                "path": "/?is_private=False",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -27,13 +27,13 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Laborum voluptatum minus maiores quisquam laborum.",
+                                "description": "Hic rerum sit omnis magnam voluptates maiores saepe.",
                                 "domain": {
-                                    "id": "paths",
+                                    "id": "ab",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Magnam dolor blanditiis tempora porro quis perspiciatis.",
+                                "title": "Quis eos numquam ea ipsum.",
                                 "@type": "meta"
                             },
                             "method": "GET",
@@ -50,49 +50,9 @@
                                 "@type": "source"
                             },
                             "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": true,
-                                "@type": "access"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "meta": {
-                                "description": "Optio repellendus illo facere esse laborum dolor.",
-                                "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "title": "Quis quasi debitis quae inventore.",
-                                "@type": "meta"
-                            },
-                            "method": "PUT",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "source": {
-                                "end_line": 15,
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "@type": "source"
-                            },
-                            "@type": "command"
                         }
                     },
-                    "enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
+                    "enums": [],
                     "name": "test",
                     "version_info": {
                         "available": [],
@@ -107,22 +67,6 @@
         }
     },
     "SIGN_PROCESS": {
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-ACCOUNT-TYPE": "PREMIUM",
-                    "X-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        },
         "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
@@ -149,6 +93,22 @@
                         "user_id": 56
                     }
                 }
+            }
+        },
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
             }
         }
     }
