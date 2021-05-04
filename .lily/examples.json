@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/?version=2.1.3",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -15,28 +15,28 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "CREATE_HELLO": {
+                        "UPDATE_HELLO": {
                             "access": {
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "@type": "access"
                             },
                             "examples": {
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Hic rerum sit omnis magnam voluptates maiores saepe.",
+                                "description": "Itaque suscipit minima voluptatem iusto ipsa tempore quibusdam.",
                                 "domain": {
-                                    "id": "ab",
+                                    "id": "cumque",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Quis eos numquam ea ipsum.",
+                                "title": "Error quae quos ipsam id veritatis.",
                                 "@type": "meta"
                             },
-                            "method": "GET",
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
@@ -57,7 +57,7 @@
                     "version_info": {
                         "available": [],
                         "deployed": "2.5.6",
-                        "displayed": "2.5.6",
+                        "displayed": "2.1.3",
                         "@type": "version_info"
                     },
                     "@type": "entrypoint",

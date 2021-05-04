@@ -427,7 +427,7 @@ class SchemaRenderer:
         elif is_field(
             serializers.JSONField,
             serializers.JSONSchemaField,
-            parsers.JSONSchemaField,
+            parsers.JSONField,
             parsers.JSONSchemaField,
         ):
 
