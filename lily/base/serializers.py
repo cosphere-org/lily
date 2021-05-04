@@ -3,6 +3,7 @@ from datetime import datetime, date
 from copy import deepcopy
 
 from django.db import models
+from django.db.models.fields import NOT_PROVIDED
 from django.contrib.postgres.fields import ArrayField
 
 
@@ -417,6 +418,10 @@ class ModelSerializer(Serializer):
                         if model_field.null or model_field.blank:
                             required = False
 
+                        elif (model_field.default is not None and
+                                model_field.default != NOT_PROVIDED):
+                            required = False
+
                         if isinstance(model_field, models.AutoField):
                             serializer = IntegerField(required=required)
 
@@ -495,16 +500,16 @@ class ModelSerializer(Serializer):
                                 raise Exception('MISSING_TYPE_FOR_FIELD')
 
                             if t == bool:
-                                serializer = BooleanField()
+                                serializer = BooleanField(required=False)
 
                             elif t == int:
-                                serializer = IntegerField()
+                                serializer = IntegerField(required=False)
 
                             elif t == float:
-                                serializer = FloatField()
+                                serializer = FloatField(required=False)
 
                             elif t == str:
-                                serializer = CharField()
+                                serializer = CharField(required=False)
 
                         else:
                             serializer = Field()
