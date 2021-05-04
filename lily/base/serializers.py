@@ -485,7 +485,29 @@ class ModelSerializer(Serializer):
                             serializer = URLField(required=required)
 
                     except KeyError:
-                        serializer = Field()
+                        f = getattr(self.Meta.model, field)
+
+                        if f and isinstance(f, property):
+                            try:
+                                t = f.fget.__annotations__['return']
+
+                            except KeyError:
+                                raise Exception('MISSING_TYPE_FOR_FIELD')
+
+                            if t == bool:
+                                serializer = BooleanField()
+
+                            elif t == int:
+                                serializer = IntegerField()
+
+                            elif t == float:
+                                serializer = FloatField()
+
+                            elif t == str:
+                                serializer = CharField()
+
+                        else:
+                            serializer = Field()
 
                     if not serializer:
                         raise Exception('CANNOT_MATCH_FIELD')
