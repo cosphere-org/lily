@@ -162,4 +162,8 @@ class ModelParser(drf_serializers.ModelSerializer, Parser):
             field_kwargs['enum_name'] = model_field.enum_name
             field_class = EnumChoiceField  # noqa
 
+        elif isinstance(model_field, models.JSONSchemaField):
+            field_kwargs['schema'] = model_field.validators[0].schema
+            field_class = JSONSchemaField  # noqa
+
         return field_class, field_kwargs
