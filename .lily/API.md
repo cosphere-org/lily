@@ -25,22 +25,22 @@ Respone:
                 "access_list": [
                     "ANY"
                 ],
-                "is_private": true
+                "is_private": false
             },
             "examples": {
                 "some": "examples"
             },
             "meta": {
                 "@type": "meta",
-                "description": "Itaque suscipit minima voluptatem iusto ipsa tempore quibusdam.",
+                "description": "Tempore molestias est sequi magni.",
                 "domain": {
                     "@type": "domain",
-                    "id": "cumque",
+                    "id": "iusto",
                     "name": "domain"
                 },
-                "title": "Error quae quos ipsam id veritatis."
+                "title": "Cumque ratione ex ex molestias veritatis laborum repudiandae."
             },
-            "method": "POST",
+            "method": "GET",
             "path_conf": {
                 "path": "conf"
             },
