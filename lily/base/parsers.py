@@ -62,8 +62,9 @@ class JSONSchemaField(JSONField):
             schema = {}
 
         super(JSONSchemaField, self).__init__(*args, **kwargs)
-        self.validators.insert(
-            0, JSONSchemaValidatorSerializer(schema=schema))
+        if not self.validators:
+            self.validators.insert(
+                0, JSONSchemaValidatorSerializer(schema=schema))
 
 
 @unique
