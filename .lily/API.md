@@ -8,7 +8,7 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?version=2.1.3 HTTP/1.1
+GET /?commands=READ_PAYMENTS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
@@ -18,7 +18,7 @@ Respone:
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "UPDATE_HELLO": {
+        "READ_PAYMENTS": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -32,13 +32,13 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Tempore molestias est sequi magni.",
+                "description": "Quam voluptatum dolorem quam ipsum assumenda.",
                 "domain": {
                     "@type": "domain",
-                    "id": "iusto",
+                    "id": "vitae",
                     "name": "domain"
                 },
-                "title": "Cumque ratione ex ex molestias veritatis laborum repudiandae."
+                "title": "Quae natus iure voluptatum officiis aliquid mollitia enim."
             },
             "method": "GET",
             "path_conf": {
@@ -61,7 +61,7 @@ Respone:
         "@type": "version_info",
         "available": [],
         "deployed": "2.5.6",
-        "displayed": "2.1.3"
+        "displayed": "2.5.6"
     }
 }
 ```
