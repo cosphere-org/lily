@@ -98,12 +98,13 @@ class TestCase(SimpleTestCase):
 
 class E2EClient:
 
-    def post(self, path, data=None, json=None, **headers):
+    def post(self, path, data=None, json=None, files=None, **headers):
         return self._make_request(
             'post',
             path,
             data=data,
             json=json,
+            files=files,
             headers=headers)
 
     def get(self, path, data=None, json=None, **headers):
@@ -131,7 +132,14 @@ class E2EClient:
             headers=headers)
 
     def _make_request(
-            self, http_verb, path, data=None, json=None, headers=None):
+        self,
+        http_verb,
+        path,
+        data=None,
+        json=None,
+        files=None,
+        headers=None
+    ):
 
         payload = {}
         if json:
@@ -146,6 +154,7 @@ class E2EClient:
         response = getattr(requests, http_verb)(
             self._get_url(path),
             headers=headers or {},
+            files=files or {},
             verify=self._verify_ssl,
             **payload)
 
