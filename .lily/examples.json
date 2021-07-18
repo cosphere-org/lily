@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?commands=READ_PAYMENTS",
+                "path": "/?domain_id=PATHS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -15,7 +15,7 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "READ_PAYMENTS": {
+                        "CREATE_HELLO": {
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -27,13 +27,49 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Quam voluptatum dolorem quam ipsum assumenda.",
+                                "description": "Nostrum tenetur sunt nulla ex saepe aspernatur.",
                                 "domain": {
-                                    "id": "vitae",
+                                    "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Quae natus iure voluptatum officiis aliquid mollitia enim.",
+                                "title": "Non quas voluptas repellat doloremque eius atque amet recusandae.",
+                                "@type": "meta"
+                            },
+                            "method": "PUT",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "Tempore ea eaque vero cum enim.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Sequi nam suscipit maiores beatae ut quisquam placeat incidunt.",
                                 "@type": "meta"
                             },
                             "method": "GET",
@@ -52,7 +88,11 @@
                             "@type": "command"
                         }
                     },
-                    "enums": [],
+                    "enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
                     "name": "test",
                     "version_info": {
                         "available": [],
@@ -67,6 +107,34 @@
         }
     },
     "SIGN_PROCESS": {
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "This field is required."
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "account_type": "PREMIUM",
+                        "user_id": 56
+                    }
+                }
+            }
+        },
         "200": {
             "method": "get",
             "description": null,
@@ -81,34 +149,6 @@
                 "status": 200,
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        },
-        "400 (QUERY_DID_NOT_VALIDATE)": {
-            "method": "get",
-            "description": "QUERY_DID_NOT_VALIDATE",
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
-                "headers": {
-                    "X-ACCOUNT-TYPE": "PREMIUM",
-                    "X-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 400,
-                "content_type": "application/json",
-                "content": {
-                    "errors": {
-                        "datetime": [
-                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
-                        ]
-                    },
-                    "@type": "error",
-                    "@event": "QUERY_DID_NOT_VALIDATE",
-                    "@authorizer": {
-                        "account_type": "PREMIUM",
-                        "user_id": 56
-                    }
-                }
             }
         }
     }
