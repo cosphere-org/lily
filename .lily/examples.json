@@ -1,21 +1,5 @@
 {
     "SIGN_PROCESS": {
-        "200": {
-            "method": "get",
-            "description": null,
-            "request": {
-                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
-                "headers": {
-                    "X-ACCOUNT-TYPE": "PREMIUM",
-                    "X-USER-ID": 56
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "text/html; charset=utf-8",
-                "content": "af52522c5afb83b5348ed06b5fbd0c"
-            }
-        },
         "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
@@ -43,6 +27,22 @@
                     }
                 }
             }
+        },
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
+            }
         }
     },
     "READ_ENTRY_POINT": {
@@ -50,7 +50,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?commands=READ_PAYMENTS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -61,7 +61,7 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "UPDATE_HELLO": {
+                        "READ_PAYMENTS": {
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -73,16 +73,16 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Aspernatur eveniet ipsam deserunt vel officiis.",
+                                "description": "Quas alias error iste eaque voluptatibus animi illum repellendus.",
                                 "domain": {
-                                    "id": "officia",
+                                    "id": "quidem",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Cumque minima ipsam assumenda numquam odit quasi incidunt.",
+                                "title": "Id recusandae animi assumenda dolores ab.",
                                 "@type": "meta"
                             },
-                            "method": "GET",
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
