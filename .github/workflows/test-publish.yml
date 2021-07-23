@@ -36,6 +36,9 @@ jobs:
           sudo apt-get install libhunspell-dev hunspell hunspell-pl
           make install
 
+      - name: DEBUG - SHOW FLAKE8
+        run: pip show -f flake8
+
       - name: Launch Linter
         working-directory: .
         run: make lint
