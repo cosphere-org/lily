@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?domain_id=PATHS",
+                "path": "/?is_private=False",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -27,49 +27,13 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Nostrum tenetur sunt nulla ex saepe aspernatur.",
+                                "description": "Odio libero quos labore sed tenetur.",
                                 "domain": {
-                                    "id": "paths",
+                                    "id": "voluptatem",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Non quas voluptas repellat doloremque eius atque amet recusandae.",
-                                "@type": "meta"
-                            },
-                            "method": "PUT",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "source": {
-                                "end_line": 15,
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "@type": "source"
-                            },
-                            "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "@type": "access"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "meta": {
-                                "description": "Tempore ea eaque vero cum enim.",
-                                "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "title": "Sequi nam suscipit maiores beatae ut quisquam placeat incidunt.",
+                                "title": "Voluptatem sint qui modi molestias.",
                                 "@type": "meta"
                             },
                             "method": "GET",
@@ -88,11 +52,7 @@
                             "@type": "command"
                         }
                     },
-                    "enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
+                    "enums": [],
                     "name": "test",
                     "version_info": {
                         "available": [],
