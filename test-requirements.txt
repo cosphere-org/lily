@@ -1,7 +1,4 @@
 
-# -- linter
-flake8==3.9.2
-
 # -- allows specifying python project path to be discovered
 pytest-pythonpath==0.7.1
 
