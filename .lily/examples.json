@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/?commands=READ_PAYMENTS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -15,7 +15,7 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "CREATE_HELLO": {
+                        "READ_PAYMENTS": {
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -27,16 +27,16 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Odio libero quos labore sed tenetur.",
+                                "description": "Fuga quam culpa ullam recusandae repellendus sapiente repellat asperiores.",
                                 "domain": {
-                                    "id": "voluptatem",
+                                    "id": "enim",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Voluptatem sint qui modi molestias.",
+                                "title": "Repellat vel aliquam tempore dignissimos tempora sit minus.",
                                 "@type": "meta"
                             },
-                            "method": "GET",
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
