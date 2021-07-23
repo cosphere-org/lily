@@ -49,5 +49,9 @@ jobs:
         if: github.ref == 'refs/heads/master'
         working-directory: .
         run: |
+          export VERSION=$(bash -c "python setup.py --version")
+          git tag $VERSION
+          git push origin --tags
+
           python setup.py bdist_wheel
           twine upload -u __token__ -p ${{ secrets.PYPI_LILY_API_TOKEN }} dist/*.whl
