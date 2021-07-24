@@ -8,7 +8,7 @@ Serve Service Entry Point data: - current or chosen version of the service - lis
 #### 200 (ENTRY_POINT_READ)
 Request:
 ```http
-GET /?domain_id=PATHS HTTP/1.1
+GET /?commands=READ_PAYMENTS HTTP/1.1
 X-CS-ACCOUNT-TYPE: ADMIN
 X-CS-USER-ID: 190
 ```
@@ -18,7 +18,7 @@ Respone:
     "@event": "ENTRY_POINT_READ",
     "@type": "entrypoint",
     "commands": {
-        "CREATE_HELLO": {
+        "READ_PAYMENTS": {
             "@type": "command",
             "access": {
                 "@type": "access",
@@ -32,51 +32,15 @@ Respone:
             },
             "meta": {
                 "@type": "meta",
-                "description": "Nostrum tenetur sunt nulla ex saepe aspernatur.",
+                "description": "Quas alias error iste eaque voluptatibus animi illum repellendus.",
                 "domain": {
                     "@type": "domain",
-                    "id": "paths",
+                    "id": "quidem",
                     "name": "domain"
                 },
-                "title": "Non quas voluptas repellat doloremque eius atque amet recusandae."
+                "title": "Id recusandae animi assumenda dolores ab."
             },
-            "method": "PUT",
-            "path_conf": {
-                "path": "conf"
-            },
-            "schemas": {
-                "some": "schemas"
-            },
-            "source": {
-                "@type": "source",
-                "end_line": 15,
-                "filepath": "/tests/factory.py",
-                "start_line": 14
-            }
-        },
-        "DELETE_HELLO": {
-            "@type": "command",
-            "access": {
-                "@type": "access",
-                "access_list": [
-                    "ANY"
-                ],
-                "is_private": false
-            },
-            "examples": {
-                "some": "examples"
-            },
-            "meta": {
-                "@type": "meta",
-                "description": "Tempore ea eaque vero cum enim.",
-                "domain": {
-                    "@type": "domain",
-                    "id": "paths",
-                    "name": "domain"
-                },
-                "title": "Sequi nam suscipit maiores beatae ut quisquam placeat incidunt."
-            },
-            "method": "GET",
+            "method": "POST",
             "path_conf": {
                 "path": "conf"
             },
@@ -91,11 +55,7 @@ Respone:
             }
         }
     },
-    "enums": [
-        {
-            "A": "X"
-        }
-    ],
+    "enums": [],
     "name": "test",
     "version_info": {
         "@type": "version_info",

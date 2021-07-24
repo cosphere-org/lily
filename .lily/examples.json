@@ -1,111 +1,4 @@
 {
-    "READ_ENTRY_POINT": {
-        "200 (ENTRY_POINT_READ)": {
-            "method": "get",
-            "description": "ENTRY_POINT_READ",
-            "request": {
-                "path": "/?domain_id=PATHS",
-                "headers": {
-                    "X-CS-ACCOUNT-TYPE": "ADMIN",
-                    "X-CS-USER-ID": 190
-                }
-            },
-            "response": {
-                "status": 200,
-                "content_type": "application/json",
-                "content": {
-                    "commands": {
-                        "CREATE_HELLO": {
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "@type": "access"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "meta": {
-                                "description": "Nostrum tenetur sunt nulla ex saepe aspernatur.",
-                                "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "title": "Non quas voluptas repellat doloremque eius atque amet recusandae.",
-                                "@type": "meta"
-                            },
-                            "method": "PUT",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "source": {
-                                "end_line": 15,
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "@type": "source"
-                            },
-                            "@type": "command"
-                        },
-                        "DELETE_HELLO": {
-                            "access": {
-                                "access_list": [
-                                    "ANY"
-                                ],
-                                "is_private": false,
-                                "@type": "access"
-                            },
-                            "examples": {
-                                "some": "examples"
-                            },
-                            "meta": {
-                                "description": "Tempore ea eaque vero cum enim.",
-                                "domain": {
-                                    "id": "paths",
-                                    "name": "domain",
-                                    "@type": "domain"
-                                },
-                                "title": "Sequi nam suscipit maiores beatae ut quisquam placeat incidunt.",
-                                "@type": "meta"
-                            },
-                            "method": "GET",
-                            "path_conf": {
-                                "path": "conf"
-                            },
-                            "schemas": {
-                                "some": "schemas"
-                            },
-                            "source": {
-                                "end_line": 15,
-                                "filepath": "/tests/factory.py",
-                                "start_line": 14,
-                                "@type": "source"
-                            },
-                            "@type": "command"
-                        }
-                    },
-                    "enums": [
-                        {
-                            "A": "X"
-                        }
-                    ],
-                    "name": "test",
-                    "version_info": {
-                        "available": [],
-                        "deployed": "2.5.6",
-                        "displayed": "2.5.6",
-                        "@type": "version_info"
-                    },
-                    "@type": "entrypoint",
-                    "@event": "ENTRY_POINT_READ"
-                }
-            }
-        }
-    },
     "SIGN_PROCESS": {
         "400 (QUERY_DID_NOT_VALIDATE)": {
             "method": "get",
@@ -149,6 +42,73 @@
                 "status": 200,
                 "content_type": "text/html; charset=utf-8",
                 "content": "af52522c5afb83b5348ed06b5fbd0c"
+            }
+        }
+    },
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
+            "method": "get",
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "path": "/?commands=READ_PAYMENTS",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "application/json",
+                "content": {
+                    "commands": {
+                        "READ_PAYMENTS": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "Quas alias error iste eaque voluptatibus animi illum repellendus.",
+                                "domain": {
+                                    "id": "quidem",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Id recusandae animi assumenda dolores ab.",
+                                "@type": "meta"
+                            },
+                            "method": "POST",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        }
+                    },
+                    "enums": [],
+                    "name": "test",
+                    "version_info": {
+                        "available": [],
+                        "deployed": "2.5.6",
+                        "displayed": "2.5.6",
+                        "@type": "version_info"
+                    },
+                    "@type": "entrypoint",
+                    "@event": "ENTRY_POINT_READ"
+                }
             }
         }
     }
