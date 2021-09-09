@@ -37,9 +37,10 @@ LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS = getattr(
     'LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS',
     None)
 
-LILY_ANGULAR_CLIENT_ORIGIN = (
-    'git@github.com:cosphere-org/lily-angular-client-base.git')
-
+LILY_ANGULAR_CLIENT_ORIGIN = getattr(
+    settings,
+    'LILY_ANGULAR_CLIENT_ORIGIN',
+    'https://github.com/cosphere-org/lily-angular-client-base.git')
 
 #
 # TEST
