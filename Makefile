@@ -3,6 +3,13 @@
 include .lily/lily_assistant.makefile
 include .lily/lily.makefile
 
+.PHONY: install
+install:  # generic install command for python
+	source env.sh && \
+	pip install -U pip && \
+	pip install -r requirements.txt && \
+	pip install -r test-requirements.txt
+
 #
 # Postgres
 #
