@@ -1,6 +1,7 @@
 
 import re
 from copy import deepcopy
+from pathlib import Path
 
 from django.contrib.postgres.search import (
     SearchVector,
@@ -22,10 +23,12 @@ class TextVector:
 
     def __init__(self):
         if not TextVector.hobj_pl:
+            p = Path(__file__).parents[0]
+
             try:
                 TextVector.hobj_pl = hunspell.HunSpell(
-                    '/usr/share/hunspell/pl_PL.dic',
-                    '/usr/share/hunspell/pl_PL.aff')
+                    str(p / 'dicts/pl_PL.dic'),
+                    str(p / 'dicts/pl_PL.aff'))
             except Exception:
                 TextVector.hobj_pl = None
 

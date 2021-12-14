@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/?is_private=False",
+                "path": "/",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -15,28 +15,28 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "CREATE_HELLO": {
+                        "UPDATE_HELLO": {
                             "access": {
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "@type": "access"
                             },
                             "examples": {
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Provident blanditiis eaque impedit tenetur saepe.",
+                                "description": "Debitis rem ex consequatur fugit ullam natus labore.",
                                 "domain": {
-                                    "id": "explicabo",
+                                    "id": "eos",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Aliquam at dolorum aliquam.",
+                                "title": "Occaecati provident deserunt quibusdam id ab expedita quia.",
                                 "@type": "meta"
                             },
-                            "method": "PUT",
+                            "method": "DELETE",
                             "path_conf": {
                                 "path": "conf"
                             },
@@ -71,7 +71,7 @@
             "method": "get",
             "description": "QUERY_DID_NOT_VALIDATE",
             "request": {
-                "path": "/sign/?to_sign=hi+there",
+                "path": "/sign/?to_sign=hi+there&datetime=2017000001201T123112Z",
                 "headers": {
                     "X-ACCOUNT-TYPE": "PREMIUM",
                     "X-USER-ID": 56
@@ -83,7 +83,7 @@
                 "content": {
                     "errors": {
                         "datetime": [
-                            "This field is required."
+                            "invalid datetime format accepted is YYYYMMDDThhmmssZ"
                         ]
                     },
                     "@type": "error",
