@@ -12,10 +12,11 @@ jobs:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: local
+          POSTGRES_USER: lily
+          POSTGRES_PASSWORD: mysecret
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
-          - 5434:5432/tcp
+          - 5435:5432/tcp
 
     steps:
       - name: Check out repository
@@ -24,7 +25,7 @@ jobs:
       - name: Set up Python 3.x
         uses: actions/setup-python@v2
         with:
-          python-version: "3.7"
+          python-version: "3.9"
           architecture: "x64"
 
       - name: Display Python version

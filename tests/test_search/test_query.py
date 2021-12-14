@@ -81,6 +81,7 @@ def test_query__parse_value(value, expected, mocker):
     ),
 
 ], ids=['0', '1', '2'])
+@pytest.mark.skip(reason="waiting for FTS")
 def test_query__get_transformed_value__with_latex(
         value, language_conf, expected, mocker):
 
