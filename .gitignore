@@ -1,4 +1,4 @@
-*.py[cod]
+.DS_Store
 
 # C extensions
 *.so
@@ -30,6 +30,9 @@ coverage_html
 cover
 pep8.txt
 sphinx-output
+__pycache__
+.pytest_cache
+*.py[cod]
 
 # Translations
 *.mo
@@ -56,5 +59,3 @@ docker-compose.yml
 
 # django
 collectedstatic
-
-.pytest_cache

@@ -28,32 +28,35 @@ jobs:
           python-version: "3.9"
           architecture: "x64"
 
-      - name: Display Python version
-        run: python -V
+      - name: Install Poetry
+        uses: Gr1N/setup-poetry@v7
+
+      - name: Display Python and Poetry versions
+        run: |
+          python --version
+          poetry --version
 
       - name: Install dependencies
         working-directory: .
         run: |
           sudo apt-get update
           sudo apt-get install -y libhunspell-dev hunspell hunspell-pl
-          make install
+          poetry env use 3.9.9
+          poetry install
 
-      - name: Launch Linter
+      - name: Launch linter
         working-directory: .
-        run: make lint
+        run: poetry run make lint
 
       - name: Launch tests
         working-directory: .
-        run: make test_all
+        run: poetry run make test_all
 
       # if launched from master branch, then build and publish to PyPI
       - name: Build and publish
         if: github.ref == 'refs/heads/master'
         working-directory: .
         run: |
-          export VERSION=$(bash -c "python setup.py --version")
-          git tag $VERSION
+          git tag $(poetry version -s)
           git push origin --tags
-
-          python setup.py bdist_wheel
-          twine upload -u __token__ -p ${{ secrets.PYPI_LILY_API_TOKEN }} dist/*.whl
+          poetry publish --build -u __token__ -p ${{ secrets.PYPI_LILY_API_TOKEN }}

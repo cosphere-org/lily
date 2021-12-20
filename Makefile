@@ -1,14 +1,21 @@
+#
 # Makefile
-
+#
 include .lily/lily_assistant.makefile
 include .lily/lily.makefile
 
+
+
+#
+# DEVELOPMENT
+#
 .PHONY: install
-install:  # generic install command for python
+install:
+	poetry env use 3.9.9
 	source env.sh && \
-	pip install -U pip && \
-	pip install -r requirements.txt && \
-	pip install -r test-requirements.txt
+	poetry install
+
+
 
 #
 # Postgres
