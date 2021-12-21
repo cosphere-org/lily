@@ -94,8 +94,7 @@ class BaseRenderer(EventFactory):
                 if not is_lily_commands:
                     continue
 
-                view_name = pattern.callback.__name__
-
+                view_name = pattern.callback.view_class.__name__
                 ignore_views = [
                     'serve',
                     'add_view',

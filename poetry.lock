@@ -106,19 +106,19 @@ python-versions = ">=3.5"
 
 [[package]]
 name = "django"
-version = "3.1.14"
-description = "A high-level Python Web framework that encourages rapid development and clean, pragmatic design."
+version = "4.0"
+description = "A high-level Python web framework that encourages rapid development and clean, pragmatic design."
 category = "main"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 
 [package.dependencies]
-asgiref = ">=3.2.10,<4"
-pytz = "*"
+asgiref = ">=3.4.1,<4"
 sqlparse = ">=0.2.2"
+tzdata = {version = "*", markers = "sys_platform == \"win32\""}
 
 [package.extras]
-argon2 = ["argon2-cffi (>=16.1.0)"]
+argon2 = ["argon2-cffi (>=19.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
@@ -778,6 +778,14 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "tzdata"
+version = "2021.5"
+description = "Provider of IANA time zone data"
+category = "main"
+optional = false
+python-versions = ">=2"
+
+[[package]]
 name = "urllib3"
 version = "1.26.7"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -801,7 +809,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "~3.9.9"
-content-hash = "2694980efc10c6ea7d06f1e96faa58520db910cc67894661218105952a19ebde"
+content-hash = "6bd530d7032b4484dff488a653e5015e74ba0e5f975eb9f40eda12e0308d2a30"
 
 [metadata.files]
 appnope = [
@@ -894,8 +902,8 @@ decorator = [
     {file = "decorator-5.1.0.tar.gz", hash = "sha256:e59913af105b9860aa2c8d3272d9de5a56a4e608db9a2f167a8480b323d529a7"},
 ]
 django = [
-    {file = "Django-3.1.14-py3-none-any.whl", hash = "sha256:0fabc786489af16ad87a8c170ba9d42bfd23f7b699bd5ef05675864e8d012859"},
-    {file = "Django-3.1.14.tar.gz", hash = "sha256:72a4a5a136a214c39cf016ccdd6b69e2aa08c7479c66d93f3a9b5e4bb9d8a347"},
+    {file = "Django-4.0-py3-none-any.whl", hash = "sha256:59304646ebc6a77b9b6a59adc67d51ecb03c5e3d63ed1f14c909cdfda84e8010"},
+    {file = "Django-4.0.tar.gz", hash = "sha256:d5a8a14da819a8b9237ee4d8c78dfe056ff6e8a7511987be627192225113ee75"},
 ]
 django-bulk-update = [
     {file = "django-bulk-update-2.2.0.tar.gz", hash = "sha256:5ab7ce8a65eac26d19143cc189c0f041d5c03b9d1b290ca240dc4f3d6aaeb337"},
@@ -1259,6 +1267,10 @@ traitlets = [
 ]
 trans = [
     {file = "trans-2.1.0.tar.bz2", hash = "sha256:417d8f7862a4a01470bdf0ab2a96b60983e459d202c1b12e8df3fa563146b71f"},
+]
+tzdata = [
+    {file = "tzdata-2021.5-py2.py3-none-any.whl", hash = "sha256:3eee491e22ebfe1e5cfcc97a4137cd70f092ce59144d81f8924a844de05ba8f5"},
+    {file = "tzdata-2021.5.tar.gz", hash = "sha256:68dbe41afd01b867894bbdfd54fa03f468cfa4f0086bfb4adcd8de8f24f3ee21"},
 ]
 urllib3 = [
     {file = "urllib3-1.26.7-py2.py3-none-any.whl", hash = "sha256:c4fdf4019605b6e5423637e01bc9fe4daef873709a7973e195ceba0a62bbc844"},

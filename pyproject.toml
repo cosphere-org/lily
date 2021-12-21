@@ -12,7 +12,7 @@ version = "2.4.0"
 lily = "lily.cli.cli:cli"
 
 [tool.poetry.dependencies]
-Django = "~3.1.14"
+Django = "^4.0"
 PyYAML = "^6.0"
 django-bulk-update = "^2.2.0"
 django-click = "^2.3.0"
@@ -40,6 +40,7 @@ pytest-django = "^4.5.2"
 pytest-mock = "^3.6.1"
 pytest-pythonpath = "^0.7.3"
 pytest-socket = "^0.4.1"
+ipdb = "^0.13.9"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"

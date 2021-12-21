@@ -457,7 +457,6 @@ class ValidatingModelTestCase(TestCase):
 
         assert e.value.message_dict == {
             'tasks': [
-                "JSON did not validate. PATH: '0.type' REASON: 'TASKY' "
-                "does not match '^TASK$'",
+                "JSON did not validate. PATH: '0.type' REASON: 'TASK' was expected"
             ],
         }

@@ -60,8 +60,7 @@ class HttpGenericResponse(HttpResponse):
 
         self.status_code = status_code
         super(HttpGenericResponse, self).__init__(content, *args, **kwargs)
-
-        self._headers['content-type'] = ('content-type', 'application/json')
+        self.headers['content-type'] = ('content-type', 'application/json')
 
 
 class EventFactory:

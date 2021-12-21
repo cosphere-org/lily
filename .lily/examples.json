@@ -4,7 +4,7 @@
             "method": "get",
             "description": "ENTRY_POINT_READ",
             "request": {
-                "path": "/",
+                "path": "/?domain_id=PATHS",
                 "headers": {
                     "X-CS-ACCOUNT-TYPE": "ADMIN",
                     "X-CS-USER-ID": 190
@@ -15,7 +15,7 @@
                 "content_type": "application/json",
                 "content": {
                     "commands": {
-                        "UPDATE_HELLO": {
+                        "CREATE_HELLO": {
                             "access": {
                                 "access_list": [
                                     "ANY"
@@ -27,16 +27,52 @@
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Debitis rem ex consequatur fugit ullam natus labore.",
+                                "description": "Quaerat modi dignissimos minima.",
                                 "domain": {
-                                    "id": "eos",
+                                    "id": "paths",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Occaecati provident deserunt quibusdam id ab expedita quia.",
+                                "title": "Error quas repellendus a laborum sint.",
                                 "@type": "meta"
                             },
-                            "method": "DELETE",
+                            "method": "PUT",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        },
+                        "DELETE_HELLO": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": true,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "Recusandae tenetur nisi amet cupiditate nesciunt perspiciatis.",
+                                "domain": {
+                                    "id": "paths",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Corrupti fugit quibusdam natus cumque vitae.",
+                                "@type": "meta"
+                            },
+                            "method": "POST",
                             "path_conf": {
                                 "path": "conf"
                             },
@@ -52,7 +88,11 @@
                             "@type": "command"
                         }
                     },
-                    "enums": [],
+                    "enums": [
+                        {
+                            "A": "X"
+                        }
+                    ],
                     "name": "test",
                     "version_info": {
                         "available": [],
