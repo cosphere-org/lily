@@ -4,9 +4,9 @@ import sys
 from importlib import import_module
 
 import djclick as click
-from lily_assistant.config import Config
 
 from lily.conf import settings
+from lily.shared import get_lily_path
 from ...renderers.markdown.renderer import MarkdownRenderer
 
 
@@ -20,7 +20,7 @@ def command():
 
     urlpatterns = import_module(settings.ROOT_URLCONF).urlpatterns
 
-    with open(os.path.join(Config.get_lily_path(), 'API.md'), 'w') as f:
+    with open(os.path.join(get_lily_path(), 'API.md'), 'w') as f:
         f.write(MarkdownRenderer(urlpatterns).render())
 
     click.secho(

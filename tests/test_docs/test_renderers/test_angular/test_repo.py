@@ -7,9 +7,9 @@ from unittest.mock import call
 
 from django.test import TestCase, override_settings
 import pytest
-from lily_assistant.repo.repo import Repo
 
 from lily.docs.renderers.angular.repo import (
+    Repo,
     AngularRepo,
     TemplateRepo,
     PathRule,

@@ -5,7 +5,6 @@ from enum import Enum
 from django.test import TestCase
 from django.db import models
 import pytest
-from lily_assistant.config import Config
 
 from lily.base.models import EnumChoiceField
 from lily.base import serializers, parsers
@@ -1086,8 +1085,6 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_get_meta(self):
 
-        self.mocker.patch.object(
-            Config, 'get_project_path').return_value = '/home/projects/lily'
         getfile = Mock(return_value='/home/projects/lily/a/views.py')
         getsourcelines = Mock(return_value=[None, 11])
         self.mocker.patch(

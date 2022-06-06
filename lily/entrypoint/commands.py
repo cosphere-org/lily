@@ -2,8 +2,6 @@
 import os
 import json
 
-from lily_assistant.config import Config
-
 from lily.conf import settings
 from lily.base import serializers, parsers, name
 from lily.base.command import command
@@ -13,6 +11,7 @@ from lily.base.access import Access
 from lily.base.input import Input
 from lily.base.output import Output
 from .serializers import CommandSerializer
+from lily.shared import get_lily_path, get_version
 
 
 class EntryPointCommands(HTTPCommands):
@@ -84,8 +83,6 @@ class EntryPointCommands(HTTPCommands):
 
         version = request.input.query['version']
 
-        config = Config()
-
         commands = self.get_commands(version)
         enums = commands.pop('enums')
 
@@ -110,10 +107,10 @@ class EntryPointCommands(HTTPCommands):
 
         raise self.event.Read(
             {
-                'name': config.name,
+                'name': 'name',
                 'version_info': {
-                    'deployed': config.version,
-                    'displayed': version or config.version,
+                    'deployed': get_version(),
+                    'displayed': version or get_version(),
                     'available': self.get_available_versions(),
                 },
                 'commands': commands,
@@ -122,7 +119,7 @@ class EntryPointCommands(HTTPCommands):
 
     def get_available_versions(self):
 
-        commands_dir_path = os.path.join(Config.get_lily_path(), 'commands')
+        commands_dir_path = os.path.join(get_lily_path(), 'commands')
 
         return sorted(
             [
@@ -134,9 +131,8 @@ class EntryPointCommands(HTTPCommands):
 
     def get_commands(self, version=None):
 
-        config = Config()
-        version = version or config.version
-        commands_dir_path = os.path.join(Config.get_lily_path(), 'commands')
+        version = version or get_version()
+        commands_dir_path = os.path.join(get_lily_path(), 'commands')
 
         commands_path = os.path.join(commands_dir_path, f'{version}.json')
         with open(commands_path, 'r') as f:

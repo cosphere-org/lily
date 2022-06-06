@@ -15,14 +15,6 @@ Lily was inspired by various existing tools and methodologies. In order to under
 
 In `lily` we define commands that are raising (python's `raise`) various events that are captured by the main events loop (do not confuse with node.js event loop).
 
-## Prerequisites
-
-It is assumed that each `lily` project was setup together with the [`lily-assistant` tool](https://github.com/cosphere-org/lily-assistant) and that `lily_assistant init <src_dir_name>` command was executed therefore:
-
-- `.lily` folder exists in the root directory of the project
-- `.lily/config.json` was defined.
-
-
 ## Creating HTTP commands
 
 `Lily` enable very simple and semantic creation of commands using various transport mechanism (HTTP, Websockets, Async) in a one unified way.

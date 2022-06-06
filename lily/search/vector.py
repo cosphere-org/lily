@@ -10,7 +10,6 @@ from django.contrib.postgres.search import (
 )
 from django.db import connection
 from trans import trans
-import hunspell
 
 from .latex.transformer import transform as transform_latex
 from .constants import HASHTAG_ESCAPE_SEQUENCE, HASHTAG_PATTERN
@@ -18,19 +17,6 @@ from .stopwords import stopwords_filter
 
 
 class TextVector:
-
-    hobj_pl = None
-
-    def __init__(self):
-        if not TextVector.hobj_pl:
-            p = Path(__file__).parents[0]
-
-            try:
-                TextVector.hobj_pl = hunspell.HunSpell(
-                    str(p / 'dicts/pl_PL.dic'),
-                    str(p / 'dicts/pl_PL.aff'))
-            except Exception:
-                TextVector.hobj_pl = None
 
     def parse_to_tsvector(self, conf, text, weight=None):
 
@@ -161,51 +147,8 @@ class TextVector:
     #
     # STEMS
     #
-    def augument_with_stems(self, conf, text, weight, stems, tokens):
+    def augument_with_stems(self, conf, text, weight, stems):
 
-        if conf == 'polish':
-            return self._augument_with_stems_polish(
-                conf, weight, stems, tokens)
-
-        else:
-            return self._augument_with_stems_generic(conf, text, weight, stems)
-
-    def _augument_with_stems_polish(self, conf, weight, stems, tokens):
-
-        if conf == 'polish':
-            for token, position in tokens:
-                token_stems = self._get_polish_stems(token)
-                for stem in token_stems:
-                    stems.setdefault(stem, set())
-                    stems[stem].add(self.get_position(position, weight))
-
-        return stems
-
-    def _get_polish_stems(self, token):
-        if not self.hobj_pl:
-            return []
-
-        try:
-            broken = False
-            token_stems = self.hobj_pl.stem(token)
-
-        except UnicodeEncodeError:
-            broken = True
-            token_stems = []
-
-        stems = []
-
-        if token_stems:
-            for stem in token_stems:
-                stem = stem.decode(self.hobj_pl.get_dic_encoding())
-                stems.append(stem.lower())
-
-        if not broken:
-            stems.append(token.lower())
-
-        return stems
-
-    def _augument_with_stems_generic(self, conf, text, weight, stems):
         with connection.cursor() as c:
             if not weight:
                 c.execute("SELECT to_tsvector(%s, %s)", [conf, text])

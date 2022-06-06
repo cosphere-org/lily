@@ -2,8 +2,8 @@
 import os
 import json
 
-from lily_assistant.config import Config
 from lily.conf import settings
+from lily.shared import get_lily_path, get_version
 from django.core.management import CommandError
 import djclick as click
 
@@ -11,13 +11,11 @@ import djclick as click
 @click.command()
 def command():
 
-    config = Config()
-
-    commands_dir = os.path.join(config.get_lily_path(), 'commands')
+    commands_dir = os.path.join(get_lily_path(), 'commands')
 
     excluded = (
         settings.LILY_EXCLUDE_QUERY_PARSER_ALL_OPTIONAL_ASSERTIONS or [])
-    with open(os.path.join(commands_dir, f'{config.version}.json'), 'r') as f:
+    with open(os.path.join(commands_dir, f'{get_version()}.json'), 'r') as f:
         commands = json.loads(f.read())
 
         for name, command in commands.items():

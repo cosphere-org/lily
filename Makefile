@@ -1,9 +1,7 @@
 #
 # Makefile
 #
-include .lily/lily_assistant.makefile
 include .lily/lily.makefile
-
 
 
 #
@@ -24,10 +22,10 @@ install:
 create_postgres:  ## create dockerized postgres server
 	export POSTGRES_PASSWORD=mysecret && \
 	export POSTGRES_HOST=localhost && \
-	export POSTGRES_PORT=5435 && \
+	export POSTGRES_PORT=5436 && \
 	docker run -d --name lily-postgres \
 		--env-file <(env | grep POSTGRES) \
-		-p 5435:5432 \
+		-p 5436:5432 \
 		postgres
 
 .PHONY: create_postgres_dbs

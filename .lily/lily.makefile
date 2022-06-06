@@ -14,6 +14,67 @@ SHELL := /bin/bash
 
 LILY_SERVICE_PORT := $(shell source env.sh && echo $${LILY_SERVICE_PORT})
 
+VERSION := $(shell python setup.py --version)
+
+CHROME_EXISTS := $(shell command -v google-chrome)
+
+TEST_COVERAGE_THRESHOLD := 90
+
+#
+# LINTER & CODE QUALITY
+#
+.PHONY: lint
+lint:  ## lint the lily & tests
+	printf "\n>> [CHECKER] check if code fulfills quality criteria\n" && \
+	source env.sh && \
+	flake8 --max-line-length 100 --ignore N818,D100,D101,D102,D103,D104,D105,D106,D107,D202,D204,W504,W606 tests && \
+	flake8 --max-line-length 100 --ignore N818,D100,D101,D102,D103,D104,D105,D106,D107,D202,D204,W504,W606 lily
+
+#
+# TEST LIFECYCLE TARGETS
+#
+# NOTE: Those targets are only here as place-holders for
+# overwrites which will be run pre and post various test targets. See below.
+#
+.PHONY: test_setup
+test_setup:
+	printf "\n>> TEST SET UP\n"
+
+.PHONY: test_teardown
+test_teardown:
+	printf "\n>> TEST TEAR DOWN\n"
+
+# -- TEST SELECTED
+.PHONY: _test
+_test:
+	printf "\n>> [CHECKER] check if chosen tests are passing\n" && \
+	source env.sh && \
+	py.test --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv $(tests)
+
+.PHONY: test
+test: assert_test_setup_was_run _test  ## run selected tests
+
+# -- TEST ALL
+.PHONY: _test_all
+_test_all:
+	printf "\n>> [CHECKER] check if all tests are passing\n" && \
+	source env.sh && \
+	py.test --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv tests && \
+    coverage html -d coverage_html
+
+.PHONY: test_all
+test_all: test_setup _test_all test_teardown  ## run all available tests
+
+
+#
+# INSTALL
+#
+.PHONY: install
+install:  # generic install command for python
+	pip install -U pip && \
+	pip install -r requirements.txt && \
+	pip install -r test-requirements.txt
+
 #
 # UTILS
 #
