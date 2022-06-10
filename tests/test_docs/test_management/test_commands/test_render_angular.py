@@ -55,7 +55,7 @@ class RenderAngularTestCase(TestCase):
                 - Successfully rendered and pushed Angular Client version: 1.0.19
             ''', 0)  # noqa
         assert render.call_args_list == [
-            call(exclude_domains=(), include_domains=(), only_build=None),
+            call(exclude_domains=(), include_domains=(), only_build=False),
         ]
 
     def test_command__include_and_exclude_domains(self):

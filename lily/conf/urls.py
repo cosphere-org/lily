@@ -6,6 +6,6 @@ urlpatterns = [
 
     re_path(
         r'^',
-        include(('entrypoint.urls', 'entrypoint'), namespace='entrypoint')),
+        include(('lily.entrypoint.urls', 'entrypoint'), namespace='entrypoint')),
 
 ]

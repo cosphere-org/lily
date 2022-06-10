@@ -1,0 +1,120 @@
+{
+    "SIGN_PROCESS": {
+        "200": {
+            "method": "get",
+            "description": null,
+            "request": {
+                "path": "/sign/?to_sign=hi+there&datetime=20171201T123112Z",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "text/html; charset=utf-8",
+                "content": "af52522c5afb83b5348ed06b5fbd0c"
+            }
+        },
+        "400 (QUERY_DID_NOT_VALIDATE)": {
+            "method": "get",
+            "description": "QUERY_DID_NOT_VALIDATE",
+            "request": {
+                "path": "/sign/?to_sign=hi+there",
+                "headers": {
+                    "X-ACCOUNT-TYPE": "PREMIUM",
+                    "X-USER-ID": 56
+                }
+            },
+            "response": {
+                "status": 400,
+                "content_type": "application/json",
+                "content": {
+                    "errors": {
+                        "datetime": [
+                            "This field is required."
+                        ]
+                    },
+                    "@type": "error",
+                    "@event": "QUERY_DID_NOT_VALIDATE",
+                    "@authorizer": {
+                        "account_type": "PREMIUM",
+                        "user_id": 56
+                    }
+                }
+            }
+        }
+    },
+    "READ_ENTRY_POINT": {
+        "200 (ENTRY_POINT_READ)": {
+            "method": "get",
+            "description": "ENTRY_POINT_READ",
+            "request": {
+                "path": "/",
+                "headers": {
+                    "X-CS-ACCOUNT-TYPE": "ADMIN",
+                    "X-CS-USER-ID": 190
+                }
+            },
+            "response": {
+                "status": 200,
+                "content_type": "application/json",
+                "content": {
+                    "commands": {
+                        "UPDATE_HELLO": {
+                            "access": {
+                                "access_list": [
+                                    "ANY"
+                                ],
+                                "is_private": false,
+                                "@type": "access"
+                            },
+                            "examples": {
+                                "some": "examples"
+                            },
+                            "meta": {
+                                "description": "Quis velit numquam explicabo porro cumque.",
+                                "domain": {
+                                    "id": "enim",
+                                    "name": "domain",
+                                    "@type": "domain"
+                                },
+                                "title": "Dicta aut alias in.",
+                                "@type": "meta"
+                            },
+                            "method": "DELETE",
+                            "path_conf": {
+                                "path": "conf"
+                            },
+                            "schemas": {
+                                "some": "schemas"
+                            },
+                            "source": {
+                                "end_line": 15,
+                                "filepath": "/tests/factory.py",
+                                "start_line": 14,
+                                "@type": "source"
+                            },
+                            "@type": "command"
+                        }
+                    },
+                    "enums": [],
+                    "name": "name",
+                    "version_info": {
+                        "available": [
+                            "2.120.0",
+                            "2.14.5",
+                            "2.5.6",
+                            "1.0.0"
+                        ],
+                        "deployed": "2.5.6",
+                        "displayed": "2.5.6",
+                        "@type": "version_info"
+                    },
+                    "@type": "entrypoint",
+                    "@event": "ENTRY_POINT_READ"
+                }
+            }
+        }
+    }
+}

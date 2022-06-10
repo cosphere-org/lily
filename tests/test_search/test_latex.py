@@ -4,7 +4,7 @@ import random
 
 import pytest
 
-from search.latex import transformer
+from lily.search.latex import transformer
 from tests.test_search import LATEX_CASES
 
 
@@ -41,7 +41,7 @@ def _select_cases(cases):
          for c in _select_cases(LATEX_CASES)])
 def test_transform(text, english_expected, polish_expected, mocker):
 
-    mocker.patch('search.latex.transformer.MAX_ITERATIONS_COUNT', 3)
+    mocker.patch('lily.search.latex.transformer.MAX_ITERATIONS_COUNT', 3)
 
     assert (
         _normalize(transformer.transform(text, 'english')) ==

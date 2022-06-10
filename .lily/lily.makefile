@@ -14,7 +14,7 @@ SHELL := /bin/bash
 
 LILY_SERVICE_PORT := $(shell source env.sh && echo $${LILY_SERVICE_PORT})
 
-VERSION := $(shell python setup.py --version)
+VERSION := $(shell poetry version -s)
 
 CHROME_EXISTS := $(shell command -v google-chrome)
 
@@ -45,21 +45,18 @@ test_teardown:
 	printf "\n>> TEST TEAR DOWN\n"
 
 # -- TEST SELECTED
-.PHONY: _test
-_test:
+.PHONY: test
+test:
 	printf "\n>> [CHECKER] check if chosen tests are passing\n" && \
 	source env.sh && \
-	py.test --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv $(tests)
-
-.PHONY: test
-test: assert_test_setup_was_run _test  ## run selected tests
+	pytest --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv $(tests)
 
 # -- TEST ALL
 .PHONY: _test_all
 _test_all:
 	printf "\n>> [CHECKER] check if all tests are passing\n" && \
 	source env.sh && \
-	py.test --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv tests && \
+	pytest --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv tests && \
     coverage html -d coverage_html
 
 .PHONY: test_all
@@ -113,11 +110,6 @@ migrations_apply_for_version:  ## apply migrations plan for specific version
 #
 # COMMANDS & DOCS
 #
-.PHONY: docs_render_markdown
-docs_render_markdown:  ## render Markdown representation of commands
-	source env.sh && \
-	python lily/manage.py render_markdown
-
 .PHONY: docs_render_commands
 docs_render_commands:  ## render JSON representation of commands
 	source env.sh && \
@@ -140,19 +132,9 @@ clear_examples:  ## clear all existing examples
 	python lily/manage.py clear_examples
 
 
-.PHONY: run_commands_assertions
-run_commands_assertions:  ## run all commands assertions
-	source env.sh && \
-	python lily/manage.py assert_query_parser_fields_are_optional
-
-
 .PHONY: test_setup
 test_setup: clear_examples
 
 
 .PHONY: upgrade_version_post_upgrade
-upgrade_version_post_upgrade: docs_render_commands docs_render_markdown migrations_render_current_plan
-
-
-.PHONY: upgrade_version_teardown
-upgrade_version_teardown: run_commands_assertions
+upgrade_version_post_upgrade: docs_render_commands migrations_render_current_plan

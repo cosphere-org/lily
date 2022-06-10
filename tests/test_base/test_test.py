@@ -8,8 +8,7 @@ from django.views.generic import View
 from django.urls import re_path
 import pytest
 
-from conf.urls import urlpatterns
-
+from lily.conf.urls import urlpatterns
 from lily.base.command import command
 from lily.base.meta import Meta, Domain
 from lily.base.access import Access

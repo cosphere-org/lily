@@ -41,7 +41,7 @@ def init(src_dir):
 
     if not os.path.exists(os.path.join(os.getcwd(), '.lily', 'config.json')):
         raise click.ClickException(textwrap.dedent('''
-            Please install run `lily init <src_dir>`
+            Please run `lily init <src_dir>`
         '''))
 
     Copier().copy(src_dir)

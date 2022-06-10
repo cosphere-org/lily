@@ -1,7 +1,7 @@
 
 from django.test import TestCase
 
-from search.stopwords import stopwords_filter
+from lily.search.stopwords import stopwords_filter
 
 
 class StopWordsFilterTestCase(TestCase):

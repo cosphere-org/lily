@@ -43,7 +43,7 @@ class TextVector:
 
         # -- stems
         stems = {}
-        stems = self.augument_with_stems(conf, text, weight, stems, tokens)
+        stems = self.augument_with_stems(conf, text, weight, stems)
         stems = self.augument_with_unaccents(conf, weight, stems, tokens)
 
         return stems

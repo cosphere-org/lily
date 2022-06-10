@@ -4,14 +4,14 @@ from unittest.mock import Mock, call
 from django.test import TestCase
 import pytest
 
-import search
-from search import TextVector
+from lily import search
+from lily.search import TextVector
 
 
 def test_stored_vector__to_sql(mocker):
 
     compiler, connection = Mock(), Mock()
-    as_sql = mocker.patch('search.vector.SearchVector.as_sql')
+    as_sql = mocker.patch('lily.search.vector.SearchVector.as_sql')
     as_sql.return_value = ['sql::text', ['param', 's']]
 
     vector = search.StoredVector('column')
@@ -32,7 +32,7 @@ class TextVectorTestCase(TestCase):
     @pytest.fixture(autouse=True)
     def initfixtures(self, mocker):
         self.mocker = mocker
-        self.mocker.patch('search.vector.HASHTAG_ESCAPE_SEQUENCE', '007')
+        self.mocker.patch('lily.search.vector.HASHTAG_ESCAPE_SEQUENCE', '007')
 
     def setUp(self):
         self.vector = TextVector()
@@ -498,34 +498,11 @@ class TextVectorTestCase(TestCase):
             None,
             {
                 'already': set(['1', '5']),
-            },
-            [('will', 1), ('be', 2), ('ignored', 3)]
+            }
         ) == {
             'already': set(['1', '5']),
             'hello': set(['1']),
             'there': set(['2']),
-        }
-
-    def test_augument_with_stems__polish_conf(self):
-
-        assert self.vector.augument_with_stems(
-            'polish',
-            'cześć wam zdobyliście wszystkie zasługi?',
-            None,
-            {},
-            [
-                ('cześć', 1),
-                ('zdobyliście', 3),
-                ('wszystkie', 4),
-                ('zasługi', 5),
-            ]
-        ) == {
-            'cześć': set(['1']),
-            'wszystkie': set(['4']),
-            'zasługi': set(['5']),
-            # 'zasługa': set(['5']),
-            'zdobyliście': set(['3']),
-            # 'zdobyć': set(['3']),
         }
 
     def test_augument_with_stems__english_conf(self):
@@ -534,36 +511,11 @@ class TextVectorTestCase(TestCase):
             'english',
             'hey there did you gained everything?',
             None,
-            {},
-            [('will', 1), ('be', 2), ('ignored', 3)]
+            {}
         ) == {
             'everyth': set(['6']),
             'gain': set(['5']),
             'hey': set(['1']),
-        }
-
-    def test_augument_with_stems__polish_conf__special_chars(self):
-
-        assert self.vector.augument_with_stems(
-            'polish',
-            'Wierzchołek paraboli ⛰ Funkcja kwadratowa',
-            None,
-            {},
-            [
-                ('Wierzchołek', 1),
-                ('paraboli', 2),
-                ('⛰', 3),
-                ('Funkcja', 4),
-                ('kwadratowa', 5),
-            ]
-        ) == {
-            'wierzchołek': {'1'},
-            'parabola': {'2'},
-            'paraboli': {'2'},
-            '⛰': {'3'},
-            'funkcja': {'4'},
-            'kwadratowa': {'5'},
-            'kwadratowy': {'5'},
         }
 
 

@@ -39,6 +39,7 @@ pytest-mock = "^3.6.1"
 pytest-pythonpath = "^0.7.3"
 pytest-socket = "^0.4.1"
 pytest = "^7.1.2"
+pytest-cov = "^3.0.0"
 
 [build-system]
 build-backend = "poetry.core.masonry.api"

@@ -45,6 +45,7 @@ class CopierTestCase(TestCase):
     #
     def test_copy_makefile__copies_makefile(self):
 
+        self.mocker.patch("lily.cli.copier.get_version").return_value = "0.0.11"
         makefile = self.cli_dir.join('base.makefile')
         makefile.write(textwrap.dedent('''
             ## GENERATED FOR VERSION: {% VERSION %}
