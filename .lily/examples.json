@@ -66,20 +66,20 @@
                                 "access_list": [
                                     "ANY"
                                 ],
-                                "is_private": false,
+                                "is_private": true,
                                 "@type": "access"
                             },
                             "examples": {
                                 "some": "examples"
                             },
                             "meta": {
-                                "description": "Quis velit numquam explicabo porro cumque.",
+                                "description": "Voluptas provident nesciunt voluptate tempore aliquam ratione expedita cum.",
                                 "domain": {
-                                    "id": "enim",
+                                    "id": "saepe",
                                     "name": "domain",
                                     "@type": "domain"
                                 },
-                                "title": "Dicta aut alias in.",
+                                "title": "Beatae animi corrupti vitae repellendus provident ex voluptatem.",
                                 "@type": "meta"
                             },
                             "method": "DELETE",

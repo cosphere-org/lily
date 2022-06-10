@@ -1,7 +1,6 @@
 
 import re
 from copy import deepcopy
-from pathlib import Path
 
 from django.contrib.postgres.search import (
     SearchVector,

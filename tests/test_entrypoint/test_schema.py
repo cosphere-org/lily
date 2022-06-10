@@ -20,7 +20,6 @@ from lily.base.models import (
     enum,
 )
 from lily.entrypoint.schema import (
-    Schema,
     ArrayValue,
     SchemaRenderer,
     MissingSchemaMappingError,
