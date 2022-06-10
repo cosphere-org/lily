@@ -9,9 +9,9 @@ import requests
 from django.urls import get_resolver
 from django.test import Client as DjangoClient, SimpleTestCase
 from django.test.utils import CaptureQueriesContext
-
 from django.db import DEFAULT_DB_ALIAS, connections
-from lily_assistant.config import Config
+
+from lily.shared import get_lily_path
 
 from lily.conf import settings
 
@@ -21,7 +21,7 @@ class MissingConfError(Exception):
 
 
 def get_examples_filepath():
-    return os.path.join(Config.get_lily_path(), 'examples.json')
+    return os.path.join(get_lily_path(), 'examples.json')
 
 
 class override_settings(ContextDecorator):  # noqa

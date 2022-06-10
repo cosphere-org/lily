@@ -5,7 +5,7 @@ import sys  # pragma: no cover
 sys.path.append('.')  # pragma: no cover
 
 if __name__ == "__main__":  # pragma: no cover
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "conf.settings")
+    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "lily.conf.settings")
 
     try:
         from django.core.management import execute_from_command_line

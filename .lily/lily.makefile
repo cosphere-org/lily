@@ -14,6 +14,64 @@ SHELL := /bin/bash
 
 LILY_SERVICE_PORT := $(shell source env.sh && echo $${LILY_SERVICE_PORT})
 
+VERSION := $(shell poetry version -s)
+
+CHROME_EXISTS := $(shell command -v google-chrome)
+
+TEST_COVERAGE_THRESHOLD := 90
+
+#
+# LINTER & CODE QUALITY
+#
+.PHONY: lint
+lint:  ## lint the lily & tests
+	printf "\n>> [CHECKER] check if code fulfills quality criteria\n" && \
+	source env.sh && \
+	flake8 --max-line-length 100 --ignore N818,D100,D101,D102,D103,D104,D105,D106,D107,D202,D204,W504,W606 tests && \
+	flake8 --max-line-length 100 --ignore N818,D100,D101,D102,D103,D104,D105,D106,D107,D202,D204,W504,W606 lily
+
+#
+# TEST LIFECYCLE TARGETS
+#
+# NOTE: Those targets are only here as place-holders for
+# overwrites which will be run pre and post various test targets. See below.
+#
+.PHONY: test_setup
+test_setup:
+	printf "\n>> TEST SET UP\n"
+
+.PHONY: test_teardown
+test_teardown:
+	printf "\n>> TEST TEAR DOWN\n"
+
+# -- TEST SELECTED
+.PHONY: test
+test:
+	printf "\n>> [CHECKER] check if chosen tests are passing\n" && \
+	source env.sh && \
+	pytest --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv $(tests)
+
+# -- TEST ALL
+.PHONY: _test_all
+_test_all:
+	printf "\n>> [CHECKER] check if all tests are passing\n" && \
+	source env.sh && \
+	pytest --cov=lily --cov-fail-under=${TEST_COVERAGE_THRESHOLD} -r w -s -vv tests && \
+    coverage html -d coverage_html
+
+.PHONY: test_all
+test_all: test_setup _test_all test_teardown  ## run all available tests
+
+
+#
+# INSTALL
+#
+.PHONY: install
+install:  # generic install command for python
+	pip install -U pip && \
+	pip install -r requirements.txt && \
+	pip install -r test-requirements.txt
+
 #
 # UTILS
 #
@@ -52,11 +110,6 @@ migrations_apply_for_version:  ## apply migrations plan for specific version
 #
 # COMMANDS & DOCS
 #
-.PHONY: docs_render_markdown
-docs_render_markdown:  ## render Markdown representation of commands
-	source env.sh && \
-	python lily/manage.py render_markdown
-
 .PHONY: docs_render_commands
 docs_render_commands:  ## render JSON representation of commands
 	source env.sh && \
@@ -79,19 +132,9 @@ clear_examples:  ## clear all existing examples
 	python lily/manage.py clear_examples
 
 
-.PHONY: run_commands_assertions
-run_commands_assertions:  ## run all commands assertions
-	source env.sh && \
-	python lily/manage.py assert_query_parser_fields_are_optional
-
-
 .PHONY: test_setup
 test_setup: clear_examples
 
 
 .PHONY: upgrade_version_post_upgrade
-upgrade_version_post_upgrade: docs_render_commands docs_render_markdown migrations_render_current_plan
-
-
-.PHONY: upgrade_version_teardown
-upgrade_version_teardown: run_commands_assertions
+upgrade_version_post_upgrade: docs_render_commands migrations_render_current_plan

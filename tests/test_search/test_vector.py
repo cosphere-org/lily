@@ -4,14 +4,14 @@ from unittest.mock import Mock, call
 from django.test import TestCase
 import pytest
 
-import search
-from search import TextVector
+from lily import search
+from lily.search import TextVector
 
 
 def test_stored_vector__to_sql(mocker):
 
     compiler, connection = Mock(), Mock()
-    as_sql = mocker.patch('search.vector.SearchVector.as_sql')
+    as_sql = mocker.patch('lily.search.vector.SearchVector.as_sql')
     as_sql.return_value = ['sql::text', ['param', 's']]
 
     vector = search.StoredVector('column')
@@ -32,7 +32,7 @@ class TextVectorTestCase(TestCase):
     @pytest.fixture(autouse=True)
     def initfixtures(self, mocker):
         self.mocker = mocker
-        self.mocker.patch('search.vector.HASHTAG_ESCAPE_SEQUENCE', '007')
+        self.mocker.patch('lily.search.vector.HASHTAG_ESCAPE_SEQUENCE', '007')
 
     def setUp(self):
         self.vector = TextVector()
@@ -136,213 +136,6 @@ class TextVectorTestCase(TestCase):
                 'divided': (4,),
                 'fraction': (2,),
                 'squared': (7,),
-            })
-
-    #
-    # PARSE - POLISH CONF
-    #
-    def test_parse__conf_polish__escape_accents(self):
-        self.assert_parse(
-            'polish',
-            'część grzegżółek dość Świata',
-            None,
-            {
-                'czesc': (1,),
-                'część': (1,),
-                'grzegzolek': (2,),
-                'grzegżółek': (2,),
-                'swiata': (4,),
-                'świata': (4,),
-            })
-
-    def test_parse__conf_polish__escape_accents_triangulation(
-            self):
-        self.assert_parse(
-            'polish',
-            'Pchnąć w tę łódź jeża lub ośm skrzyń fig',
-            None,
-            {
-                'fig': (9,),
-                'figa': (9,),
-                'figi': (9,),
-                'jez': (5,),
-                'jeża': (5,),
-                'jeza': (5,),
-                'jeż': (5,),
-                'lodz': (4,),
-                'osm': (7,),
-                'ośm': (7,),
-                'pchnac': (1,),
-                'pchnąć': (1,),
-                'skrzyń': (8,),
-                'skrzyn': (8,),
-                'skrzynia': (8,),
-                'łódź': (4,),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__weird_polish_characters_encoding(
-            self):
-        self.assert_parse(
-            'polish',
-            # -- warning: not visible to you eyes maybe but
-            # -- I've manually added here crazy polish letters
-            'Pchnąć w tę łódź jeża lub ośm skrzyń fig łódź.',
-            None,
-            {
-                'fig': (9,),
-                'figa': (9,),
-                'figi': (9,),
-                'jez': (5,),
-                'jeza': (5,),
-                'jeż': (5,),
-                'jeża': (5,),
-                'lodz': (4, 10),
-                'osm': (7,),
-                'ośm': (7,),
-                'pchnac': (1,),
-                'pchnąć': (1,),
-                'skrzyń': (8,),
-                'skrzyn': (8,),
-                'skrzynia': (8,),
-                'łódź': (4, 10),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__many_hashtags(self):
-        self.assert_parse(
-            'polish',
-            'część grzegżółek #dośćŚwiata #wokółNAS słyszałeś',
-            None,
-            {
-                '007doscswiata': (3,),
-                '007dośćświata': (3,),
-                '007wokolnas': (4,),
-                '007wokółnas': (4,),
-                'czesc': (1,),
-                'część': (1,),
-                'grzegzolek': (2,),
-                'grzegżółek': (2,),
-                'słyszałeś': (5,),
-                'słyszeć': (5,),
-                'slyszec': (5,),
-                'slyszales': (5,),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__latex_transformation(self):
-        self.assert_parse(
-            'polish',
-            'rozwiązanie to $$ \\sqrt{a ^ 2} $$',
-            None,
-            {
-                'funkcja': (4,),
-                'kwadrat': (10,),
-                'kwadratu': (10,),
-                'kwadratowy': (6,),
-                'pierwiastek': (5,),
-                'pierwiastka': (5,),
-                'rozwiazanie': (1,),
-                'rozwiązanie': (1,),
-                'rozwiazac': (1,),
-                'rozwiązać': (1,),
-                'sqrt': (3,),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__with_weight(self):
-        self.assert_parse(
-            'polish',
-            'dzień dobry świecie',
-            'B',
-            {
-                'dobry': ('2B',),
-                'dzien': ('1B',),
-                'dzień': ('1B',),
-                'swiecie': ('3B',),
-                'świecie': ('3B',),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__with_commas_and_dots(self):
-        self.assert_parse(
-            'polish',
-            'rozwiązanie, to. jest, ok, ale, inne, jest prostsze.',
-            None,
-            {
-                'prostsze': (8,),
-                'prostszy': (8,),
-                'rozwiazac': (1,),
-                'rozwiazanie': (1,),
-                'rozwiązanie': (1,),
-                'rozwiązać': (1,),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__with_other_extra_characters(self):
-        self.assert_parse(
-            'polish',
-            'rozwiązanie;+- to%^& jest, ok, ale, san-jose, jest prostsze.',
-            None,
-            {
-                'prostsze': (10,),
-                'prostszy': (10,),
-                'rozwiazac': (1,),
-                'rozwiazanie': (1,),
-                'rozwiązanie': (1,),
-                'rozwiązać': (1,),
-                'san-jose': (6,),
-                'san': (7,),
-                'jose': (8,),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__multiple_positions(self):
-        self.assert_parse(
-            'polish',
-            'adam adam ma kota kot ma adama',
-            None,
-            {
-                'adam': set([2, 1]),
-                'adama': set([7]),
-                'kot': set([4, 5]),
-                'kota': set([4, 5]),
-            })
-
-    def test_parse__conf_polish__broken_no_stem_words_positions(
-            self):
-        self.assert_parse(
-            'polish',
-            'zjezdzalnia brakuje znakow',
-            None,
-            {
-                'brakowac': (2,),
-                'brakować': (2,),
-                'brakuje': (2,),
-                'zjezdzalnia': (1,),
-                'znakow': (3,),
-            },
-            issubset=True)
-
-    def test_parse__conf_polish__stop_words_removed(self):
-        self.assert_parse(
-            'polish',
-            'i lub ale to ta te',
-            None,
-            {})
-
-    def test_parse__conf_polish__not_have_to_contain_letters(self):
-        self.assert_parse(
-            'polish',
-            '123 14 16 19 wynik to 190',
-            None,
-            {
-                '123': (1,),
-                '14': (2,),
-                '16': (3,),
-                '19': (4,),
-                '190': (7,),
-                'wynik': (5,)
             })
 
     #
@@ -705,34 +498,11 @@ class TextVectorTestCase(TestCase):
             None,
             {
                 'already': set(['1', '5']),
-            },
-            [('will', 1), ('be', 2), ('ignored', 3)]
+            }
         ) == {
             'already': set(['1', '5']),
             'hello': set(['1']),
             'there': set(['2']),
-        }
-
-    def test_augument_with_stems__polish_conf(self):
-
-        assert self.vector.augument_with_stems(
-            'polish',
-            'cześć wam zdobyliście wszystkie zasługi?',
-            None,
-            {},
-            [
-                ('cześć', 1),
-                ('zdobyliście', 3),
-                ('wszystkie', 4),
-                ('zasługi', 5),
-            ]
-        ) == {
-            'cześć': set(['1']),
-            'wszystkie': set(['4']),
-            'zasługi': set(['5']),
-            # 'zasługa': set(['5']),
-            'zdobyliście': set(['3']),
-            # 'zdobyć': set(['3']),
         }
 
     def test_augument_with_stems__english_conf(self):
@@ -741,36 +511,11 @@ class TextVectorTestCase(TestCase):
             'english',
             'hey there did you gained everything?',
             None,
-            {},
-            [('will', 1), ('be', 2), ('ignored', 3)]
+            {}
         ) == {
             'everyth': set(['6']),
             'gain': set(['5']),
             'hey': set(['1']),
-        }
-
-    def test_augument_with_stems__polish_conf__special_chars(self):
-
-        assert self.vector.augument_with_stems(
-            'polish',
-            'Wierzchołek paraboli ⛰ Funkcja kwadratowa',
-            None,
-            {},
-            [
-                ('Wierzchołek', 1),
-                ('paraboli', 2),
-                ('⛰', 3),
-                ('Funkcja', 4),
-                ('kwadratowa', 5),
-            ]
-        ) == {
-            'wierzchołek': {'1'},
-            'parabola': {'2'},
-            'paraboli': {'2'},
-            '⛰': {'3'},
-            'funkcja': {'4'},
-            'kwadratowa': {'5'},
-            'kwadratowy': {'5'},
         }
 
 

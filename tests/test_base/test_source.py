@@ -14,16 +14,8 @@ class SourceTestCase(TestCase):
         self.mocker = mocker
 
     def setUp(self):
-        class ConfigMock:
-
-            @classmethod
-            def get_project_path(cls):
-                return os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    '..',
-                    '..')
-
-        self.mocker.patch('base.source.Config', ConfigMock)
+        self.mocker.patch('lily.base.source.get_project_path').return_value = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), '..', '..')
 
     def test_constructor(self):
 
@@ -34,9 +26,9 @@ class SourceTestCase(TestCase):
 
         source = Source(fn)
 
-        assert source.filepath == '/tests/test_base/test_source.py'
-        assert source.start_line == 30
-        assert source.end_line == 33
+        assert source.filepath.endswith('/tests/test_base/test_source.py')
+        assert source.start_line == 22
+        assert source.end_line == 25
 
 
 class SourceSerializerTestCase(TestCase):
@@ -52,6 +44,6 @@ class SourceSerializerTestCase(TestCase):
         assert SourceSerializer(source).data == {
             '@type': 'source',
             'filepath': '/tests/test_base/test_source.py',
-            'start_line': 46,
-            'end_line': 48,
+            'start_line': 38,
+            'end_line': 40,
         }

@@ -16,7 +16,7 @@ jobs:
           POSTGRES_PASSWORD: mysecret
           POSTGRES_HOST_AUTH_METHOD: trust
         ports:
-          - 5435:5432/tcp
+          - 5436:5432/tcp
 
     steps:
       - name: Check out repository
@@ -39,8 +39,6 @@ jobs:
       - name: Install dependencies
         working-directory: .
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libhunspell-dev hunspell hunspell-pl
           poetry env use 3.9.9
           poetry install
 

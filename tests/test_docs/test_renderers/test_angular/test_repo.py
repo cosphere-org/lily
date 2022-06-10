@@ -7,9 +7,9 @@ from unittest.mock import call
 
 from django.test import TestCase, override_settings
 import pytest
-from lily_assistant.repo.repo import Repo
 
 from lily.docs.renderers.angular.repo import (
+    Repo,
     AngularRepo,
     TemplateRepo,
     PathRule,
@@ -72,12 +72,6 @@ class AngularRepoTestCase(TestCase):
     #
     def test_upgrade_version(self):
 
-        class MockConfig:
-
-            @property
-            def version(self):
-                return '0.9.1'
-
         temp_dir = self.tmpdir.mkdir('repo')
 
         app_package = temp_dir.join('package.json')
@@ -85,7 +79,7 @@ class AngularRepoTestCase(TestCase):
             'scripts': 'hi',
             'what': 'where',
         }))
-
+        self.mocker.patch("lily.docs.renderers.angular.repo.get_version").return_value = "0.9.1"
         client_dir = temp_dir.mkdir('projects').mkdir('client')
         client_package = client_dir.join('package.json')
         client_package.write(json.dumps({"version": "0.1.18"}))
@@ -96,7 +90,7 @@ class AngularRepoTestCase(TestCase):
         r = AngularRepo('origin')
         r.cd_to_repo()
 
-        assert r.upgrade_version(MockConfig()) == '0.9.1-API-0.1.18-CLIENT'
+        assert r.upgrade_version() == '0.9.1-API-0.1.18-CLIENT'
         with open('package.json') as f:
             assert json.loads(f.read()) == {
                 'scripts': 'hi',

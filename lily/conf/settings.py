@@ -99,11 +99,9 @@ INSTALLED_APPS = [
     'rest_framework',
 
     'docs',
-    'base',
-    'search',
-    'entrypoint',
-    'assertion',
-    'migrator',
+    'lily.base.apps.BaseAppConfig',
+    'lily.search.apps.SearchAppConfig',
+    'lily.entrypoint.apps.EntrypointAppConfig',
 
     'django.contrib.contenttypes',
     'django.contrib.auth',
@@ -117,7 +115,7 @@ DATABASES = {
         'USER': 'lily',
         'PASSWORD': 'mysecret',
         'HOST': '127.0.0.1',
-        'PORT': '5435',
+        'PORT': '5436',
     },
 }
 
@@ -130,13 +128,13 @@ MIDDLEWARE = [
 ROOT_URLCONF = getattr(
     settings,
     'ROOT_URLCONF',
-    'conf.urls')
+    'lily.conf.urls')
 
 
 WSGI_APPLICATION = getattr(
     settings,
     'WSGI_APPLICATION',
-    'conf.wsgi.application')
+    'lily.conf.wsgi.application')
 
 
 TEMPLATES = [

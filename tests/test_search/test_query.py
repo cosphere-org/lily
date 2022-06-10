@@ -3,7 +3,7 @@ from unittest.mock import Mock, call
 
 import pytest
 
-import search
+from lily import search
 
 
 @pytest.mark.django_db
@@ -46,7 +46,7 @@ import search
 
 ], ids=list(map(str, range(0, 7))))
 def test_query__parse_value(value, expected, mocker):
-    mocker.patch('search.query.HASHTAG_ESCAPE_SEQUENCE', 'hh')
+    mocker.patch('lily.search.query.HASHTAG_ESCAPE_SEQUENCE', 'hh')
 
     q = search.Query('')
 
@@ -86,7 +86,7 @@ def test_query__get_transformed_value__with_latex(
         value, language_conf, expected, mocker):
 
     mocker.patch(
-        'search.query.detector.detect_db_conf'
+        'lily.search.query.detector.detect_db_conf'
     ).return_value = language_conf
 
     q = search.Query('')
@@ -97,7 +97,7 @@ def test_query__get_transformed_value__with_latex(
 @pytest.mark.django_db
 def test_query__to_sql__with_config(mocker):
     mocker.patch(
-        'search.query.detector.detect_db_conf'
+        'lily.search.query.detector.detect_db_conf'
     ).return_value = 'simple'
 
     q = search.Query('hi there')
@@ -113,7 +113,7 @@ def test_query__to_sql__with_config(mocker):
 @pytest.mark.django_db
 def test_query__auto_detects_language(mocker):
     mocker.patch(
-        'search.query.detector.detect_db_conf'
+        'lily.search.query.detector.detect_db_conf'
     ).return_value = 'polish'
     parse_value_mock = mocker.patch.object(
         search.Query, 'parse_value')

@@ -3,7 +3,7 @@ import os
 import re
 
 import click
-from lily_assistant.config import Config
+from lily.shared import get_version
 
 
 class Copier:
@@ -17,12 +17,10 @@ class Copier:
 
     def copy_makefile(self, src_dir):
 
-        config = Config()
-
         with open(self.base_makefile_path, 'r') as makefile:
             content = makefile.read()
             content = re.sub(r'{%\s*SRC_DIR\s*%}', src_dir, content)
-            content = re.sub(r'{%\s*VERSION\s*%}', config.version, content)
+            content = re.sub(r'{%\s*VERSION\s*%}', get_version(), content)
 
         if not os.path.exists(os.path.join(self.root_dir, '.lily')):
             os.mkdir(os.path.join(self.root_dir, '.lily'))

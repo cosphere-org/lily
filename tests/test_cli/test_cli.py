@@ -51,9 +51,7 @@ class CliTestCase(TestCase):
         assert result.exit_code == 1
         assert remove_white_chars(result.output) == remove_white_chars('''
             Error:
-            Please install `lily_assistant` and run
-            `lily_assistant init <src_dir>` before running
-            `lily init <src_dir>`
+            Please run `lily init <src_dir>`
         ''')
         assert copy.call_count == 0
         os.chdir(current_cwd)

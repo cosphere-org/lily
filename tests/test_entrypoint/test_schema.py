@@ -5,7 +5,6 @@ from enum import Enum
 from django.test import TestCase
 from django.db import models
 import pytest
-from lily_assistant.config import Config
 
 from lily.base.models import EnumChoiceField
 from lily.base import serializers, parsers
@@ -21,7 +20,6 @@ from lily.base.models import (
     enum,
 )
 from lily.entrypoint.schema import (
-    Schema,
     ArrayValue,
     SchemaRenderer,
     MissingSchemaMappingError,
@@ -240,15 +238,10 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_person_body_parser(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         assert SchemaRenderer(
             HumanBodyParser,
             parser_type=parsers.ParserTypeEnum.BODY.value
         ).render().serialize() == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': ['age'],
@@ -267,15 +260,10 @@ class SchemaRendererTestCase(TestCase):
 
     def test_person_query_parser(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         assert SchemaRenderer(
             HumanQueryParser,
             parser_type=parsers.ParserTypeEnum.QUERY.value
         ).render().serialize() == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': ['age'],
@@ -297,12 +285,7 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_person_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         assert SchemaRenderer(HumanSerializer).render().serialize() == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': ['age', 'place'],
@@ -327,12 +310,7 @@ class SchemaRendererTestCase(TestCase):
 
     def test_object_json_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         assert SchemaRenderer(CycleJSONSerializer).render().serialize() == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'entity_type': 'cycle',
@@ -347,14 +325,9 @@ class SchemaRendererTestCase(TestCase):
 
     def test_array_json_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         rendered = SchemaRenderer(CyclesJSONSerializer).render().serialize()
 
         assert rendered == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'entity_type': 'cycles',
@@ -392,12 +365,7 @@ class SchemaRendererTestCase(TestCase):
 
     def test_method_json_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         expected = {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'entity_type': 'json',
@@ -487,14 +455,9 @@ class SchemaRendererTestCase(TestCase):
 
     def test_method_json_multischema_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         assert SchemaRenderer(
             JSONSchemaMultiSchemaSerializer
         ).render().serialize() == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': ['entity'],
@@ -541,16 +504,11 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_person_model_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         rendered = SchemaRenderer(
             HumanModelSerializer
         ).render().serialize()
 
         assert rendered == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'entity_type': 'human',
@@ -581,16 +539,11 @@ class SchemaRendererTestCase(TestCase):
 
     def test_enumer_model_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         rendered = SchemaRenderer(
             EnumerModelSerializer
         ).render().serialize()
 
         assert rendered == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'entity_type': 'enumer',
                 'properties': {
@@ -625,10 +578,6 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_simple_fields(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         class SimpleFieldsSerializer(serializers.Serializer):
 
             number = serializers.IntegerField()
@@ -659,7 +608,6 @@ class SchemaRendererTestCase(TestCase):
             created_at = serializers.DateTimeField()
 
         expected = {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': [
@@ -726,10 +674,6 @@ class SchemaRendererTestCase(TestCase):
 
     def test_list_field(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         class Serializer(serializers.Serializer):
 
             _type = 'complex'
@@ -750,7 +694,6 @@ class SchemaRendererTestCase(TestCase):
         rendered = SchemaRenderer(Serializer).render().serialize()
 
         assert rendered == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'entity_type': 'complex',
@@ -813,10 +756,6 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_method_derived_fields(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         class MethodDerivedFieldsSerializer(serializers.Serializer):
 
             _type = 'method'
@@ -849,7 +788,6 @@ class SchemaRendererTestCase(TestCase):
         assert SchemaRenderer(
             MethodDerivedFieldsSerializer
         ).render().serialize() == {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': [
@@ -923,12 +861,7 @@ class SchemaRendererTestCase(TestCase):
     #
     def test_nested_party_serializer(self):
 
-        self.mocker.patch.object(
-            Schema, 'get_repository_uri'
-        ).return_value = 'http://hi.there#123'
-
         expected = {
-            'uri': 'http://hi.there#123',
             'schema': {
                 'type': 'object',
                 'required': ['food', 'guests', 'host'],
@@ -1029,65 +962,10 @@ class SchemaRendererTestCase(TestCase):
             SchemaRenderer(Serializer).render().serialize()
 
     #
-    # test_get_repository_uri
-    #
-    def test_get_repository_uri__bitbucket(self):
-
-        class MockConfig:
-
-            repository = 'http://bitbucket.com'
-
-            last_commit_hash = '1234'
-
-            @classmethod
-            def get_project_path(cls):
-                return '/home/projects/lily'
-
-        self.mocker.patch(
-            'lily.entrypoint.schema.Config', MockConfig)
-
-        schema = SchemaRenderer(HumanSerializer).render()
-        schema.meta = {
-            'path': '/some/path',
-            'first_line': 11,
-        }
-
-        assert (
-            schema.get_repository_uri() ==
-            'http://bitbucket.com/src/1234/some/path/#lines-11')
-
-    def test_get_repository_uri__github(self):
-
-        class MockConfig:
-
-            repository = 'http://github.com/what'
-
-            last_commit_hash = '1234'
-
-            @classmethod
-            def get_project_path(cls):
-                return '/home/projects/lily'
-
-        self.mocker.patch(
-            'lily.entrypoint.schema.Config', MockConfig)
-
-        schema = SchemaRenderer(HumanSerializer).render()
-        schema.meta = {
-            'path': '/some/path',
-            'first_line': 11,
-        }
-
-        assert (
-            schema.get_repository_uri() ==
-            'http://github.com/what/blob/1234/some/path/#L11')
-
-    #
     # get_meta
     #
     def test_get_meta(self):
 
-        self.mocker.patch.object(
-            Config, 'get_project_path').return_value = '/home/projects/lily'
         getfile = Mock(return_value='/home/projects/lily/a/views.py')
         getsourcelines = Mock(return_value=[None, 11])
         self.mocker.patch(
@@ -1098,7 +976,7 @@ class SchemaRendererTestCase(TestCase):
 
         assert renderer.get_meta(HumanSerializer) == {
             'first_line': 11,
-            'path': '/a/views.py',
+            'path': '/home/projects/lily/a/views.py',
         }
         assert getfile.call_args_list == [
             call(HumanSerializer), call(HumanSerializer)]
@@ -1277,12 +1155,8 @@ def get_schema(raw_schema):
     ])
 def test_serialize(raw_schema, expected, mocker):
 
-    mocker.patch.object(
-        Schema, 'get_repository_uri').return_value = 'uri'
-
     schema = SchemaRenderer(HumanSerializer).render()
     schema.schema = raw_schema
 
     serialized = schema.serialize()
-    del serialized['uri']
     assert serialized == expected

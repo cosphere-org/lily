@@ -1,11 +1,8 @@
 
 from enum import Enum, unique
 import inspect
-import re
-import os
 
-from lily_assistant.config import Config
-
+from lily.shared import get_project_path
 from lily.base import serializers, parsers
 from lily.base.models import JSONSchemaValidator
 
@@ -86,7 +83,7 @@ class SchemaRenderer:
 
     def get_meta(self, serializer):
         path = inspect.getfile(serializer)
-        path = path.replace(Config.get_project_path(), '')
+        path = path.replace(get_project_path(), '')
 
         return {
             'first_line': inspect.getsourcelines(serializer)[1],
@@ -558,25 +555,5 @@ class Schema:
             schema = serialize(self.schema)
 
         return {
-            'uri': self.get_repository_uri(),
             'schema': schema,
         }
-
-    def get_repository_uri(self):
-        config = Config()
-
-        if 'bitbucket' in config.repository:
-            return os.path.join(
-                config.repository,
-                'src',
-                config.last_commit_hash,
-                re.sub(r'^/', '', self.meta['path']),
-                '#lines-{}'.format(self.meta['first_line']))
-
-        elif 'github':
-            return os.path.join(
-                config.repository,
-                'blob',
-                config.last_commit_hash,
-                re.sub(r'^/', '', self.meta['path']),
-                '#L{}'.format(self.meta['first_line']))

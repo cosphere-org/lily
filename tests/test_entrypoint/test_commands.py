@@ -8,7 +8,7 @@ from django.urls import reverse
 import pytest
 
 from lily.base.test import Client
-from entrypoint.commands import (
+from lily.entrypoint.commands import (
     EntryPointCommands,
     CommandSerializer,
 )
@@ -16,17 +16,6 @@ from tests.factory import EntityFactory
 
 
 ef = EntityFactory()
-
-
-class MockConfig:
-
-    def __init__(self, **kwargs):
-        self.version = '2.5.6'
-        self.name = 'test'
-
-    @classmethod
-    def get_lily_path(cls):
-        return cls._lily_path
 
 
 class EntryPointCommandsTestCase(TestCase):
@@ -48,9 +37,9 @@ class EntryPointCommandsTestCase(TestCase):
         self.lily_dir = self.tmpdir.mkdir('.lily')
         self.commands_dir = self.lily_dir.mkdir('commands')
 
-        MockConfig._lily_path = str(self.lily_dir)
+        self.mocker.patch("lily.entrypoint.commands.get_version").return_value = '2.5.6'
         self.mocker.patch(
-            'entrypoint.commands.Config', MockConfig)
+            "lily.entrypoint.commands.get_lily_path").return_value = str(self.lily_dir)
 
     def test_get(self):
 
@@ -70,7 +59,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': [],
@@ -104,7 +93,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': ['2.120.0', '2.14.5', '2.5.6', '1.0.0'],
@@ -150,7 +139,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': [],
@@ -176,7 +165,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': [],
@@ -222,7 +211,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': [],
@@ -246,7 +235,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': [],
@@ -292,7 +281,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [{'A': 'C'}],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': [],
@@ -315,7 +304,7 @@ class EntryPointCommandsTestCase(TestCase):
             '@event': 'ENTRY_POINT_READ',
             '@type': 'entrypoint',
             'enums': [{'A': 'X'}],
-            'name': 'test',
+            'name': 'name',
             'version_info': {
                 '@type': 'version_info',
                 'available': [],

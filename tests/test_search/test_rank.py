@@ -1,13 +1,13 @@
 
 from unittest.mock import Mock, call
 
-import search
+from lily import search
 
 
 def test_rank__to_sql(mocker):
 
     vector, query, compiler, connection = Mock(), Mock(), Mock(), Mock()
-    as_sql = mocker.patch('search.rank.SearchRank.as_sql')
+    as_sql = mocker.patch('lily.search.rank.SearchRank.as_sql')
 
     rank = search.Rank(vector, query)
     result = rank.as_sql(compiler, connection)
@@ -25,7 +25,7 @@ def test_rank__to_sql(mocker):
 def test_rank_cd__to_sql(mocker):
 
     vector, query, compiler, connection = Mock(), Mock(), Mock(), Mock()
-    as_sql = mocker.patch('search.rank.SearchRank.as_sql')
+    as_sql = mocker.patch('lily.search.rank.SearchRank.as_sql')
 
     rank = search.RankCD(vector, query)
     result = rank.as_sql(compiler, connection)

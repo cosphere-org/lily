@@ -6,10 +6,126 @@ from functools import partial
 import tempfile
 import json
 import collections
+from subprocess import Popen, PIPE, STDOUT
+import shlex
+import click
 
-from lily_assistant.repo.repo import Repo
-
+from lily.shared import get_version, get_project_path
 from lily.conf import settings
+
+
+class Repo:
+
+    def __init__(self):
+        self.base_path = get_project_path()
+        self.cd_to_repo()
+
+    def cd_to_repo(self):
+        os.chdir(self.base_path)
+
+    #
+    # GIT
+    #
+    def clone(self, destination):
+        self.git(f'clone {self.origin} {destination}')
+
+    def push(self):
+        self.git(f'push origin {self.current_branch}')
+
+    def stash(self):
+        self.git('stash')
+
+    def pull(self):
+        self.git(f'pull origin {self.current_branch}')
+
+    @property
+    def current_branch(self):
+        return self.git('rev-parse --abbrev-ref HEAD').strip()
+
+    @property
+    def current_commit_hash(self):
+        return self.git('rev-parse HEAD').strip()
+
+    def add_all(self):
+        self.git('add .')
+        self.git('add -u .')
+
+    def add(self, path):
+        self.git(f'add {path}')
+
+    def commit(self, message):
+        self.git(f'commit --no-verify -m "{message}"')
+
+    def all_changes_commited(self):
+        changed = self.git('status --porcelain').strip()
+        if changed:
+            files = changed.split('\n')
+            not_lily_changes = [f for f in files if '.lily/' not in f]
+
+            return not bool(not_lily_changes)
+
+        return True
+
+    def git(self, command):
+        return self.execute(f'git {command}')
+
+    #
+    # DIR / FILES
+    #
+    def clear_dir(self, path):
+
+        path = re.sub('^/', '', path)
+        path = os.path.join(os.getcwd(), path)
+
+        for filename in os.listdir(path):
+            os.remove(os.path.join(path, filename))
+
+    def create_dir(self, path):
+        path = re.sub('^/', '', path)
+        path = os.path.join(os.getcwd(), path)
+
+        try:
+            os.mkdir(path)
+
+        except FileExistsError:
+            pass
+
+    #
+    # GENERIC
+    #
+    def execute(self, command):
+
+        click.secho(f'[EXECUTE] {command}', fg='blue')
+        captured = ''
+
+        p = Popen(
+            self.split_command(command),
+            stdout=PIPE,
+            stderr=STDOUT,
+            bufsize=1,
+            universal_newlines=True)
+
+        while p.poll() is not None:
+            line = p.stdout.readline()
+            captured += line
+            click.secho(line, fg='white')
+
+        # -- final read
+        line = p.stdout.read()
+        captured += line
+        click.secho(line, fg='white')
+
+        # -- fetch return code
+        p.communicate()
+        if p.returncode != 0:
+            raise OSError(
+                f'Command: {command} return exit code: {p.returncode}')
+
+        return captured
+
+    def split_command(self, command):
+
+        return shlex.split(command)
 
 
 class AngularRepo(Repo):
@@ -41,13 +157,13 @@ class AngularRepo(Repo):
     #
     # UTILS
     #
-    def upgrade_version(self, config):
+    def upgrade_version(self):
 
         # -- take only VERSION from here
         with open('projects/client/package.json', 'r') as p:
             packagejson = json.loads(p.read())
             next_version = (
-                f'{config.version}-API-{packagejson["version"]}-CLIENT')
+                f'{get_version()}-API-{packagejson["version"]}-CLIENT')
 
         # -- take the whole configuration from here
         with open('package.json', 'r') as p:

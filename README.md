@@ -15,14 +15,6 @@ Lily was inspired by various existing tools and methodologies. In order to under
 
 In `lily` we define commands that are raising (python's `raise`) various events that are captured by the main events loop (do not confuse with node.js event loop).
 
-## Prerequisites
-
-It is assumed that each `lily` project was setup together with the [`lily-assistant` tool](https://github.com/cosphere-org/lily-assistant) and that `lily_assistant init <src_dir_name>` command was executed therefore:
-
-- `.lily` folder exists in the root directory of the project
-- `.lily/config.json` was defined.
-
-
 ## Creating HTTP commands
 
 `Lily` enable very simple and semantic creation of commands using various transport mechanism (HTTP, Websockets, Async) in a one unified way.
@@ -217,40 +209,3 @@ class SampleCommands(HTTPCommands):
 ```
 
 where `access` entry explicitly specifies who can access a particular command, that list will be injected to the `Authorizer` on each request to the server.
-
-## Rendering Commands (entrypoint)
-
-By calling:
-
-```bash
-make docs_render_markdown
-```
-
-One will render `.lily/API.md` file which will contain the Markdown version of the commands specification.
-
-## Rendering API.md
-
-By calling:
-
-```bash
-make docs_render_commands
-```
-
-One will render `.lily/commands/<version>.json` file which will contain the JSON version of the commands specification for a current version of the service. (this could be used for the automatic detection of Changelog).
-
-
-## Managing the state of database
-
-Lily exposes three commands for managing migrations:
-
-```bash
-make migrations_create
-make migrations_bulk_read
-make migrations_apply
-```
-
-Which are just a wrappers around the commands exposed by django's built-in migration tool.
-
-## Full text search support
-FIXME: add it ...
-

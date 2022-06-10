@@ -3,8 +3,8 @@ import json
 import os
 
 import djclick as click
-from lily_assistant.config import Config
 
+from lily.shared import get_lily_path, get_version
 from ...renderer import CommandsRenderer
 from ...serializers import CommandSerializer
 
@@ -18,13 +18,11 @@ def command():
 
     """
 
-    config = Config()
-
-    commands_dir_path = os.path.join(Config.get_lily_path(), 'commands')
+    commands_dir_path = os.path.join(get_lily_path(), 'commands')
     if not os.path.exists(commands_dir_path):
         os.mkdir(commands_dir_path)
 
-    version = config.next_version or config.version
+    version = get_version()
     commands_path = os.path.join(commands_dir_path, f'{version}.json')
     with open(commands_path, 'w') as f:
         commands = CommandsRenderer().render()

@@ -2,10 +2,10 @@
 import json
 import os
 
-from lily_assistant.config import Config
 from django.conf import settings
 
 from lily.base.events import EventFactory
+from lily.shared import get_lily_path, get_version
 from .command import Command
 from lily.base.utils import normalize_indentation
 from .repo import AngularRepo, TemplateRepo
@@ -53,9 +53,6 @@ class AngularClientRenderer(EventFactory):
 
         root_cwd = os.getcwd()
 
-        # -- save it now before all directory jumps
-        config = Config()
-
         # -- pull newest changes to the template
         self.template_repo.clone()
 
@@ -101,7 +98,7 @@ class AngularClientRenderer(EventFactory):
         self.repo.build()
 
         if not only_build:
-            next_version = self.repo.upgrade_version(config)
+            next_version = self.repo.upgrade_version()
 
             self.repo.add_all()
             self.repo.commit(next_version)
@@ -144,9 +141,9 @@ class AngularClientRenderer(EventFactory):
     def get_commands(self):
 
         commands_path = os.path.join(
-            Config.get_lily_path(),
+            get_lily_path(),
             'commands',
-            f'{Config().version}.json')
+            f'{get_version()}.json')
         with open(commands_path, 'r') as f:
             return json.loads(f.read())
 

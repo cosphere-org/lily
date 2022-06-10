@@ -1,17 +1,15 @@
 
 import inspect
 
-from lily_assistant.config import Config
-
 from . import serializers
+from lily.shared import get_project_path
 
 
 class Source:
 
     def __init__(self, fn):
         code, firstline = inspect.getsourcelines(fn)
-        self.filepath = inspect.getfile(fn).replace(
-            Config.get_project_path(), '')
+        self.filepath = inspect.getfile(fn).replace(get_project_path(), '')
         self.start_line = firstline
         self.end_line = firstline + len(code) - 1
 

@@ -48,20 +48,12 @@ class AngularClientRendererTestCase(TestCase):
     #
     def test_render(self):
 
-        class MockConfig:
-
-            @property
-            def version(self):
-                return '0.9.1'
-
-            @classmethod
-            def get_lily_path(cls):
-                return str(self.tmpdir)
-
         commands_dir = self.tmpdir.mkdir('commands')
         commands_dir.join('0.9.1.json').write(json.dumps({'some': 'commands'}))
         self.mocker.patch(
-            'lily.docs.renderers.angular.renderer.Config', MockConfig)
+            'lily.docs.renderers.angular.renderer.get_version').return_value = '0.9.1'
+        self.mocker.patch(
+            'lily.docs.renderers.angular.renderer.get_lily_path').return_value = str(self.tmpdir)
 
         repo = Mock()
         self.mocker.patch.object(self.renderer, 'repo', repo)
@@ -135,20 +127,12 @@ class AngularClientRendererTestCase(TestCase):
 
     def test_render__only_build(self):
 
-        class MockConfig:
-
-            @property
-            def version(self):
-                return '0.9.1'
-
-            @classmethod
-            def get_lily_path(cls):
-                return str(self.tmpdir)
-
         commands_dir = self.tmpdir.mkdir('commands')
         commands_dir.join('0.9.1.json').write(json.dumps({'some': 'commands'}))
         self.mocker.patch(
-            'lily.docs.renderers.angular.renderer.Config', MockConfig)
+            'lily.docs.renderers.angular.renderer.get_version').return_value = '0.9.1'
+        self.mocker.patch(
+            'lily.docs.renderers.angular.renderer.get_lily_path').return_value = str(self.tmpdir)
 
         repo = Mock()
         self.mocker.patch.object(self.renderer, 'repo', repo)
@@ -346,20 +330,12 @@ class AngularClientRendererTestCase(TestCase):
     #
     def test_get_commands(self):
 
-        class MockConfig:
-
-            @property
-            def version(self):
-                return '0.9.1'
-
-            @classmethod
-            def get_lily_path(cls):
-                return str(self.tmpdir)
-
         commands_dir = self.tmpdir.mkdir('commands')
         commands_dir.join('0.9.1.json').write(json.dumps({'some': 'commands'}))
         self.mocker.patch(
-            'lily.docs.renderers.angular.renderer.Config', MockConfig)
+            'lily.docs.renderers.angular.renderer.get_version').return_value = '0.9.1'
+        self.mocker.patch(
+            'lily.docs.renderers.angular.renderer.get_lily_path').return_value = str(self.tmpdir)
 
         assert self.renderer.get_commands() == {'some': 'commands'}
 
