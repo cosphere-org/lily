@@ -213,9 +213,6 @@ class InterfaceTestCase(TestCase):
             {},
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {}
             ''', 0),
@@ -227,9 +224,6 @@ class InterfaceTestCase(TestCase):
             {'type': 'object', 'properties': {}},
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
             }
@@ -255,9 +249,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 age: number;
@@ -288,9 +279,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 '@type'?: 'human';
@@ -323,9 +311,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 occupation: OccupationType;
@@ -378,9 +363,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 employees?: ({
@@ -419,9 +401,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 age?: AgeChoice;
@@ -457,9 +436,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 occupation: Occupation[];
@@ -496,9 +472,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 '@type'?: 'employee';
@@ -553,9 +526,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 age: number;
@@ -599,9 +569,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 age: number;
@@ -640,9 +607,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-            /**
-             * http://here
-             */
 
             export interface ReadCardsResponse {
                 age: MyAge;
@@ -692,10 +656,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponse {
                     attempt_stats: {
                         card_id?: any;
@@ -729,10 +689,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponse {
                     age: number;
                     type: "MAN";
@@ -782,10 +738,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponse {
                     person: {
                         age?: number;
@@ -824,10 +776,6 @@ class InterfaceTestCase(TestCase):
             },
             'cards',
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponseEntity {
                     age: number;
                     name: string;
@@ -858,10 +806,6 @@ class InterfaceTestCase(TestCase):
             },
             'card_ids',
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponseEntity extends Number {}
 
                 export interface ReadCardsResponse {
@@ -889,10 +833,6 @@ class InterfaceTestCase(TestCase):
             },
             'card_ids',
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponseEntity extends Boolean {}
 
                 export interface ReadCardsResponse {
@@ -920,10 +860,6 @@ class InterfaceTestCase(TestCase):
             },
             'card_ids',
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponseEntity extends String {}
 
                 export interface ReadCardsResponse {
@@ -946,10 +882,6 @@ class InterfaceTestCase(TestCase):
             },
             'cards',
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponseEntity extends Object {};
 
                 export interface ReadCardsResponse {
@@ -974,10 +906,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponse {
                     name?: null | string;
                 }
@@ -1011,10 +939,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponse {
                     background: null | {
                         audio_stop?: number;
@@ -1063,10 +987,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponse {
                     background: null | {
                         audio_stop?: number;
@@ -1136,10 +1056,6 @@ class InterfaceTestCase(TestCase):
             },
             None,
             normalize_indentation('''
-                /**
-                 * http://here
-                 */
-
                 export interface ReadCardsResponse {
                     background: null | {
                         audio_language?: null | Language;
@@ -1159,7 +1075,6 @@ def test_render(schema, bulk_read_field, expected_rendered, expected_enums):
         'READ_CARDS',
         Interface.TYPES.RESPONSE,
         schema,
-        'http://here',
         bulk_read_field=bulk_read_field).render()
 
     assert rendered == expected_rendered

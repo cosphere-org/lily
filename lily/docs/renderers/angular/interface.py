@@ -15,11 +15,10 @@ class Interface:
 
         REQUEST_BODY = 'REQUEST_BODY'
 
-    def __init__(self, command_name, type_, schema, uri, bulk_read_field=None):
+    def __init__(self, command_name, type_, schema, bulk_read_field=None):
         self.command_name = command_name
         self.type = type_
         self.schema = schema
-        self.uri = uri
         self.enums = []
         self.bulk_read_field = bulk_read_field
 
@@ -163,11 +162,7 @@ class Interface:
 
             return '\n'.join(lines)
 
-        blocks = [normalize_indentation('''
-            /**
-             * {self.uri}
-             */
-        ''', 0).format(self=self)]
+        blocks = []
 
         # -- treat differently Bulk Read Response interfaces in order to
         # -- allow one extra mapping in the domain service

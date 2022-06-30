@@ -126,9 +126,9 @@ class CommandTestCase(TestCase):
         )]
 
         assert interface.call_args_list == [
-            call('READ_TASK', 'REQUEST_QUERY', request_query, 'Q'),
-            call('READ_TASK', 'REQUEST_BODY', request_body, 'B'),
-            call('READ_TASK', 'RESPONSE', response, 'R', bulk_read_field=None),
+            call('READ_TASK', 'REQUEST_QUERY', request_query),
+            call('READ_TASK', 'REQUEST_BODY', request_body),
+            call('READ_TASK', 'RESPONSE', response, bulk_read_field=None),
         ]
 
     def test_header(self):

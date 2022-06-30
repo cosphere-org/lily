@@ -34,23 +34,21 @@ class Command:
 
         # -- request query
         request_query_schema = self.conf['schemas'].get(
-            'input_query') or {'schema': None, 'uri': None}
+            'input_query') or {'schema': None}
 
         self.request_query = Interface(
             self.name,
             Interface.TYPES.REQUEST_QUERY,
-            request_query_schema['schema'],
-            request_query_schema['uri'])
+            request_query_schema['schema'])
 
         # -- request body
         request_body_schema = self.conf['schemas'].get(
-            'input_body') or {'schema': None, 'uri': None}
+            'input_body') or {'schema': None}
 
         self.request_body = Interface(
             self.name,
             Interface.TYPES.REQUEST_BODY,
-            request_body_schema['schema'],
-            request_body_schema['uri'])
+            request_body_schema['schema'])
 
         # -- response
         response_schema = self.conf['schemas']['output']
@@ -58,7 +56,6 @@ class Command:
             self.name,
             Interface.TYPES.RESPONSE,
             response_schema['schema'],
-            response_schema['uri'],
             bulk_read_field=self.get_bulk_read_field())
         self.signature = Signature(
             self.method,
